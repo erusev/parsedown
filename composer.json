@@ -14,5 +14,5 @@
     ],
     "autoload": {
         "psr-0": {"Parsedown": ""}
-    },
+    }
 }
