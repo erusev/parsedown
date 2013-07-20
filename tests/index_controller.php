@@ -6,7 +6,7 @@ $failed_test_count = 0;
 
 foreach ($DirectoryIterator as $Item) 
 {
-	if ($Item->isFile() and $Item->getBasename() != '.DS_Store')
+	if ($Item->isFile() and strpos($Item->getBasename(), '.') !== 0)
 	{
 		if ($Item->getExtension() === 'md')
 		{
