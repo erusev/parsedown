@@ -9,9 +9,9 @@ class Test extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider provider
      */
-    public function testAdd($expected, $actual)
+    public function test_($markdown, $expected)
     {
-		$markup = Parsedown::instance()->parse('sdf');
+		$actual = Parsedown::instance()->parse($markdown);
 		
 		$this->assertEquals($expected, $actual);
     }
@@ -35,9 +35,7 @@ class Test extends PHPUnit_Framework_TestCase
 				
 				$expected_markup = file_get_contents(__DIR__.'/'.self::provider_dir.$basename.'.html');
 				
-				$actual_markup = Parsedown::instance()->parse($markdown);
-				
-				$provider []= array($expected_markup, $actual_markup);
+				$provider []= array($markdown, $expected_markup);
 			}
 		}
 		
