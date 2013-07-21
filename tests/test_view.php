@@ -12,7 +12,6 @@
 		<link href="test.css" rel="stylesheet" type="text/css" />
 		
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.js" type="text/javascript"></script>
-		<script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
 		
 		<title><?= $name ?> &laquo; Parsedown Test</title>
 		
@@ -28,8 +27,8 @@
 				<td colspan="2"><a href="/">Parsedown PHP</a> » <a href=".">Tests</a> » <?= $name ?></td>
 				<td style="text-align: right;">
 					<form action="http://parsedown.org<?= $_SERVER['SERVER_NAME'] === 'parsedown.org.local' ? '.local' : '' ?>/explorer/" method="post">
-						<input type="hidden" name="text" />
-						<a id="explorer" href="">Open in Explorer</a>
+						<input type="hidden" name="text" value="<?= $md ?>"/>
+						<button type="submit">Open in Explorer</button>
 					</form>
 				</td>
 			</tr>
@@ -46,16 +45,6 @@
 				<td>Actual Markup</td>
 			</tr>
 		</table>
-		
-		<script type="text/javascript">
-			
-			$('#explorer').click(function(e) {
-				$('input[name=text]').val($('#md').text());
-				$('form').submit();
-				return false;
-			});
-			
-		</script>
 		
 	</body>
 	

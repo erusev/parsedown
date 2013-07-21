@@ -10,9 +10,16 @@ tr.header td {
 	padding: 20px;
 }
 
-tr.header a {
+tr.header a, tr.header button {
 	color: #fff;
 	text-decoration: underline;
+}
+
+tr.header button {
+	border: 0;
+	background: none;
+	font-size: 100%;
+	cursor: pointer;
 }
 
 tr.body td {
