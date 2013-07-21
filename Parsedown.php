@@ -147,7 +147,7 @@ class Parsedown
 				
 				unset($block);
 			}
-			elseif (isset($list) and $block[0] === ' ') # list item block 
+			elseif (isset($list) and isset($block) and $block[0] === ' ') # list item block 
 			{
 				$list .= "\n\n".$block;
 				
