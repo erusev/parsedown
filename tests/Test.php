@@ -6,21 +6,21 @@ class Test extends PHPUnit_Framework_TestCase
 {
 	const provider_dir = 'data/';
 	
-    /**
-     * @dataProvider provider
-     */
-    public function test_($markdown, $expected)
-    {
-		$actual = Parsedown::instance()->parse($markdown);
-		
-		$this->assertEquals($expected, $actual);
-    }
+	/**
+	 * @dataProvider provider
+	 */
+	function test_($markdown, $expected_markup)
+	{
+		$actual_markup = Parsedown::instance()->parse($markdown);
+
+		$this->assertEquals($expected_markup, $actual_markup);
+	}
 	
-    public function provider()
-    {
+	function provider()
+	{
 		$provider = array();
 		
-		$DirectoryIterator = new DirectoryIterator(__DIR__.'/'.self::provider_dir);
+		$DirectoryIterator = new DirectoryIterator(__DIR__ . '/' . self::provider_dir);
 		
 		foreach ($DirectoryIterator as $Item)
 		{
@@ -28,18 +28,18 @@ class Test extends PHPUnit_Framework_TestCase
 			{
 				$basename = $Item->getBasename('.md');
 				
-				$markdown = file_get_contents(__DIR__.'/'.self::provider_dir.$basename.'.md');
+				$markdown = file_get_contents(__DIR__ . '/' . self::provider_dir . $basename . '.md');
 				
-				if ( ! $markdown)
+				if (!$markdown)
 					continue;
 				
-				$expected_markup = file_get_contents(__DIR__.'/'.self::provider_dir.$basename.'.html');
+				$expected_markup = file_get_contents(__DIR__ . '/' . self::provider_dir . $basename . '.html');
 				
-				$provider []= array($markdown, $expected_markup);
+				$provider [] = array($markdown, $expected_markup);
 			}
 		}
 		
 		return $provider;
-    }
+	}
 }
 
