@@ -19,3 +19,9 @@ Here's one with no space after markers:
 
 -list item
 -another list item
+
+Here's one with different indentation level:
+
+- list item
+ - more indented list item
+  - even more
