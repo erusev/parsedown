@@ -120,7 +120,7 @@ class Parsedown
 		
 		foreach ($blocks as $block)
 		{
-			if (isset($block) and $block[0] > 'A')
+			if (isset($block) and $block[0] >= 'A')
 			{
 				$quick_block = $block;
 				
@@ -311,7 +311,7 @@ class Parsedown
 			
 			# Paragraph 
 			
-			if (isset($line) and $line[0] > 'A')
+			if (isset($line) and $line[0] >= 'A')
 			{
 				$quick_line = $line;
 				
