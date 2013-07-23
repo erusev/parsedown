@@ -432,12 +432,13 @@ class Parsedown
 				{
 					if ($line[0] === $setext_character and preg_match('/^['.$setext_character.']+[ ]*$/', $line))
 					{
-						$atx_heading_level = $index + 1;
+						$setext_heading_level = $index + 1;
 						
-						$markup .= '<h'.$atx_heading_level.'>'.$paragraph.'</h'.$atx_heading_level.'>'."\n";
+						$setext_heading_text = $this->parse_inline_elements($paragraph);
 						
-						unset($paragraph);
-						unset($line);
+						$markup .= '<h'.$setext_heading_level.'>'.$setext_heading_text.'</h'.$setext_heading_level.'>'."\n";
+						
+						unset($paragraph, $line);
 						
 						continue 2;
 					}
