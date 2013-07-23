@@ -18,7 +18,3 @@ $result = Parsedown::instance()->parse($text);
 
 echo $result; # prints: <p>Hello <strong>Parsedown</strong>!</p>
 ```
-
----
-
-[![Coverage Status](https://coveralls.io/repos/erusev/parsedown/badge.png?branch=master)](https://coveralls.io/r/erusev/parsedown?branch=master)
