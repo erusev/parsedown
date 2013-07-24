@@ -558,19 +558,19 @@ class Parsedown
 		
 		# Inline Link / Image 
 		
-		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)\[(.*?)\]\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline 
+		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^][]+|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline 
 		{
 			foreach ($matches as $matches)
 			{
 				if ($matches[1]) # image 
 				{
-					$element = '<img alt="'.$matches[2].'" src="'.$matches[3].'">';
+					$element = '<img alt="'.$matches[3].'" src="'.$matches[4].'">';
 				}
 				else 
 				{
-					$element_text = $this->parse_inline_elements($matches[2]);
+					$element_text = $this->parse_inline_elements($matches[3]);
 					
-					$element = '<a href="'.$matches[3].'">'.$element_text.'</a>';
+					$element = '<a href="'.$matches[4].'">'.$element_text.'</a>';
 				}
 				
 				$element_text = $this->parse_inline_elements($matches[1]);
