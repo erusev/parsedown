@@ -18,3 +18,10 @@ Here's one with no space after markers:
 
 -list item
 -another list item
+
+Here's one where items contain line breaks:
+
+- list
+item
+- another
+list item

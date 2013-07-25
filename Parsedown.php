@@ -157,7 +157,6 @@ class Parsedown
 			{
 				$markup .= '<'.$list_type.'>'."\n";
 				
-				# Of the same type and indentation.
 				$list_items = preg_split('/^([ ]{'.$list_indentation.'})'.$list_marker_pattern.'[ ]/m', $list, -1, PREG_SPLIT_NO_EMPTY);
 				
 				foreach ($list_items as $list_item)
@@ -175,7 +174,7 @@ class Parsedown
 						}
 						else 
 						{
-							$list_item = $this->parse_lines($list_item);
+							$list_item = $this->parse_lines($list_item, TRUE);
 						}
 						
 						$markup .= "\n".$list_item;
@@ -277,7 +276,7 @@ class Parsedown
 			{
 				if (strpos($block, "\n"))
 				{
-					$markup .= $this->parse_lines($block);
+					$markup .= $this->parse_lines($block, TRUE);
 				}
 				else 
 				{
@@ -292,7 +291,7 @@ class Parsedown
 		return $markup;
 	}
 	
-	private function parse_lines($text)
+	private function parse_lines($text, $paragraph_based = FALSE)
 	{
 		$text = trim($text, "\n");
 		
@@ -473,9 +472,11 @@ class Parsedown
 			{
 				if (isset($paragraph))
 				{
-					$element_text = $this->parse_inline_elements($paragraph);
+					$paragraph_text = $this->parse_inline_elements($paragraph);
 					
-					$markup .= '<p>'.$element_text.'</p>'."\n";
+					$markup .= $markup === '' && $paragraph_based === FALSE
+						? $paragraph_text
+						: '<p>'.$paragraph_text.'</p>'."\n";
 					
 					unset($paragraph);
 				}
