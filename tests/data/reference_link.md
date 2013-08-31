@@ -18,12 +18,23 @@ Here's [one][5] with a different URL.
 
 [5]: http://parsedown.org/tests/
 
-Here's [one][the website] with a semantic name.
+Here's [one][website] with a semantic name.
 
-[the website]: http://parsedown.org
+[website]: http://parsedown.org
 
 Here's [one][404] with no definition.
 
 Here's an image: ![Markdown Logo][image]
 
 [image]: https://raw.github.com/dcurtis/markdown-mark/master/png/32x20-solid.png
+
+Here's an [implicit one].
+
+Here's an [implicit one].
+
+[implicit one]: http://google.com
+
+Here's an [implicit one][] with an empty link definition.
+
+Here's a [multiline
+one][website] defined on 2 lines.

@@ -81,7 +81,7 @@ class Parsedown
 		{
 			foreach ($matches as $matches)
 			{
-				$this->reference_map[$matches[1]] = $matches[2];
+				$this->reference_map[strtolower($matches[1])] = $matches[2];
 				
 				$text = str_replace($matches[0], '', $text);
 			}
@@ -526,14 +526,20 @@ class Parsedown
 		
 		# Reference(d) Link / Image 
 		
-		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\][ ]?\[(.+?)\]/', $text, $matches, PREG_SET_ORDER))
+		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\](?:[ ]?\[(.*?)\])?/ms', $text, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $matches)
 			{
-				if (array_key_exists($matches[3], $this->reference_map))
+				$link_difinition = isset($matches[3]) && $matches[3]
+					? $matches[3]
+					: $matches[2]; # implicit 
+				
+				$link_difinition = strtolower($link_difinition);
+				
+				if (isset($this->reference_map[$link_difinition]))
 				{
-					$url = $this->reference_map[$matches[3]];
-
+					$url = $this->reference_map[$link_difinition];
+					
 					if ($matches[1]) # image 
 					{
 						$element = '<img alt="'.$matches[2].'" src="'.$url.'">';
