@@ -34,6 +34,8 @@ class Test extends PHPUnit_Framework_TestCase
 					continue;
 				
 				$expected_markup = file_get_contents(__DIR__ . '/' . self::provider_dir . $basename . '.html');
+				$expected_markup = str_replace("\r\n", "\n", $expected_markup);
+				$expected_markup = str_replace("\r", "\n", $expected_markup);
 				
 				$provider [] = array($markdown, $expected_markup);
 			}
