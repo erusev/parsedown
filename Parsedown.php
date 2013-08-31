@@ -50,7 +50,8 @@ class Parsedown
 		$text = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $text);
 		
 		# Removes \r characters.
-		$text = str_replace("\r", '', $text);
+		$text = str_replace("\r\n", "\n", $text);
+		$text = str_replace("\r", "\n", $text);
 		
 		# Replaces tabs with spaces.
 		$text = str_replace("\t", '    ', $text);
