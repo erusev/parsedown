@@ -109,8 +109,10 @@ class Parsedown
 	
 	private function parse_blocks($text)
 	{
+		$text = trim($text, "\n");
+		
 		# Divides text into blocks.
-		$blocks = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
+		$blocks = preg_split('/\n\s*\n/', $text);
 		
 		# Makes sure compound blocks get rendered.
 		$blocks []= NULL;
