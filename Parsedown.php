@@ -528,7 +528,7 @@ class Parsedown
 		
 		# Reference(d) Link / Image 
 		
-		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\](?:[ ]?\[(.*?)\])?/ms', $text, $matches, PREG_SET_ORDER))
+		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\](?:\n?[ ]?\[(.*?)\])?/ms', $text, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $matches)
 			{

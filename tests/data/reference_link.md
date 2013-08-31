@@ -22,6 +22,9 @@ Here's [one][website] with a semantic name.
 
 [website]: http://parsedown.org
 
+Here's [one]
+[website] with definition name on the next line.
+
 Here's [one][404] with no definition.
 
 Here's an image: ![Markdown Logo][image]
