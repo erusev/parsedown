@@ -254,15 +254,6 @@ class Parsedown
 				continue;
 			}
 			
-			# Horizontal Line 
-			
-			if (isset($block) and preg_match('/^[ ]{0,3}([-*_])([ ]{0,2}\1){2,}$/', $block))
-			{
-				$markup .= '<hr />'."\n";
-				
-				continue;
-			}
-			
 			# ~ 
 			
 			if (isset($quick_block))
@@ -270,6 +261,18 @@ class Parsedown
 				$block = $quick_block;
 				
 				unset ($quick_block);
+			}
+			
+			# Horizontal Line
+			# Horizontal lines checks could be optimized with $quick_block
+			# But '_' > 'A' and horizontal lines could be defined by underscores
+			# See #13
+			
+			if (isset($block) and preg_match('/^[ ]{0,3}([-*_])([ ]{0,2}\1){2,}$/', $block))
+			{
+				$markup .= '<hr />'."\n";
+				
+				continue;
 			}
 			
 			# 
