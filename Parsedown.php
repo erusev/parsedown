@@ -458,7 +458,7 @@ class Parsedown
 			{
 				substr($line, -2) === '  '
 					and $line = substr($line, 0, -2)
-					and $line .= '<br/>';
+					and $line .= '<br />';
 				
 				if (isset($paragraph))
 				{
