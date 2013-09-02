@@ -29,7 +29,7 @@ Here's [one][404] with no definition.
 
 Here's an image: ![Markdown Logo][image]
 
-[image]: https://raw.github.com/dcurtis/markdown-mark/master/png/32x20-solid.png
+[image]: /md.png
 
 Here's an [implicit one].
 
