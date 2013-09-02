@@ -616,13 +616,19 @@ class Parsedown
 				$index ++;
 			}
 		}
-
-		if (strpos($text, '*') !== FALSE or strpos($text, '_') !== FALSE)
+		
+		if (strpos($text, '_') !== FALSE)
 		{
-			$text = preg_replace('/(\*\*|__)(.+?[*_]*)(?<=\S)\1/', '<strong>$2</strong>', $text);
-			$text = preg_replace('/(\*|_)(.+?)(?<=\S)\1/', '<em>$2</em>', $text);
+			$text = preg_replace('/__(?=\S)(.+?)(?<=\S)__/', '<strong>$1</strong>', $text);
+			$text = preg_replace('/_(?=\S)(.+?)(?<=\S)_/', '<em>$1</em>', $text);
 		}
-
+		
+		if (strpos($text, '*') !== FALSE)
+		{
+			$text = preg_replace('/\*\*(?=\S)(.+?)(?<=\S)\*\*/', '<strong>$1</strong>', $text);
+			$text = preg_replace('/\*(?=\S)(.+?)(?<=\S)\*/', '<em>$1</em>', $text);
+		}
+		
 		$text = strtr($text, $map);
 		
 		return $text;
