@@ -273,12 +273,10 @@ class Parsedown
 				if (isset($blockquote))
 				{
 					$blockquote .= "\n".$matches[1];
-					$blockquote_is_multiline = true;
 				}
 				else 
 				{
 					$blockquote = $matches[1];
-					$blockquote_is_multiline = false;
 				}
 				
 				unset($line);
@@ -288,13 +286,10 @@ class Parsedown
 				if (isset($line) and $line === '')
 				{
 					$blockquote .= "\n";
-					$blockquote_is_multiline = true;
 				}
 				else 
 				{
-					$blockquote = $blockquote_is_multiline
-						? $this->parse_lines($blockquote)
-						: '<p>'.$this->parse_inline_elements($blockquote).'</p>'."\n";
+					$blockquote = $this->parse_lines($blockquote);
 					
 					$markup .= '<blockquote>'."\n".$blockquote.'</blockquote>'."\n";
 					
