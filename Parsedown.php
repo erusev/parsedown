@@ -121,11 +121,11 @@ class Parsedown
 		
 		foreach ($lines as $index => $line)
 		{
-			# Quick Line 
+			# ~ 
 			
 			if (isset($line) and $line !== '' and $line[0] >= 'A')
 			{
-				$quick_line = $line;
+				$simple_line = $line;
 				
 				unset($line);
 			}
@@ -329,11 +329,11 @@ class Parsedown
 			
 			# Paragraph 
 			
-			if (isset($quick_line))
+			if (isset($simple_line))
 			{
-				$line = $quick_line;
+				$line = $simple_line;
 				
-				unset($quick_line);
+				unset($simple_line);
 			}
 			
 			if (isset($line) and $line !== '')
