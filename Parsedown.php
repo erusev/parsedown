@@ -145,7 +145,7 @@ class Parsedown
 			
 			# Rule 
 			
-			if (isset($line) and preg_match('/^[ ]{0,3}([-*_])([ ]{0,2}\1){2,}[ ]*$/', $line))
+			if (isset($line) and $line !== '' and preg_match('/^[ ]{0,3}([-*_])([ ]{0,2}\1){2,}[ ]*$/', $line))
 			{
 				$rule = true;
 				
