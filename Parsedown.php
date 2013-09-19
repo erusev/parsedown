@@ -417,6 +417,37 @@ class Parsedown
 			}
 		}
 		
+		# Inline Link / Image 
+		
+		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^][]+|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline 
+		{
+			foreach ($matches as $matches)
+			{
+				if ($matches[1]) # image 
+				{
+					$element = '<img alt="'.$matches[3].'" src="'.$matches[4].'">';
+				}
+				else 
+				{
+					$element_text = $this->parse_inline_elements($matches[3]);
+					
+					$element = '<a href="'.$matches[4].'">'.$element_text.'</a>';
+				}
+				
+				$element_text = $this->parse_inline_elements($matches[1]);
+				
+				# ~ 
+
+				$code = "\x1A".'$'.$index;
+
+				$text = str_replace($matches[0], $code, $text);
+
+				$map[$code] = $element;
+				
+				$index ++;
+			}
+		}
+		
 		# Reference(d) Link / Image 
 		
 		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\](?:\n?[ ]?\[(.*?)\])?/ms', $text, $matches, PREG_SET_ORDER))
@@ -454,37 +485,6 @@ class Parsedown
 
 					$index ++;
 				}
-			}
-		}
-		
-		# Inline Link / Image 
-		
-		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^][]+|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline 
-		{
-			foreach ($matches as $matches)
-			{
-				if ($matches[1]) # image 
-				{
-					$element = '<img alt="'.$matches[3].'" src="'.$matches[4].'">';
-				}
-				else 
-				{
-					$element_text = $this->parse_inline_elements($matches[3]);
-					
-					$element = '<a href="'.$matches[4].'">'.$element_text.'</a>';
-				}
-				
-				$element_text = $this->parse_inline_elements($matches[1]);
-				
-				# ~ 
-
-				$code = "\x1A".'$'.$index;
-
-				$text = str_replace($matches[0], $code, $text);
-
-				$map[$code] = $element;
-				
-				$index ++;
 			}
 		}
 		
