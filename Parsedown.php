@@ -113,7 +113,7 @@ class Parsedown
 	private function parse_lines($text, $context = null)
 	{
 		$lines = explode("\n", $text);
-		$lines []= NULL;
+		$lines []= null;
 		
 		$line_count = count($lines);
 		
