@@ -266,7 +266,7 @@ class Parsedown
 				}
 			}
 			
-			# Quote Block 
+			# Blockquote
 			
 			if (isset($line) and $line !== '' and preg_match('/^[ ]*>[ ]?(.*)/', $line, $matches))
 			{
