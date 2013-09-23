@@ -89,10 +89,12 @@ class Parsedown
 		
 		# ~ 
 		
-		$text = trim($text, "\n");
 		$text = preg_replace('/\n\s*\n/', "\n\n", $text);
+		$text = trim($text, "\n");
 		
-		$text = $this->parse_lines($text);
+		$lines = explode("\n", $text);
+		
+		$text = $this->parse_block_elements($lines);
 		
 		# Decodes escape sequences (leaves out backslashes).
 		
@@ -110,270 +112,340 @@ class Parsedown
 	# Private Methods 
 	# 
 	
-	private function parse_lines($text, $context = null)
+	private function parse_block_elements(array $lines, $context = '')
 	{
-		$lines = explode("\n", $text);
-		$lines []= null;
+		$elements = array();
 		
-		$line_count = count($lines);
+		$element = array(
+			'type' => '',
+		);
 		
-		$markup = '';
-		
-		foreach ($lines as $index => $line)
+		foreach ($lines as $line)
 		{
-			# ~ 
+			# Empty 
 			
-			if (isset($line) and $line !== '' and $line[0] >= 'A')
+			if ($line === '')
 			{
-				$simple_line = $line;
+				$element['interrupted'] = true;
 				
-				unset($line);
-			}
-			
-			# Setext Heading (-)
-			
-			if (isset($line) and $line !== '' and isset($paragraph) and preg_match('/^[-]+[ ]*$/', $line))
-			{
-				$setext_heading_text = $this->parse_inline_elements($paragraph);
-				
-				$markup .= '<h2>'.$setext_heading_text.'</h2>'."\n";
-				
-				unset($paragraph, $line);
+				$element['type'] === 'code' and $element['text'] .= "\n";
 				
 				continue;
 			}
 			
-			# Rule 
+			# Lazy Blockquote 
 			
-			if (isset($line) and $line !== '' and preg_match('/^[ ]{0,3}([-*_])([ ]{0,2}\1){2,}[ ]*$/', $line))
+			if ($element['type'] === 'blockquote' and ! isset($element['interrupted']))
 			{
-				$rule = true;
+				$line = preg_replace('/^[ ]*>[ ]?/', '', $line);
 				
-				unset($line);
-			}
-			elseif (isset($rule))
-			{
-				$markup .= '<hr />'."\n";
+				$element['lines'] []= $line;
 				
-				unset($rule);
+				continue;
 			}
 			
-			# List 
+			# Lazy List Item 
 			
-			# Unlike other types, consequent lines of type "list items" may not
-			# belong to the same block.
-			
-			if (isset($line) and $line !== '' and preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches)) # list item 
+			if ($element['type'] === 'li')
 			{
-				$list_item_indentation = $matches[1];
-				$list_item_type = ($matches[2] === '-' or $matches[2] === '+' or $matches[2] === '*')
-					? 'ul'
-					: 'ol';
-				
-				if (isset($list_items)) # subsequent 
+				if (preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
 				{
-					if ($list_item_indentation === $list_indentation and $list_item_type === $list_type)
+					if ($element['indentation'] !== $matches[1]) 
 					{
-						$list_items []= $list_item;
-						
-						$list_item = $matches[3];
+						$element['lines'] []= $line;
 					}
 					else 
 					{
-						$list_item .= "\n".$line;
+						unset($element['last']);
+						
+						$elements []= $element;
+						
+						$element = array(
+							'type' => 'li',
+							'indentation' => $matches[1],
+							'last' => true,
+							'lines' => array(
+								preg_replace('/^[ ]{0,4}/', '', $matches[3]),
+							),
+						);
 					}
-				}
-				else # first 
-				{
-					$list_indentation = $list_item_indentation;
-					$list_type = $list_item_type;
 					
-					$list_item = $matches[3];
-					
-					$list_items = array();
+					continue;
 				}
 				
-				unset($line);
-			}
-			elseif (isset($list_items)) # incomplete list item
-			{
-				if (isset($line) and ($line === '' or $line[0] === ' '))
+				if (isset($element['interrupted']))
 				{
-					$line and $line = preg_replace('/^[ ]{0,4}/', '', $line);;
-					
-					$list_item .= "\n".$line;
-						
-					unset($line);
-				}
-				else # line is consumed or does not belong to the list item 
-				{
-					$list_item = rtrim($list_item, "\n");
-					
-					$list_items []= $list_item;
-					
-					$markup .= '<'.$list_type.'>'."\n";
-					
-					foreach ($list_items as $list_item)
+					if ($line[0] === ' ')
 					{
-						$list_item_text = strpos($list_item, "\n") !== false
-							? $this->parse_lines($list_item, 'li')
-							: $this->parse_inline_elements($list_item);
+						$element['lines'] []= '';
 						
-						$markup .= '<li>'.$list_item_text.'</li>'."\n";
+						$line = preg_replace('/^[ ]{0,4}/', '', $line);;
+						
+						$element['lines'] []= $line;
+						
+						continue;
 					}
-					
-					$markup .= '</'.$list_type.'>'."\n";
-					
-					unset($list_items);
-				}
-			}
-			
-			# Code Block 
-			
-			if (isset($line) and $line !== '' and preg_match('/^[ ]{4}(.*)/', $line, $matches))
-			{
-				if (isset($code_block))
-				{
-					$code_block .= "\n".$matches[1];
 				}
 				else
 				{
-					$code_block = $matches[1];
-				}
-				
-				unset($line);
-			}
-			elseif (isset($code_block))
-			{
-				if (isset($line) and $line === '')
-				{
-					$code_block .= "\n";
+					$line = preg_replace('/^[ ]{0,4}/', '', $line);;
+						
+					$element['lines'] []= $line;
 					
-					# » continue;
-				}
-				else 
-				{
-					$code_block = rtrim($code_block);
-					
-					$code_block_text = htmlentities($code_block, ENT_NOQUOTES);
-					
-					# Decodes encoded escape sequences if present.
-					strpos($code_block_text, "\x1A\\") !== FALSE and $code_block_text = strtr($code_block_text, $this->escape_sequence_map);
-					
-					$markup .= '<pre><code>'.$code_block_text.'</code></pre>'."\n";
-					
-					unset($code_block);
+					continue;
 				}
 			}
 			
-			# Blockquote
+			# Quick Paragraph 
 			
-			if (isset($line) and $line !== '' and preg_match('/^[ ]*>[ ]?(.*)/', $line, $matches))
+			if ($line[0] >= 'A')
 			{
-				if (isset($blockquote))
-				{
-					$blockquote .= "\n".$matches[1];
-				}
-				else 
-				{
-					$blockquote = $matches[1];
-				}
-				
-				unset($line);
-			}
-			elseif (isset($blockquote)) 
-			{
-				if (isset($line) and $line === '')
-				{
-					$blockquote .= "\n";
-				}
-				else 
-				{
-					$blockquote = $this->parse_lines($blockquote);
-					
-					$markup .= '<blockquote>'."\n".$blockquote.'</blockquote>'."\n";
-					
-					unset($blockquote);
-				}
+				goto paragraph; # trust me 
 			}
 			
-			# Atx Heading 
+			# Setext Header (---) 
 			
-			if (isset($line) and $line !== '' and $line[0] === '#' and preg_match('/^(#{1,6})[ ]*(.+?)[ ]*#*$/', $line, $matches))
+			if ($element['type'] === 'p' and preg_match('/^[-]+[ ]*$/', $line))
 			{
-				$atx_heading_level = strlen($matches[1]);
-				
-				$atx_heading = $this->parse_inline_elements($matches[2]);
-				
-				unset($line);
-			}
-			elseif (isset($atx_heading))
-			{
-				$markup .= '<h'.$atx_heading_level.'>'.$atx_heading.'</h'.$atx_heading_level.'>'."\n";
-				
-				unset($atx_heading);
-			}
-			
-			# Setext Heading (=)
-			
-			if (isset($line) and $line !== '' and isset($paragraph) and preg_match('/^[=]+[ ]*$/', $line))
-			{
-				$setext_heading_text = $this->parse_inline_elements($paragraph);
-				
-				$markup .= '<h1>'.$setext_heading_text.'</h1>'."\n";
-				
-				unset($paragraph, $line);
+				$element['type'] = 'h.';
+				$element['level'] = 2;
 				
 				continue;
 			}
 			
-			# Paragraph 
+			# Horizontal Rule  
 			
-			if (isset($simple_line))
+			if (preg_match('/^[ ]{0,3}([-*_])([ ]{0,2}\1){2,}[ ]*$/', $line))
 			{
-				$line = $simple_line;
+				$elements []= $element;
 				
-				unset($simple_line);
+				$element = array(
+					'type' => 'hr',
+				);
+				
+				continue;
 			}
 			
-			if (isset($line) and $line !== '')
+			# List Item 
+			
+			if (preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
 			{
-				substr($line, -2) === '  ' and $line = substr_replace($line, '<br />', -2);
-
-				if (isset($paragraph))
-				{
-					$paragraph .= "\n".$line;
-				}
-				else 
-				{
-					$paragraph = $line;
-				}
-			}
-			elseif (isset($paragraph))
-			{
-				$paragraph_text = $this->parse_inline_elements($paragraph);
+				$elements []= $element;
 				
-				if ($context === 'li')
+				$element = array(
+					'type' => 'li',
+					'ordered' => isset($matches[2][1]),
+					'indentation' => $matches[1],
+					'last' => true,
+					'lines' => array(
+						preg_replace('/^[ ]{0,4}/', '', $matches[3]),
+					),
+				);
+				
+				continue;
+			}
+			
+			# Code 
+			
+			if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
+			{
+				if ($element['type'] === 'code')
 				{
-					if ( ! $markup and $index + 1 === $line_count)
+					$element['text'] .= "\n".$matches[1];
+				}
+				else
+				{
+					$elements []= $element;
+					
+					$element = array(
+						'type' => 'code', 
+						'text' => $matches[1],
+					);
+				}
+				
+				continue;
+			}
+			
+			# Atx Header (#)
+			
+			if ($line[0] === '#' and preg_match('/^(#{1,6})[ ]*(.+?)[ ]*#*$/', $line, $matches))
+			{
+				$elements []= $element;
+				
+				$level = strlen($matches[1]);
+				
+				$element = array(
+					'type' => 'h.', 
+					'text' => $matches[2], 
+					'level' => $level,
+				);
+				
+				continue;
+			}
+			
+			# Blockquote 
+			
+			if (preg_match('/^[ ]*>[ ]?(.*)/', $line, $matches))
+			{
+				if ($element['type'] === 'blockquote')
+				{
+					if (isset($element['interrupted']))
 					{
-						$text_is_simple = true;
-					}
-					else
-					{
-						$markup or $markup .= "\n";
+						$element['lines'] []= '';
+						
+						unset($element['interrupted']);
 					}
 					
-					$markup .= isset($text_is_simple)
-						? $paragraph_text
-						: '<p>'.$paragraph_text.'</p>'."\n";
+					$element['lines'] []= $matches[1];
 				}
-				else 
+				else
 				{
-					$markup .= '<p>'.$paragraph_text.'</p>'."\n";
+					$elements []= $element;
+					
+					$element = array(
+						'type' => 'blockquote',
+						'lines' => array(
+							$matches[1],
+						),
+					);
 				}
 				
-				unset($paragraph);
+				continue;
+			}
+			
+			# Setext Header (===) 
+			
+			if ($element['type'] === 'p' and preg_match('/^[=]+[ ]*$/', $line))
+			{
+				$element['type'] = 'h.';
+				$element['level'] = 1;
+				
+				continue;
+			}
+			
+			# ~ 
+			
+			paragraph:
+			
+			if ($element['type'] === 'p')
+			{
+				if (isset($element['interrupted']))
+				{
+					$elements []= $element;
+					
+					$element['text'] = $line;
+					
+					unset($element['interrupted']);
+				}
+				else
+				{
+					$element['text'] .= "\n".$line;
+				}
+			}
+			else
+			{
+				$elements []= $element;
+				
+				$element = array(
+					'type' => 'p', 
+					'text' => $line,
+				);
+			}
+		}
+		
+		$elements []= $element;
+		
+		array_shift($elements);
+		
+		# 
+		# ~ 
+		# 
+		
+		$markup = '';
+		
+		foreach ($elements as $index => $element)
+		{
+			switch ($element['type'])
+			{
+				case 'li':
+					
+					if (isset($element['ordered'])) # first
+					{
+						$list_type = $element['ordered'] ? 'ol' : 'ul';
+						
+						$markup .= '<'.$list_type.'>'."\n";
+					}
+					
+					if (isset($element['interrupted']) and ! isset($element['last']))
+					{
+						$element['lines'] []= '';
+					}
+					
+					$text = $this->parse_block_elements($element['lines'], 'li');
+					
+					$markup .= '<li>'.$text.'</li>'."\n";
+					
+					isset($element['last']) and $markup .= '</'.$list_type.'>'."\n";
+					
+					break;
+				
+				case 'p':
+					
+					$text = $this->parse_inline_elements($element['text']);
+					
+					$text = preg_replace('/[ ]{2}\n/', '<br />'."\n", $text);
+					
+					if ($context === 'li' and $index === 0)
+					{
+						if (isset($element['interrupted']))
+						{
+							$markup .= "\n".'<p>'.$text.'</p>'."\n";
+						}
+						else 
+						{
+							$markup .= $text;
+						}
+					}
+					else 
+					{
+						$markup .= '<p>'.$text.'</p>'."\n";
+					}
+					
+					break;
+				
+				case 'code':
+					
+					$text = rtrim($element['text'], "\n");
+					
+					$text = htmlentities($text, ENT_NOQUOTES);
+					
+					strpos($text, "\x1A\\") !== FALSE and $text = strtr($text, $this->escape_sequence_map);
+					
+					$markup .= '<pre><code>'.$text.'</code></pre>'."\n";
+					
+					break;
+				
+				case 'blockquote':
+					
+					$text = $this->parse_block_elements($element['lines']);
+					
+					$markup .= '<blockquote>'."\n".$text.'</blockquote>'."\n";
+					
+					break;
+				
+				case 'h.':
+					
+					$text = $this->parse_inline_elements($element['text']);
+					
+					$markup .= '<h'.$element['level'].'>'.$text.'</h'.$element['level'].'>'."\n";
+					
+					break;
+				
+				case 'hr':
+					
+					$markup .= '<hr />'."\n";
+					
+					break;
 			}
 		}
 		
