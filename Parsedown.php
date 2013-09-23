@@ -198,7 +198,7 @@ class Parsedown
 			
 			# Quick Paragraph 
 			
-			if ($line[0] >= 'A')
+			if ($line[0] >= 'A' and $line['0'] !== '_')
 			{
 				goto paragraph; # trust me 
 			}
