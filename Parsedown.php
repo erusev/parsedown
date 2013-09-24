@@ -205,7 +205,7 @@ class Parsedown
 			
 			# Setext Header (---) 
 			
-			if ($element['type'] === 'p' and preg_match('/^[-]+[ ]*$/', $line))
+			if ($element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
 			{
 				$element['type'] = 'h.';
 				$element['level'] = 2;
@@ -315,7 +315,7 @@ class Parsedown
 			
 			# Setext Header (===) 
 			
-			if ($element['type'] === 'p' and preg_match('/^[=]+[ ]*$/', $line))
+			if ($element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
 			{
 				$element['type'] = 'h.';
 				$element['level'] = 1;
