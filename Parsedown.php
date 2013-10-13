@@ -526,15 +526,15 @@ class Parsedown
 		{
 			foreach ($matches as $matches)
 			{
-				$link_difinition = isset($matches[3]) && $matches[3]
+				$link_definition = isset($matches[3]) && $matches[3]
 					? $matches[3]
 					: $matches[2]; # implicit 
 				
-				$link_difinition = strtolower($link_difinition);
+				$link_definition = strtolower($link_definition);
 				
-				if (isset($this->reference_map[$link_difinition]))
+				if (isset($this->reference_map[$link_definition]))
 				{
-					$url = $this->reference_map[$link_difinition];
+					$url = $this->reference_map[$link_definition];
 					
 					if ($matches[1]) # image 
 					{
