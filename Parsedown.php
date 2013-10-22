@@ -506,8 +506,6 @@ class Parsedown
 					$element = '<a href="'.$matches[4].'">'.$element_text.'</a>';
 				}
 				
-				$element_text = $this->parse_inline_elements($matches[1]);
-				
 				# ~ 
 
 				$code = "\x1A".'$'.$index;
