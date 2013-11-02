@@ -122,6 +122,27 @@ class Parsedown
 		
 		foreach ($lines as $line)
 		{
+			# Block-Level HTML 
+			
+			if ($element['type'] === 'block' and ! isset($element['closed']))
+			{
+				if (preg_match('{<'.$element['subtype'].'>$}', $line)) # <open>
+				{
+					$element['depth']++;
+				}
+				
+				if (preg_match('{</'.$element['subtype'].'>$}', $line)) # </close>
+				{
+					$element['depth'] > 0 
+						? $element['depth']-- 
+						: $element['closed'] = true;
+				}
+				
+				$element['text'] .= "\n".$line;
+
+				continue;
+			}
+			
 			# Empty 
 			
 			if ($line === '')
@@ -322,6 +343,38 @@ class Parsedown
 				
 				continue;
 			}
+
+			# Block-Level HTML <self-closing/> 
+			
+			if (preg_match('{^<.+?/>$}', $line))
+			{
+				$elements []= $element;
+				
+				$element = array(
+					'type' => '',
+					'text' => $line,
+				);
+				
+				continue;
+			}
+			
+			# Block-Level HTML <open>
+			
+			if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $line, $matches))
+			{
+				$elements []= $element;
+				
+				$element = array(
+					'type' => 'block',
+					'subtype' => strtolower($matches[1]),
+					'text' => $line,
+					'depth' => 0,
+				);
+				
+				preg_match('{</'.$matches[1].'>\s*$}', $line) and $element['closed'] = true; 
+				
+				continue;
+			}
 			
 			# ~ 
 			
@@ -444,6 +497,10 @@ class Parsedown
 					$markup .= '<hr />'."\n";
 					
 					break;
+
+				default:
+					
+					$markup .= $element['text']."\n";
 			}
 		}
 		
