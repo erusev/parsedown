@@ -128,8 +128,6 @@ class Parsedown
 			{
 				$element['interrupted'] = true;
 				
-				$element['type'] === 'code' and $element['text'] .= "\n";
-				
 				continue;
 			}
 			
@@ -251,6 +249,8 @@ class Parsedown
 			{
 				if ($element['type'] === 'code')
 				{
+					isset($element['interrupted']) and $element['text'] .= "\n";
+					
 					$element['text'] .= "\n".$matches[1];
 				}
 				else
@@ -415,9 +415,7 @@ class Parsedown
 				
 				case 'code':
 					
-					$text = rtrim($element['text'], "\n");
-					
-					$text = htmlentities($text, ENT_NOQUOTES);
+					$text = htmlentities($element['text'], ENT_NOQUOTES);
 					
 					strpos($text, "\x1A\\") !== FALSE and $text = strtr($text, $this->escape_sequence_map);
 					
