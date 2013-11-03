@@ -550,15 +550,17 @@ class Parsedown
 		{
 			foreach ($matches as $matches)
 			{
+				$url = $this->escape_special_characters($matches[4]);
+				
 				if ($matches[1]) # image 
 				{
-					$element = '<img alt="'.$matches[3].'" src="'.$matches[4].'">';
+					$element = '<img alt="'.$matches[3].'" src="'.$url.'">';
 				}
-				else 
+				else
 				{
 					$element_text = $this->parse_inline_elements($matches[3]);
 					
-					$element = '<a href="'.$matches[4].'">'.$element_text.'</a>';
+					$element = '<a href="'.$url.'">'.$element_text.'</a>';
 				}
 				
 				# ~ 
@@ -588,6 +590,7 @@ class Parsedown
 				if (isset($this->reference_map[$link_definition]))
 				{
 					$url = $this->reference_map[$link_definition];
+					$url = $this->escape_special_characters($url);
 					
 					if ($matches[1]) # image 
 					{
@@ -613,13 +616,17 @@ class Parsedown
 			}
 		}
 		
+		# Automatic Links 
+		
 		if (strpos($text, '<') !== FALSE and preg_match_all('/<((https?|ftp|dict):[^\^\s]+?)>/i', $text, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $matches)
 			{
+				$url = $this->escape_special_characters($matches[1]);
+				
 				$element = '<a href=":href">:text</a>';
-				$element = str_replace(':text', $matches[1], $element);
-				$element = str_replace(':href', $matches[1], $element);
+				$element = str_replace(':text', $url, $element);
+				$element = str_replace(':href', $url, $element);
 				
 				# ~ 
 				
@@ -632,6 +639,12 @@ class Parsedown
 				$index ++;
 			}
 		}
+		
+		# ~ 
+		
+		$text = $this->escape_special_characters($text);
+
+		# ~ 
 		
 		if (strpos($text, '_') !== FALSE)
 		{
@@ -649,5 +662,13 @@ class Parsedown
 		
 		return $text;
 	}
+	
+	private function escape_special_characters($text)
+	{
+		strpos($text, '&') !== FALSE and $text = preg_replace('/&(?!#?\w+;)/', '&amp;', $text);
+		
+		$text = str_replace('<', '&lt;', $text);
+		
+		return $text;
+	}
 }
-
