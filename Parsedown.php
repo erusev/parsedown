@@ -217,56 +217,14 @@ class Parsedown
 			
 			# Quick Paragraph 
 			
-			if ($line[0] >= 'A' and $line['0'] !== '_')
+			if ($line[0] >= 'A' and $line[0] !== '_')
 			{
 				goto paragraph; # trust me 
 			}
 			
-			# Setext Header (---) 
-			
-			if ($element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
-			{
-				$element['type'] = 'h.';
-				$element['level'] = 2;
-				
-				continue;
-			}
-			
-			# Horizontal Rule  
-			
-			if (preg_match('/^[ ]{0,3}([-*_])([ ]{0,2}\1){2,}[ ]*$/', $line))
-			{
-				$elements []= $element;
-				
-				$element = array(
-					'type' => 'hr',
-				);
-				
-				continue;
-			}
-			
-			# List Item 
-			
-			if (preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
-			{
-				$elements []= $element;
-				
-				$element = array(
-					'type' => 'li',
-					'ordered' => isset($matches[2][1]),
-					'indentation' => $matches[1],
-					'last' => true,
-					'lines' => array(
-						preg_replace('/^[ ]{0,4}/', '', $matches[3]),
-					),
-				);
-				
-				continue;
-			}
-			
 			# Code 
 			
-			if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
+			if ($line[0] === ' ' and preg_match('/^[ ]{4}(.*)/', $line, $matches))
 			{
 				if ($element['type'] === 'code')
 				{
@@ -279,10 +237,20 @@ class Parsedown
 					$elements []= $element;
 					
 					$element = array(
-						'type' => 'code', 
+						'type' => 'code',
 						'text' => $matches[1],
 					);
 				}
+
+				continue;
+			}
+			
+			# Setext Header (---)  
+			
+			if ($line[0] === '-' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
+			{
+				$element['type'] = 'h.';
+				$element['level'] = 2;
 				
 				continue;
 			}
@@ -296,17 +264,31 @@ class Parsedown
 				$level = strlen($matches[1]);
 				
 				$element = array(
-					'type' => 'h.', 
-					'text' => $matches[2], 
+					'type' => 'h.',
+					'text' => $matches[2],
 					'level' => $level,
 				);
 				
 				continue;
 			}
 			
+			# Setext Header (===) 
+			
+			if ($line[0] === '=' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
+			{
+				$element['type'] = 'h.';
+				$element['level'] = 1;
+				
+				continue;
+			}
+			
+			# ~  
+			
+			$pure_line = ltrim($line);
+			
 			# Blockquote 
 			
-			if (preg_match('/^[ ]*>[ ]?(.*)/', $line, $matches))
+			if ($pure_line[0] === '>' and preg_match('/^>[ ]?(.*)/', $pure_line, $matches))
 			{
 				if ($element['type'] === 'blockquote')
 				{
@@ -334,44 +316,71 @@ class Parsedown
 				continue;
 			}
 			
-			# Setext Header (===) 
+			# HTML  
 			
-			if ($element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
+			if ($pure_line[0] === '<')
 			{
-				$element['type'] = 'h.';
-				$element['level'] = 1;
-				
-				continue;
-			}
+				# Block-Level HTML <self-closing/>
 
-			# Block-Level HTML <self-closing/> 
+				if (preg_match('{^<.+?/>$}', $pure_line))
+				{
+					$elements []= $element;
+
+					$element = array(
+						'type' => '',
+						'text' => $pure_line,
+					);
+
+					continue;
+				}
+				
+				# Block-Level HTML <open>
+
+				if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $pure_line, $matches))
+				{
+					$elements []= $element;
+
+					$element = array(
+						'type' => 'block',
+						'subtype' => strtolower($matches[1]),
+						'text' => $pure_line,
+						'depth' => 0,
+					);
+					
+					preg_match('{</'.$matches[1].'>\s*$}', $pure_line) and $element['closed'] = true;
+
+					continue;
+				}
+			}
 			
-			if (preg_match('{^<.+?/>$}', $line))
+			# Horizontal Rule   
+			
+			if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $pure_line))
 			{
 				$elements []= $element;
 				
 				$element = array(
-					'type' => '',
-					'text' => $line,
+					'type' => 'hr',
 				);
 				
 				continue;
 			}
 			
-			# Block-Level HTML <open>
+			# List Item 
 			
-			if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $line, $matches))
+			if (preg_match('/^([ ]*)(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
 			{
 				$elements []= $element;
 				
 				$element = array(
-					'type' => 'block',
-					'subtype' => strtolower($matches[1]),
-					'text' => $line,
-					'depth' => 0,
+					'type' => 'li',
+					'ordered' => isset($matches[2][1]),
+					'indentation' => $matches[1],
+					'last' => true,
+					'lines' => array(
+						preg_replace('/^[ ]{0,4}/', '', $matches[3]),
+					),
 				);
-				
-				preg_match('{</'.$matches[1].'>\s*$}', $line) and $element['closed'] = true; 
 				
 				continue;
 			}

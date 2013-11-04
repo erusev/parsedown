@@ -1,11 +1,11 @@
-Here's a list where items are separated by empty lines:
+Here's a sparse list:
 
 - list item
 
 - another list item
 
-Here's an ordered one:
+Here's one with an indented list item:
 
-1. item one
+- li
 
-2. item two
+    - li
