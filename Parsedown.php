@@ -75,18 +75,6 @@ class Parsedown
 			}
 		}
 		
-		# Extracts link references.
-		
-		if (preg_match_all('/^[ ]{0,3}\[(.+)\][ ]?:[ ]*\n?[ ]*(.+)$/m', $text, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $matches)
-			{
-				$this->reference_map[strtolower($matches[1])] = $matches[2];
-				
-				$text = str_replace($matches[0], '', $text);
-			}
-		}
-		
 		# ~ 
 		
 		$text = preg_replace('/\n\s*\n/', "\n\n", $text);
@@ -217,7 +205,7 @@ class Parsedown
 			
 			# Quick Paragraph 
 			
-			if ($line[0] >= 'A' and $line[0] !== '_')
+			if ($line[0] >= 'A' and $line[0] !== '_' and $line[0] !== '[')
 			{
 				goto paragraph; # trust me 
 			}
@@ -282,9 +270,21 @@ class Parsedown
 				continue;
 			}
 			
-			# ~  
+			# ~ 
 			
 			$pure_line = ltrim($line);
+			
+			# Link Reference 
+			
+			if ($pure_line[0] === '[' and preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $pure_line, $matches))
+			{
+				$label = $matches[1];
+				$url = trim($matches[2], '<>');
+				
+				$this->reference_map[$label] = $url;
+				
+				continue;
+			}
 			
 			# Blockquote 
 			
