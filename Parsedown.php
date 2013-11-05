@@ -564,7 +564,9 @@ class Parsedown
 		{
 			foreach ($matches as $matches)
 			{
-				$url = $this->escape_special_characters($matches[4]);
+				$url = $matches[4];
+				
+				strpos($url, '&') !== FALSE and $url = preg_replace('/&(?!#?\w+;)/', '&amp;', $url);
 				
 				if ($matches[1]) # image 
 				{
@@ -604,7 +606,8 @@ class Parsedown
 				if (isset($this->reference_map[$link_definition]))
 				{
 					$url = $this->reference_map[$link_definition];
-					$url = $this->escape_special_characters($url);
+					
+					strpos($url, '&') !== FALSE and $url = preg_replace('/&(?!#?\w+;)/', '&amp;', $url);
 					
 					if ($matches[1]) # image 
 					{
@@ -636,7 +639,9 @@ class Parsedown
 		{
 			foreach ($matches as $matches)
 			{
-				$url = $this->escape_special_characters($matches[1]);
+				$url = $matches[1];
+				
+				strpos($url, '&') !== FALSE and $url = preg_replace('/&(?!#?\w+;)/', '&amp;', $url);
 				
 				$element = '<a href=":href">:text</a>';
 				$element = str_replace(':text', $url, $element);
@@ -656,8 +661,9 @@ class Parsedown
 		
 		# ~ 
 		
-		$text = $this->escape_special_characters($text);
-
+		strpos($text, '&') !== FALSE and $text = preg_replace('/&(?!#?\w+;)/', '&amp;', $text);
+		strpos($text, '<') !== FALSE and $text = preg_replace('/<(?!\/?\w.*?>)/', '&lt;', $text);
+		
 		# ~ 
 		
 		if (strpos($text, '_') !== FALSE)
@@ -673,15 +679,6 @@ class Parsedown
 		}
 		
 		$text = strtr($text, $map);
-		
-		return $text;
-	}
-	
-	private function escape_special_characters($text)
-	{
-		strpos($text, '&') !== FALSE and $text = preg_replace('/&(?!#?\w+;)/', '&amp;', $text);
-		
-		$text = str_replace('<', '&lt;', $text);
 		
 		return $text;
 	}
