@@ -78,7 +78,7 @@ class Parsedown
 		# ~ 
 		
 		$text = preg_replace('/\n\s*\n/', "\n\n", $text);
-		$text = trim($text, "\n");
+		$text = trim($text, "\n ");
 		
 		$lines = explode("\n", $text);
 		
