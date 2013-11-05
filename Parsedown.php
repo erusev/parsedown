@@ -216,7 +216,12 @@ class Parsedown
 			{
 				if ($element['type'] === 'code')
 				{
-					isset($element['interrupted']) and $element['text'] .= "\n";
+					if (isset($element['interrupted']))
+					{
+						$element['text'] .= "\n";
+						
+						unset ($element['interrupted']);
+					}
 					
 					$element['text'] .= "\n".$matches[1];
 				}

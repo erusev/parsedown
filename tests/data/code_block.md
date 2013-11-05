@@ -1,10 +1,9 @@
-Here's a regular code block:
+Here's a code block:
 
     <?php
     
-    echo 'Hello World!'; 
-	
-	?>
+    $message = 'Hello World!'; 
+    echo $message;
 
 Here's one that holds a list:
 
