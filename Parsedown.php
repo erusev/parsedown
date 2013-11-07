@@ -560,7 +560,7 @@ class Parsedown
 		
 		# Inline Link / Image 
 		
-		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^][]+|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline 
+		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^\[\]]|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline 
 		{
 			foreach ($matches as $matches)
 			{
