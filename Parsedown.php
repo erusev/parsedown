@@ -277,7 +277,7 @@ class Parsedown
 			
 			# ~ 
 			
-			$pure_line = ltrim($line);
+			$pure_line = $line[0] !== ' ' ? $line : ltrim($line);
 			
 			# Link Reference 
 			
