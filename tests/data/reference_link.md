@@ -13,6 +13,10 @@ Here's [one][website] with a semantic name.
 
 [website]: http://parsedown.org
 
+Here's [one][case] with an upper case label definition.
+
+[CASE]: http://parsedown.org
+
 Here's [one]
 [website] with definition name on the next line.
 

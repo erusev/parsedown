@@ -283,7 +283,7 @@ class Parsedown
 			
 			if ($pure_line[0] === '[' and preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $pure_line, $matches))
 			{
-				$label = $matches[1];
+				$label = strtolower($matches[1]);
 				$url = trim($matches[2], '<>');
 				
 				$this->reference_map[$label] = $url;
