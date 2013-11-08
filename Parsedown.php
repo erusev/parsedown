@@ -207,7 +207,7 @@ class Parsedown
 
 			if ($line[0] >= 'a' or $line[0] >= 'A' and $line[0] <= 'Z')
 			{
-				goto paragraph; # trust me
+				goto paragraph;
 			}
 
 			# Code
