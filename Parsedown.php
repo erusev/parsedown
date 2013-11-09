@@ -78,7 +78,7 @@ class Parsedown
 		# ~
 
 		$text = preg_replace('/\n\s*\n/', "\n\n", $text);
-		$text = trim($text, "\n ");
+		$text = trim($text, "\n");
 
 		$lines = explode("\n", $text);
 
@@ -210,10 +210,15 @@ class Parsedown
 				goto paragraph;
 			}
 
-			# Code
+			# Code Block
 
 			if ($line[0] === ' ' and preg_match('/^[ ]{4}(.*)/', $line, $matches))
 			{
+				if (trim($line) === '')
+				{
+					continue;
+				}
+
 				if ($element['type'] === 'code')
 				{
 					if (isset($element['interrupted']))
@@ -278,6 +283,11 @@ class Parsedown
 			# ~
 
 			$pure_line = $line[0] !== ' ' ? $line : ltrim($line);
+
+			if ($pure_line === '')
+			{
+				continue;
+			}
 
 			# Link Reference
 
