@@ -1,3 +1,3 @@
-Here's a [link](http://parsedown.org).
+Here's a [link](http://example.com).
 
-Here's an image link: [![MD Logo](http://parsedown.org/md.png)](http://daringfireball.net/projects/markdown/).
+Here's one that is based on an image: [![MD Logo](http://parsedown.org/md.png)](http://daringfireball.net/projects/markdown/).

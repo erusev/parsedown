@@ -1,18 +1,18 @@
-Self-closing tag:
+A self-closing tag:
 
 <hr/>
 
-Self-closing tag with attributes:
+One with attributes:
 
 <hr style="background: #eaa" />
 
-Bare element:
+A bare element:
 
 <div>content</div>
 
-Element with attributes:
+One with attributes:
 
-<a href="http://parsedown.org">link</a>
+<a href="http://example.com">link</a>
 
 Nested elements:
 

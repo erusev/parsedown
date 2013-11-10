@@ -1,13 +1,13 @@
 Here's *an emphasis*.
 
-A short emphasis _a_ *b* .
+A short one _a_ *b* .
 
 Here's **a strong one**. 
 
-Here's _an emphasis that uses underscores_. 
+Here's _one that uses underscores_. 
 
-Here's __a strong emphasis that uses underscores__.
+Here's __a strong one that uses underscores__.
 
-This is not _ an emphasis _ neither is * this * neither is _ this_ neither is _this _.
+This is not _ one _ neither is * this * neither is _ this_ neither is _this _.
 
-Empty emphasis ** is not __ an emphasis.
+An empty emphasis ** is not __ an emphasis.

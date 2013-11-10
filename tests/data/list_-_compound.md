@@ -7,4 +7,3 @@ Here's a compound list:
 - This is another list item.
 
   > This is a quote block that belongs to it.
-
