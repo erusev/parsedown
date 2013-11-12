@@ -14,5 +14,8 @@
     ],
     "autoload": {
         "psr-0": {"Parsedown": ""}
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
     }
 }
