@@ -678,14 +678,14 @@ class Parsedown
 
 		if (strpos($text, '_') !== FALSE)
 		{
-			$text = preg_replace('/__(?=\S)(.+?)(?<=\S)__/', '<strong>$1</strong>', $text);
-			$text = preg_replace('/_(?=\S)(.+?)(?<=\S)_/', '<em>$1</em>', $text);
+			$text = preg_replace('/__(?=\S)(.+?)(?<=\S)__/s', '<strong>$1</strong>', $text);
+			$text = preg_replace('/_(?=\S)(.+?)(?<=\S)_/s', '<em>$1</em>', $text);
 		}
 
 		if (strpos($text, '*') !== FALSE)
 		{
-			$text = preg_replace('/\*\*(?=\S)(.+?)(?<=\S)\*\*/', '<strong>$1</strong>', $text);
-			$text = preg_replace('/\*(?=\S)(.+?)(?<=\S)\*/', '<em>$1</em>', $text);
+			$text = preg_replace('/\*\*(?=\S)(.+?)(?<=\S)\*\*/s', '<strong>$1</strong>', $text);
+			$text = preg_replace('/\*(?=\S)(.+?)(?<=\S)\*/s', '<em>$1</em>', $text);
 		}
 
 		$text = strtr($text, $map);

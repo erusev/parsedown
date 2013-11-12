@@ -11,3 +11,9 @@ Here's __a strong one that uses underscores__.
 This is not _ one _ neither is * this * neither is _ this_ neither is _this _.
 
 An empty emphasis ** is not __ an emphasis.
+
+A *multi-line
+emphasis*
+
+A **multi-line
+strong emphasis**
