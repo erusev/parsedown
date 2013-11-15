@@ -1,19 +1,8 @@
-Here's *an emphasis*.
+_underscore_, *asterisk*, _one two_, *three four*, _a_, *b*
 
-A short one _a_ *b* .
+_multiline
+emphasis_
 
-Here's **a strong one**. 
+_ this _ is not an emphasis, neither is _ this_, _this _, or _this*
 
-Here's _one that uses underscores_. 
-
-Here's __a strong one that uses underscores__.
-
-This is not _ one _ neither is * this * neither is _ this_ neither is _this _.
-
-An empty emphasis ** is not __ an emphasis.
-
-A *multi-line
-emphasis*
-
-A **multi-line
-strong emphasis**
+an empty emphasis __ ** is not an emphasis

@@ -1,15 +1,15 @@
-AT&T has an ampersand in their name.
+AT&T has an ampersand in their name
 
-AT&amp;T is another way to write it.
+AT&T is another way to write it
 
-This & that.
+this & that
 
-4 < 5 and 6 > 5.
+4 < 5 and 6 > 5
 
-Here's an autolink <http://example.com/autolink?a=1&b=2>
+<http://example.com/autolink?a=1&b=2> 
 
-Here's an inline [link](/script?a=1&b=2).
+[inline link](/script?a=1&b=2)
 
-Here's a reference [link] [1] with an ampersand in the URL.
+[reference link][1]
 
 [1]: http://example.com/?a=1&b=2
