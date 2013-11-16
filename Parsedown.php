@@ -186,7 +186,7 @@ class Parsedown
 					{
 						$element['lines'] []= '';
 
-						$line = preg_replace('/^[ ]{0,4}/', '', $line);;
+						$line = preg_replace('/^[ ]{0,4}/', '', $line);
 
 						$element['lines'] []= $line;
 
@@ -195,7 +195,7 @@ class Parsedown
 				}
 				else
 				{
-					$line = preg_replace('/^[ ]{0,4}/', '', $line);;
+					$line = preg_replace('/^[ ]{0,4}/', '', $line);
 
 					$element['lines'] []= $line;
 
