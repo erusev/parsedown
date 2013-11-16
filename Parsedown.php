@@ -468,7 +468,7 @@ class Parsedown
 
 				case 'p':
 
-					$text = $this->parse_inline_elements($element['text']);
+					$text = $this->parse_span_elements($element['text']);
 
 					$text = preg_replace('/[ ]{2}\n/', '<br />'."\n", $text);
 
@@ -510,7 +510,7 @@ class Parsedown
 
 				case 'h.':
 
-					$text = $this->parse_inline_elements($element['text']);
+					$text = $this->parse_span_elements($element['text']);
 
 					$markup .= '<h'.$element['level'].'>'.$text.'</h'.$element['level'].'>'."\n";
 
@@ -531,7 +531,7 @@ class Parsedown
 		return $markup;
 	}
 
-	private function parse_inline_elements($text)
+	private function parse_span_elements($text)
 	{
 		$map = array();
 
@@ -584,7 +584,7 @@ class Parsedown
 				}
 				else
 				{
-					$element_text = $this->parse_inline_elements($matches[3]);
+					$element_text = $this->parse_span_elements($matches[3]);
 
 					$element = '<a href="'.$url.'">'.$element_text.'</a>';
 				}
@@ -625,7 +625,7 @@ class Parsedown
 					}
 					else # anchor
 					{
-						$element_text = $this->parse_inline_elements($matches[2]);
+						$element_text = $this->parse_span_elements($matches[2]);
 
 						$element = '<a href="'.$url.'">'.$element_text.'</a>';
 					}
