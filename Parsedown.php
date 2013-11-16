@@ -114,12 +114,12 @@ class Parsedown
 
 			if ($element['type'] === 'markup' and ! isset($element['closed']))
 			{
-				if (preg_match('{<'.$element['subtype'].'>$}', $line)) # <open>
+				if (preg_match('{<'.$element['subtype'].'>$}', $line)) # opening tag
 				{
 					$element['depth']++;
 				}
 
-				if (preg_match('{</'.$element['subtype'].'>$}', $line)) # </close>
+				if (preg_match('{</'.$element['subtype'].'>$}', $line)) # closing tag
 				{
 					$element['depth'] > 0
 						? $element['depth']--
@@ -335,7 +335,7 @@ class Parsedown
 
 			if ($pure_line[0] === '<')
 			{
-				# Block-Level HTML <self-closing/>
+				# self-closing tag
 
 				if (preg_match('{^<.+?/>$}', $pure_line))
 				{
@@ -349,7 +349,7 @@ class Parsedown
 					continue;
 				}
 
-				# Block-Level HTML <open>
+				# opening tag
 
 				if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $pure_line, $matches))
 				{
@@ -546,17 +546,17 @@ class Parsedown
 				$element_text = $matches[1];
 				$element_text = htmlentities($element_text, ENT_NOQUOTES);
 
-				# Decodes escape sequences.
+				# decodes escape sequences
 
 				$this->escape_sequence_map
 					and strpos($element_text, "\x1A") !== FALSE
 					and $element_text = strtr($element_text, $this->escape_sequence_map);
 
-				# Composes element.
+				# composes element
 
 				$element = '<code>'.$element_text.'</code>';
 
-				# Encodes element.
+				# encodes element
 
 				$code = "\x1A".'$'.$index;
 
