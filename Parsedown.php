@@ -66,7 +66,7 @@ class Parsedown
 			{
 				if (strpos($text, $escape_sequence) !== FALSE)
 				{
-					$code = "\x1A".'\\'.$index;
+					$code = "\x1A".'\\'.$index.';';
 
 					$text = str_replace($escape_sequence, $code, $text);
 
