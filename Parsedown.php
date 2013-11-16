@@ -182,7 +182,7 @@ class Parsedown
 
 				if (isset($element['interrupted']))
 				{
-					if ($line[0] === ' ')
+					if ($line[0] === ' ' and ! preg_match('/^[ ]{0,4}\[(.+?)\]:[ ]*([^ ]+)/', $line))
 					{
 						$element['lines'] []= '';
 
