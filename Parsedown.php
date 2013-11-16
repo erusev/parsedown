@@ -282,16 +282,16 @@ class Parsedown
 
 			# ~
 
-			$pure_line = $line[0] !== ' ' ? $line : ltrim($line);
+			$deindented_line = $line[0] !== ' ' ? $line : ltrim($line);
 
-			if ($pure_line === '')
+			if ($deindented_line === '')
 			{
 				continue;
 			}
 
 			# reference
 
-			if ($pure_line[0] === '[' and preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $pure_line, $matches))
+			if ($deindented_line[0] === '[' and preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $deindented_line, $matches))
 			{
 				$label = strtolower($matches[1]);
 				$url = trim($matches[2], '<>');
@@ -303,7 +303,7 @@ class Parsedown
 
 			# blockquote
 
-			if ($pure_line[0] === '>' and preg_match('/^>[ ]?(.*)/', $pure_line, $matches))
+			if ($deindented_line[0] === '>' and preg_match('/^>[ ]?(.*)/', $deindented_line, $matches))
 			{
 				if ($element['type'] === 'blockquote')
 				{
@@ -333,17 +333,17 @@ class Parsedown
 
 			# markup
 
-			if ($pure_line[0] === '<')
+			if ($deindented_line[0] === '<')
 			{
 				# self-closing tag
 
-				if (preg_match('{^<.+?/>$}', $pure_line))
+				if (preg_match('{^<.+?/>$}', $deindented_line))
 				{
 					$elements []= $element;
 
 					$element = array(
 						'type' => '',
-						'text' => $pure_line,
+						'text' => $deindented_line,
 					);
 
 					continue;
@@ -351,18 +351,18 @@ class Parsedown
 
 				# opening tag
 
-				if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $pure_line, $matches))
+				if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $deindented_line, $matches))
 				{
 					$elements []= $element;
 
 					$element = array(
 						'type' => 'markup',
 						'subtype' => strtolower($matches[1]),
-						'text' => $pure_line,
+						'text' => $deindented_line,
 						'depth' => 0,
 					);
 
-					preg_match('{</'.$matches[1].'>\s*$}', $pure_line) and $element['closed'] = true;
+					preg_match('{</'.$matches[1].'>\s*$}', $deindented_line) and $element['closed'] = true;
 
 					continue;
 				}
@@ -370,7 +370,7 @@ class Parsedown
 
 			# horizontal rule
 
-			if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $pure_line))
+			if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $deindented_line))
 			{
 				$elements []= $element;
 
