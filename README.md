@@ -1,8 +1,8 @@
 ## Parsedown
 
-Parsedown is a Markdown parser for PHP. It reads Markdown the way people do. First, it breaks texts into lines. Then, it looks at how these lines start and relate to each other. Finally, it looks for special characters to identify inline elements. As a result, Parsedown is (very) fast and consistent.
+Parsedown is a Markdown parser for PHP. It is fast, consistent and easy to use.
 
-[Home](http://parsedown.org) &middot; [Demo](http://parsedown.org/explorer/) &middot; [Tests](http://parsedown.org/tests/)
+[Home](http://parsedown.org)  &middot; [Demo](http://parsedown.org/explorer/) &middot; [Tests](http://parsedown.org/tests/)
 
 ### Installation
 
