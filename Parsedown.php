@@ -444,28 +444,6 @@ class Parsedown
 		{
 			switch ($element['type'])
 			{
-				case 'li':
-
-					if (isset($element['ordered'])) # first
-					{
-						$list_type = $element['ordered'] ? 'ol' : 'ul';
-
-						$markup .= '<'.$list_type.'>'."\n";
-					}
-
-					if (isset($element['interrupted']) and ! isset($element['last']))
-					{
-						$element['lines'] []= '';
-					}
-
-					$text = $this->parse_block_elements($element['lines'], 'li');
-
-					$markup .= '<li>'.$text.'</li>'."\n";
-
-					isset($element['last']) and $markup .= '</'.$list_type.'>'."\n";
-
-					break;
-
 				case 'p':
 
 					$text = $this->parse_span_elements($element['text']);
@@ -490,6 +468,14 @@ class Parsedown
 
 					break;
 
+				case 'blockquote':
+
+					$text = $this->parse_block_elements($element['lines']);
+
+					$markup .= '<blockquote>'."\n".$text.'</blockquote>'."\n";
+
+					break;
+
 				case 'code':
 
 					$text = htmlentities($element['text'], ENT_NOQUOTES);
@@ -497,14 +483,6 @@ class Parsedown
 					strpos($text, "\x1A\\") !== FALSE and $text = strtr($text, $this->escape_sequence_map);
 
 					$markup .= '<pre><code>'.$text.'</code></pre>'."\n";
-
-					break;
-
-				case 'blockquote':
-
-					$text = $this->parse_block_elements($element['lines']);
-
-					$markup .= '<blockquote>'."\n".$text.'</blockquote>'."\n";
 
 					break;
 
@@ -519,6 +497,28 @@ class Parsedown
 				case 'hr':
 
 					$markup .= '<hr />'."\n";
+
+					break;
+
+				case 'li':
+
+					if (isset($element['ordered'])) # first
+					{
+						$list_type = $element['ordered'] ? 'ol' : 'ul';
+
+						$markup .= '<'.$list_type.'>'."\n";
+					}
+
+					if (isset($element['interrupted']) and ! isset($element['last']))
+					{
+						$element['lines'] []= '';
+					}
+
+					$text = $this->parse_block_elements($element['lines'], 'li');
+
+					$markup .= '<li>'.$text.'</li>'."\n";
+
+					isset($element['last']) and $markup .= '</'.$list_type.'>'."\n";
 
 					break;
 
