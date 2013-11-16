@@ -46,17 +46,17 @@ class Parsedown
 
 	function parse($text)
 	{
-		# Removes UTF-8 BOM and marker characters.
+		# removes UTF-8 BOM and marker characters
 		$text = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $text);
 
-		# Removes \r characters.
+		# removes \r characters
 		$text = str_replace("\r\n", "\n", $text);
 		$text = str_replace("\r", "\n", $text);
 
-		# Replaces tabs with spaces.
+		# replaces tabs with spaces
 		$text = str_replace("\t", '    ', $text);
 
-		# Encodes escape sequences.
+		# encodes escape sequences
 
 		if (strpos($text, '\\') !== FALSE)
 		{
@@ -84,7 +84,7 @@ class Parsedown
 
 		$text = $this->parse_block_elements($lines);
 
-		# Decodes escape sequences (leaves out backslashes).
+		# decodes escape sequences
 
 		foreach ($this->escape_sequence_map as $code => $escape_sequence)
 		{
@@ -110,7 +110,7 @@ class Parsedown
 
 		foreach ($lines as $line)
 		{
-			# Block-Level HTML
+			# markup (open)
 
 			if ($element['type'] === 'block' and ! isset($element['closed']))
 			{
@@ -131,7 +131,7 @@ class Parsedown
 				continue;
 			}
 
-			# Empty
+			# *
 
 			if ($line === '')
 			{
@@ -140,7 +140,7 @@ class Parsedown
 				continue;
 			}
 
-			# Lazy Blockquote
+			# blockquote (existing)
 
 			if ($element['type'] === 'blockquote' and ! isset($element['interrupted']))
 			{
@@ -151,7 +151,7 @@ class Parsedown
 				continue;
 			}
 
-			# Lazy List Item
+			# list (existing)
 
 			if ($element['type'] === 'li')
 			{
@@ -203,14 +203,14 @@ class Parsedown
 				}
 			}
 
-			# Quick Paragraph
+			# paragraph
 
 			if ($line[0] >= 'a' or $line[0] >= 'A' and $line[0] <= 'Z')
 			{
 				goto paragraph;
 			}
 
-			# Code Block
+			# code block
 
 			if ($line[0] === ' ' and preg_match('/^[ ]{4}(.*)/', $line, $matches))
 			{
@@ -243,7 +243,7 @@ class Parsedown
 				continue;
 			}
 
-			# Setext Header (---)
+			# setext heading (---)
 
 			if ($line[0] === '-' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
 			{
@@ -253,7 +253,7 @@ class Parsedown
 				continue;
 			}
 
-			# Atx Header (#)
+			# atx heading (#)
 
 			if ($line[0] === '#' and preg_match('/^(#{1,6})[ ]*(.+?)[ ]*#*$/', $line, $matches))
 			{
@@ -270,7 +270,7 @@ class Parsedown
 				continue;
 			}
 
-			# Setext Header (===)
+			# setext heading (===)
 
 			if ($line[0] === '=' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
 			{
@@ -289,7 +289,7 @@ class Parsedown
 				continue;
 			}
 
-			# Link Reference
+			# reference
 
 			if ($pure_line[0] === '[' and preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $pure_line, $matches))
 			{
@@ -301,7 +301,7 @@ class Parsedown
 				continue;
 			}
 
-			# Blockquote
+			# blockquote
 
 			if ($pure_line[0] === '>' and preg_match('/^>[ ]?(.*)/', $pure_line, $matches))
 			{
@@ -331,7 +331,7 @@ class Parsedown
 				continue;
 			}
 
-			# HTML
+			# markup
 
 			if ($pure_line[0] === '<')
 			{
@@ -368,7 +368,7 @@ class Parsedown
 				}
 			}
 
-			# Horizontal Rule
+			# horizontal rule
 
 			if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $pure_line))
 			{
@@ -381,7 +381,7 @@ class Parsedown
 				continue;
 			}
 
-			# List Item
+			# list item
 
 			if (preg_match('/^([ ]*)(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
 			{
@@ -537,7 +537,7 @@ class Parsedown
 
 		$index = 0;
 
-		# Code Span
+		# code span
 
 		if (strpos($text, '`') !== FALSE and preg_match_all('/`(.+?)`/', $text, $matches, PREG_SET_ORDER))
 		{
@@ -568,7 +568,7 @@ class Parsedown
 			}
 		}
 
-		# Inline Link / Image
+		# inline link or image
 
 		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^\[\]]|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline
 		{
@@ -601,7 +601,7 @@ class Parsedown
 			}
 		}
 
-		# Reference(d) Link / Image
+		# reference link or image
 
 		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\](?:\n?[ ]?\[(.*?)\])?/ms', $text, $matches, PREG_SET_ORDER))
 		{
@@ -643,7 +643,7 @@ class Parsedown
 			}
 		}
 
-		# Automatic Links
+		# automatic link
 
 		if (strpos($text, '<') !== FALSE and preg_match_all('/<((https?|ftp|dict):[^\^\s]+?)>/i', $text, $matches, PREG_SET_ORDER))
 		{
