@@ -112,7 +112,7 @@ class Parsedown
 		{
 			# markup (open)
 
-			if ($element['type'] === 'block' and ! isset($element['closed']))
+			if ($element['type'] === 'markup' and ! isset($element['closed']))
 			{
 				if (preg_match('{<'.$element['subtype'].'>$}', $line)) # <open>
 				{
@@ -356,7 +356,7 @@ class Parsedown
 					$elements []= $element;
 
 					$element = array(
-						'type' => 'block',
+						'type' => 'markup',
 						'subtype' => strtolower($matches[1]),
 						'text' => $pure_line,
 						'depth' => 0,
