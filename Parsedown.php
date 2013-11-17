@@ -432,7 +432,7 @@ class Parsedown
 					}
 			}
 
-			# li	
+			# li
 
 			if ($deindented_line[0] <= '9' and $deindented_line >= '0' and preg_match('/^([ ]*)\d+[.][ ](.*)/', $line, $matches))
 			{
@@ -483,7 +483,7 @@ class Parsedown
 
 		$elements []= $element;
 
-		array_shift($elements);
+		unset($elements[0]);
 
 		#
 		# ~
@@ -491,7 +491,7 @@ class Parsedown
 
 		$markup = '';
 
-		foreach ($elements as $index => $element)
+		foreach ($elements as $element)
 		{
 			switch ($element['type'])
 			{
@@ -501,7 +501,7 @@ class Parsedown
 
 					$text = preg_replace('/[ ]{2}\n/', '<br />'."\n", $text);
 
-					if ($context === 'li' and $index === 0)
+					if ($context === 'li' and $markup === '')
 					{
 						if (isset($element['interrupted']))
 						{
