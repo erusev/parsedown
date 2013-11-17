@@ -113,23 +113,50 @@ class Parsedown
 			#
 			# fenced elements
 
-			if ($element['type'] === 'markup' and ! isset($element['closed']))
+			switch ($element['type'])
 			{
-				if (preg_match('{<'.$element['subtype'].'>$}', $line)) # opening tag
-				{
-					$element['depth']++;
-				}
+				case 'fenced_code_block':
 
-				if (preg_match('{</'.$element['subtype'].'>$}', $line)) # closing tag
-				{
-					$element['depth'] > 0
-						? $element['depth']--
-						: $element['closed'] = true;
-				}
+					if ( ! isset($element['closed']))
+					{
+						if (preg_match('/^[ ]*'.$element['fence'][0].'{3,}[ ]*$/', $line))
+						{
+							$element['closed'] = true;
+						}
+						else
+						{
+							$element['text'] !== '' and $element['text'] .= "\n";
 
-				$element['text'] .= "\n".$line;
+							$element['text'] .= $line;
+						}
 
-				continue;
+						continue 2;
+					}
+
+					break;
+
+				case 'markup':
+
+					if ( ! isset($element['closed']))
+					{
+						if (preg_match('{<'.$element['subtype'].'>$}', $line)) # opening tag
+						{
+							$element['depth']++;
+						}
+
+						if (preg_match('{</'.$element['subtype'].'>$}', $line)) # closing tag
+						{
+							$element['depth'] > 0
+								? $element['depth']--
+								: $element['closed'] = true;
+						}
+
+						$element['text'] .= "\n".$line;
+
+						continue 2;
+					}
+
+					break;
 			}
 
 			# *
@@ -213,7 +240,7 @@ class Parsedown
 
 			# ~
 
-			if ($line[0] >= 'a' or $line[0] >= 'A' and $line[0] <= 'Z')
+			if ($line[0] >= 'a' and $line[0] !== '~' or $line[0] >= 'A' and $line[0] <= 'Z')
 			{
 				goto paragraph;
 			}
@@ -242,7 +269,7 @@ class Parsedown
 
 					if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
 					{
-						if ($element['type'] === 'code')
+						if ($element['type'] === 'code_block')
 						{
 							if (isset($element['interrupted']))
 							{
@@ -258,7 +285,7 @@ class Parsedown
 							$elements []= $element;
 
 							$element = array(
-								'type' => 'code',
+								'type' => 'code_block',
 								'text' => $matches[1],
 							);
 						}
@@ -388,6 +415,28 @@ class Parsedown
 						$label = strtolower($matches[1]);
 
 						$this->reference_map[$label] = trim($matches[2], '<>');;
+
+						continue 2;
+					}
+
+					break;
+
+				case '`':
+				case '~':
+
+					# fenced code block
+
+					if (preg_match('/^([`]{3,}|[~]{3,})[ ]*(\S+)?[ ]*$/', $deindented_line, $matches))
+					{
+						$elements []= $element;
+
+						$element = array(
+							'type' => 'fenced_code_block',
+							'text' => '',
+							'fence' => $matches[1],
+						);
+
+						isset($matches[2]) and $element['language'] = $matches[2];
 
 						continue 2;
 					}
@@ -527,7 +576,8 @@ class Parsedown
 
 					break;
 
-				case 'code':
+				case 'code_block':
+				case 'fenced_code_block':
 
 					$text = htmlentities($element['text'], ENT_NOQUOTES);
 
