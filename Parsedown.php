@@ -110,7 +110,8 @@ class Parsedown
 
 		foreach ($lines as $line)
 		{
-			# markup (open)
+			#
+			# fenced elements
 
 			if ($element['type'] === 'markup' and ! isset($element['closed']))
 			{
@@ -140,260 +141,310 @@ class Parsedown
 				continue;
 			}
 
-			# blockquote (existing)
+			#
+			# composite elements
 
-			if ($element['type'] === 'blockquote' and ! isset($element['interrupted']))
+			switch ($element['type'])
 			{
-				$line = preg_replace('/^[ ]*>[ ]?/', '', $line);
+				case 'blockquote':
 
-				$element['lines'] []= $line;
-
-				continue;
-			}
-
-			# list (existing)
-
-			if ($element['type'] === 'li')
-			{
-				if (preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
-				{
-					if ($element['indentation'] !== $matches[1])
+					if ( ! isset($element['interrupted']))
 					{
+						$line = preg_replace('/^[ ]*>[ ]?/', '', $line);
+
 						$element['lines'] []= $line;
+
+						continue 2;
+					}
+
+					break;
+
+				case 'li':
+
+					if (preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
+					{
+						if ($element['indentation'] !== $matches[1])
+						{
+							$element['lines'] []= $line;
+						}
+						else
+						{
+							unset($element['last']);
+
+							$elements []= $element;
+
+							$element = array(
+								'type' => 'li',
+								'indentation' => $matches[1],
+								'last' => true,
+								'lines' => array(
+									preg_replace('/^[ ]{0,4}/', '', $matches[3]),
+								),
+							);
+						}
+
+						continue 2;
+					}
+
+					if (isset($element['interrupted']))
+					{
+						if ($line[0] === ' ')
+						{
+							$element['lines'] []= '';
+
+							$line = preg_replace('/^[ ]{0,4}/', '', $line);
+
+							$element['lines'] []= $line;
+
+							continue 2;
+						}
 					}
 					else
 					{
-						unset($element['last']);
-
-						$elements []= $element;
-
-						$element = array(
-							'type' => 'li',
-							'indentation' => $matches[1],
-							'last' => true,
-							'lines' => array(
-								preg_replace('/^[ ]{0,4}/', '', $matches[3]),
-							),
-						);
-					}
-
-					continue;
-				}
-
-				if (isset($element['interrupted']))
-				{
-					if ($line[0] === ' ')
-					{
-						$element['lines'] []= '';
-
 						$line = preg_replace('/^[ ]{0,4}/', '', $line);
 
 						$element['lines'] []= $line;
 
-						continue;
+						continue 2;
 					}
-				}
-				else
-				{
-					$line = preg_replace('/^[ ]{0,4}/', '', $line);
 
-					$element['lines'] []= $line;
-
-					continue;
-				}
+					break;
 			}
 
-			# paragraph
+			# ~
 
 			if ($line[0] >= 'a' or $line[0] >= 'A' and $line[0] <= 'Z')
 			{
 				goto paragraph;
 			}
 
-			# code block
-
-			if ($line[0] === ' ' and preg_match('/^[ ]{4}(.*)/', $line, $matches))
-			{
-				if (trim($line) === '')
-				{
-					continue;
-				}
-
-				if ($element['type'] === 'code')
-				{
-					if (isset($element['interrupted']))
-					{
-						$element['text'] .= "\n";
-
-						unset ($element['interrupted']);
-					}
-
-					$element['text'] .= "\n".$matches[1];
-				}
-				else
-				{
-					$elements []= $element;
-
-					$element = array(
-						'type' => 'code',
-						'text' => $matches[1],
-					);
-				}
-
-				continue;
-			}
-
-			# setext heading (---)
-
-			if ($line[0] === '-' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
-			{
-				$element['type'] = 'h.';
-				$element['level'] = 2;
-
-				continue;
-			}
-
-			# atx heading (#)
-
-			if ($line[0] === '#' and preg_match('/^(#{1,6})[ ]*(.+?)[ ]*#*$/', $line, $matches))
-			{
-				$elements []= $element;
-
-				$level = strlen($matches[1]);
-
-				$element = array(
-					'type' => 'h.',
-					'text' => $matches[2],
-					'level' => $level,
-				);
-
-				continue;
-			}
-
-			# setext heading (===)
-
-			if ($line[0] === '=' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
-			{
-				$element['type'] = 'h.';
-				$element['level'] = 1;
-
-				continue;
-			}
-
 			# ~
 
-			$deindented_line = $line[0] !== ' ' ? $line : ltrim($line);
+			$deindented_line = $line;
 
-			if ($deindented_line === '')
+			#
+			# indentation sensitive types
+
+			switch ($line[0])
 			{
-				continue;
-			}
+				case ' ':
 
-			# reference
+					# ~
 
-			if ($deindented_line[0] === '[' and preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $deindented_line, $matches))
-			{
-				$label = strtolower($matches[1]);
-				$url = trim($matches[2], '<>');
+					$deindented_line = ltrim($line);
 
-				$this->reference_map[$label] = $url;
-
-				continue;
-			}
-
-			# blockquote
-
-			if ($deindented_line[0] === '>' and preg_match('/^>[ ]?(.*)/', $deindented_line, $matches))
-			{
-				if ($element['type'] === 'blockquote')
-				{
-					if (isset($element['interrupted']))
+					if ($deindented_line === '')
 					{
-						$element['lines'] []= '';
-
-						unset($element['interrupted']);
+						continue 2;
 					}
 
-					$element['lines'] []= $matches[1];
-				}
-				else
-				{
-					$elements []= $element;
+					# code block
 
-					$element = array(
-						'type' => 'blockquote',
-						'lines' => array(
-							$matches[1],
-						),
-					);
-				}
+					if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
+					{
+						if ($element['type'] === 'code')
+						{
+							if (isset($element['interrupted']))
+							{
+								$element['text'] .= "\n";
 
-				continue;
+								unset ($element['interrupted']);
+							}
+
+							$element['text'] .= "\n".$matches[1];
+						}
+						else
+						{
+							$elements []= $element;
+
+							$element = array(
+								'type' => 'code',
+								'text' => $matches[1],
+							);
+						}
+
+						continue 2;
+					}
+
+					break;
+
+				case '#':
+
+					# atx heading (#)
+
+					if (preg_match('/^(#{1,6})[ ]*(.+?)[ ]*#*$/', $line, $matches))
+					{
+						$elements []= $element;
+
+						$level = strlen($matches[1]);
+
+						$element = array(
+							'type' => 'h.',
+							'text' => $matches[2],
+							'level' => $level,
+						);
+
+						continue 2;
+					}
+
+					break;
+
+				case '-':
+
+					# setext heading (---)
+
+					if ($line[0] === '-' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
+					{
+						$element['type'] = 'h.';
+						$element['level'] = 2;
+
+						continue 2;
+					}
+
+					break;
+
+				case '=':
+
+					# setext heading (===)
+
+					if ($line[0] === '=' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
+					{
+						$element['type'] = 'h.';
+						$element['level'] = 1;
+
+						continue 2;
+					}
+
+					break;
 			}
 
-			# markup
+			#
+			# indentation insensitive types
 
-			if ($deindented_line[0] === '<')
+			switch ($deindented_line[0])
 			{
-				# self-closing tag
+				case '<':
 
-				if (preg_match('{^<.+?/>$}', $deindented_line))
-				{
-					$elements []= $element;
+					# self-closing tag
 
-					$element = array(
-						'type' => '',
-						'text' => $deindented_line,
-					);
+					if (preg_match('{^<.+?/>$}', $deindented_line))
+					{
+						$elements []= $element;
 
-					continue;
-				}
+						$element = array(
+							'type' => '',
+							'text' => $deindented_line,
+						);
 
-				# opening tag
+						continue 2;
+					}
 
-				if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $deindented_line, $matches))
-				{
-					$elements []= $element;
+					# opening tag
 
-					$element = array(
-						'type' => 'markup',
-						'subtype' => strtolower($matches[1]),
-						'text' => $deindented_line,
-						'depth' => 0,
-					);
+					if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $deindented_line, $matches))
+					{
+						$elements []= $element;
 
-					preg_match('{</'.$matches[1].'>\s*$}', $deindented_line) and $element['closed'] = true;
+						$element = array(
+							'type' => 'markup',
+							'subtype' => strtolower($matches[1]),
+							'text' => $deindented_line,
+							'depth' => 0,
+						);
 
-					continue;
-				}
+						preg_match('{</'.$matches[1].'>\s*$}', $deindented_line) and $element['closed'] = true;
+
+						continue 2;
+					}
+
+					break;
+
+				case '>':
+
+					# quote
+
+					if (preg_match('/^>[ ]?(.*)/', $deindented_line, $matches))
+					{
+						$elements []= $element;
+
+						$element = array(
+							'type' => 'blockquote',
+							'lines' => array(
+								$matches[1],
+							),
+						);
+
+						continue 2;
+					}
+
+					break;
+
+				case '[':
+
+					# reference
+
+					if (preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $deindented_line, $matches))
+					{
+						$label = strtolower($matches[1]);
+
+						$this->reference_map[$label] = trim($matches[2], '<>');;
+
+						continue 2;
+					}
+
+					break;
+
+				case '*':
+				case '+':
+				case '-':
+				case '_':
+
+					# hr
+
+					if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $deindented_line))
+					{
+						$elements []= $element;
+
+						$element = array(
+							'type' => 'hr',
+						);
+
+						continue 2;
+					}
+
+					# li
+
+					if (preg_match('/^([ ]*)[*+-][ ](.*)/', $line, $matches))
+					{
+						$elements []= $element;
+
+						$element = array(
+							'type' => 'li',
+							'ordered' => false,
+							'indentation' => $matches[1],
+							'last' => true,
+							'lines' => array(
+								preg_replace('/^[ ]{0,4}/', '', $matches[2]),
+							),
+						);
+
+						continue 2;
+					}
 			}
 
-			# horizontal rule
+			# li	
 
-			if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $deindented_line))
-			{
-				$elements []= $element;
-
-				$element = array(
-					'type' => 'hr',
-				);
-
-				continue;
-			}
-
-			# list item
-
-			if (preg_match('/^([ ]*)(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
+			if ($deindented_line[0] <= '9' and $deindented_line >= '0' and preg_match('/^([ ]*)\d+[.][ ](.*)/', $line, $matches))
 			{
 				$elements []= $element;
 
 				$element = array(
 					'type' => 'li',
-					'ordered' => isset($matches[2][1]),
+					'ordered' => true,
 					'indentation' => $matches[1],
 					'last' => true,
 					'lines' => array(
-						preg_replace('/^[ ]{0,4}/', '', $matches[3]),
+						preg_replace('/^[ ]{0,4}/', '', $matches[2]),
 					),
 				);
 
