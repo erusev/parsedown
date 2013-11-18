@@ -238,19 +238,10 @@ class Parsedown
 					break;
 			}
 
-			# ~
-
-			if ($line[0] >= 'a' and $line[0] !== '~' or $line[0] >= 'A' and $line[0] <= 'Z')
-			{
-				goto paragraph;
-			}
-
-			# ~
-
-			$deindented_line = $line;
-
 			#
 			# indentation sensitive types
+
+			$deindented_line = $line;
 
 			switch ($line[0])
 			{
@@ -500,9 +491,7 @@ class Parsedown
 				continue;
 			}
 
-			# ~
-
-			paragraph:
+			# paragraph
 
 			if ($element['type'] === 'p')
 			{
