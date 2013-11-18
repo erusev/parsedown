@@ -4,6 +4,10 @@ Parsedown is a Markdown parser for PHP. It is fast, consistent and easy to use.
 
 [Home](http://parsedown.org)  &middot; [Demo](http://parsedown.org/explorer/) &middot; [Tests](http://parsedown.org/tests/)
 
+### Requirements
+
+Parsedown supports PHP 5.2+ and does not have any external dependencies.
+
 ### Installation
 
 Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown).
