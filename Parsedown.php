@@ -769,7 +769,7 @@ class Parsedown
 		if (strpos($text, '_') !== FALSE)
 		{
 			$text = preg_replace('/__(?=\S)(.+?)(?<=\S)__(?!_)/s', '<strong>$1</strong>', $text);
-			$text = preg_replace('/_(?=\S)(.+?)(?<=\S)_/s', '<em>$1</em>', $text);
+			$text = preg_replace('/\b_(?=\S)(.+?)(?<=\S)_\b/s', '<em>$1</em>', $text);
 		}
 
 		if (strpos($text, '*') !== FALSE)
