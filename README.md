@@ -1,8 +1,8 @@
 ## Parsedown
 
-Parsedown is a Markdown parser for PHP. It is fast, consistent and easy to use.
+Fast, consistent and easy to use [Markdown][1] parser for PHP.
 
-[Home](http://parsedown.org)  &middot; [Demo](http://parsedown.org/explorer/) &middot; [Tests](http://parsedown.org/tests/)
+[Home](http://parsedown.org) &middot; [Demo](http://parsedown.org/explorer/) &middot; [Tests](http://parsedown.org/tests/)
 
 ### Installation
 
@@ -17,3 +17,5 @@ $result = Parsedown::instance()->parse($text);
 
 echo $result; # prints: <p>Hello <strong>Parsedown</strong>!</p>
 ```
+
+[1]: http://daringfireball.net/projects/markdown/
