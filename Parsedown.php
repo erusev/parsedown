@@ -766,6 +766,11 @@ class Parsedown
 
 		# ~
 
+		if (strpos($text, '~~') !== FALSE)
+		{
+			$text = preg_replace('/~~(?=\S)(.+?)(?<=\S)~~/s', '<del>$1</del>', $text);
+		}
+
 		if (strpos($text, '_') !== FALSE)
 		{
 			$text = preg_replace('/__(?=\S)(.+?)(?<=\S)__(?!_)/s', '<strong>$1</strong>', $text);
