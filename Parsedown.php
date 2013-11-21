@@ -733,29 +733,35 @@ class Parsedown
 			}
 		}
 
-		# automatic link
-
-		if (strpos($text, '<') !== FALSE and preg_match_all('/<((https?|ftp|dict):[^\^\s]+?)>/i', $text, $matches, PREG_SET_ORDER))
+		if (strpos($text, '://') !== FALSE)
 		{
-			foreach ($matches as $matches)
+			switch (TRUE)
 			{
-				$url = $matches[1];
+				case preg_match_all('{<(https?:[/]{2}[^\s]+)>}i', $text, $matches, PREG_SET_ORDER):
+				case preg_match_all('{\b(https?:[/]{2}[^\s]+)\b}i', $text, $matches, PREG_SET_ORDER):
 
-				strpos($url, '&') !== FALSE and $url = preg_replace('/&(?!#?\w+;)/', '&amp;', $url);
+					foreach ($matches as $matches)
+					{
+						$url = $matches[1];
 
-				$element = '<a href=":href">:text</a>';
-				$element = str_replace(':text', $url, $element);
-				$element = str_replace(':href', $url, $element);
+						strpos($url, '&') !== FALSE and $url = preg_replace('/&(?!#?\w+;)/', '&amp;', $url);
 
-				# ~
+						$element = '<a href=":href">:text</a>';
+						$element = str_replace(':text', $url, $element);
+						$element = str_replace(':href', $url, $element);
 
-				$code = "\x1A".'$'.$index;
+						# ~
 
-				$text = str_replace($matches[0], $code, $text);
+						$code = "\x1A".'$'.$index;
 
-				$map[$code] = $element;
+						$text = str_replace($matches[0], $code, $text);
 
-				$index ++;
+						$map[$code] = $element;
+
+						$index ++;
+					}
+
+					break;
 			}
 		}
 
