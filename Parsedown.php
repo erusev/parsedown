@@ -634,7 +634,7 @@ class Parsedown
 			foreach ($matches as $matches)
 			{
 				$element_text = $matches[1];
-				$element_text = htmlentities($element_text, ENT_NOQUOTES);
+				$element_text = htmlspecialchars($element_text, ENT_NOQUOTES);
 
 				# decodes escape sequences
 
