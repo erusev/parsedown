@@ -568,7 +568,7 @@ class Parsedown
 				case 'code_block':
 				case 'fenced_code_block':
 
-					$text = htmlentities($element['text'], ENT_NOQUOTES);
+					$text = htmlspecialchars($element['text'], ENT_NOQUOTES);
 
 					strpos($text, "\x1A\\") !== FALSE and $text = strtr($text, $this->escape_sequence_map);
 
