@@ -568,7 +568,7 @@ class Parsedown
 				case 'code_block':
 				case 'fenced_code_block':
 
-					$text = htmlspecialchars($element['text'], ENT_NOQUOTES);
+					$text = htmlspecialchars($element['text'], ENT_NOQUOTES, 'UTF-8');
 
 					strpos($text, "\x1A\\") !== FALSE and $text = strtr($text, $this->escape_sequence_map);
 
@@ -634,7 +634,7 @@ class Parsedown
 			foreach ($matches as $matches)
 			{
 				$element_text = $matches[1];
-				$element_text = htmlspecialchars($element_text, ENT_NOQUOTES);
+				$element_text = htmlspecialchars($element_text, ENT_NOQUOTES, 'UTF-8');
 
 				# decodes escape sequences
 
