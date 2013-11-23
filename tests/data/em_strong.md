@@ -1,9 +1,7 @@
-___em strong___
+___em strong_ strong__
 
-___one_ at the start__
+__strong _em strong___
 
-__one at the _end___
+__strong _em strong_ strong__
 
-__one _in the_ middle__
-
-**one with *asterisks***
+**strong *em strong***
