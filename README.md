@@ -1,6 +1,6 @@
 ## Parsedown
 
-Fast, consistent and easy to use [Markdown][1] parser for PHP.
+Fast and consistent [Markdown][1] parser for PHP.
 
 [Home](http://parsedown.org) &middot; [Demo](http://parsedown.org/explorer/) &middot; [Tests](http://parsedown.org/tests/)
 
