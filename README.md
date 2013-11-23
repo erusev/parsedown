@@ -2,7 +2,17 @@
 
 Fast and consistent [Markdown][1] parser for PHP.
 
-[Home](http://parsedown.org) &middot; [Demo](http://parsedown.org/explorer/) &middot; [Tests](http://parsedown.org/tests/)
+***
+
+[home](http://parsedown.org/) &middot; [demo](http://parsedown.org/explorer/) &middot; [tests](http://parsedown.org/tests/)
+
+***
+
+Other features include:
+
+* [ GitHub Flavored ][2]
+* tested in PHP 5.2, 5.3, 5.4 and 5.5
+* friendly to international input
 
 ### Installation
 
@@ -19,3 +29,4 @@ echo $result; # prints: <p>Hello <strong>Parsedown</strong>!</p>
 ```
 
 [1]: http://daringfireball.net/projects/markdown/
+[2]: https://help.github.com/articles/github-flavored-markdown 
