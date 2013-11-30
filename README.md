@@ -1,15 +1,17 @@
 ## Parsedown
 
-Fast and consistent [Markdown][1] parser for PHP.
+Better [Markdown][1] parser for PHP.
 
 ***
 
-[home](http://parsedown.org/) &middot; [demo](http://parsedown.org/explorer/) &middot; [tests](http://parsedown.org/tests/)
+[home](http://parsedown.org/) &middot; [demo](http://parsedown.org/demo) &middot; [tests](http://parsedown.org/tests/)
 
 ***
 
-Other features include:
+Features:
 
+* [fast](http://parsedown.org/speed)
+* [consistent](http://parsedown.org/consistency)
 * [ GitHub Flavored ][2]
 * tested in PHP 5.2, 5.3, 5.4 and 5.5
 * friendly to international input
