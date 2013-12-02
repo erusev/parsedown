@@ -568,7 +568,11 @@ class Parsedown
 
 					strpos($text, "\x1A\\") !== FALSE and $text = strtr($text, $this->escape_sequence_map);
 
-					$markup .= '<pre><code>'.$text.'</code></pre>'."\n";
+					$markup .= isset($element['language'])
+						? '<pre><code class="language-'.$element['language'].'">'.$text.'</code></pre>'
+						: '<pre><code>'.$text.'</code></pre>';
+
+					$markup .= "\n";
 
 					break;
 
