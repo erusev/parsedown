@@ -110,7 +110,6 @@ class Parsedown
 
 		foreach ($lines as $line)
 		{
-			#
 			# fenced elements
 
 			switch ($element['type'])
@@ -168,7 +167,6 @@ class Parsedown
 				continue;
 			}
 
-			#
 			# composite elements
 
 			switch ($element['type'])
@@ -238,7 +236,6 @@ class Parsedown
 					break;
 			}
 
-			#
 			# indentation sensitive types
 
 			$deindented_line = $line;
@@ -336,7 +333,6 @@ class Parsedown
 					break;
 			}
 
-			#
 			# indentation insensitive types
 
 			switch ($deindented_line[0])
