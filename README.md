@@ -4,11 +4,11 @@ Better [Markdown][1] parser for PHP.
 
 ***
 
-[home](http://parsedown.org/) &middot; [demo](http://parsedown.org/demo) &middot; [tests](http://parsedown.org/tests/)
+[demo](http://parsedown.org/demo) &middot; [tests](http://parsedown.org/tests/) &middot; [speed](http://parsedown.org/speed) &middot; [consistency](http://parsedown.org/consistency)
 
 ***
 
-Features:
+### Features
 
 * [fast](http://parsedown.org/speed)
 * [consistent](http://parsedown.org/consistency)
