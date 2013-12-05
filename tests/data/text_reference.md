@@ -14,3 +14,5 @@ one][website] defined on 2 lines
 [one][label] with an upper case label
 
 [LABEL]: http://example.com
+
+[`link`][website]

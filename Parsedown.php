@@ -629,38 +629,7 @@ class Parsedown
 
 		$index = 0;
 
-		# code span
-
-		if (strpos($text, '`') !== FALSE and preg_match_all('/`(.+?)`/', $text, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $matches)
-			{
-				$element_text = $matches[1];
-				$element_text = htmlspecialchars($element_text, ENT_NOQUOTES, 'UTF-8');
-
-				# decodes escape sequences
-
-				$this->escape_sequence_map
-					and strpos($element_text, "\x1A") !== FALSE
-					and $element_text = strtr($element_text, $this->escape_sequence_map);
-
-				# composes element
-
-				$element = '<code>'.$element_text.'</code>';
-
-				# encodes element
-
-				$code = "\x1A".'$'.$index;
-
-				$text = str_replace($matches[0], $code, $text);
-
-				$map[$code] = $element;
-
-				$index ++;
-			}
-		}
-
-		# inline link or image
+		# inline link or image (recursive)
 
 		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^\[\]]|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline
 		{
@@ -693,7 +662,7 @@ class Parsedown
 			}
 		}
 
-		# reference link or image
+		# reference link or image (recursive)
 
 		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\](?:\n?[ ]?\[(.*?)\])?/ms', $text, $matches, PREG_SET_ORDER))
 		{
@@ -732,6 +701,37 @@ class Parsedown
 
 					$index ++;
 				}
+			}
+		}
+
+		# code span
+
+		if (strpos($text, '`') !== FALSE and preg_match_all('/`(.+?)`/', $text, $matches, PREG_SET_ORDER))
+		{
+			foreach ($matches as $matches)
+			{
+				$element_text = $matches[1];
+				$element_text = htmlspecialchars($element_text, ENT_NOQUOTES, 'UTF-8');
+
+				# decodes escape sequences
+
+				$this->escape_sequence_map
+					and strpos($element_text, "\x1A") !== FALSE
+					and $element_text = strtr($element_text, $this->escape_sequence_map);
+
+				# composes element
+
+				$element = '<code>'.$element_text.'</code>';
+
+				# encodes element
+
+				$code = "\x1A".'$'.$index;
+
+				$text = str_replace($matches[0], $code, $text);
+
+				$map[$code] = $element;
+
+				$index ++;
 			}
 		}
 
