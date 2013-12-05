@@ -221,6 +221,8 @@ class Parsedown
 
 							$element['lines'] []= $line;
 
+							unset($element['interrupted']);
+
 							continue 2;
 						}
 					}
