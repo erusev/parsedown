@@ -735,6 +735,8 @@ class Parsedown
 			}
 		}
 
+		# automatic link
+
 		if (strpos($text, '://') !== FALSE)
 		{
 			switch (TRUE)
