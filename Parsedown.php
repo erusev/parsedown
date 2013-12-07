@@ -629,9 +629,9 @@ class Parsedown
 
 		$index = 0;
 
-		# inline link or image (recursive)
+		# inline link / inline image (recursive)
 
-		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^\[\]]|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER)) # inline
+		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^\[\]]|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $matches)
 			{
@@ -643,7 +643,7 @@ class Parsedown
 				{
 					$element = '<img alt="'.$matches[3].'" src="'.$url.'">';
 				}
-				else
+				else # link
 				{
 					$element_text = $this->parse_span_elements($matches[3]);
 
@@ -662,7 +662,7 @@ class Parsedown
 			}
 		}
 
-		# reference link or image (recursive)
+		# reference link / reference image (recursive)
 
 		if ($this->reference_map and strpos($text, '[') !== FALSE and preg_match_all('/(!?)\[(.+?)\](?:\n?[ ]?\[(.*?)\])?/ms', $text, $matches, PREG_SET_ORDER))
 		{
@@ -684,7 +684,7 @@ class Parsedown
 					{
 						$element = '<img alt="'.$matches[2].'" src="'.$url.'">';
 					}
-					else # anchor
+					else # link
 					{
 						$element_text = $this->parse_span_elements($matches[2]);
 
