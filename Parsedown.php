@@ -676,7 +676,7 @@ class Parsedown
 
 				$map[$code] = $element;
 
-				$index ++;
+				$index++;
 			}
 		}
 
@@ -724,7 +724,7 @@ class Parsedown
 
 					$map[$code] = $element;
 
-					$index ++;
+					$index++;
 				}
 			}
 		}
@@ -756,7 +756,7 @@ class Parsedown
 
 				$map[$code] = $element;
 
-				$index ++;
+				$index++;
 			}
 		}
 
@@ -787,7 +787,7 @@ class Parsedown
 
 						$map[$code] = $element;
 
-						$index ++;
+						$index++;
 					}
 
 					break;
