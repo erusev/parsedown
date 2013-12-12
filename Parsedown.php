@@ -37,6 +37,8 @@ class Parsedown
 	# Fields
 	#
 
+	public $internal_regex = "";
+
 	private $reference_map = array();
 	private $escape_sequence_map = array();
 
@@ -646,8 +648,8 @@ class Parsedown
 				else # link
 				{
 					$element_text = $this->parse_span_elements($matches[3]);
-
-					$element = '<a href="'.$url.'">'.$element_text.'</a>';
+					$target = ($this->internal_regex == "" || preg_match ($this->internal_regex, $url)) ? ('') : ('target="_blank" ');
+					$element = '<a '.$target.'href="'.$url.'">'.$element_text.'</a>';
 				}
 
 				# ~
@@ -687,8 +689,8 @@ class Parsedown
 					else # link
 					{
 						$element_text = $this->parse_span_elements($matches[2]);
-
-						$element = '<a href="'.$url.'">'.$element_text.'</a>';
+						$target = ($this->internal_regex == "" || preg_match ($this->internal_regex, $url)) ? ('') : ('target="_blank" ');
+						$element = '<a '.$target.'href="'.$url.'">'.$element_text.'</a>';
 					}
 
 					# ~
@@ -750,7 +752,7 @@ class Parsedown
 
 						strpos($url, '&') !== FALSE and $url = preg_replace('/&(?!#?\w+;)/', '&amp;', $url);
 
-						$element = '<a href=":href">:text</a>';
+						$element = ($this->internal_regex == "" || preg_match ($this->internal_regex, $url)) ? ('<a href=":href">:text</a>') : ('<a target="_blank" href=":href">:text</a>');
 						$element = str_replace(':text', $url, $element);
 						$element = str_replace(':href', $url, $element);
 
