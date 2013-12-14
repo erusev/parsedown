@@ -399,11 +399,16 @@ class Parsedown
 
 					# reference
 
-					if (preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $deindented_line, $matches))
+					if (preg_match('/^\[(.+?)\]:\s*([^\s]+)(?:\s+["\'\(](.+)["\'\)])?/', $deindented_line, $matches))
 					{
 						$label = strtolower($matches[1]);
 
-						$this->reference_map[$label] = trim($matches[2], '<>');;
+						$this->reference_map[$label] = trim($matches[2], '<>');
+
+						if (isset($matches[3]))
+						{
+							$this->reference_map[$label.":title"] = $matches[3];
+						}
 
 						continue 2;
 					}
@@ -631,7 +636,7 @@ class Parsedown
 
 		# inline link / inline image (recursive)
 
-		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^\[\]]|(?2))*)\])\((.*?)\)/', $text, $matches, PREG_SET_ORDER))
+		if (strpos($text, '](') !== FALSE and preg_match_all('/(!?)(\[((?:[^\[\]]|(?2))*)\])\((.*?)(?:\s+["\'\(](.*?)["\'\)])?\)/', $text, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $matches)
 			{
@@ -647,7 +652,14 @@ class Parsedown
 				{
 					$element_text = $this->parse_span_elements($matches[3]);
 
-					$element = '<a href="'.$url.'">'.$element_text.'</a>';
+					if (isset($matches[5]))
+					{
+						$element = '<a href="'.$url.'" title="'.$matches[5].'">'.$element_text.'</a>';
+					}
+					else
+					{
+						$element = '<a href="'.$url.'">'.$element_text.'</a>';
+					}
 				}
 
 				# ~
@@ -688,7 +700,14 @@ class Parsedown
 					{
 						$element_text = $this->parse_span_elements($matches[2]);
 
-						$element = '<a href="'.$url.'">'.$element_text.'</a>';
+						if (isset($this->reference_map[$link_definition.":title"]))
+						{
+							$element = '<a href="'.$url.'" title="'.$this->reference_map[$link_definition.":title"].'">'.$element_text.'</a>';
+						}
+						else
+						{
+							$element = '<a href="'.$url.'">'.$element_text.'</a>';
+						}
 					}
 
 					# ~
