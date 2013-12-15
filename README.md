@@ -1,10 +1,10 @@
 ## Parsedown
 
-Better [Markdown](http://daringfireball.net/projects/markdown/) parser for PHP.
+Better [Markdown](http://en.wikipedia.org/wiki/Markdown) parser for PHP.
 
 ***
 
-[demo](http://parsedown.org/demo) &middot; [tests](http://parsedown.org/tests/)
+[ [demo](http://parsedown.org/demo) ] [ [tests](http://parsedown.org/tests/) ]
 
 ***
 
