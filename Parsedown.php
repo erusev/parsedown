@@ -618,6 +618,12 @@ class Parsedown
 					isset($element['last']) and $markup .= '</'.$list_type.'>'."\n";
 
 					break;
+					
+				case 'markup':
+					
+					$markup .= $this->parse_span_elements($element['text'])."\n";
+
+					break;
 
 				default:
 
