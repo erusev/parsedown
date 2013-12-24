@@ -1,9 +1,10 @@
 _underscore_, *asterisk*, _one two_, *three four*, _a_, *b*
 
-_multiline
-emphasis_
+**strong** and *em* and **strong** and *em*
 
-_ this _ is not an emphasis, neither is _ this_, _this _, or _this*
+_line
+line
+line_
 
 this_is_not_an_emphasis
 

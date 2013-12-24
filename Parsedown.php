@@ -631,9 +631,14 @@ class Parsedown
 
 	# ~
 
-	private $em_strong_regex = array(
-		'*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
-		'_' => '/^_(.*?)__(.+?)__(.*?)_/s',
+	private $strong_regex = array(
+		'*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
+		'_' => '/^__([^_]+?)__(?!_)/s',
+	);
+
+	private $em_regex = array(
+		'*' => '/^[*]([^*]+?)[*](?![*])/s',
+		'_' => '/^_([^_]+?)[_](?![_])\b/s',
 	);
 
 	private $strong_em_regex = array(
@@ -641,14 +646,9 @@ class Parsedown
 		'_' => '/^__(.*?)_(.+?)_(.*?)__/s',
 	);
 
-	private $strong_regex = array(
-		'*' => '/^[*]{2}(.+?)[*]{2}/s',
-		'_' => '/^__(.+?)__/s',
-	);
-
-	private $em_regex = array(
-		'*' => '/^[*](.+?)[*]/s',
-		'_' => '/^_(.+?)_\b/s',
+	private $em_strong_regex = array(
+		'*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
+		'_' => '/^_(.*?)__(.+?)__(.*?)_/s',
 	);
 
 	private function parse_span_elements($text, $markers = array("  \n", '![', '&', '*', '<', '[', '_', '`', 'http', '~~'))
@@ -806,7 +806,28 @@ class Parsedown
 				case '*':
 				case '_':
 
-					if (preg_match($this->em_strong_regex[$closest_marker], $text, $matches))
+					if ($text[1] === $closest_marker and preg_match($this->strong_regex[$closest_marker], $text, $matches))
+					{
+						$matches[1] = $this->parse_span_elements($matches[1], $markers);
+
+						$markup .= '<strong>'.$matches[1].'</strong>';
+					}
+					elseif (preg_match($this->em_regex[$closest_marker], $text, $matches))
+					{
+						$matches[1] = $this->parse_span_elements($matches[1], $markers);
+
+						$markup .= '<em>'.$matches[1].'</em>';
+					}
+					elseif ($text[1] === $closest_marker and preg_match($this->strong_em_regex[$closest_marker], $text, $matches))
+					{
+						$matches[2] = $this->parse_span_elements($matches[2], $markers);
+
+						$matches[1] and $matches[1] = $this->parse_span_elements($matches[1], $markers);
+						$matches[3] and $matches[3] = $this->parse_span_elements($matches[3], $markers);
+
+						$markup .= '<strong>'.$matches[1].'<em>'.$matches[2].'</em>'.$matches[3].'</strong>';
+					}
+					elseif (preg_match($this->em_strong_regex[$closest_marker], $text, $matches))
 					{
 						$matches[2] = $this->parse_span_elements($matches[2], $markers);
 
@@ -815,27 +836,8 @@ class Parsedown
 
 						$markup .= '<em>'.$matches[1].'<strong>'.$matches[2].'</strong>'.$matches[3].'</em>';
 					}
-					elseif ($text[1] === $closest_marker)
-					{
-						if (preg_match($this->strong_em_regex[$closest_marker], $text, $matches))
-						{
-							$markup .= '<strong>'.$matches[1].'<em>'.$matches[2].'</em>'.$matches[3].'</strong>';
-						}
-						elseif (preg_match($this->strong_regex[$closest_marker], $text, $matches))
-						{
-							$matches[1] = $this->parse_span_elements($matches[1], $markers);
 
-							$markup .= '<strong>'.$matches[1].'</strong>';
-						}
-					}
-					elseif (preg_match($this->em_regex[$closest_marker], $text, $matches))
-					{
-						$element_text = $this->parse_span_elements($matches[1], $markers);
-
-						$markup .= '<em>'.$element_text.'</em>';
-					}
-
-					if ($matches)
+					if (isset($matches) and $matches)
 					{
 						$offset = strlen($matches[0]);
 					}
