@@ -723,40 +723,30 @@ class Parsedown
 
 					if (strpos($text, ']') and preg_match('/\[((?:[^][]|(?R))*)\]/', $text, $matches))
 					{
-						$brackets_text = $matches[1];
+						$element = array(
+							'!' => $text[0] === '!',
+							'a' => $matches[1],
+						);
 
 						$offset = strlen($matches[0]);
 
-						$element_is_image = $text[0] === '!' and $offset++;
+						$element['!'] and $offset++;
 
 						$remaining_text = substr($text, $offset);
 
 						if ($remaining_text[0] === '(' and preg_match('/^\((.*?)\)/', $remaining_text, $matches))
 						{
-							$element_url = $matches[1];
-							$element_url = str_replace('&', '&amp;', $element_url);
-							$element_url = str_replace('<', '&lt;', $element_url);
-
-							if ($element_is_image)
-							{
-								$markup .= '<img alt="'.$brackets_text.'" src="'.$element_url.'" />';
-							}
-							else
-							{
-								$element_text = $this->parse_span_elements($brackets_text, $markers);
-
-								$markup .= '<a href="'.$element_url.'">'.$element_text.'</a>';
-							}
+							$element['»'] = $matches[1];
 
 							$offset += strlen($matches[0]);
 						}
 						elseif ($this->reference_map)
 						{
-							$reference = $brackets_text;
+							$reference = $element['a'];
 
 							if (preg_match('/^\s*\[(.*?)\]/', $remaining_text, $matches))
 							{
-								$reference = $matches[1] ? $matches[1] : $brackets_text;
+								$reference = $matches[1] ? $matches[1] : $element['a'];
 
 								$offset += strlen($matches[0]);
 							}
@@ -765,35 +755,36 @@ class Parsedown
 
 							if (isset($this->reference_map[$reference]))
 							{
-								$element_url = $this->reference_map[$reference];
-
-								$element_url = str_replace('&', '&amp;', $element_url);
-								$element_url = str_replace('<', '&lt;', $element_url);
-
-								if ($element_is_image)
-								{
-									$markup .= '<img alt="'.$brackets_text.'" src="'.$element_url.'" />';
-								}
-								else
-								{
-									$element_text = $this->parse_span_elements($brackets_text, $markers);
-
-									$markup .= '<a href="'.$element_url.'">'.$element_text.'</a>';
-								}
+								$element['»'] = $this->reference_map[$reference];
 							}
 							else
 							{
-								$markup .= $closest_marker;
-
-								$offset = $element_is_image ? 2 : 1;
+								unset($element);
 							}
 						}
 						else
 						{
-							$markup .= $closest_marker;
-
-							$offset = $closest_marker === '![' ? 2 : 1;
+							unset($element);
 						}
+					}
+
+					if (isset($element))
+					{
+						$element['»'] = str_replace('&', '&amp;', $element['»']);
+						$element['»'] = str_replace('<', '&lt;', $element['»']);
+
+						if ($element['!'])
+						{
+							$markup .= '<img alt="'.$element['a'].'" src="'.$element['»'].'" />';
+						}
+						else
+						{
+							$element['a'] = $this->parse_span_elements($element['a'], $markers);
+
+							$markup .= '<a href="'.$element['»'].'">'.$element['a'].'</a>';
+						}
+
+						unset($element);
 					}
 					else
 					{
