@@ -401,11 +401,18 @@ class Parsedown
 
 					# reference
 
-					if (preg_match('/^\[(.+?)\]:[ ]*([^ ]+)/', $deindented_line, $matches))
+					if (preg_match('/^\[(.+?)\]:[ ]*(.+?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*$/', $deindented_line, $matches))
 					{
 						$label = strtolower($matches[1]);
 
-						$this->reference_map[$label] = trim($matches[2], '<>');;
+						$this->reference_map[$label] = array(
+							'»' => trim($matches[2], '<>'),
+						);
+
+						if (isset($matches[3]))
+						{
+							$this->reference_map[$label]['#'] = $matches[3];
+						}
 
 						continue 2;
 					}
@@ -734,9 +741,14 @@ class Parsedown
 
 						$remaining_text = substr($text, $offset);
 
-						if ($remaining_text[0] === '(' and preg_match('/^\((.*?)\)/', $remaining_text, $matches))
+						if ($remaining_text[0] === '(' and preg_match('/\([ ]*(.*?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*\)/', $remaining_text, $matches))
 						{
 							$element['»'] = $matches[1];
+
+							if (isset($matches[2]))
+							{
+								$element['#'] = $matches[2];
+							}
 
 							$offset += strlen($matches[0]);
 						}
@@ -755,7 +767,12 @@ class Parsedown
 
 							if (isset($this->reference_map[$reference]))
 							{
-								$element['»'] = $this->reference_map[$reference];
+								$element['»'] = $this->reference_map[$reference]['»'];
+
+								if (isset($this->reference_map[$reference]['#']))
+								{
+									$element['#'] = $this->reference_map[$reference]['#'];
+								}
 							}
 							else
 							{
@@ -781,7 +798,9 @@ class Parsedown
 						{
 							$element['a'] = $this->parse_span_elements($element['a'], $markers);
 
-							$markup .= '<a href="'.$element['»'].'">'.$element['a'].'</a>';
+							$markup .= isset($element['#'])
+								? '<a href="'.$element['»'].'" title="'.$element['#'].'">'.$element['a'].'</a>'
+								: '<a href="'.$element['»'].'">'.$element['a'].'</a>';
 						}
 
 						unset($element);
