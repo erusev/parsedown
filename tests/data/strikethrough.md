@@ -1,5 +1,5 @@
 ~~strikethrough~~
 
-in the ~~middle~~ of a sentence
+here's ~~one~~ followed by ~~another one~~
 
-in the middle of a w~~or~~d
+~~ this ~~ is not one neither is ~this~

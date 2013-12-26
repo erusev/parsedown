@@ -6,7 +6,7 @@ this & that
 
 4 < 5 and 6 > 5
 
-<http://example.com/autolink?a=1&b=2> 
+<http://example.com/autolink?a=1&b=2>
 
 [inline link](/script?a=1&b=2)
 

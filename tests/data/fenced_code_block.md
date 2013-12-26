@@ -8,3 +8,7 @@ echo $message;
 ~~~
 tilde
 ~~~
+
+```php
+echo 'language identifier';
+```
