@@ -13,8 +13,8 @@ Better [Markdown](http://en.wikipedia.org/wiki/Markdown) parser for PHP.
 * [fast](http://parsedown.org/speed)
 * [consistent](http://parsedown.org/consistency)
 * [GitHub Flavored](https://help.github.com/articles/github-flavored-markdown)
-* [tested](https://travis-ci.org/erusev/parsedown) in PHP 5.2, 5.3, 5.4 and 5.5
 * friendly to international input
+* [tested](https://travis-ci.org/erusev/parsedown) in PHP 5.2, 5.3, 5.4 and 5.5 as well as in [HHVM](http://www.hhvm.com/)
 
 ### Installation
 
