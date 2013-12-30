@@ -149,7 +149,7 @@ class Parsedown
 
 					if ( ! isset($element['closed']))
 					{
-						if (preg_match('/^[ ]*'.$element['fence'][0].'{3,}[ ]*$/', $line))
+						if (preg_match('/^[ \t]*'.$element['fence'][0].'{3,}[ ]*$/', $line))
 						{
 							$element['closed'] = true;
 						}
@@ -288,7 +288,7 @@ class Parsedown
 
 					# code block
 
-					if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
+					if (preg_match('/^([ ]{4}|\t)(.*)/', $line, $matches))
 					{
 						if ($element['type'] === 'code_block')
 						{
@@ -299,7 +299,7 @@ class Parsedown
 								unset ($element['interrupted']);
 							}
 
-							$element['text'] .= "\n".$matches[1];
+							$element['text'] .= "\n".$matches[2];
 						}
 						else
 						{
@@ -307,7 +307,7 @@ class Parsedown
 
 							$element = array(
 								'type' => 'code_block',
-								'text' => $matches[1],
+								'text' => $matches[2],
 							);
 						}
 
