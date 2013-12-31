@@ -57,7 +57,7 @@ class Parsedown
 	# Public Methods
 	#
 
-	function parse($text)
+	function parse($text,$opts = '')
 	{
 		# removes UTF-8 BOM and marker characters
 		$text = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $text);
@@ -66,8 +66,14 @@ class Parsedown
 		$text = str_replace("\r\n", "\n", $text);
 		$text = str_replace("\r", "\n", $text);
 
-		# replaces tabs with spaces
-		$text = str_replace("\t", '    ', $text);
+		# Convert tabs defaults to true
+		$tab_convert = $this->var_set($opts['tab_convert'],1);
+
+		if ($tab_convert)
+		{
+			# replaces tabs with spaces
+			$text = str_replace("\t", '    ', $text);
+		}
 
 		# encodes escape sequences
 
@@ -115,6 +121,16 @@ class Parsedown
 	# Private Methods
 	#
 
+	# If a variable isn't set, give it a default value
+	private function var_set(&$value, $default = null)
+	{
+		if (isset($value)) {
+			return $value;
+		} else {
+			return $default;
+		}
+	}
+
 	private function parse_block_elements(array $lines, $context = '')
 	{
 		$elements = array();
@@ -133,7 +149,7 @@ class Parsedown
 
 					if ( ! isset($element['closed']))
 					{
-						if (preg_match('/^[ ]*'.$element['fence'][0].'{3,}[ ]*$/', $line))
+						if (preg_match('/^[ \t]*'.$element['fence'][0].'{3,}[ ]*$/', $line))
 						{
 							$element['closed'] = true;
 						}
@@ -272,7 +288,7 @@ class Parsedown
 
 					# code block
 
-					if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
+					if (preg_match('/^([ ]{4}|\t)(.*)/', $line, $matches))
 					{
 						if ($element['type'] === 'code_block')
 						{
@@ -283,7 +299,7 @@ class Parsedown
 								unset ($element['interrupted']);
 							}
 
-							$element['text'] .= "\n".$matches[1];
+							$element['text'] .= "\n".$matches[2];
 						}
 						else
 						{
@@ -291,7 +307,7 @@ class Parsedown
 
 							$element = array(
 								'type' => 'code_block',
-								'text' => $matches[1],
+								'text' => $matches[2],
 							);
 						}
 
