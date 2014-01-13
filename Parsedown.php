@@ -129,7 +129,7 @@ class Parsedown
 
 			switch ($element['type'])
 			{
-				case 'fenced_code_block':
+				case 'fenced block':
 
 					if ( ! isset($element['closed']))
 					{
@@ -149,16 +149,16 @@ class Parsedown
 
 					break;
 
-				case 'markup':
+				case 'block-level markup':
 
 					if ( ! isset($element['closed']))
 					{
-						if (preg_match('{<'.$element['subtype'].'>$}', $line)) # opening tag
+						if (preg_match('{<'.$element['root '].'>$}', $line)) # opening tag
 						{
 							$element['depth']++;
 						}
 
-						if (preg_match('{</'.$element['subtype'].'>$}', $line)) # closing tag
+						if (preg_match('{</'.$element['root '].'>$}', $line)) # closing tag
 						{
 							$element['depth'] > 0
 								? $element['depth']--
@@ -274,7 +274,7 @@ class Parsedown
 
 					if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
 					{
-						if ($element['type'] === 'code_block')
+						if ($element['type'] === 'code block')
 						{
 							if (isset($element['interrupted']))
 							{
@@ -290,7 +290,7 @@ class Parsedown
 							$elements []= $element;
 
 							$element = array(
-								'type' => 'code_block',
+								'type' => 'code block',
 								'text' => $matches[1],
 							);
 						}
@@ -311,7 +311,7 @@ class Parsedown
 						$level = strlen($matches[1]);
 
 						$element = array(
-							'type' => 'h.',
+							'type' => 'heading',
 							'text' => $matches[2],
 							'level' => $level,
 						);
@@ -325,9 +325,9 @@ class Parsedown
 
 					# setext heading (---)
 
-					if ($line[0] === '-' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
+					if ($line[0] === '-' and $element['type'] === 'paragraph' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
 					{
-						$element['type'] = 'h.';
+						$element['type'] = 'heading';
 						$element['level'] = 2;
 
 						continue 2;
@@ -339,9 +339,9 @@ class Parsedown
 
 					# setext heading (===)
 
-					if ($line[0] === '=' and $element['type'] === 'p' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
+					if ($line[0] === '=' and $element['type'] === 'paragraph' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
 					{
-						$element['type'] = 'h.';
+						$element['type'] = 'heading';
 						$element['level'] = 1;
 
 						continue 2;
@@ -363,7 +363,7 @@ class Parsedown
 						$elements []= $element;
 
 						$element = array(
-							'type' => '',
+							'type' => 'self-closing tag',
 							'text' => $deindented_line,
 						);
 
@@ -377,9 +377,9 @@ class Parsedown
 						$elements []= $element;
 
 						$element = array(
-							'type' => 'markup',
-							'subtype' => strtolower($matches[1]),
+							'type' => 'block-level markup',
 							'text' => $deindented_line,
+							'root ' => strtolower($matches[1]),
 							'depth' => 0,
 						);
 
@@ -442,7 +442,7 @@ class Parsedown
 						$elements []= $element;
 
 						$element = array(
-							'type' => 'fenced_code_block',
+							'type' => 'fenced block',
 							'text' => '',
 							'fence' => $matches[1],
 						);
@@ -513,7 +513,7 @@ class Parsedown
 
 			# paragraph
 
-			if ($element['type'] === 'p')
+			if ($element['type'] === 'paragraph')
 			{
 				if (isset($element['interrupted']))
 				{
@@ -533,7 +533,7 @@ class Parsedown
 				$elements []= $element;
 
 				$element = array(
-					'type' => 'p',
+					'type' => 'paragraph',
 					'text' => $line,
 				);
 			}
@@ -553,7 +553,7 @@ class Parsedown
 		{
 			switch ($element['type'])
 			{
-				case 'p':
+				case 'paragraph':
 
 					$text = $this->parse_span_elements($element['text']);
 
@@ -583,8 +583,8 @@ class Parsedown
 
 					break;
 
-				case 'code_block':
-				case 'fenced_code_block':
+				case 'code block':
+				case 'fenced block':
 
 					$text = htmlspecialchars($element['text'], ENT_NOQUOTES, 'UTF-8');
 
@@ -598,7 +598,7 @@ class Parsedown
 
 					break;
 
-				case 'h.':
+				case 'heading':
 
 					$text = $this->parse_span_elements($element['text']);
 
@@ -634,7 +634,7 @@ class Parsedown
 
 					break;
 
-				case 'markup':
+				case 'block-level markup':
 
 					$markup .= $this->parse_span_elements($element['text'])."\n";
 
