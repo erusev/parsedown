@@ -59,9 +59,6 @@ class Parsedown
 
 	function parse($text)
 	{
-		# removes UTF-8 BOM and marker characters
-		$text = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $text);
-
 		# removes \r characters
 		$text = str_replace("\r\n", "\n", $text);
 		$text = str_replace("\r", "\n", $text);
@@ -90,7 +87,6 @@ class Parsedown
 
 		# ~
 
-		$text = preg_replace('/\n\s*\n/', "\n\n", $text);
 		$text = trim($text, "\n");
 
 		$lines = explode("\n", $text);
@@ -175,7 +171,9 @@ class Parsedown
 
 			# *
 
-			if ($line === '')
+			$deindented_line = ltrim($line);
+
+			if ($deindented_line === '')
 			{
 				$element['interrupted'] = true;
 
@@ -255,20 +253,9 @@ class Parsedown
 
 			# indentation sensitive types
 
-			$deindented_line = $line;
-
 			switch ($line[0])
 			{
 				case ' ':
-
-					# ~
-
-					$deindented_line = ltrim($line);
-
-					if ($deindented_line === '')
-					{
-						continue 2;
-					}
 
 					# code block
 
