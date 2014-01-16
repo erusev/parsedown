@@ -316,27 +316,35 @@ class Parsedown
 					break;
 
 				case '-':
-
-					# setext heading (---)
-
-					if ($line[0] === '-' and $element['type'] === 'paragraph' and ! isset($element['interrupted']) and preg_match('/^[-]+[ ]*$/', $line))
-					{
-						$element['type'] = 'heading';
-						$element['level'] = 2;
-
-						continue 2;
-					}
-
-					break;
-
 				case '=':
 
-					# setext heading (===)
+					# setext heading
 
-					if ($line[0] === '=' and $element['type'] === 'paragraph' and ! isset($element['interrupted']) and preg_match('/^[=]+[ ]*$/', $line))
+					if ($element['type'] === 'paragraph' and isset($element['interrupted']) === false)
 					{
-						$element['type'] = 'heading';
-						$element['level'] = 1;
+						$is_heading = true;
+
+						$chopped_line = rtrim($line);
+
+						$i = 1;
+
+						while (isset($chopped_line[$i]))
+						{
+							if ($chopped_line[$i] !== $line[0])
+							{
+								$is_heading = false;
+
+								break;
+							}
+
+							$i++;
+						}
+
+						if ($is_heading)
+						{
+							$element['type'] = 'heading';
+							$element['level'] = $line[0] === '-' ? 2 : 1;
+						}
 
 						continue 2;
 					}
