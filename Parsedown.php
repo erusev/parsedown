@@ -272,8 +272,10 @@ class Parsedown
 
 					# code block
 
-					if (preg_match('/^[ ]{4}(.*)/', $line, $matches))
+					if (isset($line[3]) and $line[3] === ' ' and $line[2] === ' ' and $line[1] === ' ')
 					{
+						$code_line = substr($line, 4);
+
 						if ($element['type'] === 'code block')
 						{
 							if (isset($element['interrupted']))
@@ -283,7 +285,7 @@ class Parsedown
 								unset ($element['interrupted']);
 							}
 
-							$element['text'] .= "\n".$matches[1];
+							$element['text'] .= "\n".$code_line;
 						}
 						else
 						{
@@ -291,7 +293,7 @@ class Parsedown
 
 							$element = array(
 								'type' => 'code block',
-								'text' => $matches[1],
+								'text' => $code_line,
 							);
 						}
 
