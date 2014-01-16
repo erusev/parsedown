@@ -293,15 +293,20 @@ class Parsedown
 
 					# atx heading (#)
 
-					if (preg_match('/^(#{1,6})[ ]*(.+?)[ ]*#*$/', $line, $matches))
+					if (isset($line[1]))
 					{
 						$elements []= $element;
 
-						$level = strlen($matches[1]);
+						$level = 1;
+
+						while (isset($line[$level]) and $line[$level] === '#')
+						{
+							$level++;
+						}
 
 						$element = array(
 							'type' => 'heading',
-							'text' => $matches[2],
+							'text' => trim($line, '# '),
 							'level' => $level,
 						);
 
