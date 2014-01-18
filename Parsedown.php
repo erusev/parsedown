@@ -149,12 +149,12 @@ class Parsedown
 
 					if ( ! isset($element['closed']))
 					{
-						if (preg_match('{<'.$element['root '].'>$}', $line)) # opening tag
+						if (strpos($line, $element['start']) !== false) # opening tag
 						{
 							$element['depth']++;
 						}
 
-						if (preg_match('{</'.$element['root '].'>$}', $line)) # closing tag
+						if (strpos($line, $element['end']) !== false) # closing tag
 						{
 							$element['depth'] > 0
 								? $element['depth']--
@@ -358,34 +358,70 @@ class Parsedown
 			{
 				case '<':
 
-					# self-closing tag
+					$position = strpos($deindented_line, '>');
 
-					if (preg_match('{^<.+?/>$}', $deindented_line))
+					if ($position > 1) # tag
 					{
-						$elements []= $element;
+						$name = substr($deindented_line, 1, $position - 1);
+						$name = rtrim($name);
 
-						$element = array(
-							'type' => 'self-closing tag',
-							'text' => $deindented_line,
+						if (substr($name, -1) === '/')
+						{
+							$self_closing = true;
+
+							$name = substr($name, 0, -1);
+						}
+
+						$position = strpos($name, ' ');
+
+						if ($position)
+						{
+							$name = substr($name, 0, $position);
+						}
+
+						if ( ! ctype_alpha($name))
+						{
+							break;
+						}
+
+						$inline_tags = array(
+							'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button',
+							'cite', 'code', 'dfn', 'em', 'i', 'img', 'input', 'kbd',
+							'label', 'map', 'object', 'q', 'samp', 'script', 'select', 'small',
+							'span', 'strong', 'sub', 'sup', 'textarea', 'tt', 'var',
 						);
 
-						continue 2;
-					}
+						if (in_array($name, $inline_tags))
+						{
+							break;
+						}
 
-					# opening tag
-
-					if (preg_match('{^<(\w+)(?:[ ].*?)?>}', $deindented_line, $matches))
-					{
 						$elements []= $element;
+
+						if (isset($self_closing))
+						{
+							$element = array(
+								'type' => 'self-closing tag',
+								'text' => $deindented_line,
+							);
+
+							unset($self_closing);
+
+							continue 2;
+						}
 
 						$element = array(
 							'type' => 'block-level markup',
 							'text' => $deindented_line,
-							'root ' => strtolower($matches[1]),
+							'start' => '<'.$name.'>',
+							'end' => '</'.$name.'>',
 							'depth' => 0,
 						);
 
-						preg_match('{</'.$matches[1].'>\s*$}', $deindented_line) and $element['closed'] = true;
+						if (strpos($deindented_line, $element['end']))
+						{
+							$element['closed'] = true;
+						}
 
 						continue 2;
 					}
@@ -638,7 +674,7 @@ class Parsedown
 
 				case 'block-level markup':
 
-					$markup .= $this->parse_span_elements($element['text'])."\n";
+					$markup .= $element['text']."\n";
 
 					break;
 

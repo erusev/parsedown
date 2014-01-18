@@ -1,12 +1,7 @@
-<div>content</div>
+<div>_content_</div>
 
-<hr style="background: #eaa;" />
-
-nested elements:
+sparse:
 
 <div>
-parent
-<div>
-child
-</div>
+_content_
 </div>
