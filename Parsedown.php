@@ -324,8 +324,6 @@ class Parsedown
 
 					if ($element['type'] === 'paragraph' and isset($element['interrupted']) === false)
 					{
-						$is_heading = true;
-
 						$chopped_line = rtrim($line);
 
 						$i = 1;
@@ -334,19 +332,14 @@ class Parsedown
 						{
 							if ($chopped_line[$i] !== $line[0])
 							{
-								$is_heading = false;
-
-								break;
+								break 2;
 							}
 
 							$i++;
 						}
 
-						if ($is_heading)
-						{
-							$element['type'] = 'heading';
-							$element['level'] = $line[0] === '-' ? 2 : 1;
-						}
+						$element['type'] = 'heading';
+						$element['level'] = $line[0] === '-' ? 2 : 1;
 
 						continue 2;
 					}
