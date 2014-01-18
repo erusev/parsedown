@@ -825,9 +825,18 @@ class Parsedown
 
 				case '&':
 
-					$markup .= '&amp;';
+					if (preg_match('/^&#?\w+;/', $text, $matches))
+					{
+						$markup .= $matches[0];
 
-					$offset = substr($text, 0, 5) === '&amp;' ? 5 : 1;
+						$offset = strlen($matches[0]);
+					}
+					else
+					{
+						$markup .= '&amp;';
+
+						$offset = 1;
+					}
 
 					break;
 

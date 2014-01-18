@@ -1,7 +1,5 @@
 AT&T has an ampersand in their name
 
-AT&T is another way to write it
-
 this & that
 
 4 < 5 and 6 > 5
