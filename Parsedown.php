@@ -111,6 +111,8 @@ class Parsedown
 	# Private Methods
 	#
 
+
+
 	private function parse_block_elements(array $lines, $context = '')
 	{
 		$elements = array();
@@ -384,14 +386,7 @@ class Parsedown
 							break;
 						}
 
-						$inline_tags = array(
-							'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button',
-							'cite', 'code', 'dfn', 'em', 'i', 'img', 'input', 'kbd',
-							'label', 'map', 'object', 'q', 'samp', 'script', 'select', 'small',
-							'span', 'strong', 'sub', 'sup', 'textarea', 'tt', 'var',
-						);
-
-						if (in_array($name, $inline_tags))
+						if (in_array($name, $this->inline_tags))
 						{
 							break;
 						}
@@ -686,28 +681,6 @@ class Parsedown
 
 		return $markup;
 	}
-
-	# ~
-
-	private $strong_regex = array(
-		'*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
-		'_' => '/^__([^_]+?)__(?!_)/s',
-	);
-
-	private $em_regex = array(
-		'*' => '/^[*]([^*]+?)[*](?![*])/s',
-		'_' => '/^_([^_]+?)[_](?![_])\b/s',
-	);
-
-	private $strong_em_regex = array(
-		'*' => '/^[*]{2}(.*?)[*](.+?)[*](.*?)[*]{2}/s',
-		'_' => '/^__(.*?)_(.+?)_(.*?)__/s',
-	);
-
-	private $em_strong_regex = array(
-		'*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
-		'_' => '/^_(.*?)__(.+?)__(.*?)_/s',
-	);
 
 	private function parse_span_elements($text, $markers = array('![', '&', '*', '<', '[', '_', '`', 'http', '~~'))
 	{
@@ -1026,4 +999,37 @@ class Parsedown
 
 		return $markup;
 	}
+
+	#
+	# Read-only
+	#
+
+	private $inline_tags = array(
+		'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button',
+		'cite', 'code', 'dfn', 'em', 'i', 'img', 'input', 'kbd',
+		'label', 'map', 'object', 'q', 'samp', 'script', 'select', 'small',
+		'span', 'strong', 'sub', 'sup', 'textarea', 'tt', 'var',
+	);
+
+	# ~
+
+	private $strong_regex = array(
+		'*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
+		'_' => '/^__([^_]+?)__(?!_)/s',
+	);
+
+	private $em_regex = array(
+		'*' => '/^[*]([^*]+?)[*](?![*])/s',
+		'_' => '/^_([^_]+?)[_](?![_])\b/s',
+	);
+
+	private $strong_em_regex = array(
+		'*' => '/^[*]{2}(.*?)[*](.+?)[*](.*?)[*]{2}/s',
+		'_' => '/^__(.*?)_(.+?)_(.*?)__/s',
+	);
+
+	private $em_strong_regex = array(
+		'*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
+		'_' => '/^_(.*?)__(.+?)__(.*?)_/s',
+	);
 }
