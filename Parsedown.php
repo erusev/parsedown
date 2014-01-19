@@ -51,7 +51,6 @@ class Parsedown
 	#
 
 	private $reference_map = array();
-	private $escape_sequence_map = array();
 
 	#
 	# Public Methods
@@ -66,25 +65,6 @@ class Parsedown
 		# replaces tabs with spaces
 		$text = str_replace("\t", '    ', $text);
 
-		# encodes escape sequences
-
-		if (strpos($text, '\\') !== FALSE)
-		{
-			$escape_sequences = array('\\\\', '\`', '\*', '\_', '\{', '\}', '\[', '\]', '\(', '\)', '\>', '\#', '\+', '\-', '\.', '\!');
-
-			foreach ($escape_sequences as $index => $escape_sequence)
-			{
-				if (strpos($text, $escape_sequence) !== FALSE)
-				{
-					$code = "\x1A".'\\'.$index.';';
-
-					$text = str_replace($escape_sequence, $code, $text);
-
-					$this->escape_sequence_map[$code] = $escape_sequence;
-				}
-			}
-		}
-
 		# ~
 
 		$text = trim($text, "\n");
@@ -92,15 +72,6 @@ class Parsedown
 		$lines = explode("\n", $text);
 
 		$text = $this->parse_block_elements($lines);
-
-		# decodes escape sequences
-
-		foreach ($this->escape_sequence_map as $code => $escape_sequence)
-		{
-			$text = str_replace($code, $escape_sequence[1], $text);
-		}
-
-		# ~
 
 		$text = rtrim($text, "\n");
 
@@ -612,8 +583,6 @@ class Parsedown
 
 					$text = htmlspecialchars($element['text'], ENT_NOQUOTES, 'UTF-8');
 
-					strpos($text, "\x1A\\") !== FALSE and $text = strtr($text, $this->escape_sequence_map);
-
 					$markup .= isset($element['language'])
 						? '<pre><code class="language-'.$element['language'].'">'.$text.'</code></pre>'
 						: '<pre><code>'.$text.'</code></pre>';
@@ -673,9 +642,9 @@ class Parsedown
 		return $markup;
 	}
 
-	private function parse_span_elements($text, $markers = array('![', '&', '*', '<', '[', '_', '`', 'http', '~~'))
+	private function parse_span_elements($text, $markers = array('![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~'))
 	{
-		if (isset($text[2]) === false or $markers === array())
+		if (isset($text[1]) === false or $markers === array())
 		{
 			return $text;
 		}
@@ -711,7 +680,7 @@ class Parsedown
 
 			# ~
 
-			if ($closest_marker === null or isset($text[$closest_marker_position + 2]) === false)
+			if ($closest_marker === null or isset($text[$closest_marker_position + 1]) === false)
 			{
 				$markup .= $text;
 
@@ -921,17 +890,29 @@ class Parsedown
 
 					break;
 
+				case '\\':
+
+					if (in_array($text[1], $this->special_characters))
+					{
+						$markup .= $text[1];
+
+						$offset = 2;
+					}
+					else
+					{
+						$markup .= '\\';
+
+						$offset = 1;
+					}
+
+					break;
+
 				case '`':
 
 					if (preg_match('/^`(.+?)`/', $text, $matches))
 					{
 						$element_text = $matches[1];
 						$element_text = htmlspecialchars($element_text, ENT_NOQUOTES, 'UTF-8');
-
-						if ($this->escape_sequence_map and strpos($element_text, "\x1A") !== false)
-						{
-							$element_text = strtr($element_text, $this->escape_sequence_map);
-						}
 
 						$markup .= '<code>'.$element_text.'</code>';
 
@@ -1010,6 +991,8 @@ class Parsedown
 		'label', 'map', 'object', 'q', 'samp', 'script', 'select', 'small',
 		'span', 'strong', 'sub', 'sup', 'textarea', 'tt', 'var',
 	);
+
+	private $special_characters = array('\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!');
 
 	# ~
 
