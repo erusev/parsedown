@@ -579,15 +579,22 @@ class Parsedown
 					break;
 
 				case 'code block':
+
+					$text = htmlspecialchars($element['text'], ENT_NOQUOTES, 'UTF-8');
+
+					$markup .= '<pre><code>'.$text.'</code></pre>'."\n";
+
+					break;
+
 				case 'fenced block':
 
 					$text = htmlspecialchars($element['text'], ENT_NOQUOTES, 'UTF-8');
 
-					$markup .= isset($element['language'])
-						? '<pre><code class="language-'.$element['language'].'">'.$text.'</code></pre>'
-						: '<pre><code>'.$text.'</code></pre>';
+					$markup .= '<pre><code';
 
-					$markup .= "\n";
+					isset($element['language']) and $markup .= ' class="language-'.$element['language'].'"';
+
+					$markup .= '>'.$text.'</code></pre>'."\n";
 
 					break;
 
