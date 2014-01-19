@@ -111,8 +111,6 @@ class Parsedown
 	# Private Methods
 	#
 
-
-
 	private function parse_block_elements(array $lines, $context = '')
 	{
 		$elements = array();
