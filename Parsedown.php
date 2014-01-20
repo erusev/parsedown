@@ -795,9 +795,11 @@ class Parsedown
 						{
 							$element['a'] = $this->parse_span_elements($element['a'], $markers);
 
-							$markup .= isset($element['#'])
-								? '<a href="'.$element['»'].'" title="'.$element['#'].'">'.$element['a'].'</a>'
-								: '<a href="'.$element['»'].'">'.$element['a'].'</a>';
+							$markup .= '<a href="'.$element['»'].'"';
+
+							isset($element['#']) and $markup .= ' title="'.$element['#'].'"';
+
+							$markup .= '>'.$element['a'].'</a>';
 						}
 
 						unset($element);
