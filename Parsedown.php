@@ -37,11 +37,11 @@ class Parsedown
 	# Setters
 	#
 
-	private $break_marker = "  \n";
+	private $breaks_enabled = false;
 
 	function set_breaks_enabled($breaks_enabled)
 	{
-		$this->break_marker = $breaks_enabled ? "\n" : "  \n";
+		$this->breaks_enabled = $breaks_enabled;
 
 		return $this;
 	}
@@ -520,6 +520,8 @@ class Parsedown
 				}
 				else
 				{
+					$this->breaks_enabled and $element['text'] .= '  ';
+
 					$element['text'] .= "\n".$line;
 				}
 			}
@@ -649,7 +651,7 @@ class Parsedown
 		return $markup;
 	}
 
-	private function parse_span_elements($text, $markers = array('![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~'))
+	private function parse_span_elements($text, $markers = array("  \n", '![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~'))
 	{
 		if (isset($text[1]) === false or $markers === array())
 		{
@@ -708,6 +710,14 @@ class Parsedown
 
 			switch ($closest_marker)
 			{
+				case "  \n":
+
+					$markup .= '<br />'."\n";
+
+					$offset = 3;
+
+					break;
+
 				case '![':
 				case '[':
 
@@ -982,8 +992,6 @@ class Parsedown
 
 			$markers[$closest_marker_index] = $closest_marker;
 		}
-
-		$markup = str_replace($this->break_marker, '<br />'."\n", $markup);
 
 		return $markup;
 	}
