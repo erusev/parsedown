@@ -1,6 +1,7 @@
 <?php
 
-include 'Parsedown.php';
+$dir = dirname(__FILE__);
+include "$dir/../Parsedown.php";
 
 class Test extends PHPUnit_Framework_TestCase
 {
