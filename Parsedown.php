@@ -785,7 +785,11 @@ class Parsedown
 
 						if ($element['!'])
 						{
-							$markup .= '<img alt="'.$element['a'].'" src="'.$element['»'].'" />';
+							$markup .= '<img alt="'.$element['a'].'" src="'.$element['»'].'"';
+
+							isset($element['#']) and $markup .= ' title="'.$element['#'].'"';
+
+							$markup .= ' />';
 						}
 						else
 						{
