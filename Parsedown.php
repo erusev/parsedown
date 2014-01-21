@@ -891,6 +891,12 @@ class Parsedown
 
 							$offset = strlen($matches[0]);
 						}
+						elseif (strpos($text, '@') > 1 and preg_match('/<(\S+?@\S+?)>/', $text, $matches))
+						{
+							$markup .= '<a href="mailto:'.$matches[1].'">'.$matches[1].'</a>';
+
+							$offset = strlen($matches[0]);
+						}
 						elseif (preg_match('/^<\/?\w.*?>/', $text, $matches))
 						{
 							$markup .= $matches[0];
