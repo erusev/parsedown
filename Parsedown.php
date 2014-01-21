@@ -182,13 +182,11 @@ class Parsedown
 
 							$elements []= $element;
 
-							$element = array(
-								'type' => 'li',
-								'indentation' => $matches[1],
-								'last' => true,
-								'lines' => array(
-									preg_replace('/^[ ]{0,4}/', '', $matches[3]),
-								),
+							unset($element['first']);
+
+							$element['last'] = true;
+							$element['lines'] = array(
+								preg_replace('/^[ ]{0,4}/', '', $matches[3]),
 							);
 						}
 
@@ -477,6 +475,7 @@ class Parsedown
 							'type' => 'li',
 							'ordered' => false,
 							'indentation' => $matches[1],
+							'first' => true,
 							'last' => true,
 							'lines' => array(
 								preg_replace('/^[ ]{0,4}/', '', $matches[2]),
@@ -497,6 +496,7 @@ class Parsedown
 					'type' => 'li',
 					'ordered' => true,
 					'indentation' => $matches[1],
+					'first' => true,
 					'last' => true,
 					'lines' => array(
 						preg_replace('/^[ ]{0,4}/', '', $matches[2]),
@@ -616,11 +616,11 @@ class Parsedown
 
 				case 'li':
 
-					if (isset($element['ordered'])) # first
+					if (isset($element['first']))
 					{
-						$list_type = $element['ordered'] ? 'ol' : 'ul';
+						$type = $element['ordered'] ? 'ol' : 'ul';
 
-						$markup .= '<'.$list_type.'>'."\n";
+						$markup .= '<'.$type.'>'."\n";
 					}
 
 					if (isset($element['interrupted']) and ! isset($element['last']))
@@ -632,7 +632,12 @@ class Parsedown
 
 					$markup .= '<li>'.$text.'</li>'."\n";
 
-					isset($element['last']) and $markup .= '</'.$list_type.'>'."\n";
+					if (isset($element['last']))
+					{
+						$type = $element['ordered'] ? 'ol' : 'ul';
+
+						$markup .= '</'.$type.'>'."\n";
+					}
 
 					break;
 
