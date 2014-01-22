@@ -948,9 +948,9 @@ class Parsedown
 
 				case '`':
 
-					if (preg_match('/^`(.+?)`/', $text, $matches))
+					if (preg_match('/^(`+)(.+?)\1(?!`)/', $text, $matches))
 					{
-						$element_text = $matches[1];
+						$element_text = $matches[2];
 						$element_text = htmlspecialchars($element_text, ENT_NOQUOTES, 'UTF-8');
 
 						$markup .= '<code>'.$element_text.'</code>';
