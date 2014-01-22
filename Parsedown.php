@@ -563,6 +563,11 @@ class Parsedown
 						else
 						{
 							$markup .= $text;
+
+							if (isset($elements[2]))
+							{
+								$markup .= "\n";
+							}
 						}
 					}
 					else
