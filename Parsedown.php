@@ -889,6 +889,12 @@ class Parsedown
 
 							$offset = strlen($matches[0]);
 						}
+						elseif (preg_match('/^<([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4})>/i', $text, $matches)) 
+						{
+							$email  = $this->obfuscate_email($matches[1]);
+							$markup .= '<a href="mailto:' . $email . '">' . $email . '</a>';
+							$offset = strlen($matches[0]);
+						}
 						elseif (preg_match('/^<\/?\w.*?>/', $text, $matches))
 						{
 							$markup .= $matches[0];
@@ -999,6 +1005,15 @@ class Parsedown
 
 		return $markup;
 	}
+
+	private function obfuscate_email($email) {
+    $encoded = '';
+    for($i = 0; $i < strlen($email); $i++) 
+    {
+      $encoded .= '&#' . ord($email[$i]) . ';';
+    }
+    return $encoded;
+  }
 
 	#
 	# Read-only
