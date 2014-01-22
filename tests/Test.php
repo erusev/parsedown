@@ -1,17 +1,36 @@
 <?php
 
-include 'Parsedown.php';
-
 class Test extends PHPUnit_Framework_TestCase
 {
 	const provider_dir = 'data/';
+
+	/**
+	 * @var Parsedown
+	 */
+	private $Parsedown;
+
+	public function setUp()
+	{
+		parent::setUp();
+
+		if (version_compare(PHP_VERSION, '5.3.0') >= 0)
+		{
+			include_once __DIR__.'/../Parsedown-5.3.php';
+			$this->Parsedown = Parsedown\Parsedown::instance();
+		}
+		else
+		{
+			include_once __DIR__.'/../Parsedown.php';
+			$this->Parsedown = Parsedown::instance();
+		}
+	}
 
 	/**
 	 * @dataProvider provider
 	 */
 	function test_($markdown, $expected_markup)
 	{
-		$actual_markup = Parsedown::instance()->parse($markdown);
+		$actual_markup = $this->Parsedown->parse($markdown);
 
 		$this->assertEquals($expected_markup, $actual_markup);
 	}

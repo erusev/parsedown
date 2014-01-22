@@ -13,6 +13,6 @@
         }
     ],
     "autoload": {
-        "psr-0": {"Parsedown": ""}
+        "psr-0": {"Parsedown": "Parsedown-5.3.php"}
     }
 }
