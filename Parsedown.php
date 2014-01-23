@@ -250,7 +250,7 @@ class Parsedown
                             {
                                 $element['text'] .= "\n";
 
-                                unset ($element['interrupted']);
+                                unset($element['interrupted']);
                             }
 
                             $element['text'] .= "\n".$code_line;
