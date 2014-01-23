@@ -110,7 +110,10 @@ class Parsedown
                         }
                         else
                         {
-                            $element['text'] !== '' and $element['text'] .= "\n";
+                            if ($element['text'] !== '')
+                            {
+                                $element['text'] .= "\n";
+                            }
 
                             $element['text'] .= $line;
                         }
@@ -444,7 +447,10 @@ class Parsedown
                             'fence' => $matches[1],
                         );
 
-                        isset($matches[2]) and $element['language'] = $matches[2];
+                        if (isset($matches[2]))
+                        {
+                            $element['language'] = $matches[2];
+                        }
 
                         continue 2;
                     }
@@ -524,7 +530,10 @@ class Parsedown
                 }
                 else
                 {
-                    $this->breaks_enabled and $element['text'] .= '  ';
+                    if ($this->breaks_enabled)
+                    {
+                        $element['text'] .= '  ';
+                    }
 
                     $element['text'] .= "\n".$line;
                 }
@@ -603,7 +612,10 @@ class Parsedown
 
                     $markup .= '<pre><code';
 
-                    isset($element['language']) and $markup .= ' class="language-'.$element['language'].'"';
+                    if (isset($element['language']))
+                    {
+                        $markup .= ' class="language-'.$element['language'].'"';
+                    }
 
                     $markup .= '>'.$text.'</code></pre>'."\n";
 
@@ -744,7 +756,10 @@ class Parsedown
 
                         $offset = strlen($matches[0]);
 
-                        $element['!'] and $offset++;
+                        if ($element['!'])
+                        {
+                            $offset++;
+                        }
 
                         $remaining_text = substr($text, $offset);
 
@@ -801,7 +816,10 @@ class Parsedown
                         {
                             $markup .= '<img alt="'.$element['a'].'" src="'.$element['»'].'"';
 
-                            isset($element['#']) and $markup .= ' title="'.$element['#'].'"';
+                            if (isset($element['#']))
+                            {
+                                $markup .= ' title="'.$element['#'].'"';
+                            }
 
                             $markup .= ' />';
                         }
@@ -811,7 +829,10 @@ class Parsedown
 
                             $markup .= '<a href="'.$element['»'].'"';
 
-                            isset($element['#']) and $markup .= ' title="'.$element['#'].'"';
+                            if (isset($element['#']))
+                            {
+                                $markup .= ' title="'.$element['#'].'"';
+                            }
 
                             $markup .= '>'.$element['a'].'</a>';
                         }
