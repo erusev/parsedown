@@ -8,19 +8,16 @@
 # (c) Emanuil Rusev
 # http://erusev.com
 #
-# For the full license information, please view the LICENSE file that was
-# distributed with this source code.
+# For the full license information, view the LICENSE file that was distributed
+# with this source code.
 #
 #
 
 class Parsedown
 {
-    /**
-     * Multiton (http://en.wikipedia.org/wiki/Multiton_pattern)
-     *
-     * @param string $name
-     * @return Parsedown
-     */
+    #
+    # Multiton (http://en.wikipedia.org/wiki/Multiton_pattern)
+
     static function instance($name = 'default')
     {
         if (isset(self::$instances[$name]))
@@ -43,12 +40,9 @@ class Parsedown
 
     private $breaks_enabled = false;
 
-    /**
-     * Enables GFM line breaks.
-     *
-     * @param bool $breaks_enabled
-     * @return $this
-     */
+    #
+    # Enables GFM line breaks.
+
     function set_breaks_enabled($breaks_enabled)
     {
         $this->breaks_enabled = $breaks_enabled;
@@ -63,18 +57,15 @@ class Parsedown
     private $reference_map = array();
 
     #
-    # Public Methods
+    # Actions
     #
 
-    /**
-     * Converts Markdown to HTML.
-     *
-     * @param string $text
-     * @return string
-     */
+    #
+    # Converts Markdown to HTML.
+
     function parse($text)
     {
-        # simplifies line breaks
+        # standardizes line breaks
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
 
@@ -97,7 +88,7 @@ class Parsedown
     }
 
     #
-    # Private Methods
+    # Methods
     #
 
     private function parse_block_elements(array $lines, $context = '')
