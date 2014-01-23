@@ -73,7 +73,7 @@ class Parsedown
 
         $text = $this->parse_block_elements($lines);
 
-        $text = rtrim($text, "\n");
+        $text = chop($text, "\n");
 
         return $text;
     }
@@ -291,7 +291,7 @@ class Parsedown
 
                     if ($element['type'] === 'paragraph' and isset($element['interrupted']) === false)
                     {
-                        $chopped_line = rtrim($line);
+                        $chopped_line = chop($line);
 
                         $i = 1;
 
@@ -325,7 +325,7 @@ class Parsedown
                     if ($position > 1) # tag
                     {
                         $name = substr($deindented_line, 1, $position - 1);
-                        $name = rtrim($name);
+                        $name = chop($name);
 
                         if (substr($name, -1) === '/')
                         {
