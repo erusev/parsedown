@@ -58,21 +58,23 @@ class Parsedown
 
     function parse($text)
     {
-        # removes \r characters
+        # simplifies line breaks
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
 
         # replaces tabs with spaces
         $text = str_replace("\t", '    ', $text);
 
-        # ~
-
+        # removes surrounding line breaks
         $text = trim($text, "\n");
 
+        # splits text into lines
         $lines = explode("\n", $text);
 
+        # converts lines into html
         $text = $this->parse_block_elements($lines);
 
+        # removes trailing line breaks
         $text = chop($text, "\n");
 
         return $text;
