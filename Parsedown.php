@@ -15,10 +15,12 @@
 
 class Parsedown
 {
-    #
-    # Multiton (http://en.wikipedia.org/wiki/Multiton_pattern)
-    #
-
+    /**
+     * Multiton (http://en.wikipedia.org/wiki/Multiton_pattern)
+     *
+     * @param string $name
+     * @return Parsedown
+     */
     static function instance($name = 'default')
     {
         if (isset(self::$instances[$name]))
@@ -41,6 +43,12 @@ class Parsedown
 
     private $breaks_enabled = false;
 
+    /**
+     * Enables GFM line breaks.
+     *
+     * @param bool $breaks_enabled
+     * @return $this
+     */
     function set_breaks_enabled($breaks_enabled)
     {
         $this->breaks_enabled = $breaks_enabled;
@@ -58,6 +66,12 @@ class Parsedown
     # Public Methods
     #
 
+    /**
+     * Converts Markdown to HTML.
+     *
+     * @param string $text
+     * @return string
+     */
     function parse($text)
     {
         # simplifies line breaks
