@@ -41,7 +41,7 @@ class Parsedown
     private $breaks_enabled = false;
 
     #
-    # Enables GFM line breaks.
+    # Enable GFM line breaks.
 
     function set_breaks_enabled($breaks_enabled)
     {
@@ -61,27 +61,27 @@ class Parsedown
     #
 
     #
-    # Converts Markdown to HTML.
+    # Convert Markdown to HTML.
 
     function parse($text)
     {
-        # standardizes line breaks
+        # standardize line breaks
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
 
-        # replaces tabs with spaces
+        # replace tabs with spaces
         $text = str_replace("\t", '    ', $text);
 
-        # removes surrounding line breaks
+        # remove surrounding line breaks
         $text = trim($text, "\n");
 
-        # splits text into lines
+        # split text into lines
         $lines = explode("\n", $text);
 
-        # converts lines into html
+        # convert lines into html
         $text = $this->parse_block_elements($lines);
 
-        # removes trailing line breaks
+        # remove trailing line breaks
         $text = chop($text, "\n");
 
         return $text;
