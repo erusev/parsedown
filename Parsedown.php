@@ -16,7 +16,7 @@
 class Parsedown
 {
     #
-    # Multiton (http://en.wikipedia.org/wiki/Multiton_pattern)
+    # Multiton
 
     static function instance($name = 'default')
     {
@@ -41,7 +41,7 @@ class Parsedown
     private $breaks_enabled = false;
 
     #
-    # Enable GFM line breaks.
+    # Enables GFM line breaks.
 
     function set_breaks_enabled($breaks_enabled)
     {
@@ -57,11 +57,16 @@ class Parsedown
     private $reference_map = array();
 
     #
-    # Actions
+    # Methods
     #
 
     #
-    # Convert Markdown to HTML.
+    # Parsedown recognises that Markdown is optimised to be easy-to-read by
+    # humans, so it tries to read it the way humans do.
+    #
+    # First, it breaks texts into lines. Then, it looks at how these lines start
+    # and relate to each other. Finally, it looks for special characters to
+    # identify inline elements.
 
     function parse($text)
     {
@@ -88,7 +93,7 @@ class Parsedown
     }
 
     #
-    # Methods
+    # Private
     #
 
     private function parse_block_elements(array $lines, $context = '')
