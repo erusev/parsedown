@@ -61,12 +61,9 @@ class Parsedown
     #
 
     #
-    # Parsedown recognises that Markdown is optimised to be easy-to-read by
-    # humans, so it tries to read it the way humans do.
-    #
-    # First, it breaks texts into lines. Then, it looks at how these lines start
-    # and relate to each other. Finally, it looks for special characters to
-    # identify inline elements.
+    # Parsedown tries to read Markdown texts the way humans do. First, it breaks
+    # texts into lines. Then, it identifies blocks by looking at how these lines
+    # start and relate to each other. Finally, it identifies inline elements.
 
     function parse($text)
     {
