@@ -37,8 +37,6 @@ class Parsedown
     # Setters
     #
 
-    private $breaks_enabled = false;
-
     # Enables GFM line breaks.
 
     function set_breaks_enabled($breaks_enabled)
@@ -48,11 +46,7 @@ class Parsedown
         return $this;
     }
 
-    #
-    # Fields
-    #
-
-    private $reference_map = array();
+    private $breaks_enabled = false;
 
     #
     # Methods
@@ -1053,6 +1047,12 @@ class Parsedown
 
         return $markup;
     }
+
+    #
+    # Fields
+    #
+
+    private $reference_map = array();
 
     #
     # Read-only
