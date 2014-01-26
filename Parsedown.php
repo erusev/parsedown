@@ -334,23 +334,28 @@ class Parsedown
 
                     $position = strpos($deindented_line, '>');
 
-                    if ($position > 1) # tag
+                    if ($position > 1)
                     {
-                        $name = substr($deindented_line, 1, $position - 1);
-                        $name = chop($name);
+                        $substring = substr($deindented_line, 1, $position - 1);
 
-                        if (substr($name, -1) === '/')
+                        $substring = chop($substring);
+
+                        if (substr($substring, -1) === '/')
                         {
-                            $self_closing = true;
+                            $is_self_closing = true;
 
-                            $name = substr($name, 0, -1);
+                            $substring = substr($substring, 0, -1);
                         }
 
-                        $position = strpos($name, ' ');
+                        $position = strpos($substring, ' ');
 
                         if ($position)
                         {
-                            $name = substr($name, 0, $position);
+                            $name = substr($substring, 0, $position);
+                        }
+                        else
+                        {
+                            $name = $substring;
                         }
 
                         if ( ! ctype_alpha($name))
@@ -358,21 +363,21 @@ class Parsedown
                             break;
                         }
 
-                        if (in_array($name, $this->inline_tags))
+                        if (in_array($name, self::$text_level_elements))
                         {
                             break;
                         }
 
                         $blocks []= $block;
 
-                        if (isset($self_closing))
+                        if (isset($is_self_closing))
                         {
                             $block = array(
                                 'type' => 'self-closing tag',
                                 'text' => $deindented_line,
                             );
 
-                            unset($self_closing);
+                            unset($is_self_closing);
 
                             continue 2;
                         }
@@ -1058,11 +1063,16 @@ class Parsedown
     # Read-only
     #
 
-    private $inline_tags = array(
-        'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button',
-        'cite', 'code', 'dfn', 'em', 'i', 'img', 'input', 'kbd',
-        'label', 'map', 'object', 'q', 'samp', 'script', 'select', 'small',
-        'span', 'strong', 'sub', 'sup', 'textarea', 'tt', 'var',
+    private static $text_level_elements = array(
+        'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
+        'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
+        'i', 'rp', 'sub', 'code',          'strike', 'marquee',
+        'q', 'rt', 'sup', 'font',          'strong',
+        's', 'tt', 'var', 'mark',
+        'u', 'xm', 'wbr', 'nobr',
+                          'ruby',
+                          'span',
+                          'time',
     );
 
     private $special_characters = array('\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!');
