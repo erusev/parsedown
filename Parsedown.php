@@ -141,9 +141,14 @@ class Parsedown
 
                         if (strpos($line, $block['end']) !== false) # closing tag
                         {
-                            $block['depth'] > 0
-                                ? $block['depth']--
-                                : $block['closed'] = true;
+                            if ($block['depth'] > 0)
+                            {
+                                $block['depth']--;
+                            }
+                            else
+                            {
+                                $block['closed'] = true;
+                            }
                         }
 
                         $block['text'] .= "\n".$line;
