@@ -15,7 +15,6 @@
 
 class Parsedown
 {
-    #
     # Multiton
 
     static function instance($name = 'default')
@@ -40,7 +39,6 @@ class Parsedown
 
     private $breaks_enabled = false;
 
-    #
     # Enables GFM line breaks.
 
     function set_breaks_enabled($breaks_enabled)
@@ -60,7 +58,6 @@ class Parsedown
     # Methods
     #
 
-    #
     # Parsedown tries to read Markdown texts the way humans do. First, it breaks
     # texts into lines. Then, it identifies blocks by looking at how these lines
     # start and relate to each other. Finally, it identifies inline elements.
