@@ -878,19 +878,19 @@ class Parsedown
                 case '*':
                 case '_':
 
-                    if ($text[1] === $closest_marker and preg_match($this->strong_regex[$closest_marker], $text, $matches))
+                    if ($text[1] === $closest_marker and preg_match(self::$strong_regex[$closest_marker], $text, $matches))
                     {
                         $matches[1] = $this->parse_span_elements($matches[1], $markers);
 
                         $markup .= '<strong>'.$matches[1].'</strong>';
                     }
-                    elseif (preg_match($this->em_regex[$closest_marker], $text, $matches))
+                    elseif (preg_match(self::$em_regex[$closest_marker], $text, $matches))
                     {
                         $matches[1] = $this->parse_span_elements($matches[1], $markers);
 
                         $markup .= '<em>'.$matches[1].'</em>';
                     }
-                    elseif ($text[1] === $closest_marker and preg_match($this->strong_em_regex[$closest_marker], $text, $matches))
+                    elseif ($text[1] === $closest_marker and preg_match(self::$strong_em_regex[$closest_marker], $text, $matches))
                     {
                         $matches[2] = $this->parse_span_elements($matches[2], $markers);
 
@@ -899,7 +899,7 @@ class Parsedown
 
                         $markup .= '<strong>'.$matches[1].'<em>'.$matches[2].'</em>'.$matches[3].'</strong>';
                     }
-                    elseif (preg_match($this->em_strong_regex[$closest_marker], $text, $matches))
+                    elseif (preg_match(self::$em_strong_regex[$closest_marker], $text, $matches))
                     {
                         $matches[2] = $this->parse_span_elements($matches[2], $markers);
 
@@ -966,7 +966,7 @@ class Parsedown
 
                 case '\\':
 
-                    if (in_array($text[1], $this->special_characters))
+                    if (in_array($text[1], self::$special_characters))
                     {
                         $markup .= $text[1];
 
@@ -1063,6 +1063,30 @@ class Parsedown
     # Read-only
     #
 
+    private static $strong_regex = array(
+        '*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
+        '_' => '/^__([^_]+?)__(?!_)/s',
+    );
+
+    private static $em_regex = array(
+        '*' => '/^[*]([^*]+?)[*](?![*])/s',
+        '_' => '/^_([^_]+?)[_](?![_])\b/s',
+    );
+
+    private static $strong_em_regex = array(
+        '*' => '/^[*]{2}(.*?)[*](.+?)[*](.*?)[*]{2}/s',
+        '_' => '/^__(.*?)_(.+?)_(.*?)__/s',
+    );
+
+    private static $em_strong_regex = array(
+        '*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
+        '_' => '/^_(.*?)__(.+?)__(.*?)_/s',
+    );
+
+    private static $special_characters = array(
+        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!',
+    );
+
     private static $text_level_elements = array(
         'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
         'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
@@ -1073,29 +1097,5 @@ class Parsedown
                           'ruby',
                           'span',
                           'time',
-    );
-
-    private $special_characters = array('\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!');
-
-    # ~
-
-    private $strong_regex = array(
-        '*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
-        '_' => '/^__([^_]+?)__(?!_)/s',
-    );
-
-    private $em_regex = array(
-        '*' => '/^[*]([^*]+?)[*](?![*])/s',
-        '_' => '/^_([^_]+?)[_](?![_])\b/s',
-    );
-
-    private $strong_em_regex = array(
-        '*' => '/^[*]{2}(.*?)[*](.+?)[*](.*?)[*]{2}/s',
-        '_' => '/^__(.*?)_(.+?)_(.*?)__/s',
-    );
-
-    private $em_strong_regex = array(
-        '*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
-        '_' => '/^_(.*?)__(.+?)__(.*?)_/s',
     );
 }
