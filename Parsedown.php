@@ -199,6 +199,7 @@ class Parsedown
                             unset($block['first']);
 
                             $block['last'] = true;
+
                             $block['lines'] = array(
                                 preg_replace('/^[ ]{0,4}/', '', $matches[3]),
                             );
@@ -320,6 +321,7 @@ class Parsedown
                         }
 
                         $block['type'] = 'heading';
+
                         $block['level'] = $line[0] === '-' ? 2 : 1;
 
                         continue 2;
