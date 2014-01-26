@@ -95,34 +95,34 @@ class Parsedown
 
     private function parse_block_elements(array $lines, $context = '')
     {
-        $elements = array();
+        $blocks = array();
 
-        $element = array(
+        $block = array(
             'type' => '',
         );
 
         foreach ($lines as $line)
         {
-            # fenced elements
+            # fenced blocks
 
-            switch ($element['type'])
+            switch ($block['type'])
             {
                 case 'fenced block':
 
-                    if ( ! isset($element['closed']))
+                    if ( ! isset($block['closed']))
                     {
-                        if (preg_match('/^[ ]*'.$element['fence'][0].'{3,}[ ]*$/', $line))
+                        if (preg_match('/^[ ]*'.$block['fence'][0].'{3,}[ ]*$/', $line))
                         {
-                            $element['closed'] = true;
+                            $block['closed'] = true;
                         }
                         else
                         {
-                            if ($element['text'] !== '')
+                            if ($block['text'] !== '')
                             {
-                                $element['text'] .= "\n";
+                                $block['text'] .= "\n";
                             }
 
-                            $element['text'] .= $line;
+                            $block['text'] .= $line;
                         }
 
                         continue 2;
@@ -132,21 +132,21 @@ class Parsedown
 
                 case 'block-level markup':
 
-                    if ( ! isset($element['closed']))
+                    if ( ! isset($block['closed']))
                     {
-                        if (strpos($line, $element['start']) !== false) # opening tag
+                        if (strpos($line, $block['start']) !== false) # opening tag
                         {
-                            $element['depth']++;
+                            $block['depth']++;
                         }
 
-                        if (strpos($line, $element['end']) !== false) # closing tag
+                        if (strpos($line, $block['end']) !== false) # closing tag
                         {
-                            $element['depth'] > 0
-                                ? $element['depth']--
-                                : $element['closed'] = true;
+                            $block['depth'] > 0
+                                ? $block['depth']--
+                                : $block['closed'] = true;
                         }
 
-                        $element['text'] .= "\n".$line;
+                        $block['text'] .= "\n".$line;
 
                         continue 2;
                     }
@@ -160,22 +160,22 @@ class Parsedown
 
             if ($deindented_line === '')
             {
-                $element['interrupted'] = true;
+                $block['interrupted'] = true;
 
                 continue;
             }
 
-            # composite elements
+            # composite blocks
 
-            switch ($element['type'])
+            switch ($block['type'])
             {
                 case 'blockquote':
 
-                    if ( ! isset($element['interrupted']))
+                    if ( ! isset($block['interrupted']))
                     {
                         $line = preg_replace('/^[ ]*>[ ]?/', '', $line);
 
-                        $element['lines'] []= $line;
+                        $block['lines'] []= $line;
 
                         continue 2;
                     }
@@ -186,20 +186,20 @@ class Parsedown
 
                     if (preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
                     {
-                        if ($element['indentation'] !== $matches[1])
+                        if ($block['indentation'] !== $matches[1])
                         {
-                            $element['lines'] []= $line;
+                            $block['lines'] []= $line;
                         }
                         else
                         {
-                            unset($element['last']);
+                            unset($block['last']);
 
-                            $elements []= $element;
+                            $blocks []= $block;
 
-                            unset($element['first']);
+                            unset($block['first']);
 
-                            $element['last'] = true;
-                            $element['lines'] = array(
+                            $block['last'] = true;
+                            $block['lines'] = array(
                                 preg_replace('/^[ ]{0,4}/', '', $matches[3]),
                             );
                         }
@@ -207,17 +207,17 @@ class Parsedown
                         continue 2;
                     }
 
-                    if (isset($element['interrupted']))
+                    if (isset($block['interrupted']))
                     {
                         if ($line[0] === ' ')
                         {
-                            $element['lines'] []= '';
+                            $block['lines'] []= '';
 
                             $line = preg_replace('/^[ ]{0,4}/', '', $line);
 
-                            $element['lines'] []= $line;
+                            $block['lines'] []= $line;
 
-                            unset($element['interrupted']);
+                            unset($block['interrupted']);
 
                             continue 2;
                         }
@@ -226,7 +226,7 @@ class Parsedown
                     {
                         $line = preg_replace('/^[ ]{0,4}/', '', $line);
 
-                        $element['lines'] []= $line;
+                        $block['lines'] []= $line;
 
                         continue 2;
                     }
@@ -246,22 +246,22 @@ class Parsedown
                     {
                         $code_line = substr($line, 4);
 
-                        if ($element['type'] === 'code block')
+                        if ($block['type'] === 'code block')
                         {
-                            if (isset($element['interrupted']))
+                            if (isset($block['interrupted']))
                             {
-                                $element['text'] .= "\n";
+                                $block['text'] .= "\n";
 
-                                unset($element['interrupted']);
+                                unset($block['interrupted']);
                             }
 
-                            $element['text'] .= "\n".$code_line;
+                            $block['text'] .= "\n".$code_line;
                         }
                         else
                         {
-                            $elements []= $element;
+                            $blocks []= $block;
 
-                            $element = array(
+                            $block = array(
                                 'type' => 'code block',
                                 'text' => $code_line,
                             );
@@ -278,7 +278,7 @@ class Parsedown
 
                     if (isset($line[1]))
                     {
-                        $elements []= $element;
+                        $blocks []= $block;
 
                         $level = 1;
 
@@ -287,7 +287,7 @@ class Parsedown
                             $level++;
                         }
 
-                        $element = array(
+                        $block = array(
                             'type' => 'heading',
                             'text' => trim($line, '# '),
                             'level' => $level,
@@ -303,7 +303,7 @@ class Parsedown
 
                     # setext heading
 
-                    if ($element['type'] === 'paragraph' and isset($element['interrupted']) === false)
+                    if ($block['type'] === 'paragraph' and isset($block['interrupted']) === false)
                     {
                         $chopped_line = chop($line);
 
@@ -319,8 +319,8 @@ class Parsedown
                             $i++;
                         }
 
-                        $element['type'] = 'heading';
-                        $element['level'] = $line[0] === '-' ? 2 : 1;
+                        $block['type'] = 'heading';
+                        $block['level'] = $line[0] === '-' ? 2 : 1;
 
                         continue 2;
                     }
@@ -365,11 +365,11 @@ class Parsedown
                             break;
                         }
 
-                        $elements []= $element;
+                        $blocks []= $block;
 
                         if (isset($self_closing))
                         {
-                            $element = array(
+                            $block = array(
                                 'type' => 'self-closing tag',
                                 'text' => $deindented_line,
                             );
@@ -379,7 +379,7 @@ class Parsedown
                             continue 2;
                         }
 
-                        $element = array(
+                        $block = array(
                             'type' => 'block-level markup',
                             'text' => $deindented_line,
                             'start' => '<'.$name.'>',
@@ -387,9 +387,9 @@ class Parsedown
                             'depth' => 0,
                         );
 
-                        if (strpos($deindented_line, $element['end']))
+                        if (strpos($deindented_line, $block['end']))
                         {
-                            $element['closed'] = true;
+                            $block['closed'] = true;
                         }
 
                         continue 2;
@@ -403,9 +403,9 @@ class Parsedown
 
                     if (preg_match('/^>[ ]?(.*)/', $deindented_line, $matches))
                     {
-                        $elements []= $element;
+                        $blocks []= $block;
 
-                        $element = array(
+                        $block = array(
                             'type' => 'blockquote',
                             'lines' => array(
                                 $matches[1],
@@ -446,9 +446,9 @@ class Parsedown
 
                     if (preg_match('/^([`]{3,}|[~]{3,})[ ]*(\S+)?[ ]*$/', $deindented_line, $matches))
                     {
-                        $elements []= $element;
+                        $blocks []= $block;
 
-                        $element = array(
+                        $block = array(
                             'type' => 'fenced block',
                             'text' => '',
                             'fence' => $matches[1],
@@ -456,7 +456,7 @@ class Parsedown
 
                         if (isset($matches[2]))
                         {
-                            $element['language'] = $matches[2];
+                            $block['language'] = $matches[2];
                         }
 
                         continue 2;
@@ -473,9 +473,9 @@ class Parsedown
 
                     if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $deindented_line))
                     {
-                        $elements []= $element;
+                        $blocks []= $block;
 
-                        $element = array(
+                        $block = array(
                             'type' => 'hr',
                         );
 
@@ -486,9 +486,9 @@ class Parsedown
 
                     if (preg_match('/^([ ]*)[*+-][ ](.*)/', $line, $matches))
                     {
-                        $elements []= $element;
+                        $blocks []= $block;
 
-                        $element = array(
+                        $block = array(
                             'type' => 'li',
                             'ordered' => false,
                             'indentation' => $matches[1],
@@ -507,9 +507,9 @@ class Parsedown
 
             if ($deindented_line[0] <= '9' and $deindented_line[0] >= '0' and preg_match('/^([ ]*)\d+[.][ ](.*)/', $line, $matches))
             {
-                $elements []= $element;
+                $blocks []= $block;
 
-                $element = array(
+                $block = array(
                     'type' => 'li',
                     'ordered' => true,
                     'indentation' => $matches[1],
@@ -525,40 +525,40 @@ class Parsedown
 
             # paragraph
 
-            if ($element['type'] === 'paragraph')
+            if ($block['type'] === 'paragraph')
             {
-                if (isset($element['interrupted']))
+                if (isset($block['interrupted']))
                 {
-                    $elements []= $element;
+                    $blocks []= $block;
 
-                    $element['text'] = $line;
+                    $block['text'] = $line;
 
-                    unset($element['interrupted']);
+                    unset($block['interrupted']);
                 }
                 else
                 {
                     if ($this->breaks_enabled)
                     {
-                        $element['text'] .= '  ';
+                        $block['text'] .= '  ';
                     }
 
-                    $element['text'] .= "\n".$line;
+                    $block['text'] .= "\n".$line;
                 }
             }
             else
             {
-                $elements []= $element;
+                $blocks []= $block;
 
-                $element = array(
+                $block = array(
                     'type' => 'paragraph',
                     'text' => $line,
                 );
             }
         }
 
-        $elements []= $element;
+        $blocks []= $block;
 
-        unset($elements[0]);
+        unset($blocks[0]);
 
         #
         # ~
@@ -566,17 +566,17 @@ class Parsedown
 
         $markup = '';
 
-        foreach ($elements as $element)
+        foreach ($blocks as $block)
         {
-            switch ($element['type'])
+            switch ($block['type'])
             {
                 case 'paragraph':
 
-                    $text = $this->parse_span_elements($element['text']);
+                    $text = $this->parse_span_elements($block['text']);
 
                     if ($context === 'li' and $markup === '')
                     {
-                        if (isset($element['interrupted']))
+                        if (isset($block['interrupted']))
                         {
                             $markup .= "\n".'<p>'.$text.'</p>'."\n";
                         }
@@ -584,7 +584,7 @@ class Parsedown
                         {
                             $markup .= $text;
 
-                            if (isset($elements[2]))
+                            if (isset($blocks[2]))
                             {
                                 $markup .= "\n";
                             }
@@ -599,7 +599,7 @@ class Parsedown
 
                 case 'blockquote':
 
-                    $text = $this->parse_block_elements($element['lines']);
+                    $text = $this->parse_block_elements($block['lines']);
 
                     $markup .= '<blockquote>'."\n".$text.'</blockquote>'."\n";
 
@@ -607,7 +607,7 @@ class Parsedown
 
                 case 'code block':
 
-                    $text = htmlspecialchars($element['text'], ENT_NOQUOTES, 'UTF-8');
+                    $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
 
                     $markup .= '<pre><code>'.$text.'</code></pre>'."\n";
 
@@ -615,13 +615,13 @@ class Parsedown
 
                 case 'fenced block':
 
-                    $text = htmlspecialchars($element['text'], ENT_NOQUOTES, 'UTF-8');
+                    $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
 
                     $markup .= '<pre><code';
 
-                    if (isset($element['language']))
+                    if (isset($block['language']))
                     {
-                        $markup .= ' class="language-'.$element['language'].'"';
+                        $markup .= ' class="language-'.$block['language'].'"';
                     }
 
                     $markup .= '>'.$text.'</code></pre>'."\n";
@@ -630,9 +630,9 @@ class Parsedown
 
                 case 'heading':
 
-                    $text = $this->parse_span_elements($element['text']);
+                    $text = $this->parse_span_elements($block['text']);
 
-                    $markup .= '<h'.$element['level'].'>'.$text.'</h'.$element['level'].'>'."\n";
+                    $markup .= '<h'.$block['level'].'>'.$text.'</h'.$block['level'].'>'."\n";
 
                     break;
 
@@ -644,25 +644,25 @@ class Parsedown
 
                 case 'li':
 
-                    if (isset($element['first']))
+                    if (isset($block['first']))
                     {
-                        $type = $element['ordered'] ? 'ol' : 'ul';
+                        $type = $block['ordered'] ? 'ol' : 'ul';
 
                         $markup .= '<'.$type.'>'."\n";
                     }
 
-                    if (isset($element['interrupted']) and ! isset($element['last']))
+                    if (isset($block['interrupted']) and ! isset($block['last']))
                     {
-                        $element['lines'] []= '';
+                        $block['lines'] []= '';
                     }
 
-                    $text = $this->parse_block_elements($element['lines'], 'li');
+                    $text = $this->parse_block_elements($block['lines'], 'li');
 
                     $markup .= '<li>'.$text.'</li>'."\n";
 
-                    if (isset($element['last']))
+                    if (isset($block['last']))
                     {
-                        $type = $element['ordered'] ? 'ol' : 'ul';
+                        $type = $block['ordered'] ? 'ol' : 'ul';
 
                         $markup .= '</'.$type.'>'."\n";
                     }
@@ -671,13 +671,13 @@ class Parsedown
 
                 case 'block-level markup':
 
-                    $markup .= $element['text']."\n";
+                    $markup .= $block['text']."\n";
 
                     break;
 
                 default:
 
-                    $markup .= $element['text']."\n";
+                    $markup .= $block['text']."\n";
             }
         }
 
