@@ -98,7 +98,7 @@ class Parsedown
 
             switch ($block['type'])
             {
-                case 'fenced block':
+                case 'fenced':
 
                     if ( ! isset($block['closed']))
                     {
@@ -121,7 +121,7 @@ class Parsedown
 
                     break;
 
-                case 'block-level markup':
+                case 'markup':
 
                     if ( ! isset($block['closed']))
                     {
@@ -165,7 +165,7 @@ class Parsedown
 
             switch ($block['type'])
             {
-                case 'blockquote':
+                case 'quote':
 
                     if ( ! isset($block['interrupted']))
                     {
@@ -243,7 +243,7 @@ class Parsedown
                     {
                         $code_line = substr($line, 4);
 
-                        if ($block['type'] === 'code block')
+                        if ($block['type'] === 'code')
                         {
                             if (isset($block['interrupted']))
                             {
@@ -259,7 +259,7 @@ class Parsedown
                             $blocks []= $block;
 
                             $block = array(
-                                'type' => 'code block',
+                                'type' => 'code',
                                 'text' => $code_line,
                             );
                         }
@@ -383,7 +383,7 @@ class Parsedown
                         }
 
                         $block = array(
-                            'type' => 'block-level markup',
+                            'type' => 'markup',
                             'text' => $deindented_line,
                             'start' => '<'.$name.'>',
                             'end' => '</'.$name.'>',
@@ -409,7 +409,7 @@ class Parsedown
                         $blocks []= $block;
 
                         $block = array(
-                            'type' => 'blockquote',
+                            'type' => 'quote',
                             'lines' => array(
                                 $matches[1],
                             ),
@@ -452,7 +452,7 @@ class Parsedown
                         $blocks []= $block;
 
                         $block = array(
-                            'type' => 'fenced block',
+                            'type' => 'fenced',
                             'text' => '',
                             'fence' => $matches[1],
                         );
@@ -479,7 +479,7 @@ class Parsedown
                         $blocks []= $block;
 
                         $block = array(
-                            'type' => 'hr',
+                            'type' => 'rule',
                         );
 
                         continue 2;
@@ -600,7 +600,7 @@ class Parsedown
 
                     break;
 
-                case 'blockquote':
+                case 'quote':
 
                     $text = $this->parse_block_elements($block['lines']);
 
@@ -608,7 +608,7 @@ class Parsedown
 
                     break;
 
-                case 'code block':
+                case 'code':
 
                     $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
 
@@ -616,7 +616,7 @@ class Parsedown
 
                     break;
 
-                case 'fenced block':
+                case 'fenced':
 
                     $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
 
@@ -639,7 +639,7 @@ class Parsedown
 
                     break;
 
-                case 'hr':
+                case 'rule':
 
                     $markup .= '<hr />'."\n";
 
@@ -672,7 +672,7 @@ class Parsedown
 
                     break;
 
-                case 'block-level markup':
+                case 'markup':
 
                     $markup .= $block['text']."\n";
 
