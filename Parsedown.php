@@ -808,6 +808,8 @@ class Parsedown
 
         while ($markers)
         {
+            # preserve order of markers as they is important for example when having [ and [[
+            ksort($markers);
             $closest_marker = null;
             $closest_marker_index = 0;
             $closest_marker_position = null;
