@@ -931,7 +931,7 @@ class Parsedown
 
                     if (strpos($text, '>') !== false)
                     {
-                        if ($text[1] === 'h' and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/ui', $text, $matches))
+                        if ($text[1] === 'h' and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $text, $matches))
                         {
                             $element_url = $matches[1];
                             $element_url = str_replace('&', '&amp;', $element_url);
