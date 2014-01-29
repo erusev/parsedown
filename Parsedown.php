@@ -49,6 +49,49 @@ class Parsedown
     private $breaks_enabled = false;
 
     #
+    # Add special handler for a span element marker.
+    #
+    # $marker: a string representing a marker for an inline element e.g. '[' or '~'
+    # $handler: a php callback or anonymous function the signature of this function must be as follows:
+    #
+    # function ($text, &$markup) {}
+    #
+    # $text is the currently parsed markdown starting with the marker the handler is registered for.
+    # The $markup parameter is given by reference and it represents the html markup
+    # that the handler should append the rendered result to.
+    #
+    # The handler may return an offset that should be cut off from the text before continuing parsing.
+    #
+    function add_span_marker($marker, $handler)
+    {
+        $this->markers[] = $marker;
+        $this->marker_handlers[] = $handler;
+
+        return $this;
+    }
+
+    private $markers = array("  \n", '![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~');
+    private $marker_handlers = array();
+
+    #
+    # Remove a marker from the list of inline markers.
+    #
+    # $marker: a string representing a marker for an inline element e.g. '[' or '~'
+    #
+    function remove_span_marker($marker)
+    {
+        if (($key = array_search($marker, $this->markers)) !== false) {
+            unset($this->markers[$key]);
+        }
+        if (isset($this->marker_handlers[$marker]))
+        {
+            unset($this->marker_handlers[$marker]);
+        }
+
+        return $this;
+    }
+
+    #
     # Synopsis
     #
 
@@ -692,8 +735,12 @@ class Parsedown
         return $markup;
     }
 
-    private function parse_span_elements($text, $markers = array("  \n", '![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~'))
+    private function parse_span_elements($text, $markers = null)
     {
+        # set markers to default on initial call
+        if ($markers === null) {
+            $markers = $this->markers;
+        }
         if (isset($text[1]) === false or $markers === array())
         {
             return $text;
@@ -1044,6 +1091,12 @@ class Parsedown
                         $offset = 2;
                     }
 
+                    break;
+                default:
+                    # allow special handlers to handle marker
+                    if (isset($this->marker_handlers[$closest_marker])) {
+                        $offset = call_user_func($this->marker_handlers[$closest_marker], $text, $markup);
+                    }
                     break;
             }
 
