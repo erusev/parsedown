@@ -87,6 +87,23 @@ class Parsedown
     }
 
     #
+    # Parses a single line by using only inline markdown
+    #
+    function parseLine($line)
+    {
+        # remove line breaks and replace tabs with spaces
+        $line = str_replace(["\r\n", "\n", "\r", "\t"], ' ', $line);
+
+        # remove surrounding line breaks and space
+        $line = trim($line);
+
+        # convert line into html
+        $line = $this->parse_span_elements($line);
+
+        return $line;
+    }
+
+    #
     # Private
 
     private function parse_block_elements(array $lines, $context = '')
