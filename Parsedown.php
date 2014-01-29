@@ -49,12 +49,18 @@ class Parsedown
     private $breaks_enabled = false;
 
     #
-    # Methods
+    # Synopsis
     #
 
-    # Parsedown tries to read Markdown texts the way humans do. First, it breaks
-    # texts into lines. Then, it identifies blocks by looking at how these lines
-    # start and relate to each other. Finally, it identifies inline elements.
+    # Markdown is intended to be easy-to-read by humans - those of us who read
+    # line by line, left to right, top to bottom. In order to take advantage of
+    # this, Parsedown tries to read in a similar way. It breaks texts into
+    # lines, it iterates through them and it looks at how they start and relate
+    # to each other.
+
+    #
+    # Methods
+    #
 
     function parse($text)
     {
@@ -82,7 +88,6 @@ class Parsedown
 
     #
     # Private
-    #
 
     private function parse_block_elements(array $lines, $context = '')
     {
@@ -94,7 +99,7 @@ class Parsedown
 
         foreach ($lines as $line)
         {
-            # fenced blocks
+            # context
 
             switch ($block['type'])
             {
@@ -150,9 +155,11 @@ class Parsedown
                     break;
             }
 
-            # *
+            # ~
 
             $deindented_line = ltrim($line);
+
+            # blank
 
             if ($deindented_line === '')
             {
@@ -161,7 +168,7 @@ class Parsedown
                 continue;
             }
 
-            # composite blocks
+            # context
 
             switch ($block['type'])
             {
@@ -237,7 +244,7 @@ class Parsedown
             {
                 case ' ':
 
-                    # code block
+                    # code
 
                     if (isset($line[3]) and $line[3] === ' ' and $line[2] === ' ' and $line[1] === ' ')
                     {
@@ -298,7 +305,7 @@ class Parsedown
                 case '-':
                 case '=':
 
-                    # setext heading
+                    # setext heading (===)
 
                     if ($block['type'] === 'paragraph' and isset($block['interrupted']) === false)
                     {
@@ -506,7 +513,7 @@ class Parsedown
                     }
             }
 
-            # li
+            # list item
 
             if ($deindented_line[0] <= '9' and $deindented_line[0] >= '0' and preg_match('/^([ ]*)\d+[.][ ](.*)/', $line, $matches))
             {
@@ -563,9 +570,7 @@ class Parsedown
 
         unset($blocks[0]);
 
-        #
-        # ~
-        #
+        # $blocks » HTML
 
         $markup = '';
 
@@ -1061,7 +1066,6 @@ class Parsedown
 
     #
     # Read-only
-    #
 
     private static $strong_regex = array(
         '*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
