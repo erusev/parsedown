@@ -65,7 +65,7 @@ class Parsedown
     function add_span_marker($marker, $handler)
     {
         $this->markers[] = $marker;
-        $this->marker_handlers[] = $handler;
+        $this->marker_handlers[$marker] = $handler;
 
         return $this;
     }
