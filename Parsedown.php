@@ -931,7 +931,7 @@ class Parsedown
 
                     if (strpos($text, '>') !== false)
                     {
-                        if ($text[1] === 'h' and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $text, $matches))
+                        if ($text[1] === 'h' and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/ui', $text, $matches))
                         {
                             $element_url = $matches[1];
                             $element_url = str_replace('&', '&amp;', $element_url);
@@ -1008,7 +1008,7 @@ class Parsedown
 
                 case 'http':
 
-                    if (preg_match('/^https?:[\/]{2}[^\s]+\b/i', $text, $matches))
+                    if (preg_match('/^https?:[\/]{2}[^\s]+\b/ui', $text, $matches))
                     {
                         $element_url = $matches[0];
                         $element_url = str_replace('&', '&amp;', $element_url);
@@ -1068,22 +1068,22 @@ class Parsedown
     # Read-only
 
     private static $strong_regex = array(
-        '*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/us',
+        '*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
         '_' => '/^__([^_]+?)__(?!_)/us',
     );
 
     private static $em_regex = array(
-        '*' => '/^[*]([^*]+?)[*](?![*])/us',
+        '*' => '/^[*]([^*]+?)[*](?![*])/s',
         '_' => '/^_([^_]+?)[_](?![_])\b/us',
     );
 
     private static $strong_em_regex = array(
-        '*' => '/^[*]{2}(.*?)[*](.+?)[*](.*?)[*]{2}/us',
+        '*' => '/^[*]{2}(.*?)[*](.+?)[*](.*?)[*]{2}/s',
         '_' => '/^__(.*?)_(.+?)_(.*?)__/us',
     );
 
     private static $em_strong_regex = array(
-        '*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/us',
+        '*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
         '_' => '/^_(.*?)__(.+?)__(.*?)_/us',
     );
 
