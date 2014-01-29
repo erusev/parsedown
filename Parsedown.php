@@ -92,7 +92,7 @@ class Parsedown
     function parseLine($line)
     {
         # remove line breaks and replace tabs with spaces
-        $line = str_replace(["\r\n", "\n", "\r", "\t"], ' ', $line);
+        $line = str_replace(array("\r\n", "\n", "\r", "\t"), ' ', $line);
 
         # remove surrounding line breaks and space
         $line = trim($line);
