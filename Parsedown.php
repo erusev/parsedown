@@ -86,6 +86,30 @@ class Parsedown
         return $text;
     }
 
+
+    #
+    # This method will be called before an element will be transformed to html.
+    #
+    # The markdown element is represented as an array which is given by reference so you can manipulate
+    # it directly. You may override this method to do arbitrary adjustments to the elements properties and content.
+    #
+    # @param array $block the markdown element to process. This array always has a 'type' key which refers to the type
+    # of element given. There may be further keys in the array dependent on the element type such as 'text' or 'lines'.
+    # Available types are among others:
+    # - 'markup'
+    # - 'quote'
+    # - 'code'
+    # - 'fenced'
+    # - 'rule'
+    # - 'heading'
+    # - 'li'
+    # - 'paragraph'
+    #
+    protected function pre_process_block_element(&$block)
+    {
+    }
+
+
     #
     # Private
 
@@ -576,6 +600,10 @@ class Parsedown
 
         foreach ($blocks as $block)
         {
+            # allow extending classes to pre-process the element
+            # before it is converted to html
+            $this->pre_process_block_element($block);
+
             switch ($block['type'])
             {
                 case 'paragraph':
