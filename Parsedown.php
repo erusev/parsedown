@@ -547,7 +547,7 @@ class Parsedown
                 $parts    = array_map('trim',$parts);
 
                 // If the table has been interupted start a new block
-                if ($block['interrupted'] && $block['type'] === 'table') {
+                if (isset($block['interrupted']) && $block['type'] === 'table') {
                     $blocks[]      = $block;
                     $block['type'] = '';
                 }
@@ -774,7 +774,12 @@ class Parsedown
 
                 default:
 
-                    $markup .= $block['text']."\n";
+                    if (isset($block['text'])) {
+                        $markup .= $block['text'];
+                    }
+
+                    $markup .= "\n";
+
             }
         }
 
