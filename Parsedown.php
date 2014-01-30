@@ -13,6 +13,14 @@
 #
 #
 
+if (Parsedown::is_cli() && is_readable($argv[1])) {
+	$str  = file_get_contents($argv[1]);
+
+	print Parsedown::instance()->parse($str);
+
+	exit();
+}
+
 class Parsedown
 {
     # Multiton
@@ -47,6 +55,16 @@ class Parsedown
     }
 
     private $breaks_enabled = false;
+
+	# Detect if we're running in CLI mode
+
+	public static function is_cli() {
+		if (php_sapi_name() == 'cli') {
+			return true;
+		}
+
+		return false;
+	}
 
     #
     # Synopsis
