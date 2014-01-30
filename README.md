@@ -29,3 +29,9 @@ $result = Parsedown::instance()->parse($text);
 
 echo $result; # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
+
+### CLI Example
+
+```
+php Parsedown.php document.md > document.html
+```
