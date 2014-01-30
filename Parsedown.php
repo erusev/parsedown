@@ -13,8 +13,14 @@
 #
 #
 
-if (Parsedown::is_cli() && is_readable($argv[1])) {
-	$str  = file_get_contents($argv[1]);
+if (Parsedown::is_cli()) {
+	$file_mode = is_readable($argv[1]);
+
+	if ($file_mode) {
+		$str = file_get_contents($argv[1]);
+	} else {
+		$str = file_get_contents("php://stdin");
+	}
 
 	print Parsedown::instance()->parse($str);
 
