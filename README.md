@@ -33,5 +33,6 @@ echo $result; # prints: <p>Hello <em>Parsedown</em>!</p>
 ### CLI Example
 
 ```
-php Parsedown.php document.md > document.html
+cd bin
+./parsedown document.md > document.html
 ```
