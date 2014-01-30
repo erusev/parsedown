@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?PHP
+
+$dir = dirname(__FILE__);
+require("$dir/../Parsedown.php");
+
+//////////////////////////////////////////////
+
+$file_mode = is_readable($argv[1]);
+
+// From a file
+if ($file_mode) {
+	$str = file_get_contents($argv[1]);
+// From STDIN
+} else {
+	$str = file_get_contents("php://stdin");
+}
+
+print Parsedown::instance()->parse($str);
