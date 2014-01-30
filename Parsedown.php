@@ -48,16 +48,6 @@ class Parsedown
 
     private $breaks_enabled = false;
 
-	# Detect if we're running in CLI mode
-
-	public static function is_cli() {
-		if (php_sapi_name() == 'cli') {
-			return true;
-		}
-
-		return false;
-	}
-
     #
     # Synopsis
     #
