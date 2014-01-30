@@ -29,3 +29,7 @@ $result = Parsedown::instance()->parse($text);
 
 echo $result; # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
+
+### Contributing
+
+Please follow the [contribution guidelines](contributing.md).
