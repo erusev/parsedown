@@ -546,6 +546,12 @@ class Parsedown
                 $parts    = preg_split("/\|/",$tmp_line);
                 $parts    = array_map('trim',$parts);
 
+                // If the table has been interupted start a new block
+                if ($block['interrupted'] && $block['type'] === 'table') {
+                    $blocks[]      = $block;
+                    $block['type'] = '';
+                }
+
                 if ($block['type'] === 'table') {
                     // This is the alignment/separator line
                     if (preg_match("/\|[: ]-/",$line)) {
