@@ -157,7 +157,14 @@ class Parsedown
 
             # ~
 
-            $deindented_line = ltrim($line);
+            $indentation = 0;
+
+            while(isset($line[$indentation]) and $line[$indentation] === ' ')
+            {
+                $indentation++;
+            }
+
+            $deindented_line = $indentation > 0 ? ltrim($line) : $line;
 
             # blank
 
@@ -187,50 +194,39 @@ class Parsedown
 
                 case 'li':
 
-                    if (preg_match('/^([ ]{0,3})(\d+[.]|[*+-])[ ](.*)/', $line, $matches))
+                    if ($block['indentation'] === $indentation and preg_match('/^'.$block['marker'].'[ ](.*)/', $deindented_line, $matches))
                     {
-                        if ($block['indentation'] !== $matches[1])
-                        {
-                            $block['lines'] []= $line;
-                        }
-                        else
-                        {
-                            unset($block['last']);
+                        unset($block['last']);
 
-                            $blocks []= $block;
+                        $blocks []= $block;
 
-                            unset($block['first']);
+                        unset($block['first']);
 
-                            $block['last'] = true;
+                        $block['last'] = true;
+                        $block['lines'] = array();
 
-                            $block['lines'] = array(
-                                preg_replace('/^[ ]{0,4}/', '', $matches[3]),
-                            );
-                        }
+                        $block['lines'] []= preg_replace('/^[ ]{0,4}/', '', $matches[1]);
 
                         continue 2;
                     }
 
-                    if (isset($block['interrupted']))
-                    {
-                        if ($line[0] === ' ')
-                        {
-                            $block['lines'] []= '';
-
-                            $line = preg_replace('/^[ ]{0,4}/', '', $line);
-
-                            $block['lines'] []= $line;
-
-                            unset($block['interrupted']);
-
-                            continue 2;
-                        }
-                    }
-                    else
+                    if ( ! isset($block['interrupted']))
                     {
                         $line = preg_replace('/^[ ]{0,4}/', '', $line);
 
                         $block['lines'] []= $line;
+
+                        continue 2;
+                    }
+                    elseif ($line[0] === ' ')
+                    {
+                        $block['lines'] []= '';
+
+                        $line = preg_replace('/^[ ]{0,4}/', '', $line);
+
+                        $block['lines'] []= $line;
+
+                        unset($block['interrupted']);
 
                         continue 2;
                     }
@@ -246,7 +242,7 @@ class Parsedown
 
                     # code
 
-                    if (isset($line[3]) and $line[3] === ' ' and $line[2] === ' ' and $line[1] === ' ')
+                    if ($indentation >= 4)
                     {
                         $code_line = substr($line, 4);
 
@@ -494,20 +490,20 @@ class Parsedown
 
                     # li
 
-                    if (preg_match('/^([ ]*)[*+-][ ](.*)/', $line, $matches))
+                    if (preg_match('/^[*+-][ ](.*)/', $deindented_line, $matches))
                     {
                         $blocks []= $block;
 
                         $block = array(
                             'type' => 'li',
-                            'ordered' => false,
-                            'indentation' => $matches[1],
+                            'indentation' => $indentation,
+                            'marker' => '[*+-]',
                             'first' => true,
                             'last' => true,
-                            'lines' => array(
-                                preg_replace('/^[ ]{0,4}/', '', $matches[2]),
-                            ),
+                            'lines' => array(),
                         );
+
+                        $block['lines'] []= preg_replace('/^[ ]{0,4}/', '', $matches[1]);
 
                         continue 2;
                     }
@@ -515,20 +511,21 @@ class Parsedown
 
             # list item
 
-            if ($deindented_line[0] <= '9' and $deindented_line[0] >= '0' and preg_match('/^([ ]*)\d+[.][ ](.*)/', $line, $matches))
+            if ($deindented_line[0] <= '9' and preg_match('/^\d+[.][ ](.*)/', $deindented_line, $matches))
             {
                 $blocks []= $block;
 
                 $block = array(
                     'type' => 'li',
-                    'ordered' => true,
-                    'indentation' => $matches[1],
+                    'indentation' => $indentation,
+                    'marker' => '\d+[.]',
                     'first' => true,
                     'last' => true,
-                    'lines' => array(
-                        preg_replace('/^[ ]{0,4}/', '', $matches[2]),
-                    ),
+                    'ordered' => true,
+                    'lines' => array(),
                 );
+
+                $block['lines'] []= preg_replace('/^[ ]{0,4}/', '', $matches[1]);
 
                 continue;
             }
@@ -654,7 +651,7 @@ class Parsedown
 
                     if (isset($block['first']))
                     {
-                        $type = $block['ordered'] ? 'ol' : 'ul';
+                        $type = isset($block['ordered']) ? 'ol' : 'ul';
 
                         $markup .= '<'.$type.'>'."\n";
                     }
@@ -670,7 +667,7 @@ class Parsedown
 
                     if (isset($block['last']))
                     {
-                        $type = $block['ordered'] ? 'ol' : 'ul';
+                        $type = isset($block['ordered']) ? 'ol' : 'ul';
 
                         $markup .= '</'.$type.'>'."\n";
                     }
