@@ -200,12 +200,13 @@ class Parsedown
 
                         $blocks []= $block;
 
-                        unset($block['first']);
-
                         $block['last'] = true;
                         $block['lines'] = array();
 
                         $block['lines'] []= preg_replace('/^[ ]{0,4}/', '', $matches[1]);
+
+                        unset($block['first']);
+                        unset($block['interrupted']);
 
                         continue 2;
                     }
