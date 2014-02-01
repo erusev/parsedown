@@ -1,15 +1,13 @@
 #!/usr/bin/env php
-<?PHP
+<?php
 
 $dir = dirname(__FILE__);
 require("$dir/../Parsedown.php");
 
 //////////////////////////////////////////////
 
-$file_mode = is_readable($argv[1]);
-
 // From a file
-if ($file_mode) {
+if (isset($argv[1]) && is_readable($argv[1])) {
 	$str = file_get_contents($argv[1]);
 // From STDIN
 } else {
