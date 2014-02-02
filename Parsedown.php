@@ -164,11 +164,11 @@ class Parsedown
                 $indentation++;
             }
 
-            $deindented_line = $indentation > 0 ? ltrim($line) : $line;
+            $outdented_line = $indentation > 0 ? ltrim($line) : $line;
 
             # blank
 
-            if ($deindented_line === '')
+            if ($outdented_line === '')
             {
                 $block['interrupted'] = true;
 
@@ -194,7 +194,7 @@ class Parsedown
 
                 case 'li':
 
-                    if ($block['indentation'] === $indentation and preg_match('/^'.$block['marker'].'[ ]+(.*)/', $deindented_line, $matches))
+                    if ($block['indentation'] === $indentation and preg_match('/^'.$block['marker'].'[ ]+(.*)/', $outdented_line, $matches))
                     {
                         unset($block['last']);
 
@@ -330,15 +330,15 @@ class Parsedown
 
             # indentation insensitive types
 
-            switch ($deindented_line[0])
+            switch ($outdented_line[0])
             {
                 case '<':
 
-                    $position = strpos($deindented_line, '>');
+                    $position = strpos($outdented_line, '>');
 
                     if ($position > 1)
                     {
-                        $substring = substr($deindented_line, 1, $position - 1);
+                        $substring = substr($outdented_line, 1, $position - 1);
 
                         $substring = chop($substring);
 
@@ -376,7 +376,7 @@ class Parsedown
                         {
                             $block = array(
                                 'type' => 'self-closing tag',
-                                'text' => $deindented_line,
+                                'text' => $outdented_line,
                             );
 
                             unset($is_self_closing);
@@ -386,13 +386,13 @@ class Parsedown
 
                         $block = array(
                             'type' => 'markup',
-                            'text' => $deindented_line,
+                            'text' => $outdented_line,
                             'start' => '<'.$name.'>',
                             'end' => '</'.$name.'>',
                             'depth' => 0,
                         );
 
-                        if (strpos($deindented_line, $block['end']))
+                        if (strpos($outdented_line, $block['end']))
                         {
                             $block['closed'] = true;
                         }
@@ -406,7 +406,7 @@ class Parsedown
 
                     # quote
 
-                    if (preg_match('/^>[ ]?(.*)/', $deindented_line, $matches))
+                    if (preg_match('/^>[ ]?(.*)/', $outdented_line, $matches))
                     {
                         $blocks []= $block;
 
@@ -426,7 +426,7 @@ class Parsedown
 
                     # reference
 
-                    if (preg_match('/^\[(.+?)\]:[ ]*(.+?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*$/', $deindented_line, $matches))
+                    if (preg_match('/^\[(.+?)\]:[ ]*(.+?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*$/', $outdented_line, $matches))
                     {
                         $label = strtolower($matches[1]);
 
@@ -449,7 +449,7 @@ class Parsedown
 
                     # fenced code block
 
-                    if (preg_match('/^([`]{3,}|[~]{3,})[ ]*(\S+)?[ ]*$/', $deindented_line, $matches))
+                    if (preg_match('/^([`]{3,}|[~]{3,})[ ]*(\S+)?[ ]*$/', $outdented_line, $matches))
                     {
                         $blocks []= $block;
 
@@ -476,7 +476,7 @@ class Parsedown
 
                     # hr
 
-                    if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $deindented_line))
+                    if (preg_match('/^([-*_])([ ]{0,2}\1){2,}[ ]*$/', $outdented_line))
                     {
                         $blocks []= $block;
 
@@ -489,7 +489,7 @@ class Parsedown
 
                     # li
 
-                    if (preg_match('/^([*+-][ ]+)(.*)/', $deindented_line, $matches))
+                    if (preg_match('/^([*+-][ ]+)(.*)/', $outdented_line, $matches))
                     {
                         $blocks []= $block;
 
@@ -513,7 +513,7 @@ class Parsedown
 
             # li
 
-            if ($deindented_line[0] <= '9' and preg_match('/^(\d+[.][ ]+)(.*)/', $deindented_line, $matches))
+            if ($outdented_line[0] <= '9' and preg_match('/^(\d+[.][ ]+)(.*)/', $outdented_line, $matches))
             {
                 $blocks []= $block;
 
