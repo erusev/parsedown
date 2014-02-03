@@ -887,33 +887,17 @@ class Parsedown
 
                     if ($text[1] === $closest_marker and preg_match(self::$strong_regex[$closest_marker], $text, $matches))
                     {
+                        $markers[] = $closest_marker;
                         $matches[1] = $this->parse_span_elements($matches[1], $markers);
 
                         $markup .= '<strong>'.$matches[1].'</strong>';
                     }
                     elseif (preg_match(self::$em_regex[$closest_marker], $text, $matches))
                     {
+                        $markers[] = $closest_marker;
                         $matches[1] = $this->parse_span_elements($matches[1], $markers);
 
                         $markup .= '<em>'.$matches[1].'</em>';
-                    }
-                    elseif ($text[1] === $closest_marker and preg_match(self::$strong_em_regex[$closest_marker], $text, $matches))
-                    {
-                        $matches[2] = $this->parse_span_elements($matches[2], $markers);
-
-                        $matches[1] and $matches[1] = $this->parse_span_elements($matches[1], $markers);
-                        $matches[3] and $matches[3] = $this->parse_span_elements($matches[3], $markers);
-
-                        $markup .= '<strong>'.$matches[1].'<em>'.$matches[2].'</em>'.$matches[3].'</strong>';
-                    }
-                    elseif (preg_match(self::$em_strong_regex[$closest_marker], $text, $matches))
-                    {
-                        $matches[2] = $this->parse_span_elements($matches[2], $markers);
-
-                        $matches[1] and $matches[1] = $this->parse_span_elements($matches[1], $markers);
-                        $matches[3] and $matches[3] = $this->parse_span_elements($matches[3], $markers);
-
-                        $markup .= '<em>'.$matches[1].'<strong>'.$matches[2].'</strong>'.$matches[3].'</em>';
                     }
 
                     if (isset($matches) and $matches)
@@ -1070,23 +1054,13 @@ class Parsedown
     # Read-only
 
     private static $strong_regex = array(
-        '*' => '/^[*]{2}([^*]+?)[*]{2}(?![*])/s',
-        '_' => '/^__([^_]+?)__(?!_)/us',
+        '*' => '/^[*]{2}((?:[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
+        '_' => '/^__((?:[^_]|_[^_]*_)+?)__(?!_)/us',
     );
 
     private static $em_regex = array(
-        '*' => '/^[*]([^*]+?)[*](?![*])/s',
-        '_' => '/^_([^_]+?)[_](?![_])\b/us',
-    );
-
-    private static $strong_em_regex = array(
-        '*' => '/^[*]{2}(.*?)[*](.+?)[*](.*?)[*]{2}/s',
-        '_' => '/^__(.*?)_(.+?)_(.*?)__/us',
-    );
-
-    private static $em_strong_regex = array(
-        '*' => '/^[*](.*?)[*]{2}(.+?)[*]{2}(.*?)[*]/s',
-        '_' => '/^_(.*?)__(.+?)__(.*?)_/us',
+        '*' => '/^[*]((?:[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
+        '_' => '/^_((?:[^_]|__[^_]*__)+?)_(?!_)\b/us',
     );
 
     private static $special_characters = array(
