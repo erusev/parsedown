@@ -48,6 +48,17 @@ class Parsedown
 
     private $breaks_enabled = false;
 
+    # Set maximum recursion depth.
+
+    function set_max_recursion_depth($depth)
+    {
+        $this->maximum_recursion_depth = $depth;
+
+        return $this;
+    }
+
+    private $maximum_recursion_depth = 30;
+
     #
     # Synopsis
     #
@@ -89,8 +100,21 @@ class Parsedown
     #
     # Private
 
-    private function parse_block_elements(array $lines, $context = '')
+    private function parse_block_elements(array $lines, $params = array())
     {
+        $context = '';
+        if (isset($params['context'][0]))
+            $context = $params['context'];
+
+        # check recursion depth
+        $call_depth = 0;
+        if (isset($params['depth']))
+            $call_depth = $params['depth'] + 1;
+
+        if ($call_depth > $this->maximum_recursion_depth) {
+            return $this->parse_span_elements(implode("\n", $lines));
+        }
+
         $blocks = array();
 
         $block = array(
@@ -609,7 +633,8 @@ class Parsedown
 
                 case 'quote':
 
-                    $text = $this->parse_block_elements($block['lines']);
+                    $args = array('depth' => $call_depth);
+                    $text = $this->parse_block_elements($block['lines'], $args);
 
                     $markup .= '<blockquote>'."\n".$text.'</blockquote>'."\n";
 
@@ -666,7 +691,8 @@ class Parsedown
                         $block['lines'] []= '';
                     }
 
-                    $text = $this->parse_block_elements($block['lines'], 'li');
+                    $args = array('context' => 'li', 'depth' => $call_depth);
+                    $text = $this->parse_block_elements($block['lines'], $args);
 
                     $markup .= '<li>'.$text.'</li>'."\n";
 
