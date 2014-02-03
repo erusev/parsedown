@@ -535,6 +535,66 @@ class Parsedown
                 continue;
             }
 
+            # Table
+
+            // If the line starts with a | or has a | with a space before/after it
+            // it's a table line
+            if ($line[0] === '|' || preg_match("/(\| | \|)/",$line))
+            {
+                // Remove trailing and leading |
+                $tmp_line = preg_replace("/(^\||\|$)/","",$line);
+
+                // Break up the columns and remove any whitespace
+                $parts    = preg_split("/\|/",$tmp_line);
+                $parts    = array_map('trim',$parts);
+
+                // If the table has been interupted start a new block
+                if (isset($block['interrupted']) && $block['type'] === 'table') {
+                    $blocks[]      = $block;
+                    $block['type'] = '';
+                }
+
+                if ($block['type'] === 'table') {
+                    // This is the alignment/separator line
+                    if (preg_match("/\|[: ]-/",$line)) {
+                        foreach ($parts as $a) {
+                            $first_char = substr($a,0,1);
+                            $last_char  = substr($a,-1,1);
+
+                            $align = "left";
+                            if ($first_char === ":" && $last_char === ":") {
+                                $align = "center";
+                            } elseif ($last_char === ":") {
+                                $align = "right";
+                            }
+
+                            $alignments[] = $align;
+                        }
+
+                        $block['alignment']  = $alignments;
+                        $block['has_header'] = 1;
+                    } else {
+                        $block['items'][] = $parts;
+                    }
+
+                } else {
+                    $blocks []= $block;
+
+                    $block = array(
+                        'type'       => 'table',
+                        'items'      => array(),
+                        'has_header' => 0,
+                    );
+
+                    $block['items'][]   = $parts;
+                    // Default alignment is left (may be redefined later)
+                    $block['alignment'] = array_fill(0,sizeof($parts),"left");
+                    $alignments         = array();
+                }
+
+                continue 1;
+            }
+
             # paragraph
 
             if ($block['type'] === 'paragraph')
@@ -623,6 +683,35 @@ class Parsedown
 
                     break;
 
+                case 'table':
+
+                    $markup .= "<table>\n";
+
+                    if ($block['has_header']) {
+                        $markup .= "<tr>\n";
+                        $header_items = array_shift($block['items']);
+                        foreach ($header_items as $h) {
+                            $markup .= "\t<th>$h</th>\n";
+                        }
+                        $markup .= "</tr>\n";
+                    }
+
+                    foreach ($block['items'] as $row) {
+                        $num = 0;
+                        $markup .= "<tr>\n";
+                        foreach ($row as $i) {
+                            $alignment = $block['alignment'][$num];
+                            $i = self::parse_span_elements($i);
+                            $markup .= "\t<td style=\"text-align: $alignment\">$i</td>\n";
+                            $num++;
+                        }
+                        $markup .= "</tr>\n";
+                    }
+
+                    $markup .= "</table>\n";
+
+                    break;
+
                 case 'fenced':
 
                     $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
@@ -687,7 +776,12 @@ class Parsedown
 
                 default:
 
-                    $markup .= $block['text']."\n";
+                    if (isset($block['text'])) {
+                        $markup .= $block['text'];
+                    }
+
+                    $markup .= "\n";
+
             }
         }
 
