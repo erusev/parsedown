@@ -994,7 +994,8 @@ class Parsedown
 
                 case 'http':
 
-                    if (preg_match('/^https?:[\/]{2}[^\s]+\b/ui', $text, $matches))
+                    // Regexp From: http://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+                    if (preg_match('/(https?):\/\/([-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b)([-a-zA-Z0-9@:%_\+.~#?&=\/]*)/', $text, $matches))
                     {
                         $element_url = $matches[0];
                         $element_url = str_replace('&', '&amp;', $element_url);
