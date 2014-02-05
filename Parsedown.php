@@ -433,6 +433,7 @@ class Parsedown
                         $reference = array();
 
                         $label = substr($outdented_line, 1, $position - 1);
+                        $label = strtolower($label);
 
                         $substring = substr($outdented_line, $position + 2);
                         $substring = trim($substring);
