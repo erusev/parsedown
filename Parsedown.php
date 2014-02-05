@@ -48,6 +48,18 @@ class Parsedown
 
     private $breaks_enabled = false;
 
+
+    # Switch links parsing.
+
+    function set_parse_links($flag)
+    {
+        $this->parse_links = $flag;
+
+        return $this;
+    }
+
+    private $parse_links = true;
+
     #
     # Synopsis
     #
@@ -969,7 +981,7 @@ class Parsedown
 
                     if (strpos($text, '>') !== false)
                     {
-                        if ($text[1] === 'h' and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $text, $matches))
+                        if ($this->parse_links and $text[1] === 'h' and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $text, $matches))
                         {
                             $element_url = $matches[1];
                             $element_url = str_replace('&', '&amp;', $element_url);
@@ -1046,7 +1058,7 @@ class Parsedown
 
                 case 'http':
 
-                    if (preg_match('/^https?:[\/]{2}[^\s]+\b/ui', $text, $matches))
+                    if ($this->parse_links and preg_match('/^https?:[\/]{2}[^\s]+\b/ui', $text, $matches))
                     {
                         $element_url = $matches[0];
                         $element_url = str_replace('&', '&amp;', $element_url);
