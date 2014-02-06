@@ -7,3 +7,11 @@ a `code span`
 single backtick in a code span: `` ` ``
 
 backtick-delimited string in a code span: `` `foo` ``
+
+Trim spaces: `` code ``
+
+Multiple spaces: ``  like that  ``
+
+Unequal number of spaces: ``  like that   ``
+
+Space only at the beginning: `` code``
