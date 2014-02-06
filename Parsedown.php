@@ -438,6 +438,11 @@ class Parsedown
                         $substring = substr($outdented_line, $position + 2);
                         $substring = trim($substring);
 
+                        if ($substring === '')
+                        {
+                            break;
+                        }
+
                         if ($substring[0] === '<')
                         {
                             $position = strpos($substring, '>');
