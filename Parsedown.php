@@ -476,22 +476,19 @@ class Parsedown
 
                         if ($substring !== false)
                         {
+                            if ($substring[0] !== '"' and $substring[0] !== "'" and $substring[0] !== '(')
+                            {
+                                break;
+                            }
+
                             $last_char = substr($substring, -1);
 
-                            switch (true)
+                            if ($last_char !== '"' and $last_char !== "'" and $last_char !== ')')
                             {
-                                case $substring[0] === '"' and $substring[0] === $last_char:
-                                case $substring[0] === "'" and $substring[0] === $last_char:
-                                case $substring[0] === '(' and $last_char === ')':
-
-                                    $reference['#'] = substr($substring, 1, -1);
-
-                                    break;
-
-                                default:
-
-                                    break 2;
+                                break;
                             }
+
+                            $reference['#'] = substr($substring, 1, -1);
                         }
 
                         $this->reference_map[$label] = $reference;
