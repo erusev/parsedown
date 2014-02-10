@@ -277,18 +277,31 @@ class Parsedown
 
                     if (isset($line[1]))
                     {
-                        $blocks []= $block;
-
                         $level = 1;
 
-                        while (isset($line[$level]) and $line[$level] === '#')
+                        while (isset($line[$level]) and $level < 7 and $line[$level] === '#')
                         {
                             $level++;
                         }
 
+                        # check heading level
+                        if ($level == 7)
+                        {
+                            break;
+                        }
+
+                        $heading = trim($line, '# ');
+                        # check heading text
+                        if ( ! isset($heading[0]))
+                        {
+                            break;
+                        }
+
+                        $blocks []= $block;
+
                         $block = array(
                             'type' => 'heading',
-                            'text' => trim($line, '# '),
+                            'text' => $heading,
                             'level' => $level,
                         );
 
