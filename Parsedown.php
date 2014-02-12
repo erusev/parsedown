@@ -49,6 +49,99 @@ class Parsedown
     private $breaks_enabled = false;
 
     #
+    # Add special handler for a span element marker.
+    #
+    # $marker: a string representing a marker for an inline element e.g. '[' or '~'
+    # $handler: a php callback or anonymous function the signature of this function must be as follows:
+    #
+    # function ($text, &$markup) {}
+    #
+    # $text is the currently parsed markdown starting with the marker the handler is registered for.
+    # The $markup parameter is given by reference and it represents the html markup
+    # that the handler should append the rendered result to.
+    #
+    # The handler may return an offset that should be cut off from the text before continuing parsing.
+    #
+    function add_span_marker($marker, $handler)
+    {
+        $this->markers[] = $marker;
+        $this->marker_handlers[$marker] = $handler;
+
+        return $this;
+    }
+
+    #
+    # Remove a marker from the list of inline markers.
+    #
+    # $marker: a string representing a marker for an inline element e.g. '[' or '~'
+    #
+    function remove_span_marker($marker)
+    {
+        if (($key = array_search($marker, $this->markers)) !== false) {
+            unset($this->markers[$key]);
+        }
+        if (isset($this->marker_handlers[$marker]))
+        {
+            unset($this->marker_handlers[$marker]);
+        }
+
+        return $this;
+    }
+
+    private $markers = array("  \n", '![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~');
+    private $marker_handlers = array();
+
+    #
+    # This method registers a handler for block elements.
+    #
+    # $name: a string representing the block name to handle
+    # Available names are among others:
+    # - 'markup'
+    # - 'quote'
+    # - 'code'
+    # - 'fenced'
+    # - 'rule'
+    # - 'heading'
+    # - 'li'
+    # - 'paragraph'
+    #
+    # $handler: a php callback or anonymous function the signature of this function must be as follows:
+    #
+    # function (&$block, &$markup) {}
+    #
+    # The parameter $block represents the markdown element to process. This array always has a 'type' key which refers to the type
+    # of element given. There may be further keys in the array dependent on the element type such as 'text' or 'lines'.
+    #
+    # The $markup parameter is given by reference and it represents the html markup
+    # that the handler should append the rendered result to.
+    #
+    # A handler may be used to manipulate the $block array OR to parse the block and add the result to $markup.
+    # It can return a boolean value indicating whether this block should be parsed further (false) or it has already been
+    # parsed and the processing should continue with the next block (true).
+    #
+    function register_block_handler($name, $handler)
+    {
+        $this->block_handlers[$name] = $handler;
+
+        return $this;
+    }
+
+    #
+    # removes a registered block handler
+    #
+    function remove_block_handler($name)
+    {
+        if (isset($this->block_handlers[$name]))
+        {
+            unset($this->block_handlers[$name]);
+        }
+
+        return $this;
+    }
+
+    private $block_handlers = array();
+
+    #
     # Synopsis
     #
 
@@ -632,6 +725,12 @@ class Parsedown
 
         foreach ($blocks as $block)
         {
+            if (isset($this->block_handlers[$block['type']])) {
+                if (call_user_func_array($this->block_handlers[$block['type']], array(&$block, &$markup))) {
+                    continue;
+                }
+            }
+
             switch ($block['type'])
             {
                 case 'paragraph':
@@ -748,8 +847,12 @@ class Parsedown
         return $markup;
     }
 
-    private function parse_span_elements($text, $markers = array("  \n", '![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~'))
+    private function parse_span_elements($text, $markers = null)
     {
+        # set markers to default on initial call
+        if ($markers === null) {
+            $markers = $this->markers;
+        }
         if (isset($text[1]) === false or $markers === array())
         {
             return $text;
@@ -761,6 +864,8 @@ class Parsedown
 
         while ($markers)
         {
+            # preserve order of markers as they is important for example when having [ and [[
+            ksort($markers);
             $closest_marker = null;
             $closest_marker_index = 0;
             $closest_marker_position = null;
@@ -1084,6 +1189,12 @@ class Parsedown
                         $offset = 2;
                     }
 
+                    break;
+                default:
+                    # allow special handlers to handle marker
+                    if (isset($this->marker_handlers[$closest_marker])) {
+                        $offset = call_user_func_array($this->marker_handlers[$closest_marker], array($text, &$markup));
+                    }
                     break;
             }
 
