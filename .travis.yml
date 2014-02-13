@@ -7,3 +7,10 @@ php:
   - 5.3
   - 5.2
   - hhvm
+
+after_success:
+  - php --version | grep Zend >/dev/null && composer require --no-update composer/composer:*@dev
+  - php --version | grep Zend >/dev/null && composer require kzykhys/markbench:*@dev
+  - php --version | grep Zend >/dev/null && vendor/bin/markbench benchmark --parser=erusev/parsedown --profile=blank
+  - php --version | grep Zend >/dev/null && vendor/bin/markbench benchmark --parser=erusev/parsedown --profile=default
+  - php --version | grep Zend >/dev/null && vendor/bin/markbench benchmark --parser=erusev/parsedown --profile=github-sample
