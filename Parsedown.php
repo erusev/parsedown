@@ -818,7 +818,7 @@ class Parsedown
                 case '![':
                 case '[':
 
-                    if (strpos($text, ']') and preg_match('/\[((?:[^][]|(?R))*)\]/', $text, $matches))
+                    if (strpos($text, ']') and preg_match('/\[((?:[^][]|(?R))*)\]/s', $text, $matches))
                     {
                         $element = array(
                             '!' => $text[0] === '!',
@@ -848,6 +848,7 @@ class Parsedown
                         elseif ($this->reference_map)
                         {
                             $reference = $element['a'];
+                            $reference = preg_replace('/\s+/s', ' ', $reference);
 
                             if (preg_match('/^\s*\[(.*?)\]/', $remaining_text, $matches))
                             {
