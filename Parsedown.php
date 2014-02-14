@@ -130,7 +130,7 @@ class Parsedown
 
                     if ( ! isset($block['closed']))
                     {
-                        if (stripos($line, $block['start']) !== false) # opening tag
+                        if (isset($block['start']) and stripos($line, $block['start']) !== false) # opening tag
                         {
                             $block['depth']++;
                         }
@@ -148,6 +148,15 @@ class Parsedown
                         }
 
                         $block['text'] .= "\n".$line;
+
+                        # HTML comment case
+                        if ($block['end'] == '-->' and isset($block['closed']))
+                        {
+                            if (substr($line, -3) != '-->')
+                            {
+                                $block['type'] = 'paragraph';
+                            }
+                        }
 
                         continue 2;
                     }
@@ -367,6 +376,14 @@ class Parsedown
                             if ($name == 'hr')
                                 $is_self_closing = 1;
                         }
+                        # HTML comments
+                        elseif ($name[0] == '!' and $name[1] == '-' and $name[2] == '-')
+                        {
+                            if (substr($substring, -2) == '--')
+                            {
+                                $is_self_closing = true;
+                            }
+                        }
                         elseif ( ! ctype_alpha($name))
                         {
                             break;
@@ -403,6 +420,19 @@ class Parsedown
                         {
                             $block['closed'] = true;
                         }
+
+                        continue 2;
+                    }
+                    elseif ($name[0] == '!' and $name[1] == '-' and $name[2] == '-')
+                    {
+                        $blocks []= $block;
+
+                        $block = array(
+                            'type' => 'markup',
+                            'text' => $outdented_line,
+                            'end' => '-->',
+                            'depth' => 0,
+                        );
 
                         continue 2;
                     }
@@ -985,6 +1015,12 @@ class Parsedown
                             $element_url = str_replace('<', '&lt;', $element_url);
 
                             $markup .= '<a href="'.$element_url.'">'.$element_url.'</a>';
+
+                            $offset = strlen($matches[0]);
+                        }
+                        elseif ($text[1] === '!' and preg_match('/^<!--.*?-->/s', $text, $matches))
+                        {
+                            $markup .= $matches[0];
 
                             $offset = strlen($matches[0]);
                         }
