@@ -688,6 +688,14 @@ class Parsedown
                         $markup .= ' class="language-'.$block['language'].'"';
                     }
 
+                    if (!isset($block['language']) || strtolower($block['language']) == 'php') {
+                        if (strpos($block['text'], '<?') === false) {
+                            $block['text'] = "<?php\n" . $block['text'];
+                        }
+                        $code = highlight_string($block['text'], true);
+                        $text = preg_replace('/\&lt;\?php/', '', $code);
+                    }
+
                     $markup .= '>'.$text.'</code></pre>'."\n";
 
                     break;
