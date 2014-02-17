@@ -86,6 +86,44 @@ class Parsedown
         return $text;
     }
 
+    function highlight($text, $language = '')
+    {
+        if (is_array($text) and isset($text['text']))
+        {
+            if (isset($text['language']))
+                $language = $text['language'];
+            $text = $text['text'];
+        }
+
+        switch ($language)
+        {
+            case 'php':
+                if (strpos($text, '<'.'?') === false)
+                {
+                    $text = '<'.'?php'."\n".$text;
+                    $tag_added = true;
+                }
+
+                $markup = '<pre>'.highlight_string($text, true).'</pre>'."\n";
+
+                if (isset($tag_added))
+                {
+                    $markup = preg_replace('@&lt;\?php<br[ ]/?'.'>@', '', $markup);
+                }
+
+                break;
+
+            default:
+                $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+
+                $markup = '<pre><code';
+                $markup .= ' class="language-'.$language.'"';
+                $markup .= '>'.$text.'</code></pre>'."\n";
+        }
+
+        return $markup;
+    }
+
     #
     # Private
 
@@ -670,25 +708,18 @@ class Parsedown
                     break;
 
                 case 'code':
-
-                    $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
-
-                    $markup .= '<pre><code>'.$text.'</code></pre>'."\n";
-
-                    break;
-
                 case 'fenced':
-
-                    $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
-
-                    $markup .= '<pre><code';
 
                     if (isset($block['language']))
                     {
-                        $markup .= ' class="language-'.$block['language'].'"';
+                        $markup .= $this->highlight($block);
                     }
+                    else
+                    {
+                        $text = htmlspecialchars($block['text'], ENT_NOQUOTES, 'UTF-8');
 
-                    $markup .= '>'.$text.'</code></pre>'."\n";
+                        $markup .= '<pre><code>'.$text.'</code></pre>'."\n";
+                    }
 
                     break;
 
