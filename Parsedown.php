@@ -130,12 +130,12 @@ class Parsedown
 
                     if ( ! isset($block['closed']))
                     {
-                        if (strpos($line, $block['start']) !== false) # opening tag
+                        if (stripos($line, $block['start']) !== false) # opening tag
                         {
                             $block['depth']++;
                         }
 
-                        if (strpos($line, $block['end']) !== false) # closing tag
+                        if (stripos($line, $block['end']) !== false) # closing tag
                         {
                             if ($block['depth'] > 0)
                             {
@@ -359,8 +359,15 @@ class Parsedown
                         {
                             $name = $substring;
                         }
+                        $name = strtolower($name);
 
-                        if ( ! ctype_alpha($name))
+                        // hr,h1,h2,h3,h4,h5,h6 cases
+                        if ($name[0] == 'h' and strpos('r123456', $name[1]) !== false)
+                        {
+                            if ($name == 'hr')
+                                $is_self_closing = 1;
+                        }
+                        elseif ( ! ctype_alpha($name))
                         {
                             break;
                         }
@@ -392,7 +399,7 @@ class Parsedown
                             'depth' => 0,
                         );
 
-                        if (strpos($outdented_line, $block['end']))
+                        if (stripos($outdented_line, $block['end']))
                         {
                             $block['closed'] = true;
                         }
