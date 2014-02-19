@@ -459,7 +459,7 @@ class Parsedown
                                 break;
                             }
 
-                            $reference['»'] = substr($substring, 1, $position - 1);
+                            $reference['link'] = substr($substring, 1, $position - 1);
 
                             $substring = substr($substring, $position + 1);
                         }
@@ -469,13 +469,13 @@ class Parsedown
 
                             if ($position === false)
                             {
-                                $reference['»'] = $substring;
+                                $reference['link'] = $substring;
 
                                 $substring = false;
                             }
                             else
                             {
-                                $reference['»'] = substr($substring, 0, $position);
+                                $reference['link'] = substr($substring, 0, $position);
 
                                 $substring = substr($substring, $position + 1);
                             }
@@ -495,7 +495,7 @@ class Parsedown
                                 break;
                             }
 
-                            $reference['#'] = substr($substring, 1, -1);
+                            $reference['title'] = substr($substring, 1, -1);
                         }
 
                         $this->reference_map[$label] = $reference;
@@ -829,7 +829,7 @@ class Parsedown
                     {
                         $element = array(
                             '!' => $text[0] === '!',
-                            'a' => $matches[1],
+                            'text' => $matches[1],
                         );
 
                         $offset = strlen($matches[0]);
@@ -843,22 +843,22 @@ class Parsedown
 
                         if ($remaining_text[0] === '(' and preg_match('/\([ ]*(.*?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*\)/', $remaining_text, $matches))
                         {
-                            $element['»'] = $matches[1];
+                            $element['link'] = $matches[1];
 
                             if (isset($matches[2]))
                             {
-                                $element['#'] = $matches[2];
+                                $element['title'] = $matches[2];
                             }
 
                             $offset += strlen($matches[0]);
                         }
                         elseif ($this->reference_map)
                         {
-                            $reference = $element['a'];
+                            $reference = $element['text'];
 
                             if (preg_match('/^\s*\[(.*?)\]/', $remaining_text, $matches))
                             {
-                                $reference = $matches[1] ? $matches[1] : $element['a'];
+                                $reference = $matches[1] ? $matches[1] : $element['text'];
 
                                 $offset += strlen($matches[0]);
                             }
@@ -867,11 +867,11 @@ class Parsedown
 
                             if (isset($this->reference_map[$reference]))
                             {
-                                $element['»'] = $this->reference_map[$reference]['»'];
+                                $element['link'] = $this->reference_map[$reference]['link'];
 
-                                if (isset($this->reference_map[$reference]['#']))
+                                if (isset($this->reference_map[$reference]['title']))
                                 {
-                                    $element['#'] = $this->reference_map[$reference]['#'];
+                                    $element['title'] = $this->reference_map[$reference]['title'];
                                 }
                             }
                             else
@@ -887,32 +887,32 @@ class Parsedown
 
                     if (isset($element))
                     {
-                        $element['»'] = str_replace('&', '&amp;', $element['»']);
-                        $element['»'] = str_replace('<', '&lt;', $element['»']);
+                        $element['link'] = str_replace('&', '&amp;', $element['link']);
+                        $element['link'] = str_replace('<', '&lt;', $element['link']);
 
                         if ($element['!'])
                         {
-                            $markup .= '<img alt="'.$element['a'].'" src="'.$element['»'].'"';
+                            $markup .= '<img alt="'.$element['text'].'" src="'.$element['link'].'"';
 
-                            if (isset($element['#']))
+                            if (isset($element['title']))
                             {
-                                $markup .= ' title="'.$element['#'].'"';
+                                $markup .= ' title="'.$element['title'].'"';
                             }
 
                             $markup .= ' />';
                         }
                         else
                         {
-                            $element['a'] = $this->parse_span_elements($element['a'], $markers);
+                            $element['text'] = $this->parse_span_elements($element['text'], $markers);
 
-                            $markup .= '<a href="'.$element['»'].'"';
+                            $markup .= '<a href="'.$element['link'].'"';
 
-                            if (isset($element['#']))
+                            if (isset($element['title']))
                             {
-                                $markup .= ' title="'.$element['#'].'"';
+                                $markup .= ' title="'.$element['title'].'"';
                             }
 
-                            $markup .= '>'.$element['a'].'</a>';
+                            $markup .= '>'.$element['text'].'</a>';
                         }
 
                         unset($element);
