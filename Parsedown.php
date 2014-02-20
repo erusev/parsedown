@@ -764,6 +764,7 @@ class Parsedown
 
         # ~
 
+        $markups = array();
         $markup = '';
 
         while ($markers)
@@ -795,13 +796,19 @@ class Parsedown
 
             if ($closest_marker === null or isset($text[$closest_marker_position + 1]) === false)
             {
-                $markup .= $text;
+                if (isset($text[0]))
+                {
+                    $markups[] = $text;
+                }
 
                 break;
             }
             else
             {
-                $markup .= substr($text, 0, $closest_marker_position);
+                if ($closest_marker_position > 0)
+                {
+                    $markups[] = substr($text, 0, $closest_marker_position);
+                }
             }
 
             $text = substr($text, $closest_marker_position);
@@ -816,7 +823,7 @@ class Parsedown
             {
                 case "  \n":
 
-                    $markup .= '<br />'."\n";
+                    $markup = array('tag' => 'br');
 
                     $offset = 3;
 
@@ -892,34 +899,30 @@ class Parsedown
 
                         if ($element['!'])
                         {
-                            $markup .= '<img alt="'.$element['text'].'" src="'.$element['link'].'"';
+                            $markup = array('tag' => 'img', 'src' => $element['link'], 'alt' => $element['text']);
 
                             if (isset($element['title']))
                             {
-                                $markup .= ' title="'.$element['title'].'"';
+                                $markup['title'] = $element['title'];
                             }
-
-                            $markup .= ' />';
                         }
                         else
                         {
                             $element['text'] = $this->parse_span_elements($element['text'], $markers);
 
-                            $markup .= '<a href="'.$element['link'].'"';
-
+                            $markup = array('tag' => 'a', 'href' => $element['link'], 'text' => $element['text']);
                             if (isset($element['title']))
                             {
-                                $markup .= ' title="'.$element['title'].'"';
+                                $markup['title'] = $element['title'];
                             }
 
-                            $markup .= '>'.$element['text'].'</a>';
                         }
 
                         unset($element);
                     }
                     else
                     {
-                        $markup .= $closest_marker;
+                        $markup = $closest_marker;
 
                         $offset = $closest_marker === '![' ? 2 : 1;
                     }
@@ -930,13 +933,13 @@ class Parsedown
 
                     if (preg_match('/^&#?\w+;/', $text, $matches))
                     {
-                        $markup .= $matches[0];
+                        $markup = $matches[0];
 
                         $offset = strlen($matches[0]);
                     }
                     else
                     {
-                        $markup .= '&amp;';
+                        $markup = '&amp;';
 
                         $offset = 1;
                     }
@@ -951,14 +954,14 @@ class Parsedown
                         $markers[] = $closest_marker;
                         $matches[1] = $this->parse_span_elements($matches[1], $markers);
 
-                        $markup .= '<strong>'.$matches[1].'</strong>';
+                        $markup = array('tag' => 'strong', 'text' => $matches[1]);
                     }
                     elseif (preg_match(self::$em_regex[$closest_marker], $text, $matches))
                     {
                         $markers[] = $closest_marker;
                         $matches[1] = $this->parse_span_elements($matches[1], $markers);
 
-                        $markup .= '<em>'.$matches[1].'</em>';
+                        $markup = array('tag' => 'em', 'text' => $matches[1]);
                     }
 
                     if (isset($matches) and $matches)
@@ -967,7 +970,7 @@ class Parsedown
                     }
                     else
                     {
-                        $markup .= $closest_marker;
+                        $markup = $closest_marker;
 
                         $offset = 1;
                     }
@@ -984,32 +987,32 @@ class Parsedown
                             $element_url = str_replace('&', '&amp;', $element_url);
                             $element_url = str_replace('<', '&lt;', $element_url);
 
-                            $markup .= '<a href="'.$element_url.'">'.$element_url.'</a>';
+                            $markup = array('tag' => 'a', 'href' => $element_url, 'text' => $element_url);
 
                             $offset = strlen($matches[0]);
                         }
                         elseif (strpos($text, '@') > 1 and preg_match('/<(\S+?@\S+?)>/', $text, $matches))
                         {
-                            $markup .= '<a href="mailto:'.$matches[1].'">'.$matches[1].'</a>';
+                            $markup = array('tag' => 'a', 'href' => 'mailto:'.$matches[1], 'text' => $matches[1]);
 
                             $offset = strlen($matches[0]);
                         }
                         elseif (preg_match('/^<\/?\w.*?>/', $text, $matches))
                         {
-                            $markup .= $matches[0];
+                            $markup = $matches[0];
 
                             $offset = strlen($matches[0]);
                         }
                         else
                         {
-                            $markup .= '&lt;';
+                            $markup = '&lt;';
 
                             $offset = 1;
                         }
                     }
                     else
                     {
-                        $markup .= '&lt;';
+                        $markup = '&lt;';
 
                         $offset = 1;
                     }
@@ -1020,13 +1023,13 @@ class Parsedown
 
                     if (in_array($text[1], self::$special_characters))
                     {
-                        $markup .= $text[1];
+                        $markup = $text[1];
 
                         $offset = 2;
                     }
                     else
                     {
-                        $markup .= '\\';
+                        $markup = '\\';
 
                         $offset = 1;
                     }
@@ -1040,13 +1043,13 @@ class Parsedown
                         $element_text = $matches[2];
                         $element_text = htmlspecialchars($element_text, ENT_NOQUOTES, 'UTF-8');
 
-                        $markup .= '<code>'.$element_text.'</code>';
+                        $markup = array('tag' => 'code', 'text' => $element_text);
 
                         $offset = strlen($matches[0]);
                     }
                     else
                     {
-                        $markup .= '`';
+                        $markup = '`';
 
                         $offset = 1;
                     }
@@ -1061,13 +1064,13 @@ class Parsedown
                         $element_url = str_replace('&', '&amp;', $element_url);
                         $element_url = str_replace('<', '&lt;', $element_url);
 
-                        $markup .= '<a href="'.$element_url.'">'.$element_url.'</a>';
+                        $markup = array('tag' => 'a', 'href' => $element_url, 'text' => $element_url);
 
                         $offset = strlen($matches[0]);
                     }
                     else
                     {
-                        $markup .= 'http';
+                        $markup = 'http';
 
                         $offset = 4;
                     }
@@ -1080,13 +1083,13 @@ class Parsedown
                     {
                         $matches[1] = $this->parse_span_elements($matches[1], $markers);
 
-                        $markup .= '<del>'.$matches[1].'</del>';
+                        $markup = array('tag' => 'del', 'text' => $matches[1]);
 
                         $offset = strlen($matches[0]);
                     }
                     else
                     {
-                        $markup .= '~~';
+                        $markup = '~~';
 
                         $offset = 2;
                     }
@@ -1099,7 +1102,80 @@ class Parsedown
                 $text = substr($text, $offset);
             }
 
+            $markups[] = $markup;
+
             $markers[$closest_marker_index] = $closest_marker;
+        }
+
+        return $this->render($markups);
+    }
+
+    function render($elements)
+    {
+        $markup = '';
+        $buffer = '';
+
+        foreach ($elements as $element)
+        {
+            if (is_string($element))
+            {
+                # concat string elements
+                $buffer .= $element;
+
+                continue;
+            }
+
+            if (isset($buffer[0]))
+            {
+                # append string buffer
+                $markup.= $buffer;
+                $buffer = '';
+            }
+
+            switch ($element['tag'])
+            {
+                case 'a':
+                    $markup .= '<a href="'.$element['href'].'"';
+                    if (isset($element['title']))
+                    {
+                        $markup .= ' title="'. $element['title']. '"';
+                    }
+                    $markup .= '>'.$element['text'].'</a>';
+
+                    break;
+
+                case 'img':
+                    $markup .= '<img';
+
+                    if (isset($element['alt']))
+                    {
+                        $markup .= ' alt="'. $element['alt']. '"';
+                    }
+                    $markup .= ' src="'.$element['src'].'"';
+                    if (isset($element['title']))
+                    {
+                        $markup .= ' title="'. $element['title']. '"';
+                    }
+                    $markup .= ' />';
+
+                    break;
+
+                case 'br':
+                    $markup .= '<br />'."\n";
+
+                    break;
+
+                default:
+                    $markup .= '<'.$element['tag'].'>'.$element['text'].'</'.$element['tag'].'>';
+
+                    break;
+            }
+        }
+
+        # append remaining string
+        if (isset($buffer[0]))
+        {
+            $markup.= $buffer;
         }
 
         return $markup;
