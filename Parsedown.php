@@ -498,7 +498,7 @@ class Parsedown
                             $reference['title'] = substr($substring, 1, -1);
                         }
 
-                        $this->reference_map[$label] = $reference;
+                        $this->reference($label, $reference);
 
                         continue 2;
                     }
@@ -852,7 +852,7 @@ class Parsedown
 
                             $offset += strlen($matches[0]);
                         }
-                        elseif ($this->reference_map)
+                        else
                         {
                             $reference = $element['text'];
 
@@ -863,25 +863,19 @@ class Parsedown
                                 $offset += strlen($matches[0]);
                             }
 
-                            $reference = strtolower($reference);
-
-                            if (isset($this->reference_map[$reference]))
+                            if (($ref = $this->reference($reference)) !== false)
                             {
-                                $element['link'] = $this->reference_map[$reference]['link'];
+                                $element['link'] = $ref['link'];
 
-                                if (isset($this->reference_map[$reference]['title']))
+                                if (isset($ref['title']))
                                 {
-                                    $element['title'] = $this->reference_map[$reference]['title'];
+                                    $element['title'] = $ref['title'];
                                 }
                             }
                             else
                             {
                                 unset($element);
                             }
-                        }
-                        else
-                        {
-                            unset($element);
                         }
                     }
 
@@ -1103,6 +1097,22 @@ class Parsedown
         }
 
         return $markup;
+    }
+
+    function reference($label, $element = array())
+    {
+        $label = strtolower($label);
+
+        if (empty($element))
+        {
+            if (isset($this->reference_map[$label]))
+                return $this->reference_map[$label];
+
+            return false;
+        }
+
+        $this->reference_map[$label] = $element;
+        return true;
     }
 
     #
