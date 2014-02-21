@@ -16,7 +16,7 @@
 class Parsedown
 {
     #
-    # Synopsis
+    # Philosophy
     #
 
     # Markdown is intended to be easy-to-read by humans - those of us who read
