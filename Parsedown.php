@@ -16,6 +16,16 @@
 class Parsedown
 {
     #
+    # Synopsis
+    #
+
+    # Markdown is intended to be easy-to-read by humans - those of us who read
+    # line by line, left to right, top to bottom. In order to take advantage of
+    # this, Parsedown tries to read in a similar way. It breaks texts into
+    # lines, it iterates through them and it looks at how they start and relate
+    # to each other.
+
+    #
     # Setters
     #
 
@@ -29,16 +39,6 @@ class Parsedown
     }
 
     private $breaks_enabled = false;
-
-    #
-    # Synopsis
-    #
-
-    # Markdown is intended to be easy-to-read by humans - those of us who read
-    # line by line, left to right, top to bottom. In order to take advantage of
-    # this, Parsedown tries to read in a similar way. It breaks texts into
-    # lines, it iterates through them and it looks at how they start and relate
-    # to each other.
 
     #
     # Methods
