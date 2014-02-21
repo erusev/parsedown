@@ -173,10 +173,6 @@ class Parsedown
 
     private function find_blocks(array $lines, $block_context = null)
     {
-        $block_tree = array();
-
-        $blocks = & $block_tree;
-
         $block = null;
 
         $context = null;
