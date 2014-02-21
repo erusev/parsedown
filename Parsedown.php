@@ -15,24 +15,6 @@
 
 class Parsedown
 {
-    # Multiton
-
-    static function instance($name = 'default')
-    {
-        if (isset(self::$instances[$name]))
-        {
-            return self::$instances[$name];
-        }
-
-        $instance = new Parsedown();
-
-        self::$instances[$name] = $instance;
-
-        return $instance;
-    }
-
-    private static $instances = array();
-
     #
     # Setters
     #
@@ -91,85 +73,6 @@ class Parsedown
 
     #
     # Private
-
-    private function compile(array $blocks)
-    {
-        $markup = '';
-
-        foreach ($blocks as $block)
-        {
-            $markup .= "\n";
-
-            if (isset($block['name']))
-            {
-                $markup .= '<'.$block['name'];
-
-                if (isset($block['attributes']))
-                {
-                    foreach ($block['attributes'] as $name => $value)
-                    {
-                        $markup .= ' '.$name.'="'.$value.'"';
-                    }
-                }
-
-                if ($block['content'] === null)
-                {
-                    $markup .= ' />';
-
-                    continue;
-                }
-                else
-                {
-                    $markup .= '>';
-                }
-            }
-
-            switch ($block['content type'])
-            {
-                case 'markup':
-
-                    $markup .= $block['content'];
-
-                    break;
-
-                case 'markdown':
-
-                    $markup .= $this->parse_span_elements($block['content']);
-
-                    break;
-
-                case 'markdown lines':
-
-                    $result = $this->find_blocks($block['content'], $block['name']);
-
-                    if (is_string($result)) # dense li
-                    {
-                        $markup .= $this->parse_span_elements($result);
-
-                        break;
-                    }
-
-                    $markup .= $this->compile($result);
-
-                    break;
-
-                case 'blocks':
-
-                    $markup .= $this->compile($block['content']);
-
-                    break;
-            }
-
-            if (isset($block['name']))
-            {
-                $markup .= '</'.$block['name'].'>';
-            }
-        }
-
-        $markup .= "\n";
-
-        return $markup;
-    }
 
     private function find_blocks(array $lines, $block_context = null)
     {
@@ -790,6 +693,85 @@ class Parsedown
         return $blocks;
     }
 
+    private function compile(array $blocks)
+    {
+        $markup = '';
+
+        foreach ($blocks as $block)
+        {
+            $markup .= "\n";
+
+            if (isset($block['name']))
+            {
+                $markup .= '<'.$block['name'];
+
+                if (isset($block['attributes']))
+                {
+                    foreach ($block['attributes'] as $name => $value)
+                    {
+                        $markup .= ' '.$name.'="'.$value.'"';
+                    }
+                }
+
+                if ($block['content'] === null)
+                {
+                    $markup .= ' />';
+
+                    continue;
+                }
+                else
+                {
+                    $markup .= '>';
+                }
+            }
+
+            switch ($block['content type'])
+            {
+                case 'markup':
+
+                    $markup .= $block['content'];
+
+                    break;
+
+                case 'markdown':
+
+                    $markup .= $this->parse_span_elements($block['content']);
+
+                    break;
+
+                case 'markdown lines':
+
+                    $result = $this->find_blocks($block['content'], $block['name']);
+
+                    if (is_string($result)) # dense li
+                    {
+                        $markup .= $this->parse_span_elements($result);
+
+                        break;
+                    }
+
+                    $markup .= $this->compile($result);
+
+                    break;
+
+                case 'blocks':
+
+                    $markup .= $this->compile($block['content']);
+
+                    break;
+            }
+
+            if (isset($block['name']))
+            {
+                $markup .= '</'.$block['name'].'>';
+            }
+        }
+
+        $markup .= "\n";
+
+        return $markup;
+    }
+
     private function parse_span_elements($text, $markers = array("  \n", '![', '&', '*', '<', '[', '\\', '_', '`', 'http', '~~'))
     {
         if (isset($text[1]) === false or $markers === array())
@@ -1139,6 +1121,25 @@ class Parsedown
 
         return $markup;
     }
+
+    #
+    # Static
+
+    static function instance($name = 'default')
+    {
+        if (isset(self::$instances[$name]))
+        {
+            return self::$instances[$name];
+        }
+
+        $instance = new Parsedown();
+
+        self::$instances[$name] = $instance;
+
+        return $instance;
+    }
+
+    private static $instances = array();
 
     #
     # Fields
