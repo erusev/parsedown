@@ -22,10 +22,8 @@ Include `Parsedown.php` or install [the composer package](https://packagist.org/
 
 ### Example
 
-```php
-$text = 'Hello *Parsedown*!';
+``` php
+$parsedown = new Parsedown();
 
-$result = Parsedown::instance()->parse($text);
-
-echo $result; # prints: <p>Hello <em>Parsedown</em>!</p>
+echo $parsedown->parse('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
