@@ -10,8 +10,14 @@ class Test extends PHPUnit_Framework_TestCase
 	/**
 	 * @dataProvider provider
 	 */
-	function test_($markdown, $expected_markup)
+	function test_($filename)
 	{
+		$path = $this->get_data_path();
+		$markdown = file_get_contents($path . $filename . '.md');
+		$expected_markup = file_get_contents($path . $filename . '.html');
+		$expected_markup = str_replace("\r\n", "\n", $expected_markup);
+		$expected_markup = str_replace("\r", "\n", $expected_markup);
+
 		$actual_markup = Parsedown::instance()->parse($markdown);
 
 		$this->assertEquals($expected_markup, $actual_markup);
@@ -21,9 +27,8 @@ class Test extends PHPUnit_Framework_TestCase
 	{
 		$provider = array();
 
-		$path = dirname(__FILE__).'/';
-
-		$DirectoryIterator = new DirectoryIterator($path . '/' . self::provider_dir);
+		$path = $this->get_data_path();
+		$DirectoryIterator = new DirectoryIterator($path);
 
 		foreach ($DirectoryIterator as $Item)
 		{
@@ -37,20 +42,17 @@ class Test extends PHPUnit_Framework_TestCase
 					continue;
 
 				$basename = $Item->getBasename('.md');
-
-				$markdown = file_get_contents($path . '/' . self::provider_dir . $basename . '.md');
-
-				if (!$markdown)
-					continue;
-
-				$expected_markup = file_get_contents($path . '/' . self::provider_dir . $basename . '.html');
-				$expected_markup = str_replace("\r\n", "\n", $expected_markup);
-				$expected_markup = str_replace("\r", "\n", $expected_markup);
-
-				$provider [] = array($markdown, $expected_markup);
+				if (file_exists($path.$basename.'.html')) {
+					$provider [] = array($basename);
+				}
 			}
 		}
 
 		return $provider;
+	}
+
+	function get_data_path()
+	{
+		return dirname(__FILE__).'/'.self::provider_dir;
 	}
 }
