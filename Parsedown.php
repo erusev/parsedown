@@ -135,7 +135,7 @@ class Parsedown
                             $block['content'][0]['content'] .= "\n";
                         }
 
-                        $string = htmlspecialchars($line, ENT_NOQUOTES, 'UTF-8');
+                        $string = htmlspecialchars($indented_line, ENT_NOQUOTES, 'UTF-8');
 
                         $block['content'][0]['content'] .= $string;
                     }
