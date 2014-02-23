@@ -187,7 +187,7 @@ class Parsedown
 
                         $nested_block = array(
                             'name' => 'li',
-                            'content type' => 'markdown lines',
+                            'content type' => 'lines',
                             'content' => array(
                                 $matches[1],
                             ),
@@ -317,7 +317,7 @@ class Parsedown
 
                             $nested_block = array(
                                 'name' => 'td',
-                                'content type' => 'markdown',
+                                'content type' => 'line',
                                 'content' => $substring,
                             );
 
@@ -417,7 +417,7 @@ class Parsedown
 
                             $nested_block = array(
                                 'name' => 'th',
-                                'content type' => 'markdown',
+                                'content type' => 'line',
                                 'content' => $substring,
                             );
 
@@ -494,7 +494,7 @@ class Parsedown
                     'content' => array(
                         array(
                             'name' => 'code',
-                            'content type' => 'markup',
+                            'content type' => null,
                             'content' => $string,
                         ),
                     ),
@@ -525,7 +525,7 @@ class Parsedown
 
                         $block = array(
                             'name' => 'h'.$level,
-                            'content type' => 'markdown',
+                            'content type' => 'line',
                             'content' => $string,
                         );
 
@@ -587,7 +587,7 @@ class Parsedown
 
                         $block = array(
                             'name' => null,
-                            'content type' => 'markup',
+                            'content type' => null,
                             'content' => $indented_line,
                         );
 
@@ -623,7 +623,7 @@ class Parsedown
 
                         $block = array(
                             'name' => 'blockquote',
-                            'content type' => 'markdown lines',
+                            'content type' => 'lines',
                             'content' => array(
                                 $matches[1],
                             ),
@@ -724,7 +724,7 @@ class Parsedown
                             'content' => array(
                                 array(
                                     'name' => 'code',
-                                    'content type' => 'markup',
+                                    'content type' => null,
                                     'content' => '',
                                 ),
                             ),
@@ -783,7 +783,7 @@ class Parsedown
 
                     $nested_block = array(
                         'name' => 'li',
-                        'content type' => 'markdown lines',
+                        'content type' => 'lines',
                         'content' => array(
                             $matches[2],
                         ),
@@ -820,7 +820,7 @@ class Parsedown
 
                 $block = array(
                     'name' => 'p',
-                    'content type' => 'markdown',
+                    'content type' => 'line',
                     'content' => $line,
                 );
 
@@ -879,19 +879,19 @@ class Parsedown
 
             switch ($block['content type'])
             {
-                case 'markup':
+                case null:
 
                     $markup .= $block['content'];
 
                     break;
 
-                case 'markdown':
+                case 'line':
 
                     $markup .= $this->parse_span_elements($block['content']);
 
                     break;
 
-                case 'markdown lines':
+                case 'lines':
 
                     $result = $this->find_blocks($block['content'], $block['name']);
 
