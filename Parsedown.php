@@ -1027,7 +1027,7 @@ class Parsedown
 
                             if (preg_match('/^\s*\[(.*?)\]/', $remaining_text, $matches))
                             {
-                                $reference = $matches[1] ? $matches[1] : $element['text'];
+                                $reference = $matches[1] === '' ? $element['text'] : $matches[1];
 
                                 $offset += strlen($matches[0]);
                             }
