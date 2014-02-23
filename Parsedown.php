@@ -293,6 +293,59 @@ class Parsedown
 
                     break;
 
+                case 'table':
+
+                    if ($line === '')
+                    {
+                        $context = null;
+
+                        continue 2;
+                    }
+
+                    if ($line[0] === '|')
+                    {
+                        $nested_blocks = array();
+
+                        $substring = preg_replace('/^[|][ ]*/', '', $line);
+                        $substring = preg_replace('/[|]?[ ]*$/', '', $substring);
+
+                        $parts = explode('|', $substring);
+
+                        foreach ($parts as $index => $part)
+                        {
+                            $substring = trim($part);
+
+                            $nested_block = array(
+                                'name' => 'td',
+                                'content type' => 'markdown',
+                                'content' => $substring,
+                            );
+
+                            if (isset($context_data['alignments'][$index]))
+                            {
+                                $nested_block['attributes'] = array(
+                                    'align' => $context_data['alignments'][$index],
+                                );
+                            }
+
+                            $nested_blocks []= $nested_block;
+                        }
+
+                        $nested_block = array(
+                            'name' => 'tr',
+                            'content type' => 'blocks',
+                            'content' => $nested_blocks,
+                        );
+
+                        $block['content'][1]['content'] []= $nested_block;
+
+                        continue 2;
+                    }
+
+                    $context = null;
+
+                    break;
+
                 case 'paragraph':
 
                     if ($line === '')
@@ -318,6 +371,105 @@ class Parsedown
                         $block['name'] = 'h2';
 
                         $context = null;
+
+                        continue 2;
+                    }
+
+                    if ($line[0] === '|' and $block['content'][0] === '|' and chop($line, ' -:|') === '')
+                    {
+                        $values = array();
+
+                        $substring = trim($line, ' |');
+
+                        $parts = explode('|', $substring);
+
+                        foreach ($parts as $part)
+                        {
+                            $substring = trim($part);
+
+                            $value = null;
+
+                            if ($substring[0] === ':')
+                            {
+                                $value = 'left';
+                            }
+
+                            if (substr($substring, -1) === ':')
+                            {
+                                $value = $value === 'left' ? 'center' : 'right';
+                            }
+
+                            $values []= $value;
+                        }
+
+                        # ~
+
+                        $nested_blocks = array();
+
+                        $substring = preg_replace('/^[|][ ]*/', '', $block['content']);
+                        $substring = preg_replace('/[|]?[ ]*$/', '', $substring);
+
+                        $parts = explode('|', $substring);
+
+                        foreach ($parts as $index => $part)
+                        {
+                            $substring = trim($part);
+
+                            $nested_block = array(
+                                'name' => 'th',
+                                'content type' => 'markdown',
+                                'content' => $substring,
+                            );
+
+                            if (isset($values[$index]))
+                            {
+                                $value = $values[$index];
+
+                                $nested_block['attributes'] = array(
+                                    'align' => $value,
+                                );
+                            }
+
+                            $nested_blocks []= $nested_block;
+                        }
+
+                        # ~
+
+                        $block = array(
+                            'name' => 'table',
+                            'content type' => 'blocks',
+                            'content' => array(),
+                        );
+
+                        $block['content'] []= array(
+                            'name' => 'thead',
+                            'content type' => 'blocks',
+                            'content' => array(),
+                        );
+
+                        $block['content'] []= array(
+                            'name' => 'tbody',
+                            'content type' => 'blocks',
+                            'content' => array(),
+                        );
+
+                        $block['content'][0]['content'] []= array(
+                            'name' => 'tr',
+                            'content type' => 'blocks',
+                            'content' => array(),
+                        );
+
+                        $block['content'][0]['content'][0]['content'] = $nested_blocks;
+
+                        # ~
+
+                        $context = 'table';
+
+                        $context_data = array(
+                            'alignments' => $values,
+                        );
+
+                        # ~
 
                         continue 2;
                     }
