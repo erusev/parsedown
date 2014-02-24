@@ -38,6 +38,16 @@ class Parsedown
         return $this;
     }
 
+    /**
+     * For backwards compatibility before PSR-2 naming.
+     *
+     * @deprecated Use setBreaksEnabled instead.
+     */
+    function set_breaks_enabled($breaks_enabled)
+    {
+        return $this->setBreaksEnabled($breaks_enabled);
+    }
+
     private $breaksEnabled = false;
 
     #
