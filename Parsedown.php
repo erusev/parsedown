@@ -1117,14 +1117,14 @@ class Parsedown
 
                     if ($text[1] === $closestMarker and preg_match(self::$strongRegex[$closestMarker], $text, $matches))
                     {
-                        $markers[] = $closestMarker;
+                        $markers[$closestMarkerIndex] = $closestMarker;
                         $matches[1] = $this->parseLine($matches[1], $markers);
 
                         $markup .= '<strong>'.$matches[1].'</strong>';
                     }
                     elseif (preg_match(self::$emRegex[$closestMarker], $text, $matches))
                     {
-                        $markers[] = $closestMarker;
+                        $markers[$closestMarkerIndex] = $closestMarker;
                         $matches[1] = $this->parseLine($matches[1], $markers);
 
                         $markup .= '<em>'.$matches[1].'</em>';
