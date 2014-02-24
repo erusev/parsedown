@@ -1,8 +1,9 @@
 ```
 <?php
 
-$message = 'fenced code block';
-echo $message;
+if ($message = 'fenced code block') {
+    echo $message;
+}
 ```
 
 ~~~
