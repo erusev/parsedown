@@ -934,8 +934,9 @@ class Parsedown
         # ~
 
         $markup = '';
+        $offset = 0;
 
-        while ($markers)
+        while (isset($text[$offset]))
         {
             $closestMarker = null;
             $closestMarkerIndex = 0;
@@ -943,7 +944,7 @@ class Parsedown
 
             foreach ($markers as $index => $marker)
             {
-                $markerPosition = strpos($text, $marker);
+                $markerPosition = strpos($text, $marker, $offset);
 
                 if ($markerPosition === false)
                 {
@@ -964,20 +965,22 @@ class Parsedown
 
             if ($closestMarker === null or isset($text[$closestMarkerPosition + 1]) === false)
             {
-                $markup .= $text;
+                $markup .= substr($text, $offset);
 
                 break;
             }
             else
             {
-                $markup .= substr($text, 0, $closestMarkerPosition);
+                if ($closestMarkerPosition > $offset)
+                {
+                    $markup .= substr($text, $offset, $closestMarkerPosition - $offset);
+                }
             }
-
-            $text = substr($text, $closestMarkerPosition);
 
             # ~
 
             unset($markers[$closestMarkerIndex]);
+            $offset = $closestMarkerPosition;
 
             # ~
 
@@ -987,30 +990,24 @@ class Parsedown
 
                     $markup .= '<br />'."\n";
 
-                    $offset = 3;
+                    $offset += 3;
 
                     break;
 
                 case '![':
                 case '[':
+                    $saveOffset = $offset;
 
-                    if (strpos($text, ']') and preg_match('/\[((?:[^][]|(?R))*)\]/', $text, $matches))
+                    if (strpos($text, ']', $offset) and preg_match('/!?(\[((?:[^][]|(?1))*)\])/A', $text, $matches, null, $offset))
                     {
                         $element = array(
-                            '!' => $text[0] === '!',
-                            'text' => $matches[1],
+                            '!' => $text[$offset] === '!',
+                            'text' => $matches[2],
                         );
 
-                        $offset = strlen($matches[0]);
+                        $offset += strlen($matches[0]);
 
-                        if ($element['!'])
-                        {
-                            $offset++;
-                        }
-
-                        $remainingText = substr($text, $offset);
-
-                        if ($remainingText[0] === '(' and preg_match('/\([ ]*(.*?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*\)/', $remainingText, $matches))
+                        if (isset($text[$offset]) and $text[$offset] === '(' and preg_match('/\([ ]*(.*?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*\)/A', $text, $matches, null, $offset))
                         {
                             $element['link'] = $matches[1];
 
@@ -1025,7 +1022,7 @@ class Parsedown
                         {
                             $reference = $element['text'];
 
-                            if (preg_match('/^\s*\[(.*?)\]/', $remainingText, $matches))
+                            if (preg_match('/\s*\[(.*?)\]/A', $text, $matches, null, $offset))
                             {
                                 $reference = $matches[1] === '' ? $element['text'] : $matches[1];
 
@@ -1089,25 +1086,26 @@ class Parsedown
                     else
                     {
                         $markup .= $closestMarker;
+                        $offset = $saveOffset;
 
-                        $offset = $closestMarker === '![' ? 2 : 1;
+                        $offset += $closestMarker === '![' ? 2 : 1;
                     }
 
                     break;
 
                 case '&':
 
-                    if (preg_match('/^&#?\w+;/', $text, $matches))
+                    if (preg_match('/&#?\w+;/A', $text, $matches, null, $offset))
                     {
                         $markup .= $matches[0];
 
-                        $offset = strlen($matches[0]);
+                        $offset += strlen($matches[0]);
                     }
                     else
                     {
                         $markup .= '&amp;';
 
-                        $offset = 1;
+                        $offset += 1;
                     }
 
                     break;
@@ -1115,16 +1113,16 @@ class Parsedown
                 case '*':
                 case '_':
 
-                    if ($text[1] === $closestMarker and preg_match(self::$strongRegex[$closestMarker], $text, $matches))
+                    if ($text[$offset + 1] === $closestMarker and preg_match(self::$strongRegex[$closestMarker], $text, $matches, null, $offset))
                     {
-                        $markers[] = $closestMarker;
+                        $markers[$closestMarkerIndex] = $closestMarker;
                         $matches[1] = $this->parseLine($matches[1], $markers);
 
                         $markup .= '<strong>'.$matches[1].'</strong>';
                     }
-                    elseif (preg_match(self::$emRegex[$closestMarker], $text, $matches))
+                    elseif (preg_match(self::$emRegex[$closestMarker], $text, $matches, null, $offset))
                     {
-                        $markers[] = $closestMarker;
+                        $markers[$closestMarkerIndex] = $closestMarker;
                         $matches[1] = $this->parseLine($matches[1], $markers);
 
                         $markup .= '<em>'.$matches[1].'</em>';
@@ -1132,22 +1130,22 @@ class Parsedown
 
                     if (isset($matches) and $matches)
                     {
-                        $offset = strlen($matches[0]);
+                        $offset += strlen($matches[0]);
                     }
                     else
                     {
                         $markup .= $closestMarker;
 
-                        $offset = 1;
+                        $offset += 1;
                     }
 
                     break;
 
                 case '<':
 
-                    if (strpos($text, '>') !== false)
+                    if (strpos($text, '>', $offset) !== false)
                     {
-                        if ($text[1] === 'h' and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $text, $matches))
+                        if ($text[$offset + 1] === 'h' and preg_match('/<(https?:[\/]{2}[^\s]+?)>/iA', $text, $matches, null, $offset))
                         {
                             $elementUrl = $matches[1];
                             $elementUrl = str_replace('&', '&amp;', $elementUrl);
@@ -1155,76 +1153,76 @@ class Parsedown
 
                             $markup .= '<a href="'.$elementUrl.'">'.$elementUrl.'</a>';
 
-                            $offset = strlen($matches[0]);
+                            $offset += strlen($matches[0]);
                         }
-                        elseif (strpos($text, '@') > 1 and preg_match('/<(\S+?@\S+?)>/', $text, $matches))
+                        elseif (strpos($text, '@', $offset) > $offset + 1 and preg_match('/<(\S+?@\S+?)>/A', $text, $matches, null, $offset))
                         {
                             $markup .= '<a href="mailto:'.$matches[1].'">'.$matches[1].'</a>';
 
-                            $offset = strlen($matches[0]);
+                            $offset += strlen($matches[0]);
                         }
-                        elseif (preg_match('/^<\/?\w.*?>/', $text, $matches))
+                        elseif (preg_match('/<\/?\w.*?>/A', $text, $matches, null, $offset))
                         {
                             $markup .= $matches[0];
 
-                            $offset = strlen($matches[0]);
+                            $offset += strlen($matches[0]);
                         }
                         else
                         {
                             $markup .= '&lt;';
 
-                            $offset = 1;
+                            $offset += 1;
                         }
                     }
                     else
                     {
                         $markup .= '&lt;';
 
-                        $offset = 1;
+                        $offset += 1;
                     }
 
                     break;
 
                 case '\\':
 
-                    if (in_array($text[1], self::$specialCharacters))
+                    if (in_array($text[$offset + 1], self::$specialCharacters))
                     {
-                        $markup .= $text[1];
+                        $markup .= $text[$offset + 1];
 
-                        $offset = 2;
+                        $offset += 2;
                     }
                     else
                     {
                         $markup .= '\\';
 
-                        $offset = 1;
+                        $offset += 1;
                     }
 
                     break;
 
                 case '`':
 
-                    if (preg_match('/^(`+)[ ]*(.+?)[ ]*(?<!`)\1(?!`)/', $text, $matches))
+                    if (preg_match('/(`+)[ ]*(.+?)[ ]*(?<!`)\1(?!`)/A', $text, $matches, null, $offset))
                     {
                         $elementText = $matches[2];
                         $elementText = htmlspecialchars($elementText, ENT_NOQUOTES, 'UTF-8');
 
                         $markup .= '<code>'.$elementText.'</code>';
 
-                        $offset = strlen($matches[0]);
+                        $offset += strlen($matches[0]);
                     }
                     else
                     {
                         $markup .= '`';
 
-                        $offset = 1;
+                        $offset += 1;
                     }
 
                     break;
 
                 case 'http':
 
-                    if (preg_match('/^https?:[\/]{2}[^\s]+\b\/*/ui', $text, $matches))
+                    if (preg_match('/https?:[\/]{2}[^\s]+\b\/*/uiA', $text, $matches, null, $offset))
                     {
                         $elementUrl = $matches[0];
                         $elementUrl = str_replace('&', '&amp;', $elementUrl);
@@ -1232,40 +1230,35 @@ class Parsedown
 
                         $markup .= '<a href="'.$elementUrl.'">'.$elementUrl.'</a>';
 
-                        $offset = strlen($matches[0]);
+                        $offset += strlen($matches[0]);
                     }
                     else
                     {
                         $markup .= 'http';
 
-                        $offset = 4;
+                        $offset += 4;
                     }
 
                     break;
 
                 case '~~':
 
-                    if (preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $text, $matches))
+                    if (preg_match('/~~(?=\S)(.+?)(?<=\S)~~/A', $text, $matches, null, $offset))
                     {
                         $matches[1] = $this->parseLine($matches[1], $markers);
 
                         $markup .= '<del>'.$matches[1].'</del>';
 
-                        $offset = strlen($matches[0]);
+                        $offset += strlen($matches[0]);
                     }
                     else
                     {
                         $markup .= '~~';
 
-                        $offset = 2;
+                        $offset += 2;
                     }
 
                     break;
-            }
-
-            if (isset($offset))
-            {
-                $text = substr($text, $offset);
             }
 
             $markers[$closestMarkerIndex] = $closestMarker;
@@ -1303,13 +1296,13 @@ class Parsedown
     # Read-only
 
     private static $strongRegex = array(
-        '*' => '/^[*]{2}((?:[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
-        '_' => '/^__((?:[^_]|_[^_]*_)+?)__(?!_)/us',
+        '*' => '/[*]{2}((?:[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/As',
+        '_' => '/__((?:[^_]|_[^_]*_)+?)__(?!_)/uAs',
     );
 
     private static $emRegex = array(
-        '*' => '/^[*]((?:[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
-        '_' => '/^_((?:[^_]|__[^_]*__)+?)_(?!_)\b/us',
+        '*' => '/[*]((?:[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/As',
+        '_' => '/_((?:[^_]|__[^_]*__)+?)_(?!_)\b/Aus',
     );
 
     private static $specialCharacters = array(
