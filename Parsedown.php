@@ -936,21 +936,32 @@ class Parsedown
         $markup = '';
         $offset = 0;
 
+        # init positions of markers
+        $markerPositions = array();
+        foreach ($markers as $index => $marker)
+        {
+            $markerPositions[$index] = -1;
+        }
+
         while (isset($text[$offset]))
         {
             $closestMarker = null;
-            $closestMarkerIndex = 0;
             $closestMarkerPosition = null;
 
             foreach ($markers as $index => $marker)
             {
-                $markerPosition = strpos($text, $marker, $offset);
-
-                if ($markerPosition === false)
+                $markerPosition = $markerPositions[$index];
+                if ($markerPosition < $offset)
                 {
-                    unset($markers[$index]);
+                    $markerPosition = strpos($text, $marker, $offset);
 
-                    continue;
+                    if ($markerPosition === false)
+                    {
+                        unset($markers[$index]);
+
+                        continue;
+                    }
+                    $markerPositions[$index] = $markerPosition;
                 }
 
                 if ($closestMarker === null or $markerPosition < $closestMarkerPosition)
