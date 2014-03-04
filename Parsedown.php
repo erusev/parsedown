@@ -312,7 +312,7 @@ class Parsedown
                         continue 2;
                     }
 
-                    if ($line[0] === '|')
+                    if (strpos($line, '|') !== false)
                     {
                         $nestedBlocks = array();
 
@@ -385,7 +385,7 @@ class Parsedown
                         continue 2;
                     }
 
-                    if ($line[0] === '|' and $block['content'][0] === '|' and chop($line, ' -:|') === '')
+                    if (strpos($line, '|') !== false and strpos($block['content'], '|') !== false and chop($line, ' -:|') === '')
                     {
                         $values = array();
 
