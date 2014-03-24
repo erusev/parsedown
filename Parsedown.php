@@ -1163,7 +1163,7 @@ class Parsedown
                             $elementUrl = str_replace('&', '&amp;', $elementUrl);
                             $elementUrl = str_replace('<', '&lt;', $elementUrl);
 
-                            $markup .= '<a href="'.$elementUrl.'">'.$elementUrl.'</a>';
+                            $markup .= '<a href="'.$elementUrl.'" target="_blank">'.$elementUrl.'</a>';
 
                             $offset = strlen($matches[0]);
                         }
@@ -1240,7 +1240,7 @@ class Parsedown
                         $elementUrl = str_replace('&', '&amp;', $elementUrl);
                         $elementUrl = str_replace('<', '&lt;', $elementUrl);
 
-                        $markup .= '<a href="'.$elementUrl.'">'.$elementUrl.'</a>';
+                        $markup .= '<a href="'.$elementUrl.'" target="_blank">'.$elementUrl.'</a>';
 
                         $offset = strlen($matches[0]);
                     }
