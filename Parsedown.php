@@ -1084,14 +1084,7 @@ class Parsedown
                         {
                             $element['text'] = $this->parseLine($element['text'], $markers);
 
-                            $markup .= '<a href="'.$element['link'].'"';
-
-                            if (isset($element['title']))
-                            {
-                                $markup .= ' title="'.$element['title'].'"';
-                            }
-
-                            $markup .= '>'.$element['text'].'</a>';
+                            $markup .= $this->getHTMLForLink($element['link'], isset($element['title']) ? $element['title'] : null, $element['text']);
                         }
 
                         unset($element);
@@ -1163,13 +1156,13 @@ class Parsedown
                             $elementUrl = str_replace('&', '&amp;', $elementUrl);
                             $elementUrl = str_replace('<', '&lt;', $elementUrl);
 
-                            $markup .= '<a href="'.$elementUrl.'">'.$elementUrl.'</a>';
+                            $markup .= $this->getHTMLForLink($elementUrl, null, $elementUrl);
 
                             $offset = strlen($matches[0]);
                         }
                         elseif (strpos($text, '@') > 1 and preg_match('/<(\S+?@\S+?)>/', $text, $matches))
                         {
-                            $markup .= '<a href="mailto:'.$matches[1].'">'.$matches[1].'</a>';
+                            $markup .= $this->getHTMLForLink("mailto:".$matches[1], null, $matches[1]);
 
                             $offset = strlen($matches[0]);
                         }
@@ -1240,7 +1233,7 @@ class Parsedown
                         $elementUrl = str_replace('&', '&amp;', $elementUrl);
                         $elementUrl = str_replace('<', '&lt;', $elementUrl);
 
-                        $markup .= '<a href="'.$elementUrl.'">'.$elementUrl.'</a>';
+                        $markup .= $this->getHTMLForLink($elementUrl, null, $elementUrl);
 
                         $offset = strlen($matches[0]);
                     }
@@ -1337,4 +1330,11 @@ class Parsedown
                           'span',
                           'time',
     );
+	
+	
+	
+	protected function getHTMLForLink($href, $title, $contents) {
+		return '<a href="'.$href.'"'.($title?' title="'.$title.'"':'').'>'.$contents.'</a>';
+	}
+	
 }
