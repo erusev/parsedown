@@ -242,6 +242,10 @@ class Parsedown
 
         # ~
 
+        $this->references = array();
+
+        # ~
+
         return $markup;
     }
 
