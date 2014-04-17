@@ -23,7 +23,7 @@ Include `Parsedown.php` or install [the composer package](https://packagist.org/
 ### Example
 
 ``` php
-$parsedown = new Parsedown();
+$Parsedown = new Parsedown();
 
-echo $parsedown->parse('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
+echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
