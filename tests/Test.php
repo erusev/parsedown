@@ -4,54 +4,64 @@ include 'Parsedown.php';
 
 class Test extends PHPUnit_Framework_TestCase
 {
-	const provider_dir = 'data/';
+    public function __construct($name = null, array $data = array(), $dataName = '')
+    {
+        $this->dataDir = dirname(__FILE__).'/data/';
 
-	/**
-	 * @dataProvider provider
+        parent::__construct($name, $data, $dataName);
+    }
+
+    private $dataDir;
+
+    /**
+	 * @dataProvider data
 	 */
 	function test_($filename)
 	{
-		$path = $this->get_data_path();
-		$markdown = file_get_contents($path . $filename . '.md');
-		$expected_markup = file_get_contents($path . $filename . '.html');
-		$expected_markup = str_replace("\r\n", "\n", $expected_markup);
-		$expected_markup = str_replace("\r", "\n", $expected_markup);
+		$markdown = file_get_contents($this->dataDir . $filename . '.md');
 
-		$actual_markup = Parsedown::instance()->parse($markdown);
+		$expectedMarkup = file_get_contents($this->dataDir . $filename . '.html');
 
-		$this->assertEquals($expected_markup, $actual_markup);
+		$expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
+		$expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
+
+		$actualMarkup = Parsedown::instance()->text($markdown);
+
+		$this->assertEquals($expectedMarkup, $actualMarkup);
 	}
 
-	function provider()
+	function data()
 	{
-		$provider = array();
+		$data = array();
 
-		$path = $this->get_data_path();
-		$DirectoryIterator = new DirectoryIterator($path);
+		$Folder = new DirectoryIterator($this->dataDir);
 
-		foreach ($DirectoryIterator as $Item)
+		foreach ($Folder as $File)
 		{
-			if ($Item->isFile())
-			{
-				$filename = $Item->getFilename();
+            /** @var $File DirectoryIterator */
 
-				$extension = pathinfo($filename, PATHINFO_EXTENSION);
+            if ( ! $File->isFile())
+            {
+                continue;
+            }
 
-				if ($extension !== 'md')
-					continue;
+            $filename = $File->getFilename();
 
-				$basename = $Item->getBasename('.md');
-				if (file_exists($path.$basename.'.html')) {
-					$provider [] = array($basename);
-				}
-			}
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if ($extension !== 'md')
+            {
+                continue;
+            }
+
+            $basename = $File->getBasename('.md');
+
+            if (file_exists($this->dataDir . $basename . '.html'))
+            {
+                $data []= array($basename);
+            }
 		}
 
-		return $provider;
-	}
-
-	function get_data_path()
-	{
-		return dirname(__FILE__).'/'.self::provider_dir;
+		return $data;
 	}
 }
