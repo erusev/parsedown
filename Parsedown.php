@@ -454,7 +454,7 @@ class Parsedown
             return $Block;
         }
 
-        $string = htmlspecialchars($Line['text'], ENT_NOQUOTES, 'UTF-8');
+        $string = htmlspecialchars($Line['body'], ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] .= "\n".$string;;
 
