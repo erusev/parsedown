@@ -14,30 +14,30 @@ class Test extends PHPUnit_Framework_TestCase
     private $dataDir;
 
     /**
-	 * @dataProvider data
-	 */
-	function test_($filename)
-	{
-		$markdown = file_get_contents($this->dataDir . $filename . '.md');
+     * @dataProvider data
+     */
+    function test_($filename)
+    {
+        $markdown = file_get_contents($this->dataDir . $filename . '.md');
 
-		$expectedMarkup = file_get_contents($this->dataDir . $filename . '.html');
+        $expectedMarkup = file_get_contents($this->dataDir . $filename . '.html');
 
-		$expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
-		$expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
+        $expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
+        $expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
 
-		$actualMarkup = Parsedown::instance()->text($markdown);
+        $actualMarkup = Parsedown::instance()->text($markdown);
 
-		$this->assertEquals($expectedMarkup, $actualMarkup);
-	}
+        $this->assertEquals($expectedMarkup, $actualMarkup);
+    }
 
-	function data()
-	{
-		$data = array();
+    function data()
+    {
+        $data = array();
 
-		$Folder = new DirectoryIterator($this->dataDir);
+        $Folder = new DirectoryIterator($this->dataDir);
 
-		foreach ($Folder as $File)
-		{
+        foreach ($Folder as $File)
+        {
             /** @var $File DirectoryIterator */
 
             if ( ! $File->isFile())
@@ -60,8 +60,8 @@ class Test extends PHPUnit_Framework_TestCase
             {
                 $data []= array($basename);
             }
-		}
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 }
