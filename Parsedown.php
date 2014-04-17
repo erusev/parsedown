@@ -48,6 +48,9 @@ class Parsedown
         # trim line breaks
         $markup = trim($markup, "\n");
 
+        # clean up
+        $this->references = array();
+
         return $markup;
     }
 
@@ -239,10 +242,6 @@ class Parsedown
         # ~
 
         $markup = $this->elements($elements);
-
-        # ~
-
-        $this->references = array();
 
         # ~
 
