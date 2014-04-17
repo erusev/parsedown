@@ -86,6 +86,7 @@ class Parsedown
         '7' => array('List'),
         '8' => array('List'),
         '9' => array('List'),
+        ':' => array('Table'),
         '<' => array('Markup'),
         '=' => array('Setext'),
         '>' => array('Quote'),
