@@ -158,12 +158,12 @@ class Parsedown
                 }
                 else
                 {
-                    unset($CurrentBlock['incomplete']);
-
                     if (method_exists($this, 'complete'.$CurrentBlock['type']))
                     {
                         $CurrentBlock = $this->{'complete'.$CurrentBlock['type']}($CurrentBlock);
                     }
+
+                    unset($CurrentBlock['incomplete']);
                 }
             }
 
@@ -235,6 +235,15 @@ class Parsedown
                 );
             }
         }
+
+        # ~
+
+        if (isset($CurrentBlock['incomplete']) and method_exists($this, 'complete'.$CurrentBlock['type']))
+        {
+            $CurrentBlock = $this->{'complete'.$CurrentBlock['type']}($CurrentBlock);
+        }
+
+        # ~
 
         $elements []= $CurrentBlock['element'];
 
