@@ -1,7 +1,5 @@
 <?php
 
-include 'Parsedown.php';
-
 class Test extends PHPUnit_Framework_TestCase
 {
     public function __construct($name = null, array $data = array(), $dataName = '')
