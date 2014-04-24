@@ -7,3 +7,6 @@ php:
   - 5.3
   - 5.2
   - hhvm
+
+before_install: composer self-update
+install: composer install
