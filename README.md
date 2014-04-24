@@ -24,3 +24,10 @@ $Parsedown = new Parsedown();
 
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
+
+### CLI Example
+
+```
+cd bin
+./parsedown document.md > document.html
+```
