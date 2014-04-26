@@ -49,7 +49,7 @@ class Parsedown
         $markup = trim($markup, "\n");
 
         # clean up
-        $this->references = array();
+        $this->definitions = array();
 
         return $markup;
     }
@@ -97,7 +97,6 @@ class Parsedown
         '~' => array('FencedCode'),
     );
 
-    # Draft
     protected $definitionMarkers = array(
         '[' => array('Reference'),
     );
@@ -169,9 +168,28 @@ class Parsedown
 
             # ~
 
-            $blockTypes = $this->unmarkedBlockTypes;
-
             $marker = $text[0];
+
+            # Definitions
+
+            if (isset($this->definitionMarkers[$marker]))
+            {
+                foreach ($this->definitionMarkers[$marker] as $definitionType)
+                {
+                    $Definition = $this->{'identify'.$definitionType}($Line, $CurrentBlock);
+
+                    if (isset($Definition))
+                    {
+                        $this->definitions[$definitionType][$Definition['id']] = $Definition['data'];
+
+                        continue 2;
+                    }
+                }
+            }
+
+            # ~
+
+            $blockTypes = $this->unmarkedBlockTypes;
 
             if (isset($this->blockMarkers[$marker]))
             {
@@ -310,22 +328,19 @@ class Parsedown
     {
         if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
         {
-            $label = strtolower($matches[1]);
-
-            $this->references[$label] = array(
-                'url' => $matches[2],
+            $Definition = array(
+                'id' => strtolower($matches[1]),
+                'data' => array(
+                    'url' => $matches[2],
+                ),
             );
 
             if (isset($matches[3]))
             {
-                $this->references[$label]['title'] = $matches[3];
+                $Definition['data']['title'] = $matches[3];
             }
 
-            $Block = array(
-                'element' => null,
-            );
-
-            return $Block;
+            return $Definition;
         }
     }
 
@@ -1104,9 +1119,9 @@ class Parsedown
             {
                 $Link['label'] = strtolower($matches[1]);
 
-                if (isset($this->references[$Link['label']]))
+                if (isset($this->definitions['Reference'][$Link['label']]))
                 {
-                    $Link += $this->references[$Link['label']];
+                    $Link += $this->definitions['Reference'][$Link['label']];
 
                     $extent += strlen($matches[0]);
                 }
@@ -1115,9 +1130,9 @@ class Parsedown
                     return;
                 }
             }
-            elseif ($this->references and isset($this->references[$Link['label']]))
+            elseif (isset($this->definitions['Reference'][$Link['label']]))
             {
-                $Link += $this->references[$Link['label']];
+                $Link += $this->definitions['Reference'][$Link['label']];
 
                 if (preg_match('/^[ ]*\[\]/', $substring, $matches))
                 {
@@ -1285,7 +1300,7 @@ class Parsedown
     # Fields
     #
 
-    protected $references = array(); # » Definitions['reference']
+    protected $definitions;
 
     #
     # Read-only
