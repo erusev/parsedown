@@ -935,9 +935,9 @@ class Parsedown
                     $Span['position'] = $markerPosition;
                 }
 
-                $unmarkedText = substr($text, 0, $Span['position']);
+                $plainText = substr($text, 0, $Span['position']);
 
-                $markup .= $this->readPlainText($unmarkedText);
+                $markup .= $this->readPlainText($plainText);
 
                 $markup .= isset($Span['element']) ? $this->element($Span['element']) : $Span['markup'];
 
