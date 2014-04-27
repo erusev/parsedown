@@ -111,30 +111,21 @@ class Parsedown
 
         foreach ($lines as $line)
         {
+            if (chop($line) === '')
+            {
+                if (isset($CurrentBlock))
+                {
+                    $CurrentBlock['interrupted'] = true;
+                }
+
+                continue;
+            }
+
             $indent = 0;
 
-            while (true)
+            while (isset($line[$indent]) and $line[$indent] === ' ')
             {
-                if (isset($line[$indent]))
-                {
-                    if ($line[$indent] === ' ')
-                    {
-                        $indent ++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else # blank line
-                {
-                    if (isset($CurrentBlock))
-                    {
-                        $CurrentBlock['interrupted'] = true;
-                    }
-
-                    continue 2;
-                }
+                $indent ++;
             }
 
             $text = $indent > 0 ? substr($line, $indent) : $line;
