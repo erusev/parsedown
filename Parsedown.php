@@ -916,36 +916,38 @@ class Parsedown
 
                 $Span = $this->$handler($markedExcerpt, $text);
 
-                if (isset($Span))
+                if ( ! isset($Span))
                 {
-                    # The identified span can be ahead of the marker.
-
-                    if (isset($Span['position']) and $Span['position'] > $markerPosition)
-                    {
-                        continue;
-                    }
-
-                    # Spans that start at the position of their marker don't have to set a position.
-
-                    if ( ! isset($Span['position']))
-                    {
-                        $Span['position'] = $markerPosition;
-                    }
-
-                    $unmarkedText = substr($text, 0, $Span['position']);
-
-                    $markup .= $this->readPlainText($unmarkedText);
-
-                    $markup .= isset($Span['element']) ? $this->element($Span['element']) : $Span['markup'];
-
-                    $text = substr($text, $Span['position'] + $Span['extent']);
-
-                    $remainder = $text;
-
-                    $markerPosition = 0;
-
-                    continue 2;
+                    continue;
                 }
+
+                # The identified span can be ahead of the marker.
+
+                if (isset($Span['position']) and $Span['position'] > $markerPosition)
+                {
+                    continue;
+                }
+
+                # Spans that start at the position of their marker don't have to set a position.
+
+                if ( ! isset($Span['position']))
+                {
+                    $Span['position'] = $markerPosition;
+                }
+
+                $unmarkedText = substr($text, 0, $Span['position']);
+
+                $markup .= $this->readPlainText($unmarkedText);
+
+                $markup .= isset($Span['element']) ? $this->element($Span['element']) : $Span['markup'];
+
+                $text = substr($text, $Span['position'] + $Span['extent']);
+
+                $remainder = $text;
+
+                $markerPosition = 0;
+
+                continue 2;
             }
 
             $remainder = substr($markedExcerpt, 1);
