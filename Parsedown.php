@@ -418,7 +418,7 @@ class Parsedown
 
     protected function identifyFencedCode($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].']{3,})[ ]*(\w+)?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^(['.$Line['text'][0].']{3,})[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches))
         {
             $Element = array(
                 'name' => 'code',
@@ -593,6 +593,8 @@ class Parsedown
             if (isset($Block['interrupted']))
             {
                 $Block['element']['text'] []= '';
+
+                unset($Block['interrupted']);
             }
 
             $Block['element']['text'] []= $matches[1];
@@ -1333,12 +1335,12 @@ class Parsedown
     protected $textLevelElements = array(
         'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
         'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
-        'i', 'rp', 'sub', 'code',          'strike', 'marquee',
-        'q', 'rt', 'sup', 'font',          'strong',
-        's', 'tt', 'var', 'mark',
-        'u', 'xm', 'wbr', 'nobr',
-                          'ruby',
-                          'span',
+        'i', 'rp', 'del', 'code',          'strike', 'marquee',
+        'q', 'rt', 'ins', 'font',          'strong',
+        's', 'tt', 'sub', 'mark',
+        'u', 'xm', 'sup', 'nobr',
+                   'var', 'ruby',
+                   'wbr', 'span',
                           'time',
     );
 }
