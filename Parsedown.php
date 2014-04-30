@@ -470,9 +470,18 @@ class Parsedown
             return $Block;
         }
 
-        $string = htmlspecialchars($Line['body'], ENT_NOQUOTES, 'UTF-8');
+        $Block['element']['text']['text'] .= "\n".$Line['body'];;
 
-        $Block['element']['text']['text'] .= "\n".$string;;
+        return $Block;
+    }
+
+    protected function completeFencedCode($Block)
+    {
+        $text = $Block['element']['text']['text'];
+
+        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+
+        $Block['element']['text']['text'] = $text;
 
         return $Block;
     }
@@ -762,7 +771,6 @@ class Parsedown
         if ($Line['indent'] >= 4)
         {
             $text = substr($Line['body'], 4);
-            $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
             $Block = array(
                 'element' => array(
@@ -793,12 +801,22 @@ class Parsedown
             $Block['element']['text']['text'] .= "\n";
 
             $text = substr($Line['body'], 4);
-            $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
             $Block['element']['text']['text'] .= $text;
 
             return $Block;
         }
+    }
+
+    protected function completeCodeBlock($Block)
+    {
+        $text = $Block['element']['text']['text'];
+
+        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+
+        $Block['element']['text']['text'] = $text;
+
+        return $Block;
     }
 
     #
