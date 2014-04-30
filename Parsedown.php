@@ -593,6 +593,8 @@ class Parsedown
             if (isset($Block['interrupted']))
             {
                 $Block['element']['text'] []= '';
+
+                unset($Block['interrupted']);
             }
 
             $Block['element']['text'] []= $matches[1];
