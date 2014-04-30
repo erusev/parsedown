@@ -1333,12 +1333,12 @@ class Parsedown
     protected $textLevelElements = array(
         'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
         'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
-        'i', 'rp', 'sub', 'code',          'strike', 'marquee',
-        'q', 'rt', 'sup', 'font',          'strong',
-        's', 'tt', 'var', 'mark',
-        'u', 'xm', 'wbr', 'nobr',
-                          'ruby',
-                          'span',
+        'i', 'rp', 'del', 'code',          'strike', 'marquee',
+        'q', 'rt', 'ins', 'font',          'strong',
+        's', 'tt', 'sub', 'mark',
+        'u', 'xm', 'sup', 'nobr',
+                   'var', 'ruby',
+                   'wbr', 'span',
                           'time',
     );
 }
