@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true">
+<phpunit bootstrap="test/bootstrap.php" colors="true">
 	<testsuites>
 		<testsuite>
-			<file>tests/Test.php</file>
+			<file>test/Test.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
