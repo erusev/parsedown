@@ -1069,7 +1069,7 @@ class Parsedown
 
     protected function identifyEmailTag($excerpt)
     {
-        if (strpos($excerpt, '>') !== false and preg_match('/<(\S+?@\S+?)>/', $excerpt, $matches))
+        if (strpos($excerpt, '>') !== false and preg_match('/^<(\S+?@\S+?)>/', $excerpt, $matches))
         {
             return array(
                 'extent' => strlen($matches[0]),
