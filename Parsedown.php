@@ -982,7 +982,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/\bhttps?:[\/]{2}[^\s]+\b\/*/ui', $text, $matches, PREG_OFFSET_CAPTURE))
+        if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $text, $matches, PREG_OFFSET_CAPTURE))
         {
             $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[0][0]);
 

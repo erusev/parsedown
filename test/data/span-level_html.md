@@ -4,3 +4,5 @@ broken<br/>
 line
 
 <b>inline tag</b> at the beginning
+
+<span>http://example.com</span>
