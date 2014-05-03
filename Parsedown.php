@@ -49,7 +49,7 @@ class Parsedown
         $markup = trim($markup, "\n");
 
         # clean up
-        $this->definitions = array();
+        $this->Text = array();
 
         return $markup;
     }
@@ -71,7 +71,7 @@ class Parsedown
     # Blocks
     #
 
-    protected $blockMarkers = array(
+    protected $Block = array(
         '#' => array('Atx'),
         '*' => array('Rule', 'List'),
         '+' => array('List'),
@@ -97,7 +97,7 @@ class Parsedown
         '~' => array('FencedCode'),
     );
 
-    protected $definitionMarkers = array(
+    protected $Definition = array(
         '[' => array('Reference'),
     );
 
@@ -163,15 +163,15 @@ class Parsedown
 
             # Definitions
 
-            if (isset($this->definitionMarkers[$marker]))
+            if (isset($this->Definition[$marker]))
             {
-                foreach ($this->definitionMarkers[$marker] as $definitionType)
+                foreach ($this->Definition[$marker] as $definitionType)
                 {
                     $Definition = $this->{'identify'.$definitionType}($Line, $CurrentBlock);
 
                     if (isset($Definition))
                     {
-                        $this->definitions[$definitionType][$Definition['id']] = $Definition['data'];
+                        $this->Text[$definitionType][$Definition['id']] = $Definition['data'];
 
                         continue 2;
                     }
@@ -182,9 +182,9 @@ class Parsedown
 
             $blockTypes = $this->unmarkedBlockTypes;
 
-            if (isset($this->blockMarkers[$marker]))
+            if (isset($this->Block[$marker]))
             {
-                foreach ($this->blockMarkers[$marker] as $blockType)
+                foreach ($this->Block[$marker] as $blockType)
                 {
                     $blockTypes []= $blockType;
                 }
@@ -892,7 +892,7 @@ class Parsedown
     # Spans
     #
 
-    protected $spanMarkers = array(
+    protected $Span = array(
         '!' => array('Link'), # ?
         '&' => array('Ampersand'),
         '*' => array('Emphasis'),
@@ -921,7 +921,7 @@ class Parsedown
 
             $markerPosition += strpos($remainder, $marker);
 
-            foreach ($this->spanMarkers[$marker] as $spanType)
+            foreach ($this->Span[$marker] as $spanType)
             {
                 $handler = 'identify'.$spanType;
 
@@ -1132,9 +1132,9 @@ class Parsedown
             {
                 $Link['label'] = strtolower($matches[1]);
 
-                if (isset($this->definitions['Reference'][$Link['label']]))
+                if (isset($this->Text['Reference'][$Link['label']]))
                 {
-                    $Link += $this->definitions['Reference'][$Link['label']];
+                    $Link += $this->Text['Reference'][$Link['label']];
 
                     $extent += strlen($matches[0]);
                 }
@@ -1143,9 +1143,9 @@ class Parsedown
                     return;
                 }
             }
-            elseif (isset($this->definitions['Reference'][$Link['label']]))
+            elseif (isset($this->Text['Reference'][$Link['label']]))
             {
-                $Link += $this->definitions['Reference'][$Link['label']];
+                $Link += $this->Text['Reference'][$Link['label']];
 
                 if (preg_match('/^[ ]*\[\]/', $substring, $matches))
                 {
@@ -1313,7 +1313,7 @@ class Parsedown
     # Fields
     #
 
-    protected $definitions;
+    protected $Text;
 
     #
     # Read-only
