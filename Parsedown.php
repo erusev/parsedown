@@ -90,7 +90,6 @@ class Parsedown
         '<' => array('Markup'),
         '=' => array('Setext'),
         '>' => array('Quote'),
-        '[' => array('Reference'),
         '_' => array('Rule'),
         '`' => array('FencedCode'),
         '|' => array('Table'),
