@@ -58,6 +58,8 @@ class Parsedown
     # Setters
     #
 
+    private $breaksEnabled;
+
     function setBreaksEnabled($breaksEnabled)
     {
         $this->breaksEnabled = $breaksEnabled;
@@ -65,10 +67,8 @@ class Parsedown
         return $this;
     }
 
-    private $breaksEnabled;
-
     #
-    # Blocks
+    # Lines
     #
 
     protected $Block = array(
@@ -97,13 +97,21 @@ class Parsedown
         '~' => array('FencedCode'),
     );
 
+    # ~
+
     protected $Definition = array(
         '[' => array('Reference'),
     );
 
+    # ~
+
     protected $unmarkedBlockTypes = array(
         'CodeBlock',
     );
+
+    #
+    # Blocks
+    #
 
     private function lines(array $lines)
     {
@@ -290,15 +298,22 @@ class Parsedown
     }
 
     #
-    # Rule
+    # Code
 
-    protected function identifyRule($Line)
+    protected function identifyCodeBlock($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].'])([ ]{0,2}\1){2,}[ ]*$/', $Line['text']))
+        if ($Line['indent'] >= 4)
         {
+            $text = substr($Line['body'], 4);
+
             $Block = array(
                 'element' => array(
-                    'name' => 'hr'
+                    'name' => 'pre',
+                    'handler' => 'element',
+                    'text' => array(
+                        'name' => 'code',
+                        'text' => $text,
+                    ),
                 ),
             );
 
@@ -306,103 +321,34 @@ class Parsedown
         }
     }
 
-    #
-    # Reference
-
-    protected function identifyReference($Line)
+    protected function addToCodeBlock($Line, $Block)
     {
-        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
+        if ($Line['indent'] >= 4)
         {
-            $Definition = array(
-                'id' => strtolower($matches[1]),
-                'data' => array(
-                    'url' => $matches[2],
-                ),
-            );
-
-            if (isset($matches[3]))
+            if (isset($Block['interrupted']))
             {
-                $Definition['data']['title'] = $matches[3];
+                $Block['element']['text']['text'] .= "\n";
+
+                unset($Block['interrupted']);
             }
 
-            return $Definition;
-        }
-    }
+            $Block['element']['text']['text'] .= "\n";
 
-    #
-    # Setext
+            $text = substr($Line['body'], 4);
 
-    protected function identifySetext($Line, array $Block = null)
-    {
-        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
-        {
-            return;
-        }
-
-        if (chop($Line['text'], $Line['text'][0]) === '')
-        {
-            $Block['element']['name'] = $Line['text'][0] === '=' ? 'h1' : 'h2';
+            $Block['element']['text']['text'] .= $text;
 
             return $Block;
         }
     }
 
-    #
-    # Markup
-
-    protected function identifyMarkup($Line)
+    protected function completeCodeBlock($Block)
     {
-        if (preg_match('/^<(\w[\w\d]*)(?:[ ][^>\/]*)?(\/?)[ ]*>/', $Line['text'], $matches))
-        {
-            if (in_array($matches[1], $this->textLevelElements))
-            {
-                return;
-            }
+        $text = $Block['element']['text']['text'];
 
-            $Block = array(
-                'element' => $Line['body'],
-            );
+        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
-            if ($matches[2] or $matches[1] === 'hr' or preg_match('/<\/'.$matches[1].'>[ ]*$/', $Line['text']))
-            {
-                $Block['closed'] = true;
-            }
-            else
-            {
-                $Block['depth'] = 0;
-                $Block['start'] = '<'.$matches[1].'>';
-                $Block['end'] = '</'.$matches[1].'>';
-            }
-
-            return $Block;
-        }
-    }
-
-    protected function addToMarkup($Line, array $Block)
-    {
-        if (isset($Block['closed']))
-        {
-            return;
-        }
-
-        if (stripos($Line['text'], $Block['start']) !== false) # opening tag
-        {
-            $Block['depth'] ++;
-        }
-
-        if (stripos($Line['text'], $Block['end']) !== false) # closing tag
-        {
-            if ($Block['depth'] > 0)
-            {
-                $Block['depth'] --;
-            }
-            else
-            {
-                $Block['closed'] = true;
-            }
-        }
-
-        $Block['element'] .= "\n".$Line['body'];
+        $Block['element']['text']['text'] = $text;
 
         return $Block;
     }
@@ -605,6 +551,101 @@ class Parsedown
     }
 
     #
+    # Rule
+
+    protected function identifyRule($Line)
+    {
+        if (preg_match('/^(['.$Line['text'][0].'])([ ]{0,2}\1){2,}[ ]*$/', $Line['text']))
+        {
+            $Block = array(
+                'element' => array(
+                    'name' => 'hr'
+                ),
+            );
+
+            return $Block;
+        }
+    }
+
+    #
+    # Setext
+
+    protected function identifySetext($Line, array $Block = null)
+    {
+        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
+        {
+            return;
+        }
+
+        if (chop($Line['text'], $Line['text'][0]) === '')
+        {
+            $Block['element']['name'] = $Line['text'][0] === '=' ? 'h1' : 'h2';
+
+            return $Block;
+        }
+    }
+
+    #
+    # Markup
+
+    protected function identifyMarkup($Line)
+    {
+        if (preg_match('/^<(\w[\w\d]*)(?:[ ][^>\/]*)?(\/?)[ ]*>/', $Line['text'], $matches))
+        {
+            if (in_array($matches[1], $this->textLevelElements))
+            {
+                return;
+            }
+
+            $Block = array(
+                'element' => $Line['body'],
+            );
+
+            if ($matches[2] or $matches[1] === 'hr' or preg_match('/<\/'.$matches[1].'>[ ]*$/', $Line['text']))
+            {
+                $Block['closed'] = true;
+            }
+            else
+            {
+                $Block['depth'] = 0;
+                $Block['start'] = '<'.$matches[1].'>';
+                $Block['end'] = '</'.$matches[1].'>';
+            }
+
+            return $Block;
+        }
+    }
+
+    protected function addToMarkup($Line, array $Block)
+    {
+        if (isset($Block['closed']))
+        {
+            return;
+        }
+
+        if (stripos($Line['text'], $Block['start']) !== false) # opening tag
+        {
+            $Block['depth'] ++;
+        }
+
+        if (stripos($Line['text'], $Block['end']) !== false) # closing tag
+        {
+            if ($Block['depth'] > 0)
+            {
+                $Block['depth'] --;
+            }
+            else
+            {
+                $Block['closed'] = true;
+            }
+        }
+
+        $Block['element'] .= "\n".$Line['body'];
+
+        return $Block;
+    }
+
+    #
     # Table
 
     protected function identifyTable($Line, array $Block = null)
@@ -760,59 +801,27 @@ class Parsedown
     }
 
     #
-    # Code
+    # Definitions
+    #
 
-    protected function identifyCodeBlock($Line)
+    protected function identifyReference($Line)
     {
-        if ($Line['indent'] >= 4)
+        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
         {
-            $text = substr($Line['body'], 4);
-
-            $Block = array(
-                'element' => array(
-                    'name' => 'pre',
-                    'handler' => 'element',
-                    'text' => array(
-                        'name' => 'code',
-                        'text' => $text,
-                    ),
+            $Definition = array(
+                'id' => strtolower($matches[1]),
+                'data' => array(
+                    'url' => $matches[2],
                 ),
             );
 
-            return $Block;
-        }
-    }
-
-    protected function addToCodeBlock($Line, $Block)
-    {
-        if ($Line['indent'] >= 4)
-        {
-            if (isset($Block['interrupted']))
+            if (isset($matches[3]))
             {
-                $Block['element']['text']['text'] .= "\n";
-
-                unset($Block['interrupted']);
+                $Definition['data']['title'] = $matches[3];
             }
 
-            $Block['element']['text']['text'] .= "\n";
-
-            $text = substr($Line['body'], 4);
-
-            $Block['element']['text']['text'] .= $text;
-
-            return $Block;
+            return $Definition;
         }
-    }
-
-    protected function completeCodeBlock($Block)
-    {
-        $text = $Block['element']['text']['text'];
-
-        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
-
-        $Block['element']['text']['text'] = $text;
-
-        return $Block;
     }
 
     #
@@ -867,7 +876,7 @@ class Parsedown
 
             $markup .= "\n";
 
-            if (is_string($Element)) # because of markup
+            if (is_string($Element)) # because of Markup
             {
                 $markup .= $Element;
 
@@ -899,7 +908,13 @@ class Parsedown
         '\\' => array('EscapeSequence'),
     );
 
+    # ~
+
     protected $spanMarkerList = '*_!&[</`~\\';
+
+    #
+    # ~
+    #
 
     public function line($text)
     {
