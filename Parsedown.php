@@ -958,7 +958,7 @@ class Parsedown
 
                 $markup .= $this->readPlainText($plainText);
 
-                $markup .= isset($Span['element']) ? $this->element($Span['element']) : $Span['markup'];
+                $markup .= isset($Span['markup']) ? $Span['markup'] : $this->element($Span['element']);
 
                 $text = substr($text, $Span['position'] + $Span['extent']);
 
