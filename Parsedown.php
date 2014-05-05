@@ -134,7 +134,7 @@ class Parsedown
 
             $Line = array('body' => $line, 'indent' => $indent, 'text' => $text);
 
-            # Multiline block types define "addTo" methods.
+            # ~
 
             if (isset($CurrentBlock['incomplete']))
             {
@@ -160,8 +160,6 @@ class Parsedown
             # ~
 
             $marker = $text[0];
-
-            # Definitions
 
             if (isset($this->Definition[$marker]))
             {
@@ -195,22 +193,18 @@ class Parsedown
 
             foreach ($blockTypes as $blockType)
             {
-                # Block types define "identify" methods.
-
                 $Block = $this->{'identify'.$blockType}($Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
                     $Block['type'] = $blockType;
 
-                    if ( ! isset($Block['identified'])) # »
+                    if ( ! isset($Block['identified']))
                     {
                         $Elements []= $CurrentBlock['element'];
 
                         $Block['identified'] = true;
                     }
-
-                    # Multiline block types define "addTo" methods.
 
                     if (method_exists($this, 'addTo'.$blockType))
                     {
