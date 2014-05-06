@@ -1136,7 +1136,7 @@ class Parsedown
 
             $substring = substr($excerpt, $extent);
 
-            if (preg_match('/^\s*\[(.+?)\]/', $substring, $matches))
+            if (preg_match('/^\s*\[([^][]+)\]/', $substring, $matches))
             {
                 $Link['label'] = strtolower($matches[1]);
 
