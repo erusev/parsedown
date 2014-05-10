@@ -49,7 +49,7 @@ class Parsedown
         $markup = trim($markup, "\n");
 
         # clean up
-        $this->Text = array();
+        $this->Definitions = array();
 
         return $markup;
     }
@@ -71,7 +71,7 @@ class Parsedown
     # Lines
     #
 
-    protected $Block = array(
+    protected $BlockTypes = array(
         '#' => array('Atx'),
         '*' => array('Rule', 'List'),
         '+' => array('List'),
@@ -98,7 +98,7 @@ class Parsedown
 
     # ~
 
-    protected $Definition = array(
+    protected $DefinitionTypes = array(
         '[' => array('Reference'),
     );
 
@@ -168,15 +168,15 @@ class Parsedown
 
             $marker = $text[0];
 
-            if (isset($this->Definition[$marker]))
+            if (isset($this->DefinitionTypes[$marker]))
             {
-                foreach ($this->Definition[$marker] as $definitionType)
+                foreach ($this->DefinitionTypes[$marker] as $definitionType)
                 {
                     $Definition = $this->{'identify'.$definitionType}($Line, $CurrentBlock);
 
                     if (isset($Definition))
                     {
-                        $this->Text[$definitionType][$Definition['id']] = $Definition['data'];
+                        $this->Definitions[$definitionType][$Definition['id']] = $Definition['data'];
 
                         continue 2;
                     }
@@ -187,9 +187,9 @@ class Parsedown
 
             $blockTypes = $this->unmarkedBlockTypes;
 
-            if (isset($this->Block[$marker]))
+            if (isset($this->BlockTypes[$marker]))
             {
-                foreach ($this->Block[$marker] as $blockType)
+                foreach ($this->BlockTypes[$marker] as $blockType)
                 {
                     $blockTypes []= $blockType;
                 }
@@ -894,7 +894,7 @@ class Parsedown
     # Spans
     #
 
-    protected $Span = array(
+    protected $SpanTypes = array(
         '!' => array('Link'), # ?
         '&' => array('Ampersand'),
         '*' => array('Emphasis'),
@@ -929,7 +929,7 @@ class Parsedown
 
             $markerPosition += strpos($remainder, $marker);
 
-            foreach ($this->Span[$marker] as $spanType)
+            foreach ($this->SpanTypes[$marker] as $spanType)
             {
                 $handler = 'identify'.$spanType;
 
@@ -1140,9 +1140,9 @@ class Parsedown
             {
                 $Link['label'] = strtolower($matches[1]);
 
-                if (isset($this->Text['Reference'][$Link['label']]))
+                if (isset($this->Definitions['Reference'][$Link['label']]))
                 {
-                    $Link += $this->Text['Reference'][$Link['label']];
+                    $Link += $this->Definitions['Reference'][$Link['label']];
 
                     $extent += strlen($matches[0]);
                 }
@@ -1151,9 +1151,9 @@ class Parsedown
                     return;
                 }
             }
-            elseif (isset($this->Text['Reference'][$Link['label']]))
+            elseif (isset($this->Definitions['Reference'][$Link['label']]))
             {
-                $Link += $this->Text['Reference'][$Link['label']];
+                $Link += $this->Definitions['Reference'][$Link['label']];
 
                 if (preg_match('/^[ ]*\[\]/', $substring, $matches))
                 {
@@ -1225,11 +1225,11 @@ class Parsedown
 
         $marker = $excerpt[0];
 
-        if ($excerpt[1] === $marker and preg_match($this->strongRegex[$marker], $excerpt, $matches))
+        if ($excerpt[1] === $marker and preg_match($this->StrongRegex[$marker], $excerpt, $matches))
         {
             $emphasis = 'strong';
         }
-        elseif (preg_match($this->emRegex[$marker], $excerpt, $matches))
+        elseif (preg_match($this->EmRegex[$marker], $excerpt, $matches))
         {
             $emphasis = 'em';
         }
@@ -1321,7 +1321,7 @@ class Parsedown
     # Fields
     #
 
-    protected $Text;
+    protected $Definitions;
 
     #
     # Read-only
@@ -1330,12 +1330,12 @@ class Parsedown
         '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!',
     );
 
-    protected $strongRegex = array(
+    protected $StrongRegex = array(
         '*' => '/^[*]{2}((?:[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
         '_' => '/^__((?:[^_]|_[^_]*_)+?)__(?!_)/us',
     );
 
-    protected $emRegex = array(
+    protected $EmRegex = array(
         '*' => '/^[*]((?:[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
         '_' => '/^_((?:[^_]|__[^_]*__)+?)_(?!_)\b/us',
     );
