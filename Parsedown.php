@@ -226,7 +226,7 @@ class Parsedown
 
             # ~
 
-            if ($CurrentBlock['type'] === 'Paragraph' and ! isset($CurrentBlock['interrupted']))
+            if (isset($CurrentBlock) and ! isset($CurrentBlock['type']) and ! isset($CurrentBlock['interrupted']))
             {
                 $CurrentBlock['element']['text'] .= "\n".$text;
             }
@@ -236,10 +236,7 @@ class Parsedown
 
                 $CurrentBlock = $this->buildParagraph($Line);
 
-                $CurrentBlock += array(
-                    'type' => 'Paragraph',
-                    'identified' => true,
-                );
+                $CurrentBlock['identified'] = true;
             }
         }
 
@@ -568,7 +565,7 @@ class Parsedown
 
     protected function identifySetext($Line, array $Block = null)
     {
-        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
+        if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
         {
             return;
         }
@@ -646,7 +643,7 @@ class Parsedown
 
     protected function identifyTable($Line, array $Block = null)
     {
-        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
+        if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
         {
             return;
         }
