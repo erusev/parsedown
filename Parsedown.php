@@ -1041,7 +1041,7 @@ class Parsedown
 
     protected function identifyEscapeSequence($excerpt)
     {
-        if (in_array($excerpt[1], $this->specialCharacters))
+        if (isset($excerpt[1]) && in_array($excerpt[1], $this->specialCharacters))
         {
             return array(
                 'markup' => $excerpt[1],
