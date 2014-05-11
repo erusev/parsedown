@@ -29,6 +29,9 @@ class Parsedown
 
     function text($text)
     {
+        # make sure no definitions are set
+        $this->Definitions = array();
+
         # standardize line breaks
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
@@ -47,9 +50,6 @@ class Parsedown
 
         # trim line breaks
         $markup = trim($markup, "\n");
-
-        # clean up
-        $this->Definitions = array();
 
         return $markup;
     }
@@ -234,14 +234,11 @@ class Parsedown
             {
                 $Elements []= $CurrentBlock['element'];
 
-                $CurrentBlock = array(
+                $CurrentBlock = $this->buildParagraph($Line);
+
+                $CurrentBlock += array(
                     'type' => 'Paragraph',
                     'identified' => true,
-                    'element' => array(
-                        'name' => 'p',
-                        'text' => $text,
-                        'handler' => 'line',
-                    ),
                 );
             }
         }
@@ -827,7 +824,24 @@ class Parsedown
     # ~
     #
 
-    private function element(array $Element)
+    protected function buildParagraph($Line)
+    {
+        $Block = array(
+            'element' => array(
+                'name' => 'p',
+                'text' => $Line['text'],
+                'handler' => 'line',
+            ),
+        );
+
+        return $Block;
+    }
+
+    #
+    # ~
+    #
+
+    protected function element(array $Element)
     {
         $markup = '<'.$Element['name'];
 
@@ -862,7 +876,7 @@ class Parsedown
         return $markup;
     }
 
-    private function elements(array $Elements)
+    protected function elements(array $Elements)
     {
         $markup = '';
 
