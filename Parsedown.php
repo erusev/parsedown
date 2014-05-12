@@ -934,17 +934,19 @@ class Parsedown
 
         $markerPosition = 0;
 
-        while ($markedExcerpt = strpbrk($remainder, $this->spanMarkerList))
+        while ($excerpt = strpbrk($remainder, $this->spanMarkerList))
         {
-            $marker = $markedExcerpt[0];
+            $marker = $excerpt[0];
 
             $markerPosition += strpos($remainder, $marker);
+
+            $Excerpt = array('text' => $excerpt, 'context' => $text);
 
             foreach ($this->SpanTypes[$marker] as $spanType)
             {
                 $handler = 'identify'.$spanType;
 
-                $Span = $this->$handler($markedExcerpt, $text);
+                $Span = $this->$handler($Excerpt);
 
                 if ( ! isset($Span))
                 {
@@ -980,7 +982,7 @@ class Parsedown
                 continue 2;
             }
 
-            $remainder = substr($markedExcerpt, 1);
+            $remainder = substr($excerpt, 1);
 
             $markerPosition ++;
         }
@@ -994,14 +996,14 @@ class Parsedown
     # ~
     #
 
-    protected function identifyUrl($excerpt, $text)
+    protected function identifyUrl($Excerpt)
     {
-        if ( ! isset($excerpt[1]) or $excerpt[1] !== '/')
+        if ( ! isset($Excerpt['text'][1]) or $Excerpt['text'][1] !== '/')
         {
             return;
         }
 
-        if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $text, $matches, PREG_OFFSET_CAPTURE))
+        if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
         {
             $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[0][0]);
 
@@ -1019,9 +1021,9 @@ class Parsedown
         }
     }
 
-    protected function identifyAmpersand($excerpt)
+    protected function identifyAmpersand($Excerpt)
     {
-        if ( ! preg_match('/^&#?\w+;/', $excerpt))
+        if ( ! preg_match('/^&#?\w+;/', $Excerpt['text']))
         {
             return array(
                 'markup' => '&amp;',
@@ -1030,14 +1032,14 @@ class Parsedown
         }
     }
 
-    protected function identifyStrikethrough($excerpt)
+    protected function identifyStrikethrough($Excerpt)
     {
-        if ( ! isset($excerpt[1]))
+        if ( ! isset($Excerpt['text'][1]))
         {
             return;
         }
 
-        if ($excerpt[1] === $excerpt[0] and preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $excerpt, $matches))
+        if ($Excerpt['text'][1] === '~' and preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $Excerpt['text'], $matches))
         {
             return array(
                 'extent' => strlen($matches[0]),
@@ -1050,12 +1052,12 @@ class Parsedown
         }
     }
 
-    protected function identifyEscapeSequence($excerpt)
+    protected function identifyEscapeSequence($Excerpt)
     {
-        if (isset($excerpt[1]) and in_array($excerpt[1], $this->specialCharacters))
+        if (isset($Excerpt['text'][1]) and in_array($Excerpt['text'][1], $this->specialCharacters))
         {
             return array(
-                'markup' => $excerpt[1],
+                'markup' => $Excerpt['text'][1],
                 'extent' => 2,
             );
         }
@@ -1069,9 +1071,9 @@ class Parsedown
         );
     }
 
-    protected function identifyUrlTag($excerpt)
+    protected function identifyUrlTag($Excerpt)
     {
-        if (strpos($excerpt, '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $excerpt, $matches))
+        if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $Excerpt['text'], $matches))
         {
             $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
 
@@ -1088,9 +1090,9 @@ class Parsedown
         }
     }
 
-    protected function identifyEmailTag($excerpt)
+    protected function identifyEmailTag($Excerpt)
     {
-        if (strpos($excerpt, '>') !== false and preg_match('/^<(\S+?@\S+?)>/', $excerpt, $matches))
+        if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\S+?@\S+?)>/', $Excerpt['text'], $matches))
         {
             return array(
                 'extent' => strlen($matches[0]),
@@ -1105,9 +1107,9 @@ class Parsedown
         }
     }
 
-    protected function identifyTag($excerpt)
+    protected function identifyTag($Excerpt)
     {
-        if (strpos($excerpt, '>') !== false and preg_match('/^<\/?\w.*?>/', $excerpt, $matches))
+        if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<\/?\w.*?>/', $Excerpt['text'], $matches))
         {
             return array(
                 'markup' => $matches[0],
@@ -1116,11 +1118,11 @@ class Parsedown
         }
     }
 
-    protected function identifyInlineCode($excerpt)
+    protected function identifyInlineCode($Excerpt)
     {
-        $marker = $excerpt[0];
+        $marker = $Excerpt['text'][0];
 
-        if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/', $excerpt, $matches))
+        if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/', $Excerpt['text'], $matches))
         {
             $text = $matches[2];
             $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
@@ -1135,17 +1137,17 @@ class Parsedown
         }
     }
 
-    protected function identifyLink($excerpt)
+    protected function identifyLink($Excerpt)
     {
-        $extent = $excerpt[0] === '!' ? 1 : 0;
+        $extent = $Excerpt['text'][0] === '!' ? 1 : 0;
 
-        if (strpos($excerpt, ']') and preg_match('/\[((?:[^][]|(?R))*)\]/', $excerpt, $matches))
+        if (strpos($Excerpt['text'], ']') and preg_match('/\[((?:[^][]|(?R))*)\]/', $Excerpt['text'], $matches))
         {
             $Link = array('text' => $matches[1], 'label' => strtolower($matches[1]));
 
             $extent += strlen($matches[0]);
 
-            $substring = substr($excerpt, $extent);
+            $substring = substr($Excerpt['text'], $extent);
 
             if (preg_match('/^\s*\[([^][]+)\]/', $substring, $matches))
             {
@@ -1194,7 +1196,7 @@ class Parsedown
 
         $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Link['url']);
 
-        if ($excerpt[0] === '!')
+        if ($Excerpt['text'][0] === '!')
         {
             $Element = array(
                 'name' => 'img',
@@ -1227,20 +1229,20 @@ class Parsedown
         );
     }
 
-    protected function identifyEmphasis($excerpt)
+    protected function identifyEmphasis($Excerpt)
     {
-        if ( ! isset($excerpt[1]))
+        if ( ! isset($Excerpt['text'][1]))
         {
             return;
         }
 
-        $marker = $excerpt[0];
+        $marker = $Excerpt['text'][0];
 
-        if ($excerpt[1] === $marker and preg_match($this->StrongRegex[$marker], $excerpt, $matches))
+        if ($Excerpt['text'][1] === $marker and preg_match($this->StrongRegex[$marker], $Excerpt['text'], $matches))
         {
             $emphasis = 'strong';
         }
-        elseif (preg_match($this->EmRegex[$marker], $excerpt, $matches))
+        elseif (preg_match($this->EmRegex[$marker], $Excerpt['text'], $matches))
         {
             $emphasis = 'em';
         }
