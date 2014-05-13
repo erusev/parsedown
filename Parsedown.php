@@ -601,8 +601,7 @@ class Parsedown
             else
             {
                 $Block['depth'] = 0;
-                $Block['start'] = '<'.$matches[1].'>';
-                $Block['end'] = '</'.$matches[1].'>';
+                $Block['name'] = $matches[1];
             }
 
             return $Block;
@@ -616,12 +615,12 @@ class Parsedown
             return;
         }
 
-        if (stripos($Line['text'], $Block['start']) !== false) # opening tag
+        if (preg_match('/<'.$Block['name'].'([ ][^\/]+)?>/', $Line['text'])) # opening tag
         {
             $Block['depth'] ++;
         }
 
-        if (stripos($Line['text'], $Block['end']) !== false) # closing tag
+        if (stripos($Line['text'], '</'.$Block['name'].'>') !== false) # closing tag
         {
             if ($Block['depth'] > 0)
             {
