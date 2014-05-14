@@ -87,7 +87,7 @@ class Parsedown
         '8' => array('List'),
         '9' => array('List'),
         ':' => array('Table'),
-        '<' => array('Markup'),
+        '<' => array('Comment', 'Markup'),
         '=' => array('Setext'),
         '>' => array('Quote'),
         '_' => array('Rule'),
@@ -342,6 +342,43 @@ class Parsedown
         $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
+
+        return $Block;
+    }
+
+    #
+    # Comment
+
+    protected function identifyComment($Line)
+    {
+        if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
+        {
+            $Block = array(
+                'element' => $Line['body'],
+            );
+
+            if (preg_match('/-->$/', $Line['text']))
+            {
+                $Block['closed'] = true;
+            }
+
+            return $Block;
+        }
+    }
+
+    protected function addToComment($Line, array $Block)
+    {
+        if (isset($Block['closed']))
+        {
+            return;
+        }
+
+        $Block['element'] .= "\n" . $Line['body'];
+
+        if (preg_match('/-->$/', $Line['text']))
+        {
+            $Block['closed'] = true;
+        }
 
         return $Block;
     }
