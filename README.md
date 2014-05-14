@@ -12,6 +12,7 @@ Better [Markdown](http://en.wikipedia.org/wiki/Markdown) parser for PHP.
 * [GitHub Flavored](https://help.github.com/articles/github-flavored-markdown)
 * [Tested](https://travis-ci.org/erusev/parsedown) in PHP 5.2, 5.3, 5.4, 5.5, 5.6 and [hhvm](http://www.hhvm.com/)
 * Extensible
+* [Markdown Extra extension](https://github.com/erusev/parsedown-extra) <sup>new</sup>
 
 ### Installation
 
