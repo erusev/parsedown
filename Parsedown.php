@@ -18,11 +18,10 @@ class Parsedown
     #
     # Philosophy
 
-    # Markdown is intended to be easy-to-read by humans - those of us who read
-    # line by line, left to right, top to bottom. In order to take advantage of
-    # this, Parsedown tries to read in a similar way. It breaks texts into
-    # lines, it iterates through them and it looks at how they start and relate
-    # to each other.
+    # Parsedown recognises that the Markdown syntax is optimised for humans so
+    # it tries to read like one. It goes through text line by line. It looks at
+    # how lines start to identify blocks. It looks for special characters to
+    # identify inline elements.
 
     #
     # ~
