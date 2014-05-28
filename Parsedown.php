@@ -15,6 +15,9 @@
 
 class Parsedown
 {
+	
+	private $safeMode = false;
+	
     #
     # Philosophy
 
@@ -29,6 +32,9 @@ class Parsedown
 
     function text($text)
     {
+		if ($this->safeMode)
+			$text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+		
         # standardize line breaks
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
@@ -66,6 +72,13 @@ class Parsedown
 
         return $this;
     }
+	
+	function setSafeMode($safeMode)
+	{
+		$this->safeMode = $safeMode;
+		
+		return $this;
+	}
 
     #
     # Lines
@@ -127,6 +140,10 @@ class Parsedown
 
                 continue;
             }
+			
+			# If line begins with '>' htmlentity, convert to '>' for quoting
+			if ($this->safeMode && substr($line, 0, 4) == "&gt;")
+				$line = substr_replace($line, ">", 0, 4);
 
             $indent = 0;
 
@@ -345,7 +362,8 @@ class Parsedown
     {
         $text = $Block['element']['text']['text'];
 
-        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+		if (!$this->safeMode)
+			$text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
 
@@ -418,7 +436,8 @@ class Parsedown
     {
         $text = $Block['element']['text']['text'];
 
-        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+		if (!$this->safeMode)
+			$text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
 
@@ -992,7 +1011,9 @@ class Parsedown
 
         if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $text, $matches, PREG_OFFSET_CAPTURE))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[0][0]);
+			$url = $matches[0][0];
+			if (!$this->safeMode)
+				$url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $url);
 
             return array(
                 'extent' => strlen($matches[0][0]),
@@ -1062,7 +1083,9 @@ class Parsedown
     {
         if (strpos($excerpt, '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $excerpt, $matches))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
+			$url = $matches[1];
+			if (!$this->safeMode)
+				$url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $url);
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1112,7 +1135,8 @@ class Parsedown
         if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/', $excerpt, $matches))
         {
             $text = $matches[2];
-            $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+			if (!$this->safeMode)
+				$text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1181,7 +1205,9 @@ class Parsedown
             return;
         }
 
-        $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Link['url']);
+		$url = $Link['url'];
+		if (!$this->safeMode)
+			$url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $url);
 
         if ($excerpt[0] === '!')
         {

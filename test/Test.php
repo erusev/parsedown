@@ -27,6 +27,29 @@ class Test extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
+	
+    /**
+     * @dataProvider data
+     */
+	function testSafeMode($filename) {
+        $markdown = file_get_contents($this->dataDir . $filename . '.md');
+
+        $expectedMarkup = file_get_contents($this->dataDir . $filename . '.html');
+
+        $expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
+        $expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
+
+		// Don't bother testing HTML, since it's not allowed
+		if (strpos($filename, "_html") !== false || strpos($filename, "html_") !== false) {
+			$this->markTestSkipped(
+				'HTML in md is not allowed in safe mode.'
+			);
+		}
+		
+        $actualMarkup = Parsedown::instance()->setSafeMode(true)->text($markdown);
+
+        $this->assertEquals($expectedMarkup, $actualMarkup);
+	}
 
     function data()
     {
