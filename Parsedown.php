@@ -70,25 +70,37 @@ class Parsedown
 
     function setHtmlEscaping($escapingEnabled)
     {
-        $this->escapingEnabled = $escapingEnabled;
-
-        if ($escapingEnabled)
+        // Modify parser only if the passed value differs from internal one.
+        // This prevents running the code again and again when used as one liner with instance() method.
+        if ($this->escapingEnabled !== $escapingEnabled)
         {
-            // Unset all cases of < recognition as block type.
-            unset($this->BlockTypes['<']);
+            $this->escapingEnabled = $escapingEnabled;
 
-            // Remove tag identifier from < span type.
-            $spanKey = array_search('Tag', $this->SpanTypes['<']);
-            unset($this->SpanTypes['<'][$spanKey], $spanKey);
-        }
-        else
-        {
-            // Set < recognition into block types.
-            $this->BlockTypes['<'] = array('Comment', 'Markup');
+            if ($escapingEnabled)
+            {
+                // Find comment and markup identifiers in block types.
+                $CommentKey = array_search('Comment', $this->BlockTypes['<']);
+                $MarkupKey = array_search('Markup', $this->BlockTypes['<']);
 
-            // Set tag identifier into span types.
-            // On position 2, after EmailTag
-            array_splice($this->SpanTypes['<'], 2, 0, 'Tag');
+                // Find tag identifier in span types.
+                $TagKey = array_search('Tag', $this->SpanTypes['<']);
+
+                // Unset Comment, Markup and Tag.
+                unset(
+                $this->BlockTypes['<'][$CommentKey], $CommentKey,
+                $this->BlockTypes['<'][$MarkupKey], $MarkupKey,
+                $this->SpanTypes['<'][$TagKey], $TagKey
+                );
+            }
+            else
+            {
+                // Set < recognition into block types.
+                $this->BlockTypes['<'] = array_merge($this->BlockTypes['<'], array('Comment', 'Markup'));
+
+                // Set tag identifier into span types.
+                // On position 2, after EmailTag
+                array_splice($this->SpanTypes['<'], 2, 0, 'Tag');
+            }
         }
 
         return $this;
@@ -129,7 +141,7 @@ class Parsedown
         '_' => array('Rule'),
         '`' => array('FencedCode'),
         '|' => array('Table'),
-        '~' => array('FencedCode'),
+        '~' => array('FencedCode')
     );
 
     # ~
@@ -988,7 +1000,7 @@ class Parsedown
         '_' => array('Emphasis'),
         '`' => array('InlineCode'),
         '~' => array('Strikethrough'),
-        '\\' => array('EscapeSequence'),
+        '\\' => array('EscapeSequence')
     );
 
     # ~
@@ -1078,7 +1090,7 @@ class Parsedown
 
         if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[0][0]);
+            $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $matches[0][0]);
 
             return array(
                 'extent' => strlen($matches[0][0]),
@@ -1166,7 +1178,7 @@ class Parsedown
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $Excerpt['text'], $matches))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
+            $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $matches[1]);
 
             return array(
                 'extent' => strlen($matches[0]),
