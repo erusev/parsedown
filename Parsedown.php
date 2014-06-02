@@ -66,6 +66,43 @@ class Parsedown
         return $this;
     }
 
+    private $escapingEnabled;
+
+    function setHtmlEscaping($escapingEnabled)
+    {
+        $this->escapingEnabled = $escapingEnabled;
+
+        if ($escapingEnabled)
+        {
+            // Unset all cases of < recognition as block type.
+            unset($this->BlockTypes['<']);
+
+            // Remove tag identifier from < span type.
+            $spanKey = array_search('Tag', $this->SpanTypes['<']);
+            unset($this->SpanTypes['<'][$spanKey], $spanKey);
+        }
+        else
+        {
+            // Set < recognition into block types.
+            $this->BlockTypes['<'] = array('Comment', 'Markup');
+
+            // Set tag identifier into span types.
+            // On position 2, after EmailTag
+            array_splice($this->SpanTypes['<'], 2, 0, 'Tag');
+        }
+
+        return $this;
+    }
+
+    private $safeLinksEnabled;
+
+    function setSafeLinks($safeLinksEnabled)
+    {
+        $this->safeLinksEnabled = $safeLinksEnabled;
+
+        return $this;
+    }
+
     #
     # Lines
     #
@@ -946,6 +983,7 @@ class Parsedown
         '*' => array('Emphasis'),
         '/' => array('Url'),
         '<' => array('UrlTag', 'EmailTag', 'Tag', 'LessThan'),
+        '>' => array('GreaterThan'),
         '[' => array('Link'),
         '_' => array('Emphasis'),
         '`' => array('InlineCode'),
@@ -955,7 +993,7 @@ class Parsedown
 
     # ~
 
-    protected $spanMarkerList = '*_!&[</`~\\';
+    protected $spanMarkerList = '*_!&[<>/`~\\';
 
     #
     # ~
@@ -1091,10 +1129,20 @@ class Parsedown
     {
         if (isset($Excerpt['text'][1]) and in_array($Excerpt['text'][1], $this->specialCharacters))
         {
-            return array(
-                'markup' => $Excerpt['text'][1],
-                'extent' => 2,
-            );
+            if ($this->escapingEnabled && $Excerpt['text'][1] == '>')
+            {
+                return array(
+                    'markup' => '&gt;',
+                    'extent' => 2,
+                );
+            }
+            else
+            {
+                return array(
+                    'markup' => $Excerpt['text'][1],
+                    'extent' => 2,
+                );
+            }
         }
     }
 
@@ -1102,6 +1150,14 @@ class Parsedown
     {
         return array(
             'markup' => '&lt;',
+            'extent' => 1,
+        );
+    }
+
+    protected function identifyGreaterThan()
+    {
+        return array(
+            'markup' => '&gt;',
             'extent' => 1,
         );
     }
@@ -1229,7 +1285,12 @@ class Parsedown
             return;
         }
 
-        $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Link['url']);
+        if ($this->safeLinksEnabled && stripos($Link['url'], 'javascript:') !== false)
+        {
+            return;
+        }
+
+        $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $Link['url']);
 
         if ($Excerpt['text'][0] === '!')
         {
