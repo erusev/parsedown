@@ -70,38 +70,7 @@ class Parsedown
 
     function setHtmlEscaping($escapingEnabled)
     {
-        // Modify parser only if the passed value differs from internal one.
-        // This prevents running the code again and again when used as one liner with instance() method.
-        if ($this->escapingEnabled !== $escapingEnabled)
-        {
-            $this->escapingEnabled = $escapingEnabled;
-
-            if ($escapingEnabled)
-            {
-                // Find comment and markup identifiers in block types.
-                $CommentKey = array_search('Comment', $this->BlockTypes['<']);
-                $MarkupKey = array_search('Markup', $this->BlockTypes['<']);
-
-                // Find tag identifier in span types.
-                $TagKey = array_search('Tag', $this->SpanTypes['<']);
-
-                // Unset Comment, Markup and Tag.
-                unset(
-                $this->BlockTypes['<'][$CommentKey], $CommentKey,
-                $this->BlockTypes['<'][$MarkupKey], $MarkupKey,
-                $this->SpanTypes['<'][$TagKey], $TagKey
-                );
-            }
-            else
-            {
-                // Set < recognition into block types.
-                $this->BlockTypes['<'] = array_merge($this->BlockTypes['<'], array('Comment', 'Markup'));
-
-                // Set tag identifier into span types.
-                // On position 2, after EmailTag
-                array_splice($this->SpanTypes['<'], 2, 0, 'Tag');
-            }
-        }
+        $this->escapingEnabled = $escapingEnabled;
 
         return $this;
     }
@@ -399,6 +368,11 @@ class Parsedown
 
     protected function identifyComment($Line)
     {
+        if ($this->escapingEnabled)
+        {
+            return;
+        }
+
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(
@@ -416,7 +390,7 @@ class Parsedown
 
     protected function addToComment($Line, array $Block)
     {
-        if (isset($Block['closed']))
+        if (isset($Block['closed']) || $this->escapingEnabled)
         {
             return;
         }
@@ -668,6 +642,11 @@ class Parsedown
 
     protected function identifyMarkup($Line)
     {
+        if ($this->escapingEnabled)
+        {
+            return;
+        }
+
         if (preg_match('/^<(\w[\w\d]*)(?:[ ][^>\/]*)?(\/?)[ ]*>/', $Line['text'], $matches))
         {
             if (in_array($matches[1], $this->textLevelElements))
@@ -695,7 +674,7 @@ class Parsedown
 
     protected function addToMarkup($Line, array $Block)
     {
-        if (isset($Block['closed']))
+        if (isset($Block['closed']) || $this->escapingEnabled)
         {
             return;
         }
@@ -1212,6 +1191,11 @@ class Parsedown
 
     protected function identifyTag($Excerpt)
     {
+        if ($this->escapingEnabled)
+        {
+            return;
+        }
+
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<\/?\w.*?>/', $Excerpt['text'], $matches))
         {
             return array(
