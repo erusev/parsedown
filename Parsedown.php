@@ -1240,9 +1240,9 @@ class Parsedown
         $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Link['url']);
 
         if (isset($this->relativePath) && !isset(parse_url($url)['host'])) 
-		{
-			$url = $this->relativePath . $url;
-		}
+        {
+	    $url = $this->relativePath . $url;
+	}
 		
         if ($Excerpt['text'][0] === '!')
         {
