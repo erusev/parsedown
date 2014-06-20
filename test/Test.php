@@ -23,7 +23,14 @@ class Test extends PHPUnit_Framework_TestCase
         $expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
         $expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
 
-        $actualMarkup = Parsedown::instance()->text($markdown);
+        if (strpos($filename, '_escaped') !== false)
+        {
+            $actualMarkup = Parsedown::instance('escaped')->setHtmlEscaping(true)->text($markdown);
+        }
+        else
+        {
+            $actualMarkup = Parsedown::instance()->text($markdown);
+        }
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }

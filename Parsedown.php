@@ -66,6 +66,24 @@ class Parsedown
         return $this;
     }
 
+    private $escapingEnabled;
+
+    function setHtmlEscaping($escapingEnabled)
+    {
+        $this->escapingEnabled = $escapingEnabled;
+
+        return $this;
+    }
+
+    private $safeLinksEnabled;
+
+    function setSafeLinks($safeLinksEnabled)
+    {
+        $this->safeLinksEnabled = $safeLinksEnabled;
+
+        return $this;
+    }
+
     #
     # Lines
     #
@@ -92,7 +110,7 @@ class Parsedown
         '_' => array('Rule'),
         '`' => array('FencedCode'),
         '|' => array('Table'),
-        '~' => array('FencedCode'),
+        '~' => array('FencedCode')
     );
 
     # ~
@@ -350,6 +368,11 @@ class Parsedown
 
     protected function identifyComment($Line)
     {
+        if ($this->escapingEnabled)
+        {
+            return;
+        }
+
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(
@@ -367,7 +390,7 @@ class Parsedown
 
     protected function addToComment($Line, array $Block)
     {
-        if (isset($Block['closed']))
+        if (isset($Block['closed']) || $this->escapingEnabled)
         {
             return;
         }
@@ -619,6 +642,11 @@ class Parsedown
 
     protected function identifyMarkup($Line)
     {
+        if ($this->escapingEnabled)
+        {
+            return;
+        }
+
         if (preg_match('/^<(\w[\w\d]*)(?:[ ][^>\/]*)?(\/?)[ ]*>/', $Line['text'], $matches))
         {
             if (in_array($matches[1], $this->textLevelElements))
@@ -646,7 +674,7 @@ class Parsedown
 
     protected function addToMarkup($Line, array $Block)
     {
-        if (isset($Block['closed']))
+        if (isset($Block['closed']) || $this->escapingEnabled)
         {
             return;
         }
@@ -946,16 +974,17 @@ class Parsedown
         '*' => array('Emphasis'),
         '/' => array('Url'),
         '<' => array('UrlTag', 'EmailTag', 'Tag', 'LessThan'),
+        '>' => array('GreaterThan'),
         '[' => array('Link'),
         '_' => array('Emphasis'),
         '`' => array('InlineCode'),
         '~' => array('Strikethrough'),
-        '\\' => array('EscapeSequence'),
+        '\\' => array('EscapeSequence')
     );
 
     # ~
 
-    protected $spanMarkerList = '*_!&[</`~\\';
+    protected $spanMarkerList = '*_!&[<>/`~\\';
 
     #
     # ~
@@ -1040,7 +1069,7 @@ class Parsedown
 
         if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[0][0]);
+            $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $matches[0][0]);
 
             return array(
                 'extent' => strlen($matches[0][0]),
@@ -1091,10 +1120,20 @@ class Parsedown
     {
         if (isset($Excerpt['text'][1]) and in_array($Excerpt['text'][1], $this->specialCharacters))
         {
-            return array(
-                'markup' => $Excerpt['text'][1],
-                'extent' => 2,
-            );
+            if ($this->escapingEnabled && $Excerpt['text'][1] == '>')
+            {
+                return array(
+                    'markup' => '&gt;',
+                    'extent' => 2,
+                );
+            }
+            else
+            {
+                return array(
+                    'markup' => $Excerpt['text'][1],
+                    'extent' => 2,
+                );
+            }
         }
     }
 
@@ -1106,11 +1145,19 @@ class Parsedown
         );
     }
 
+    protected function identifyGreaterThan()
+    {
+        return array(
+            'markup' => '&gt;',
+            'extent' => 1,
+        );
+    }
+
     protected function identifyUrlTag($Excerpt)
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $Excerpt['text'], $matches))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
+            $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $matches[1]);
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1144,6 +1191,11 @@ class Parsedown
 
     protected function identifyTag($Excerpt)
     {
+        if ($this->escapingEnabled)
+        {
+            return;
+        }
+
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<\/?\w.*?>/', $Excerpt['text'], $matches))
         {
             return array(
@@ -1229,7 +1281,12 @@ class Parsedown
             return;
         }
 
-        $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Link['url']);
+        if ($this->safeLinksEnabled && stripos($Link['url'], 'javascript:') !== false)
+        {
+            return;
+        }
+
+        $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $Link['url']);
 
         if ($Excerpt['text'][0] === '!')
         {
