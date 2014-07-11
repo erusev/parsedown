@@ -52,7 +52,16 @@ class Parsedown
 
         return $markup;
     }
-
+    
+    #
+    # Load markdown text from a file.
+    #
+    
+    function fromFile($fileName) {
+        $content = file_get_contents($fileName);
+        return $this->text($content);
+    }
+    
     #
     # Setters
     #
