@@ -11,3 +11,7 @@ this & that
 [reference link][1]
 
 [1]: http://example.com/?a=1&b=2
+
+## <%= @foo %>
+
+A tag with an equals sign indicates that enclosed code is an expression. <%= @foo %>

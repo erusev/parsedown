@@ -946,6 +946,7 @@ class Parsedown
         '*' => array('Emphasis'),
         '/' => array('Url'),
         '<' => array('UrlTag', 'EmailTag', 'Tag', 'LessThan'),
+        '>' => array('GreaterThan'),
         '[' => array('Link'),
         '_' => array('Emphasis'),
         '`' => array('InlineCode'),
@@ -955,7 +956,7 @@ class Parsedown
 
     # ~
 
-    protected $spanMarkerList = '*_!&[</`~\\';
+    protected $spanMarkerList = '*_!&[</>`~\\';
 
     #
     # ~
@@ -1102,6 +1103,14 @@ class Parsedown
     {
         return array(
             'markup' => '&lt;',
+            'extent' => 1,
+        );
+    }
+
+    protected function identifyGreaterThan()
+    {
+        return array(
+            'markup' => '&gt;',
             'extent' => 1,
         );
     }
