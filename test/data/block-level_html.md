@@ -9,3 +9,9 @@ _content_
 </div>
 
 paragraph
+
+<style type="text/css">
+    p {
+        color: red;
+    }
+</style>
