@@ -1325,7 +1325,7 @@ class Parsedown
 
             $position = strpos($markup, "</p>");
 
-            $markup = substr_replace($markup, '', $position, 4);
+            $markup = substr($markup, 0, $position) . substr($markup, $position + 4);
         }
 
         return $markup;
