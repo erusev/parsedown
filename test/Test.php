@@ -2,6 +2,27 @@
 
 class Test extends PHPUnit_Framework_TestCase
 {
+    private $safeModeAltResults = array(
+        "automatic_link",
+        "block-level_html",
+        "code_block",
+        "email",
+        "escaping",
+        "fenced_code_block",
+        "html_entity",
+        "html_simple",
+        "image_title",
+        "implicit_reference",
+        "inline_link_title",
+        "inline_title",
+        "nested_block-level_html",
+        "reference_title",
+        "span-level_html",
+        "special_characters",
+        "strikethrough",
+        "tab-indented_code_block"
+    );
+    
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         $this->dataDir = dirname(__FILE__).'/data/';
@@ -16,6 +37,13 @@ class Test extends PHPUnit_Framework_TestCase
      */
     function test_($filename)
     {
+        if (strpos($filename, "_escaped"))
+        {
+            $this->markTestSkipped(
+                'Escaped tests are for safe mode only.'
+            );
+        }
+        
         $markdown = file_get_contents($this->dataDir . $filename . '.md');
 
         $expectedMarkup = file_get_contents($this->dataDir . $filename . '.html');
@@ -27,29 +55,26 @@ class Test extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
-	
+    
     /**
      * @dataProvider data
      */
-	function testSafeMode($filename) {
+    function testSafeMode($filename) {
+        
         $markdown = file_get_contents($this->dataDir . $filename . '.md');
 
-        $expectedMarkup = file_get_contents($this->dataDir . $filename . '.html');
+        if (in_array($filename, $this->safeModeAltResults))
+            $expectedMarkup = file_get_contents($this->dataDir . $filename . '_escaped.html');
+        else
+            $expectedMarkup = file_get_contents($this->dataDir . $filename . '.html');
 
         $expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
         $expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
-
-		// Don't bother testing HTML, since it's not allowed
-		if (strpos($filename, "_html") !== false || strpos($filename, "html_") !== false) {
-			$this->markTestSkipped(
-				'HTML in md is not allowed in safe mode.'
-			);
-		}
-		
+        
         $actualMarkup = Parsedown::instance()->setSafeMode(true)->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
-	}
+    }
 
     function data()
     {

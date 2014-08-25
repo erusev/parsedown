@@ -15,9 +15,9 @@
 
 class Parsedown
 {
-	
-	private $safeMode = false;
-	
+    
+    private $safeMode = false;
+    
     #
     # Philosophy
 
@@ -32,9 +32,9 @@ class Parsedown
 
     function text($text)
     {
-		if ($this->safeMode)
-			$text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
-		
+        if ($this->safeMode)
+            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+        
         # standardize line breaks
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
@@ -72,13 +72,13 @@ class Parsedown
 
         return $this;
     }
-	
-	function setSafeMode($safeMode)
-	{
-		$this->safeMode = $safeMode;
-		
-		return $this;
-	}
+    
+    function setSafeMode($safeMode)
+    {
+        $this->safeMode = $safeMode;
+        
+        return $this;
+    }
 
     #
     # Lines
@@ -140,10 +140,16 @@ class Parsedown
 
                 continue;
             }
-			
-			# If line begins with '>' htmlentity, convert to '>' for quoting
-			if ($this->safeMode && substr($line, 0, 4) == "&gt;")
-				$line = substr_replace($line, ">", 0, 4);
+            
+            # If line begins with '>' htmlentity, convert to '>' for quoting
+            if ($this->safeMode and substr(trim($line), 0, 4) == "&gt;")
+            {
+                $strpos = strpos($line, "&gt;");
+                if ($strpos === 0 || (!isset($CurrentBlock['interrupted']) || !$CurrentBlock['interrupted']))
+                {
+                    $line = substr_replace($line, ">", $strpos, 4);
+                }
+            }
 
             $indent = 0;
 
@@ -362,8 +368,8 @@ class Parsedown
     {
         $text = $Block['element']['text']['text'];
 
-		if (!$this->safeMode)
-			$text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+        if (!$this->safeMode)
+            $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
 
@@ -436,8 +442,8 @@ class Parsedown
     {
         $text = $Block['element']['text']['text'];
 
-		if (!$this->safeMode)
-			$text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+        if (!$this->safeMode)
+            $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
 
@@ -824,18 +830,31 @@ class Parsedown
 
     protected function identifyReference($Line)
     {
-        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+(["\'(]?)(.+?)(["\')]?))?[ ]*$/', $Line['text'], $matches))
         {
+            if (isset($matches[3]) and trim($matches[3]) == "")
+            {
+                if (!$this->safeMode or !isset($matches[4]) or !in_array(substr($matches[4], 0, 6), array("&quot;", "&#039;")))
+                {
+                    return;
+                }
+            }
+            $url = $matches[2];
+            if ($this->safeMode && stripos($url, "javascript:") !== false)
+            {
+                $url = "";
+            }
+            
             $Definition = array(
                 'id' => strtolower($matches[1]),
                 'data' => array(
-                    'url' => $matches[2],
+                    'url' => $url,
                 ),
             );
 
-            if (isset($matches[3]))
+            if (!$this->safeMode and isset($matches[4]))
             {
-                $Definition['data']['title'] = $matches[3];
+                $Definition['data']['title'] = $matches[4];
             }
 
             return $Definition;
@@ -1011,9 +1030,15 @@ class Parsedown
 
         if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $text, $matches, PREG_OFFSET_CAPTURE))
         {
-			$url = $matches[0][0];
-			if (!$this->safeMode)
-				$url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $url);
+            $url = $matches[0][0];
+            if (!$this->safeMode)
+            {
+                $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $url);
+            }
+            elseif (stripos($url, "javascript:") !== false)
+            {
+                $url = "";
+            }
 
             return array(
                 'extent' => strlen($matches[0][0]),
@@ -1083,9 +1108,15 @@ class Parsedown
     {
         if (strpos($excerpt, '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $excerpt, $matches))
         {
-			$url = $matches[1];
-			if (!$this->safeMode)
-				$url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $url);
+            $url = $matches[1];
+            if (!$this->safeMode)
+            {
+                $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $url);
+            }
+            elseif (stripos($url, "javascript:") !== false)
+            {
+                $url = "";
+            }
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1135,8 +1166,8 @@ class Parsedown
         if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/', $excerpt, $matches))
         {
             $text = $matches[2];
-			if (!$this->safeMode)
-				$text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+            if (!$this->safeMode)
+                $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1184,7 +1215,7 @@ class Parsedown
                     $extent += strlen($matches[0]);
                 }
             }
-            elseif (preg_match('/^\([ ]*(.*?)(?:[ ]+[\'"](.+?)[\'"])?[ ]*\)/', $substring, $matches))
+            elseif (preg_match('/^\([ ]*(.*?)(?:[ ]+[\'"]?(.+?)[\'"]?)?[ ]*\)/', $substring, $matches))
             {
                 $Link['url'] = $matches[1];
 
@@ -1205,10 +1236,16 @@ class Parsedown
             return;
         }
 
-		$url = $Link['url'];
-		if (!$this->safeMode)
-			$url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $url);
-
+        $url = $Link['url'];
+        if (!$this->safeMode)
+        {
+            $url = str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), $url);
+        }
+        elseif (stripos($url, "javascript:") !== false)
+        {
+            $url = "";
+        }
+        
         if ($excerpt[0] === '!')
         {
             $Element = array(
@@ -1231,7 +1268,7 @@ class Parsedown
             );
         }
 
-        if (isset($Link['title']))
+        if (!$this->safeMode && isset($Link['title']))
         {
             $Element['attributes']['title'] = $Link['title'];
         }
