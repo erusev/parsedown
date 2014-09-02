@@ -1135,7 +1135,7 @@ class Parsedown
                     'name' => 'a',
                     'text' => $matches[1],
                     'attributes' => array(
-                        'href' => 'mailto:'.$matches[1],
+                        'href' => $this->encodeEmailUrl('mailto:' . $matches[1]),
                     ),
                 ),
             );
@@ -1230,6 +1230,11 @@ class Parsedown
         }
 
         $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Link['url']);
+
+        if ("mailto:" === substr($url, 0, 7))
+        {
+            $url = $this->encodeEmailUrl($url);
+        }
 
         if ($Excerpt['text'][0] === '!')
         {
@@ -1329,6 +1334,17 @@ class Parsedown
         }
 
         return $markup;
+    }
+
+
+    private function encodeEmailUrl ($email)
+    {
+        $encoded = '';
+
+        for ($x = 0, $_length = strlen($email); $x < $_length; $x ++) {
+            $encoded .= '&#x' . bin2hex($email[$x]) . ';';
+        }
+        return $encoded;
     }
 
     #
