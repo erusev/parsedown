@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Test Parsedown against the Standard Makrdown spec.
+ * Test Parsedown against the CommonMark spec.
  *
  * Some code based on the original JavaScript test runner by jgm.
  *
- * @link http://standardmarkdown.com/ Standard Markdown
+ * @link http://commonmark.net/ CommonMark
  * @link http://git.io/8WtRvQ JavaScript test runner
  */
-class StandardMarkdownTest extends PHPUnit_Framework_TestCase
+class CommonMarkTest extends PHPUnit_Framework_TestCase
 {
     const SPEC_FILEPATH = 'spec.txt';
 
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/stmd/master/spec.txt';
 
-    public function getStandardMarkdownRules()
+    public function getCommonMarkRules()
     {
         if (is_file(self::SPEC_FILEPATH) and is_readable(self::SPEC_FILEPATH)) {
             $spec = file_get_contents(self::SPEC_FILEPATH);
@@ -51,9 +51,9 @@ class StandardMarkdownTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getStandardMarkdownRules
+     * @dataProvider getCommonMarkRules
      */
-    public function testAgainstStandardMarkdown($markdown, $expectedHtml, $section, $number)
+    public function testAgainstCommonMark($markdown, $expectedHtml, $section, $number)
     {
         $parsedown = new Parsedown();
 
