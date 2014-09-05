@@ -7,4 +7,5 @@ php:
   - 5.3
   - 5.2
   - hhvm
-  
+
+before_script: curl -sS https://raw.githubusercontent.com/jgm/stmd/master/spec.txt>test/standard-markdown/spec.txt
