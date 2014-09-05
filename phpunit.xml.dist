@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="test/bootstrap.php" colors="true">
 	<testsuites>
-		<testsuite>
-			<file>test/Test.php</file>
+        <testsuite name="ParsedownTests">
+            <file>test/Test.php</file>
+        </testsuite>
+		<testsuite name="StandardMarkdown">
+			<file>test/standard-markdown/StandardMarkdownTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
