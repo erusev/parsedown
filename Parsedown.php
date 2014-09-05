@@ -123,8 +123,10 @@ class Parsedown
                 {
                     $CurrentBlock['interrupted'] = true;
                 }
-
-                continue;
+				else // unable to close table tags unless the current loop is executed
+				{
+                	continue;
+				}
             }
 
             $indent = 0;
@@ -135,7 +137,12 @@ class Parsedown
             }
 
             $text = $indent > 0 ? substr($line, $indent) : $line;
-
+            // avoids Notice on line 174, seems to only add a space between empty tags, i.e. <p></p> => <p> </p>
+			if(!(isset($text[0]))) 
+			{
+				$text = " "; 
+			}
+			
             # ~
 
             $Line = array('body' => $line, 'indent' => $indent, 'text' => $text);
