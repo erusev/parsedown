@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Test Parsedown against the Standard Makrdown spec.
+ *
+ * Some code based on the original JavaScript test runner by jgm.
+ *
+ * @link http://standardmarkdown.com/ Standard Markdown
+ * @link http://git.io/8WtRvQ JavaScript test runner
+ */
 class StandardMarkdownTest extends PHPUnit_Framework_TestCase
 {
     const SPEC_FILEPATH = 'spec.txt';
