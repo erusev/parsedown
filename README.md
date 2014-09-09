@@ -37,5 +37,8 @@ Parsedown recognises that the Markdown syntax is optimised for humans so it trie
 **Why doesn’t Parsedown use namespaces?**<br/>
 Using namespaces would mean dropping support for PHP 5.2. Since Parsedown is a single class with an uncommon name, making this trade wouldn't make much sense.
 
+**Is Parsedown compliant with CommonMark?**<br/>
+We are [working on it](https://github.com/erusev/parsedown/tree/commonmark).
+
 **Who uses Parsedown?**<br/>
 [phpDocumentor](http://www.phpdoc.org/), [Bolt CMS](http://bolt.cm/), [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
