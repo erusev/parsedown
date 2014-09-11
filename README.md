@@ -3,7 +3,7 @@
 Better [Markdown](http://en.wikipedia.org/wiki/Markdown) parser for PHP.
 
 * [Demo](http://parsedown.org/demo)
-* [Test Suite](http://parsedown.org/tests/)
+* [Video Tutorial](http://youtu.be/wYZBY8DEikI)
 
 ### Features
 
