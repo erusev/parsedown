@@ -3,7 +3,6 @@
 Better [Markdown](http://en.wikipedia.org/wiki/Markdown) parser for PHP.
 
 * [Demo](http://parsedown.org/demo)
-* [Video Tutorial](http://youtu.be/wYZBY8DEikI)
 
 ### Features
 
@@ -27,7 +26,7 @@ $Parsedown = new Parsedown();
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
 
-More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage).
+More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
 ### Questions
 
