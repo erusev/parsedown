@@ -2,7 +2,7 @@
 
 Better [Markdown](http://en.wikipedia.org/wiki/Markdown) parser for PHP.
 
-* [Demo](http://parsedown.org/demo)
+[[ demo ]](http://parsedown.org/demo)
 
 ### Features
 
@@ -34,7 +34,7 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and 
 Parsedown recognises that the Markdown syntax is optimised for humans so it tries to read like one. It goes through text line by line. It looks at how lines start to identify blocks. It looks for special characters to identify inline elements.
 
 **Why doesn’t Parsedown use namespaces?**<br/>
-Using namespaces would mean dropping support for PHP 5.2. Since Parsedown is a single class with an uncommon name, making this trade wouldn't make much sense.
+Using namespaces would mean dropping support for PHP 5.2. We believe that since Parsedown is a single class with an uncommon name, making this trade wouldn't be worth it.
 
 **Is Parsedown compliant with CommonMark?**<br/>
 We are [working on it](https://github.com/erusev/parsedown/tree/commonmark).
