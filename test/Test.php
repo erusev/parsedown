@@ -62,4 +62,46 @@ class Test extends PHPUnit_Framework_TestCase
 
         return $data;
     }
+
+    public function test_no_markup()
+    {
+        $markdownWithHtml = <<<MARKDOWN_WITH_MARKUP
+<div>_content_</div>
+
+sparse:
+
+<div>
+<div class="inner">
+_content_
+</div>
+</div>
+
+paragraph
+
+<style type="text/css">
+    p {
+        color: red;
+    }
+</style>
+MARKDOWN_WITH_MARKUP;
+
+        $expectedHtml = <<<EXPECTED_HTML
+<p>&lt;div><em>content</em>&lt;/div></p>
+<p>sparse:</p>
+<p>&lt;div>
+&lt;div class="inner">
+<em>content</em>
+&lt;/div>
+&lt;/div></p>
+<p>paragraph</p>
+<p>&lt;style type="text/css"></p>
+<pre><code>p {
+    color: red;
+}</code></pre>
+<p>&lt;/style></p>
+EXPECTED_HTML;
+        $parsedownWithNoMarkup = new Parsedown();
+        $parsedownWithNoMarkup->setNoMarkup(true);
+        $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
+    }
 }
