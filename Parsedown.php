@@ -66,7 +66,7 @@ class Parsedown
         return $this;
     }
 
-	private $markupEscaped;
+    private $markupEscaped;
 
     function setMarkupEscaped($markupEscaped)
     {
