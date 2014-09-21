@@ -101,7 +101,7 @@ MARKDOWN_WITH_MARKUP;
 <p>&lt;/style></p>
 EXPECTED_HTML;
         $parsedownWithNoMarkup = new Parsedown();
-        $parsedownWithNoMarkup->setNoMarkup(true);
+        $parsedownWithNoMarkup->setMarkupEscaped(true);
         $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
     }
 }

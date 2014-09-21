@@ -59,11 +59,6 @@ class Parsedown
 
     private $breaksEnabled;
 
-    /**
-     * @var boolean If true HTML is escaped
-     */
-    private $noMarkup = false;
-
     function setBreaksEnabled($breaksEnabled)
     {
         $this->breaksEnabled = $breaksEnabled;
@@ -71,15 +66,11 @@ class Parsedown
         return $this;
     }
 
-    /**
-     * Set the `noMarkup` option
-     *
-     * @param  boolean $noMarkup If true HTML is escaped
-     * @return $this
-     */
-    function setNoMarkup($noMarkup)
+	private $markupEscaped;
+
+    function setMarkupEscaped($markupEscaped)
     {
-        $this->noMarkup = (bool) $noMarkup;
+        $this->markupEscaped = $markupEscaped;
 
         return $this;
     }
@@ -637,9 +628,9 @@ class Parsedown
 
     protected function identifyMarkup($Line)
     {
-        if ($this->noMarkup)
+        if ($this->markupEscaped)
         {
-            return null;
+            return;
         }
 
         if (preg_match('/^<(\w[\w\d]*)(?:[ ][^>]*)?(\/?)[ ]*>/', $Line['text'], $matches))
@@ -1167,9 +1158,9 @@ class Parsedown
 
     protected function identifyTag($Excerpt)
     {
-        if ($this->noMarkup)
+        if ($this->markupEscaped)
         {
-            return null;
+            return;
         }
 
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<\/?\w.*?>/', $Excerpt['text'], $matches))
