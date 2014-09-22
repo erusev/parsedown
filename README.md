@@ -40,4 +40,4 @@ Using namespaces would mean dropping support for PHP 5.2. We believe that since 
 We are [working on it](https://github.com/erusev/parsedown/tree/commonmark).
 
 **Who uses Parsedown?**<br/>
-[phpDocumentor](http://www.phpdoc.org/), [Bolt CMS](http://bolt.cm/), [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
+[phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
