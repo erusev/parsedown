@@ -359,6 +359,11 @@ class Parsedown
 
     protected function identifyComment($Line)
     {
+        if ($this->markupEscaped)
+        {
+            return;
+        }
+
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(

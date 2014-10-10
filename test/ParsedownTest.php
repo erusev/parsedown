@@ -109,6 +109,10 @@ paragraph
         color: red;
     }
 </style>
+
+comment
+
+<!-- html comment -->
 MARKDOWN_WITH_MARKUP;
 
         $expectedHtml = <<<EXPECTED_HTML
@@ -125,6 +129,8 @@ MARKDOWN_WITH_MARKUP;
     color: red;
 }</code></pre>
 <p>&lt;/style></p>
+<p>comment</p>
+<p>&lt;!-- html comment --></p>
 EXPECTED_HTML;
         $parsedownWithNoMarkup = new Parsedown();
         $parsedownWithNoMarkup->setMarkupEscaped(true);
