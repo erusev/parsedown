@@ -66,6 +66,20 @@ class Parsedown
         return $this;
     }
 
+    private $markupCloser = ' />';
+
+    function setXhtmlEnabled($xhtmlEnabled)
+    {
+        if ($xhtmlEnabled)
+        {
+            $this->markupCloser = ' />';
+        }
+        else
+        {
+            $this->markupCloser = '>';
+        }
+    }
+
     private $markupEscaped;
 
     function setMarkupEscaped($markupEscaped)
@@ -921,7 +935,7 @@ class Parsedown
         }
         else
         {
-            $markup .= ' />';
+            $markup .= $this->markupCloser;
         }
 
         return $markup;
@@ -1327,7 +1341,7 @@ class Parsedown
     {
         $breakMarker = $this->breaksEnabled ? "\n" : "  \n";
 
-        $text = str_replace($breakMarker, "<br />\n", $text);
+        $text = str_replace($breakMarker, "<br".$this->markupCloser."\n", $text);
 
         return $text;
     }
