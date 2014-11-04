@@ -2,7 +2,7 @@
 <phpunit bootstrap="test/bootstrap.php" colors="true">
 	<testsuites>
 		<testsuite>
-			<file>test/Test.php</file>
+			<file>test/ParsedownTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
