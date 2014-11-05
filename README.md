@@ -16,7 +16,12 @@ Better [Markdown](http://en.wikipedia.org/wiki/Markdown) parser for PHP.
 
 ### Installation
 
-Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown).
+Download and include [Parsedown.php] or install the [composer package] by running the following command:
+
+    composer require erusev/parsedown
+
+[Parsedown.php]: https://raw.githubusercontent.com/erusev/parsedown/master/Parsedown.php "The Parsedown class file"
+[composer package]: https://packagist.org/packages/erusev/parsedown "The Parsedown package on packagist.org"
 
 ### Example
 
