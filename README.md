@@ -1,6 +1,6 @@
 ## Parsedown
 
-Parser for [Markdown](http://en.wikipedia.org/wiki/Markdown) in PHP.
+Markdown Parser in PHP
 
 [[ demo ]](http://parsedown.org/demo)
 
@@ -8,7 +8,7 @@ Parser for [Markdown](http://en.wikipedia.org/wiki/Markdown) in PHP.
 
 * [Fast](http://parsedown.org/speed)
 * [Consistent](http://parsedown.org/consistency)
-* [GitHub Flavored](https://help.github.com/articles/github-flavored-markdown)
+* [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
 * [Tested](http://parsedown.org/tests/) in PHP 5.2, 5.3, 5.4, 5.5, 5.6 and [hhvm](http://www.hhvm.com/)
 * Extensible
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra) <sup>new</sup>
@@ -16,7 +16,7 @@ Parser for [Markdown](http://en.wikipedia.org/wiki/Markdown) in PHP.
 
 ### Installation
 
-Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown).
+Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown)
 
 ### Example
 
