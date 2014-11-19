@@ -687,6 +687,13 @@ class Parsedown
             }
         }
 
+        if (isset($Block['interrupted']))
+        {
+            $Block['element'] .= "\n";
+
+            unset($Block['interrupted']);
+        }
+
         $Block['element'] .= "\n".$Line['body'];
 
         return $Block;
