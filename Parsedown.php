@@ -66,6 +66,15 @@ class Parsedown
         return $this;
     }
 
+    private $markupEscaped;
+
+    function setMarkupEscaped($markupEscaped)
+    {
+        $this->markupEscaped = $markupEscaped;
+
+        return $this;
+    }
+
     #
     # Lines
     #
@@ -350,6 +359,11 @@ class Parsedown
 
     protected function identifyComment($Line)
     {
+        if ($this->markupEscaped)
+        {
+            return;
+        }
+
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(
@@ -619,6 +633,11 @@ class Parsedown
 
     protected function identifyMarkup($Line)
     {
+        if ($this->markupEscaped)
+        {
+            return;
+        }
+
         if (preg_match('/^<(\w[\w\d]*)(?:[ ][^>]*)?(\/?)[ ]*>/', $Line['text'], $matches))
         {
             if (in_array($matches[1], $this->textLevelElements))
@@ -630,7 +649,7 @@ class Parsedown
                 'element' => $Line['body'],
             );
 
-            if ($matches[2] or $matches[1] === 'hr' or preg_match('/<\/'.$matches[1].'>[ ]*$/', $Line['text']))
+            if ($matches[2] or in_array($matches[1], $this->voidElements) or preg_match('/<\/'.$matches[1].'>[ ]*$/', $Line['text']))
             {
                 $Block['closed'] = true;
             }
@@ -651,7 +670,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/<'.$Block['name'].'([ ][^\/]+)?>/', $Line['text'])) # opening tag
+        if (preg_match('/<'.$Block['name'].'([ ].*[\'"])?[ ]*>/', $Line['text'])) # opening tag
         {
             $Block['depth'] ++;
         }
@@ -666,6 +685,13 @@ class Parsedown
             {
                 $Block['closed'] = true;
             }
+        }
+
+        if (isset($Block['interrupted']))
+        {
+            $Block['element'] .= "\n";
+
+            unset($Block['interrupted']);
         }
 
         $Block['element'] .= "\n".$Line['body'];
@@ -1144,6 +1170,11 @@ class Parsedown
 
     protected function identifyTag($Excerpt)
     {
+        if ($this->markupEscaped)
+        {
+            return;
+        }
+
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<\/?\w.*?>/', $Excerpt['text'], $matches))
         {
             return array(
@@ -1379,13 +1410,17 @@ class Parsedown
     );
 
     protected $StrongRegex = array(
-        '*' => '/^[*]{2}((?:[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
-        '_' => '/^__((?:[^_]|_[^_]*_)+?)__(?!_)/us',
+        '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
+        '_' => '/^__((?:\\\\_|[^_]|_[^_]*_)+?)__(?!_)/us',
     );
 
     protected $EmRegex = array(
-        '*' => '/^[*]((?:[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
-        '_' => '/^_((?:[^_]|__[^_]*__)+?)_(?!_)\b/us',
+        '*' => '/^[*]((?:\\\\\*|[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
+        '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
+    );
+
+    protected $voidElements = array(
+        'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
     );
 
     protected $textLevelElements = array(
