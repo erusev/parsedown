@@ -12,29 +12,46 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
 {
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/stmd/master/spec.txt';
 
-    public function getCommonMarkRules()
+    /**
+     * @dataProvider data
+     * @param $markdown
+     * @param $expectedHtml
+     */
+    function test_($markdown, $expectedHtml)
+    {
+        $parsedown = new Parsedown();
+
+        $actualHtml = $parsedown->text($markdown);
+
+        # trim for better compatibility of the HTML output
+        $actualHtml = trim($actualHtml);
+        $expectedHtml = trim($expectedHtml);
+
+        $this->assertEquals($expectedHtml, $actualHtml);
+    }
+
+    function data()
     {
         $spec = file_get_contents(self::SPEC_URL);
+        $spec = strstr($spec, '<!-- END TESTS -->', true);
 
         $tests = array();
-        $testsCount = 0;
+        $testCount = 0;
         $currentSection = '';
-
-        $spec = strstr($spec, '<!-- END TESTS -->', true);
 
         preg_replace_callback(
             '/^\.\n([\s\S]*?)^\.\n([\s\S]*?)^\.$|^#{1,6} *(.*)$/m',
-            function($matches) use (&$tests, &$currentSection, &$testsCount) {
+            function($matches) use ( & $tests, & $currentSection, & $testCount) {
                 if (isset($matches[3]) and $matches[3]) {
                     $currentSection = $matches[3];
                 } else {
-                    $testsCount++;
+                    $testCount++;
                     $markdown = preg_replace('/→/', "\t", $matches[1]);
                     $tests []= array(
-                        $markdown,       // markdown
-                        $matches[2],     // html
-                        $currentSection, // section
-                        $testsCount,     // number
+                        $markdown, # markdown
+                        $matches[2], # html
+                        $currentSection, # section
+                        $testCount, # number
                     );
                 }
             },
@@ -42,21 +59,5 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         );
 
         return $tests;
-    }
-
-    /**
-     * @dataProvider getCommonMarkRules
-     */
-    public function testAgainstCommonMark($markdown, $expectedHtml, $section, $number)
-    {
-        $parsedown = new Parsedown();
-
-        $actualHtml = $parsedown->text($markdown);
-
-        // Trim for better compatibility of the HTML output
-        $actualHtml = trim($actualHtml);
-        $expectedHtml = trim($expectedHtml);
-
-        $this->assertEquals($expectedHtml, $actualHtml);
     }
 }
