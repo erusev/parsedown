@@ -22,10 +22,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         $parsedown = new Parsedown();
 
         $actualHtml = $parsedown->text($markdown);
-
-        # trim for better compatibility of the HTML output
-        $actualHtml = trim($actualHtml);
-        $expectedHtml = trim($expectedHtml);
+        $actualHtml = $this->normalizeMarkup($actualHtml);
 
         $this->assertEquals($expectedHtml, $actualHtml);
     }
@@ -46,10 +43,13 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
                     $currentSection = $matches[3];
                 } else {
                     $testCount++;
-                    $markdown = preg_replace('/→/', "\t", $matches[1]);
+                    $markdown = $matches[1];
+                    $markdown = preg_replace('/→/', "\t", $markdown);
+                    $expectedHtml = $matches[2];
+                    $expectedHtml = $this->normalizeMarkup($expectedHtml);
                     $tests []= array(
                         $markdown, # markdown
-                        $matches[2], # html
+                        $expectedHtml, # html
                         $currentSection, # section
                         $testCount, # number
                     );
@@ -59,5 +59,16 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         );
 
         return $tests;
+    }
+
+    private function normalizeMarkup($markup)
+    {
+        $markup = preg_replace("/\n+/", "\n", $markup);
+        $markup = preg_replace('/^\s+/m', '', $markup);
+        $markup = preg_replace('/^((?:<[\w]+>)+)\n/m', '$1', $markup);
+        $markup = preg_replace('/\n((?:<\/[\w]+>)+)$/m', '$1', $markup);
+        $markup = trim($markup);
+
+        return $markup;
     }
 }
