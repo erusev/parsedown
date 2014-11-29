@@ -10,23 +10,17 @@
  */
 class CommonMarkTest extends PHPUnit_Framework_TestCase
 {
-    const SPEC_FILEPATH = 'spec.txt';
-
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/stmd/master/spec.txt';
 
     public function getCommonMarkRules()
     {
-        if (is_file(self::SPEC_FILEPATH) and is_readable(self::SPEC_FILEPATH)) {
-            $spec = file_get_contents(self::SPEC_FILEPATH);
-        } else {
-            $spec = file_get_contents(self::SPEC_URL);
-        }
+        $spec = file_get_contents(self::SPEC_URL);
 
         $tests = array();
         $testsCount = 0;
         $currentSection = '';
 
-        $spec = preg_replace('/^<!-- END TESTS -->(.|[\n])*/m', '', $spec);
+        $spec = strstr($spec, '<!-- END TESTS -->', true);
 
         preg_replace_callback(
             '/^\.\n([\s\S]*?)^\.\n([\s\S]*?)^\.$|^#{1,6} *(.*)$/m',
