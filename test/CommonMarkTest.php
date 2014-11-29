@@ -14,10 +14,11 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider data
+     * @param $section
      * @param $markdown
      * @param $expectedHtml
      */
-    function test_($markdown, $expectedHtml)
+    function test_($section, $markdown, $expectedHtml)
     {
         $parsedown = new Parsedown();
 
@@ -33,7 +34,6 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         $spec = strstr($spec, '<!-- END TESTS -->', true);
 
         $tests = array();
-        $testCount = 0;
         $currentSection = '';
 
         preg_replace_callback(
@@ -48,10 +48,9 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
                     $expectedHtml = $matches[2];
                     $expectedHtml = $this->normalizeMarkup($expectedHtml);
                     $tests []= array(
+                        $currentSection, # section
                         $markdown, # markdown
                         $expectedHtml, # html
-                        $currentSection, # section
-                        $testCount, # number
                     );
                 }
             },
