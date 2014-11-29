@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="test/bootstrap.php" colors="true">
 	<testsuites>
-		<testsuite name="ParsedownTests">
+		<testsuite>
 			<file>test/ParsedownTest.php</file>
 		</testsuite>
-		<testsuite name="CommonMark">
-			<file>test/commonmark/CommonMarkTest.php</file>
+		<testsuite>
+			<file>test/CommonMarkTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
