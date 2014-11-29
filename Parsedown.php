@@ -670,7 +670,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/<'.$Block['name'].'([ ][^\/]+)?>/', $Line['text'])) # opening tag
+        if (preg_match('/<'.$Block['name'].'([ ].*[\'"])?[ ]*>/', $Line['text'])) # opening tag
         {
             $Block['depth'] ++;
         }
