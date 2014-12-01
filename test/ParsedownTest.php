@@ -136,4 +136,26 @@ EXPECTED_HTML;
         $parsedownWithNoMarkup->setMarkupEscaped(true);
         $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
     }
+
+    public function test_xhtml_disabled()
+    {
+        $markdown = <<<MARKDOWN
+---
+
+![MD Logo](http://parsedown.org/md.png)
+
+line break  
+line
+MARKDOWN;
+
+        $expectedHtml = <<<EXPECTED_HTML
+<hr>
+<p><img alt="MD Logo" src="http://parsedown.org/md.png"></p>
+<p>line break<br>
+line</p>
+EXPECTED_HTML;
+        $parsedownWithXhtmlDisabled = new Parsedown();
+        $parsedownWithXhtmlDisabled->setXhtmlEnabled(false);
+        $this->assertEquals($expectedHtml, $parsedownWithXhtmlDisabled->text($markdown));
+    }
 }
