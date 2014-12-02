@@ -670,7 +670,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/<'.$Block['name'].'([ ][^\/]+)?>/', $Line['text'])) # opening tag
+        if (preg_match('/<'.$Block['name'].'([ ].*[\'"])?[ ]*>/', $Line['text'])) # opening tag
         {
             $Block['depth'] ++;
         }
@@ -685,6 +685,13 @@ class Parsedown
             {
                 $Block['closed'] = true;
             }
+        }
+
+        if (isset($Block['interrupted']))
+        {
+            $Block['element'] .= "\n";
+
+            unset($Block['interrupted']);
         }
 
         $Block['element'] .= "\n".$Line['body'];
@@ -1403,13 +1410,13 @@ class Parsedown
     );
 
     protected $StrongRegex = array(
-        '*' => '/^[*]{2}((?:[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
-        '_' => '/^__((?:[^_]|_[^_]*_)+?)__(?!_)/us',
+        '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
+        '_' => '/^__((?:\\\\_|[^_]|_[^_]*_)+?)__(?!_)/us',
     );
 
     protected $EmRegex = array(
-        '*' => '/^[*]((?:[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
-        '_' => '/^_((?:[^_]|__[^_]*__)+?)_(?!_)\b/us',
+        '*' => '/^[*]((?:\\\\\*|[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
+        '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
     );
 
     protected $voidElements = array(
