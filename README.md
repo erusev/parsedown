@@ -1,6 +1,6 @@
 ## Parsedown
 
-[![Build Status](https://travis-ci.org/erusev/parsedown.svg)](https://travis-ci.org/erusev/parsedown)
+[![Build Status](https://travis-ci.org/erusev/parsedown.svg?branch=master)](https://travis-ci.org/erusev/parsedown)
 
 Better Markdown Parser in PHP
 
