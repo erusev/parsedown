@@ -301,8 +301,13 @@ class Parsedown
     #
     # Code
 
-    protected function identifyCodeBlock($Line)
+    protected function identifyCodeBlock($Line, $Block = null)
     {
+        if (isset($Block) and ! isset($Block['type']) and ! isset($Block['interrupted']))
+        {
+            return;
+        }
+
         if ($Line['indent'] >= 4)
         {
             $text = substr($Line['body'], 4);
@@ -968,6 +973,7 @@ class Parsedown
 
     protected $SpanTypes = array(
         '!' => array('Link'), # ?
+        '"' => array('QuotationMark'),
         '&' => array('Ampersand'),
         '*' => array('Emphasis'),
         '/' => array('Url'),
@@ -982,7 +988,7 @@ class Parsedown
 
     # ~
 
-    protected $spanMarkerList = '*_!&[<>/`~\\';
+    protected $spanMarkerList = '!"*_&[<>/`~\\';
 
     #
     # ~
@@ -1141,6 +1147,14 @@ class Parsedown
         );
     }
 
+    protected function identifyQuotationMark()
+    {
+        return array(
+            'markup' => '&quot;',
+            'extent' => 1,
+        );
+    }
+
     protected function identifyUrlTag($Excerpt)
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $Excerpt['text'], $matches))
@@ -1162,15 +1176,22 @@ class Parsedown
 
     protected function identifyEmailTag($Excerpt)
     {
-        if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\S+?@\S+?)>/', $Excerpt['text'], $matches))
+        if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<((mailto:)?\S+?@\S+?)>/i', $Excerpt['text'], $matches))
         {
+            $url = $matches[1];
+
+            if ( ! isset($matches[2]))
+            {
+                $url = 'mailto:' . $url;
+            }
+
             return array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
                     'name' => 'a',
                     'text' => $matches[1],
                     'attributes' => array(
-                        'href' => 'mailto:'.$matches[1],
+                        'href' => $url,
                     ),
                 ),
             );
@@ -1342,10 +1363,20 @@ class Parsedown
 
     protected function readPlainText($text)
     {
-        $breakMarker = $this->breaksEnabled ? "\n" : array("  \n", "\\\n");
+        if (strpos($text, "\n") === false)
+        {
+            return $text;
+        }
 
-        $text = str_replace($breakMarker, "<br />\n", $text);
-        $text = str_replace(" \n", "\n", $text);
+        if ($this->breaksEnabled)
+        {
+            $text = preg_replace('/[ ]*\n/', "<br />\n", $text);
+        }
+        else
+        {
+            $text = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br />\n", $text);
+            $text = str_replace(" \n", "\n", $text);
+        }
 
         return $text;
     }

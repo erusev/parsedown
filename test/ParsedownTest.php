@@ -124,11 +124,11 @@ MARKDOWN_WITH_MARKUP;
 &lt;/div&gt;
 &lt;/div&gt;</p>
 <p>paragraph</p>
-<p>&lt;style type="text/css"&gt;</p>
-<pre><code>p {
-    color: red;
-}</code></pre>
-<p>&lt;/style&gt;</p>
+<p>&lt;style type="text/css"&gt;
+p {
+color: red;
+}
+&lt;/style&gt;</p>
 <p>comment</p>
 <p>&lt;!-- html comment --&gt;</p>
 EXPECTED_HTML;
