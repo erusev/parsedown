@@ -31,7 +31,7 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and 
 ### Questions
 
 **How does Parsedown work?**<br/>
-Parsedown recognises that the Markdown syntax is optimised for humans so it tries to read like one. It goes through text line by line. It looks at how lines start to identify blocks. It looks for special characters to identify inline elements.
+Parsedown recognises that Markdown texts are optimised to be read by humans so it tries to read like one. It goes through texts line by line. It looks at how lines start to identify blocks. It looks for special characters to identify inline elements.
 
 **Why doesn’t Parsedown use namespaces?**<br/>
 Using namespaces would mean dropping support for PHP 5.2. We believe that since Parsedown is a single class with an uncommon name, making this trade wouldn't be worth it.
@@ -40,4 +40,7 @@ Using namespaces would mean dropping support for PHP 5.2. We believe that since 
 We are [working on it](https://github.com/erusev/parsedown/tree/commonmark).
 
 **Who uses Parsedown?**<br/>
-[phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
+[phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/),  [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
+
+**How can I help?**<br/>
+Use the project, tell friends about it and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
