@@ -1312,6 +1312,11 @@ class Parsedown
 
         $Span = $this->identifyLink($Excerpt);
 
+        if ($Span === null)
+        {
+            return;
+        }
+
         $Span['extent'] ++;
 
         $Span['element'] = array(
