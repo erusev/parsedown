@@ -1496,6 +1496,8 @@ class Parsedown
 
     /**
      * @deprecated in favor of "text"
+     * @param $text
+     * @return string
      */
     function parse($text)
     {
