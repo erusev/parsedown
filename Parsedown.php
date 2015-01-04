@@ -1074,13 +1074,13 @@ class Parsedown
 
             $markerPosition += strpos($remainder, $marker);
 
-            foreach ($this->InlineTypes[$marker] as $spanType)
+            foreach ($this->InlineTypes[$marker] as $inlineType)
             {
-                $handler = 'inline'.$spanType;
+                $handler = 'inline'.$inlineType;
 
-                $Span = $this->$handler($excerpt);
+                $Inline = $this->$handler($excerpt);
 
-                if ( ! isset($Span))
+                if ( ! isset($Inline))
                 {
                     continue;
                 }
@@ -1089,9 +1089,9 @@ class Parsedown
 
                 $markup .= $this->readUnmarkedText($plainText);
 
-                $markup .= isset($Span['markup']) ? $Span['markup'] : $this->element($Span['element']);
+                $markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
 
-                $text = substr($text, $markerPosition + $Span['extent']);
+                $text = substr($text, $markerPosition + $Inline['extent']);
 
                 $remainder = $text;
 
@@ -1268,25 +1268,25 @@ class Parsedown
 
         $excerpt = substr($excerpt, 1);
 
-        $Span = $this->inlineLink($excerpt);
+        $Inline = $this->inlineLink($excerpt);
 
-        if ($Span === null)
+        if ($Inline === null)
         {
             return;
         }
 
-        $Span['extent'] ++;
+        $Inline['extent'] ++;
 
-        $Span['element'] = array(
+        $Inline['element'] = array(
             'name' => 'img',
             'attributes' => array(
-                'src' => $Span['element']['attributes']['href'],
-                'alt' => $Span['element']['text'],
-                'title' => $Span['element']['attributes']['title'],
+                'src' => $Inline['element']['attributes']['href'],
+                'alt' => $Inline['element']['text'],
+                'title' => $Inline['element']['attributes']['title'],
             ),
         );
 
-        return $Span;
+        return $Inline;
     }
 
     protected function inlineLink($excerpt)
