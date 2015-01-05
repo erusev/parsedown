@@ -31,7 +31,7 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and 
 ### Questions
 
 **How does Parsedown work?**<br/>
-Parsedown recognises that Markdown texts are optimised to be read by humans so it tries to read like one. It goes through texts line by line. It looks at how lines start to identify blocks. It looks for special characters to identify inline elements.
+Parsedown tries to read Markdown like a human. First, it looks at the lines. It’s interested in how the lines start. This helps it recognise blocks. It knows, for example, that if a line start with a `-` then it perhaps belong to a list. Once it recognises the blocks, it continues to the content. As it reads, it watches out for special characters. This helps it recognise inline elements (or inlines).
 
 **Why doesn’t Parsedown use namespaces?**<br/>
 Using namespaces would mean dropping support for PHP 5.2. We believe that since Parsedown is a single class with an uncommon name, making this trade wouldn't be worth it.
