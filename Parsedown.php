@@ -80,7 +80,7 @@ class Parsedown
     #
 
     protected $BlockTypes = array(
-        '#' => array('Atx'),
+        '#' => array('Header'),
         '*' => array('Rule', 'List'),
         '+' => array('List'),
         '-' => array('Setext', 'Table', 'Rule', 'List'),
@@ -271,34 +271,6 @@ class Parsedown
     }
 
     #
-    # Atx
-
-    protected function blockAtx($Line)
-    {
-        if (isset($Line['text'][1]))
-        {
-            $level = 1;
-
-            while (isset($Line['text'][$level]) and $Line['text'][$level] === '#')
-            {
-                $level ++;
-            }
-
-            $text = trim($Line['text'], '# ');
-
-            $Block = array(
-                'element' => array(
-                    'name' => 'h' . min(6, $level),
-                    'text' => $text,
-                    'handler' => 'line',
-                ),
-            );
-
-            return $Block;
-        }
-    }
-
-    #
     # Code
 
     protected function blockCode($Line, $Block = null)
@@ -474,6 +446,34 @@ class Parsedown
         $Block['element']['text']['text'] = $text;
 
         return $Block;
+    }
+
+    #
+    # Header
+
+    protected function blockHeader($Line)
+    {
+        if (isset($Line['text'][1]))
+        {
+            $level = 1;
+
+            while (isset($Line['text'][$level]) and $Line['text'][$level] === '#')
+            {
+                $level ++;
+            }
+
+            $text = trim($Line['text'], '# ');
+
+            $Block = array(
+                'element' => array(
+                    'name' => 'h' . min(6, $level),
+                    'text' => $text,
+                    'handler' => 'line',
+                ),
+            );
+
+            return $Block;
+        }
     }
 
     #
