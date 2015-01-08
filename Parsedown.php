@@ -1087,7 +1087,7 @@ class Parsedown
 
                 $plainText = substr($text, 0, $markerPosition);
 
-                $markup .= $this->readUnmarkedText($plainText);
+                $markup .= $this->unmarkedText($plainText);
 
                 $markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
 
@@ -1105,7 +1105,7 @@ class Parsedown
             $markerPosition ++;
         }
 
-        $markup .= $this->readUnmarkedText($text);
+        $markup .= $this->unmarkedText($text);
 
         return $markup;
     }
@@ -1397,17 +1397,28 @@ class Parsedown
     #
     # ~
 
-    protected function readUnmarkedText($text)
+    protected $unmarkedInlineTypes = array(
+        "  \n" => 'Break',
+        '://' => 'Url',
+    );
+
+    # ~
+
+    protected function unmarkedText($text)
     {
-        $text = $this->linkUrls($text);
-
-        # ~
-
-        if (strpos($text, "\n") === false)
+        foreach ($this->unmarkedInlineTypes as $snippet => $inlineType)
         {
-            return $text;
+            if (strpos($text, $snippet) !== false)
+            {
+                $text = $this->{'unmarkedInline'.$inlineType}($text);
+            }
         }
 
+        return $text;
+    }
+
+    protected function unmarkedInlineBreak($text)
+    {
         if ($this->breaksEnabled)
         {
             $text = preg_replace('/[ ]*\n/', "<br />\n", $text);
@@ -1421,9 +1432,7 @@ class Parsedown
         return $text;
     }
 
-    # ~
-
-    protected function linkUrls($text)
+    protected function unmarkedInlineUrl($text)
     {
         $re = '/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui';
 
