@@ -75,6 +75,15 @@ class Parsedown
         return $this;
     }
 
+    private $urlsLinked = true;
+
+    function setUrlsLinked($urlsLinked)
+    {
+        $this->urlsLinked = $urlsLinked;
+
+        return $this;
+    }
+
     #
     # Lines
     #
@@ -1434,6 +1443,11 @@ class Parsedown
 
     protected function unmarkedInlineUrl($text)
     {
+        if ($this->urlsLinked !== true)
+        {
+            return $text;
+        }
+
         $re = '/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui';
 
         $offset = 0;
