@@ -20,9 +20,10 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
      */
     function test_($section, $markdown, $expectedHtml)
     {
-        $parsedown = new Parsedown();
+        $Parsedown = new Parsedown();
+        $Parsedown->setUrlsLinked(false);
 
-        $actualHtml = $parsedown->text($markdown);
+        $actualHtml = $Parsedown->text($markdown);
         $actualHtml = $this->normalizeMarkup($actualHtml);
 
         $this->assertEquals($expectedHtml, $actualHtml);
