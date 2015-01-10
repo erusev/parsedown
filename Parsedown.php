@@ -89,7 +89,7 @@ class Parsedown
         '#' => array('Header'),
         '*' => array('Rule', 'List'),
         '+' => array('List'),
-        '-' => array('Setext', 'Table', 'Rule', 'List'),
+        '-' => array('SetextHeader', 'Table', 'Rule', 'List'),
         '0' => array('List'),
         '1' => array('List'),
         '2' => array('List'),
@@ -102,7 +102,7 @@ class Parsedown
         '9' => array('List'),
         ':' => array('Table'),
         '<' => array('Comment', 'Markup'),
-        '=' => array('Setext'),
+        '=' => array('SetextHeader'),
         '>' => array('Quote'),
         '_' => array('Rule'),
         '`' => array('FencedCode'),
@@ -648,7 +648,7 @@ class Parsedown
     #
     # Setext
 
-    protected function blockSetext($Line, array $Block = null)
+    protected function blockSetextHeader($Line, array $Block = null)
     {
         if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
         {
@@ -665,7 +665,7 @@ class Parsedown
 
     #
     # Markup
-
+    
     protected function blockMarkup($Line)
     {
         if ($this->markupEscaped)
