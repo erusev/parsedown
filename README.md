@@ -31,13 +31,13 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and 
 ### Questions
 
 **How does Parsedown work?**<br/>
-Parsedown tries to read Markdown like a human. First, it looks at the lines. It’s interested in how the lines start. This helps it recognise blocks. It knows, for example, that if a line start with a `-` then it perhaps belong to a list. Once it recognises the blocks, it continues to the content. As it reads, it watches out for special characters. This helps it recognise inline elements (or inlines).
+It tries to read Markdown like a human. First, it looks at the lines. It’s interested in how the lines start. This helps it recognise blocks. It knows, for example, that if a line start with a `-` then it perhaps belong to a list. Once it recognises the blocks, it continues to the content. As it reads, it watches out for special characters. This helps it recognise inline elements (or inlines).
 
 **Why doesn’t Parsedown use namespaces?**<br/>
-Using namespaces would mean dropping support for PHP 5.2. We believe that since Parsedown is a single class with an uncommon name, making this trade wouldn't be worth it.
+It'd mean no support for PHP 5.2. Is it worth it?
 
 **Is Parsedown compliant with CommonMark?**<br/>
-We are [working on it](https://github.com/erusev/parsedown/tree/commonmark).
+The majority of the CommonMark tests pass. Most of the tests that don't pass deal with cases that are quite extreme. Yet, we are working on them. As CommonMark matures, compliance should improve.
 
 **Who uses Parsedown?**<br/>
 [phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/),  [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
