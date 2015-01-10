@@ -35,9 +35,6 @@ class Parsedown
         $text = str_replace("\r\n", "\n", $text);
         $text = str_replace("\r", "\n", $text);
 
-        # replace tabs with spaces
-        $text = str_replace("\t", '    ', $text);
-
         # remove surrounding line breaks
         $text = trim($text, "\n");
 
@@ -143,6 +140,23 @@ class Parsedown
                 }
 
                 continue;
+            }
+
+            if (strpos($line, "\t") !== false)
+            {
+                $parts = explode("\t", $line);
+
+                $line = $parts[0];
+
+                unset($parts[0]);
+
+                foreach ($parts as $part)
+                {
+                    $shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+
+                    $line .= str_repeat(' ', $shortage);
+                    $line .= $part;
+                }
             }
 
             $indent = 0;
@@ -471,6 +485,11 @@ class Parsedown
                 $level ++;
             }
 
+            if ($level > 6 or $Line['text'][$level] !== ' ')
+            {
+                return;
+            }
+
             $text = trim($Line['text'], '# ');
 
             $Block = array(
@@ -614,7 +633,7 @@ class Parsedown
 
     protected function blockRule($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].'])([ ]{0,2}\1){2,}[ ]*$/', $Line['text']))
+        if (preg_match('/^(['.$Line['text'][0].'])([ ]*\1){2,}[ ]*$/', $Line['text']))
         {
             $Block = array(
                 'element' => array(
