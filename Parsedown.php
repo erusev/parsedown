@@ -239,7 +239,7 @@ class Parsedown
 
                     if ( ! isset($Block['identified']))
                     {
-                        $Elements []= $CurrentBlock['element'];
+                        $Blocks []= $CurrentBlock;
 
                         $Block['identified'] = true;
                     }
@@ -263,7 +263,7 @@ class Parsedown
             }
             else
             {
-                $Elements []= $CurrentBlock['element'];
+                $Blocks []= $CurrentBlock;
 
                 $CurrentBlock = $this->paragraph($Line);
 
@@ -280,13 +280,21 @@ class Parsedown
 
         # ~
 
-        $Elements []= $CurrentBlock['element'];
+        $Blocks []= $CurrentBlock;
 
-        unset($Elements[0]);
+        unset($Blocks[0]);
 
         # ~
 
-        $markup = $this->elements($Elements);
+        $markup = '';
+
+        foreach ($Blocks as $Block)
+        {
+            $markup .= "\n";
+            $markup .= isset($Block['markup']) ? $Block['markup'] : $this->element($Block['element']);
+        }
+
+        $markup .= "\n";
 
         # ~
 
@@ -367,9 +375,7 @@ class Parsedown
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(
-                'element' => array(
-                    'text' => $Line['body'],
-                ),
+                'markup' => $Line['body'],
             );
 
             if (preg_match('/-->$/', $Line['text']))
@@ -388,7 +394,7 @@ class Parsedown
             return;
         }
 
-        $Block['element']['text'] .= "\n" . $Line['body'];
+        $Block['markup'] .= "\n" . $Line['body'];
 
         if (preg_match('/-->$/', $Line['text']))
         {
@@ -683,9 +689,7 @@ class Parsedown
             $Block = array(
                 'name' => $matches[1],
                 'depth' => 0,
-                'element' => array(
-                    'text' => $Line['text'],
-                ),
+                'markup' => $Line['text'],
             );
 
             $length = strlen($matches[0]);
@@ -739,17 +743,17 @@ class Parsedown
                 $Block['closed'] = true;
             }
 
-            $Block['element']['text'] .= $matches[1];
+            $Block['markup'] .= $matches[1];
         }
 
         if (isset($Block['interrupted']))
         {
-            $Block['element']['text'] .= "\n";
+            $Block['markup'] .= "\n";
 
             unset($Block['interrupted']);
         }
 
-        $Block['element']['text'] .= "\n".$Line['body'];
+        $Block['markup'] .= "\n".$Line['body'];
 
         return $Block;
     }
@@ -957,39 +961,25 @@ class Parsedown
 
     protected function element(array $Element)
     {
-        $markup = '';
+        $markup = '<'.$Element['name'];
 
-        if (isset($Element['name']))
+        if (isset($Element['attributes']))
         {
-            $markup .= '<'.$Element['name'];
-
-            if (isset($Element['attributes']))
+            foreach ($Element['attributes'] as $name => $value)
             {
-                foreach ($Element['attributes'] as $name => $value)
+                if ($value === null)
                 {
-                    if ($value === null)
-                    {
-                        continue;
-                    }
-
-                    $markup .= ' '.$name.'="'.$value.'"';
+                    continue;
                 }
-            }
 
-            if (isset($Element['text']))
-            {
-                $markup .= '>';
-            }
-            else
-            {
-                $markup .= ' />';
-
-                return $markup;
+                $markup .= ' '.$name.'="'.$value.'"';
             }
         }
 
         if (isset($Element['text']))
         {
+            $markup .= '>';
+
             if (isset($Element['handler']))
             {
                 $markup .= $this->$Element['handler']($Element['text']);
@@ -998,11 +988,12 @@ class Parsedown
             {
                 $markup .= $Element['text'];
             }
-        }
 
-        if (isset($Element['name']))
-        {
             $markup .= '</'.$Element['name'].'>';
+        }
+        else
+        {
+            $markup .= ' />';
         }
 
         return $markup;
@@ -1014,11 +1005,6 @@ class Parsedown
 
         foreach ($Elements as $Element)
         {
-            if ($Element === null)
-            {
-                continue;
-            }
-
             $markup .= "\n" . $this->element($Element);
         }
 
