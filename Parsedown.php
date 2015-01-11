@@ -1298,6 +1298,8 @@ class Parsedown
 
         $Inline = $this->inlineLink($excerpt);
 
+        $backup = $Inline;
+
         if ($Inline === null)
         {
             return;
@@ -1305,14 +1307,12 @@ class Parsedown
 
         $Inline['extent'] ++;
 
-        $Inline['element'] = array(
-            'name' => 'img',
-            'attributes' => array(
-                'src' => $Inline['element']['attributes']['href'],
-                'alt' => $Inline['element']['text'],
-                'title' => $Inline['element']['attributes']['title'],
-            ),
-        );
+        $Inline['element']['name'] = 'img';
+        $Inline['element']['attributes']['src'] = $Inline['element']['attributes']['href'];
+        unset($Inline['element']['attributes']['href']);
+
+        $Inline['element']['attributes']['alt'] = $Inline['element']['text'];
+        unset($Inline['element']['text']);
 
         return $Inline;
     }
