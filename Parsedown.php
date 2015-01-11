@@ -1028,7 +1028,7 @@ class Parsedown
     }
 
     #
-    # Spans
+    # Inline Elements
     #
 
     protected $InlineTypes = array(
