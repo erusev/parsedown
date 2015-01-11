@@ -1298,8 +1298,6 @@ class Parsedown
 
         $Inline = $this->inlineLink($excerpt);
 
-        $backup = $Inline;
-
         if ($Inline === null)
         {
             return;
