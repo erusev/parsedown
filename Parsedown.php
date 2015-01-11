@@ -665,7 +665,7 @@ class Parsedown
 
     #
     # Markup
-    
+
     protected function blockMarkup($Line)
     {
         if ($this->markupEscaped)
@@ -673,77 +673,47 @@ class Parsedown
             return;
         }
 
-        $attrName = '[a-zA-Z_:][\w:.-]*';
-        $attrValue = '(?:[^"\'=<>`\s]+|".*?"|\'.*?\')';
-
-        preg_match('/^<(\w[\d\w]*)((?:\s'.$attrName.'(?:\s*=\s*'.$attrValue.')?)*)\s*(\/?)>/', $Line['text'], $matches);
-
-        if ( ! $matches or in_array($matches[1], $this->textLevelElements))
+        if (preg_match('/^<(\w*)(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*(\/)?>/', $Line['text'], $matches))
         {
-            return;
-        }
-
-        $Block = array(
-            'depth' => 0,
-            'element' => array(
-                'name' => $matches[1],
-                'text' => null,
-            ),
-        );
-
-        $remainder = substr($Line['text'], strlen($matches[0]));
-
-        if (trim($remainder) === '')
-        {
-            if ($matches[3] or in_array($matches[1], $this->voidElements))
-            {
-                $Block['closed'] = true;
-            }
-        }
-        else
-        {
-            if ($matches[3] or in_array($matches[1], $this->voidElements))
+            if (in_array($matches[1], $this->textLevelElements))
             {
                 return;
             }
 
-            preg_match('/(.*)<\/'.$matches[1].'>\s*$/i', $remainder, $nestedMatches);
+            $Block = array(
+                'name' => $matches[1],
+                'depth' => 0,
+                'element' => array(
+                    'text' => $Line['text'],
+                ),
+            );
 
-            if ($nestedMatches)
+            $length = strlen($matches[0]);
+
+            $remainder = substr($Line['text'], $length);
+
+            if (trim($remainder) === '')
             {
-                $Block['closed'] = true;
-                $Block['element']['text'] = $nestedMatches[1];
+                if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
+                {
+                    $Block['closed'] = true;
+                }
             }
             else
             {
-                $Block['element']['text'] = $remainder;
-            }
-        }
+                if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
+                {
+                    return;
+                }
 
-        if ( ! $matches[2])
-        {
+                if (preg_match('/<\/'.$matches[1].'>[ ]*$/i', $remainder))
+                {
+                    $Block['closed'] = true;
+                }
+            }
+
             return $Block;
         }
-
-        preg_match_all('/\s('.$attrName.')(?:\s*=\s*('.$attrValue.'))?/', $matches[2], $nestedMatches, PREG_SET_ORDER);
-
-        foreach ($nestedMatches as $nestedMatch)
-        {
-            if ( ! isset($nestedMatch[2]))
-            {
-                $Block['element']['attributes'][$nestedMatch[1]] = '';
-            }
-            elseif ($nestedMatch[2][0] === '"' or $nestedMatch[2][0] === '\'')
-            {
-                $Block['element']['attributes'][$nestedMatch[1]] = substr($nestedMatch[2], 1, - 1);
-            }
-            else
-            {
-                $Block['element']['attributes'][$nestedMatch[1]] = $nestedMatch[2];
-            }
-        }
-
-        return $Block;
     }
 
     protected function blockMarkupContinue($Line, array $Block)
@@ -753,12 +723,12 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^<'.$Block['element']['name'].'(?:\s.*[\'"])?\s*>/i', $Line['text'])) # open
+        if (preg_match('/^<'.$Block['name'].'(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*>/i', $Line['text'])) # open
         {
             $Block['depth'] ++;
         }
 
-        if (preg_match('/(.*?)<\/'.$Block['element']['name'].'>\s*$/i', $Line['text'], $matches)) # close
+        if (preg_match('/(.*?)<\/'.$Block['name'].'>[ ]*$/i', $Line['text'], $matches)) # close
         {
             if ($Block['depth'] > 0)
             {
@@ -766,8 +736,6 @@ class Parsedown
             }
             else
             {
-                $Block['element']['text'] .= "\n";
-
                 $Block['closed'] = true;
             }
 
@@ -781,10 +749,7 @@ class Parsedown
             unset($Block['interrupted']);
         }
 
-        if ( ! isset($Block['closed']))
-        {
-            $Block['element']['text'] .= "\n".$Line['body'];
-        }
+        $Block['element']['text'] .= "\n".$Line['body'];
 
         return $Block;
     }
@@ -1568,6 +1533,8 @@ class Parsedown
         '*' => '/^[*]((?:\\\\\*|[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
         '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
     );
+
+    protected $regexHtmlAttribute = '[a-zA-Z_:][\w:.-]*(?:\s*=\s*(?:[^"\'=<>`\s]+|"[^"]*"|\'[^\']*\'))?';
 
     protected $voidElements = array(
         'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
