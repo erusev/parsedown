@@ -692,6 +692,8 @@ class Parsedown
                 if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
                 {
                     $Block['closed'] = true;
+
+                    $Block['void'] = true;
                 }
             }
             else
