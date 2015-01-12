@@ -29,7 +29,7 @@ class Parsedown
     function text($text)
     {
         # make sure no definitions are set
-        $this->Definitions = array();
+        $this->DefinitionData = array();
 
         # standardize line breaks
         $text = str_replace("\r\n", "\n", $text);
@@ -104,6 +104,7 @@ class Parsedown
         '<' => array('Comment', 'Markup'),
         '=' => array('SetextHeader'),
         '>' => array('Quote'),
+        '[' => array('Reference'),
         '_' => array('Rule'),
         '`' => array('FencedCode'),
         '|' => array('Table'),
@@ -199,21 +200,6 @@ class Parsedown
 
             $marker = $text[0];
 
-            if (isset($this->DefinitionTypes[$marker]))
-            {
-                foreach ($this->DefinitionTypes[$marker] as $definitionType)
-                {
-                    $Definition = $this->{'definition'.$definitionType}($Line, $CurrentBlock);
-
-                    if (isset($Definition))
-                    {
-                        $this->Definitions[$definitionType][$Definition['id']] = $Definition['data'];
-
-                        continue 2;
-                    }
-                }
-            }
-
             # ~
 
             $blockTypes = $this->unmarkedBlockTypes;
@@ -290,6 +276,11 @@ class Parsedown
 
         foreach ($Blocks as $Block)
         {
+            if (isset($Block['hidden']))
+            {
+                continue;
+            }
+
             $markup .= "\n";
             $markup .= isset($Block['markup']) ? $Block['markup'] : $this->element($Block['element']);
         }
@@ -759,6 +750,35 @@ class Parsedown
     }
 
     #
+    # Reference
+
+    protected function blockReference($Line)
+    {
+        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
+        {
+            $id = strtolower($matches[1]);
+
+            $Data = array(
+                'url' => $matches[2],
+                'title' => null,
+            );
+
+            if (isset($matches[3]))
+            {
+                $Data['title'] = $matches[3];
+            }
+
+            $this->DefinitionData['Reference'][$id] = $Data;
+
+            $Block = array(
+                'hidden' => true,
+            );
+
+            return $Block;
+        }
+    }
+
+    #
     # Table
 
     protected function blockTable($Line, array $Block = null)
@@ -910,31 +930,6 @@ class Parsedown
             $Block['element']['text'][1]['text'] []= $Element;
 
             return $Block;
-        }
-    }
-
-    #
-    # Definitions
-    #
-
-    protected function definitionReference($Line)
-    {
-        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
-        {
-            $Definition = array(
-                'id' => strtolower($matches[1]),
-                'data' => array(
-                    'url' => $matches[2],
-                    'title' => null,
-                ),
-            );
-
-            if (isset($matches[3]))
-            {
-                $Definition['data']['title'] = $matches[3];
-            }
-
-            return $Definition;
         }
     }
 
@@ -1326,12 +1321,12 @@ class Parsedown
                 $definition = strtolower($Element['text']);
             }
 
-            if ( ! isset($this->Definitions['Reference'][$definition]))
+            if ( ! isset($this->DefinitionData['Reference'][$definition]))
             {
                 return;
             }
 
-            $Definition = $this->Definitions['Reference'][$definition];
+            $Definition = $this->DefinitionData['Reference'][$definition];
 
             $Element['attributes']['href'] = $Definition['url'];
             $Element['attributes']['title'] = $Definition['title'];
@@ -1507,7 +1502,7 @@ class Parsedown
     # Fields
     #
 
-    protected $Definitions;
+    protected $DefinitionData;
 
     #
     # Read-only
