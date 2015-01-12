@@ -1375,10 +1375,7 @@ class Parsedown
     #
     # ~
 
-    protected $unmarkedInlineTypes = array(
-        "\n" => 'Break',
-        '://' => 'Url',
-    );
+    protected $unmarkedInlineTypes = array("\n" => 'Break', '://' => 'Url');
 
     # ~
 
