@@ -30,17 +30,20 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and 
 
 ### Questions
 
-**How does Parsedown work?**<br/>
+**How does Parsedown work?**
+
 It tries to read Markdown like a human. First, it looks at the lines. It’s interested in how the lines start. This helps it recognise blocks. It knows, for example, that if a line start with a `-` then it perhaps belong to a list. Once it recognises the blocks, it continues to the content. As it reads, it watches out for special characters. This helps it recognise inline elements (or inlines).
 
-**Why doesn’t Parsedown use namespaces?**<br/>
-It'd mean no support for PHP 5.2. Would it be worth it?
+We call this approach "line based". We believe that Parsedown is the first Markdown parser to use it. Since the release of Parsedown, other developers have used it to develop other Markdown parsers in PHP and in other languages.
 
-**Is Parsedown compliant with CommonMark?**<br/>
+**Is Parsedown compliant with CommonMark?**
+
 The majority of the CommonMark tests pass. Most of the tests that don't pass deal with cases that are quite extreme. Yet, we are working on them. As CommonMark matures, compliance should improve.
 
-**Who uses Parsedown?**<br/>
+**Who uses Parsedown?**
+
 [phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/), [Grav CMS](http://getgrav.org/), [Statamic CMS](http://www.statamic.com/),  [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
 
-**How can I help?**<br/>
+**How can I help?**
+
 Use the project, tell friends about it and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
