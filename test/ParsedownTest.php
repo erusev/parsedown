@@ -116,21 +116,21 @@ comment
 MARKDOWN_WITH_MARKUP;
 
         $expectedHtml = <<<EXPECTED_HTML
-<p>&lt;div><em>content</em>&lt;/div></p>
+<p>&lt;div&gt;<em>content</em>&lt;/div&gt;</p>
 <p>sparse:</p>
-<p>&lt;div>
-&lt;div class="inner">
+<p>&lt;div&gt;
+&lt;div class=&quot;inner&quot;&gt;
 <em>content</em>
-&lt;/div>
-&lt;/div></p>
+&lt;/div&gt;
+&lt;/div&gt;</p>
 <p>paragraph</p>
-<p>&lt;style type="text/css"></p>
-<pre><code>p {
-    color: red;
-}</code></pre>
-<p>&lt;/style></p>
+<p>&lt;style type=&quot;text/css&quot;&gt;
+p {
+color: red;
+}
+&lt;/style&gt;</p>
 <p>comment</p>
-<p>&lt;!-- html comment --></p>
+<p>&lt;!-- html comment --&gt;</p>
 EXPECTED_HTML;
         $parsedownWithNoMarkup = new Parsedown();
         $parsedownWithNoMarkup->setMarkupEscaped(true);
