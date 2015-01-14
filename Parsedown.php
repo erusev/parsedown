@@ -482,7 +482,7 @@ class Parsedown
                 $level ++;
             }
 
-            if ($level > 6 or $Line['text'][$level] !== ' ')
+            if ($level > 6)
             {
                 return;
             }
