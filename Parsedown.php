@@ -1212,12 +1212,20 @@ class Parsedown
 
     protected function inlineTag($excerpt)
     {
-        if ($this->markupEscaped)
+        if ($this->markupEscaped or strpos($excerpt, '>') === false)
         {
             return;
         }
 
-        if (strpos($excerpt, '>') !== false and preg_match('/^<\/?\w.*?>/s', $excerpt, $matches))
+        if (preg_match('/^<\w*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $excerpt, $matches))
+        {
+            return array(
+                'markup' => $matches[0],
+                'extent' => strlen($matches[0]),
+            );
+        }
+
+        if ($excerpt[1] === '/' and preg_match('/^<\/\w*[ ]*>/s', $excerpt, $matches))
         {
             return array(
                 'markup' => $matches[0],
