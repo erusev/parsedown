@@ -1232,6 +1232,14 @@ class Parsedown
                 'extent' => strlen($matches[0]),
             );
         }
+
+        if ($excerpt[1] === '!' and preg_match('/^<!---?[^>-](?:-?[^-])*-->/s', $excerpt, $matches))
+        {
+            return array(
+                'markup' => $matches[0],
+                'extent' => strlen($matches[0]),
+            );
+        }
     }
 
     protected function inlineCode($excerpt)
