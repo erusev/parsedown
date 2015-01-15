@@ -910,7 +910,6 @@ class Parsedown
             foreach ($matches[0] as $index => $cell)
             {
                 $cell = trim($cell);
-                $cell = str_replace('\|', '|', $cell);
 
                 $Element = array(
                     'name' => 'td',
@@ -1512,7 +1511,7 @@ class Parsedown
     # Read-only
 
     protected $specialCharacters = array(
-        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!',
+        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|',
     );
 
     protected $StrongRegex = array(
