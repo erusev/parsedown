@@ -1,4 +1,4 @@
-[link](http://example.com) and [another link](/tests/)
+[link](http://example.com) and [another link](/url-with-(parentheses))
 
 [`link`](http://example.com)
 
