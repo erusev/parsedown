@@ -905,11 +905,12 @@ class Parsedown
             $row = trim($row);
             $row = trim($row, '|');
 
-            $cells = explode('|', $row);
+            preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]+`|`)+/', $row, $matches);
 
-            foreach ($cells as $index => $cell)
+            foreach ($matches[0] as $index => $cell)
             {
                 $cell = trim($cell);
+                $cell = str_replace('\|', '|', $cell);
 
                 $Element = array(
                     'name' => 'td',
