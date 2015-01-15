@@ -10,9 +10,8 @@ Better Markdown Parser in PHP
 * [Consistent](http://parsedown.org/consistency)
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
 * [Tested](http://parsedown.org/tests/) in PHP 5.2, 5.3, 5.4, 5.5, 5.6 and [hhvm](http://www.hhvm.com/)
-* Extensible
+* [Extensible](https://github.com/erusev/parsedown/wiki/Writing-Extensions)
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
-* [JavaScript port](https://github.com/hkdobrev/parsedown.js) under development
 
 ### Installation
 
