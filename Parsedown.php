@@ -534,7 +534,7 @@ class Parsedown
 
     protected function blockListContinue($Line, array $Block)
     {
-        if ($Block['indent'] === $Line['indent'] and preg_match('/^'.$Block['pattern'].'[ ]+(.*)/', $Line['text'], $matches))
+        if ($Block['indent'] === $Line['indent'] and preg_match('/^'.$Block['pattern'].'(?:[ ]+(.*)|$)/', $Line['text'], $matches))
         {
             if (isset($Block['interrupted']))
             {
@@ -545,11 +545,13 @@ class Parsedown
 
             unset($Block['li']);
 
+            $text = isset($matches[1]) ? $matches[1] : '';
+
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
                 'text' => array(
-                    $matches[1],
+                    $text,
                 ),
             );
 
