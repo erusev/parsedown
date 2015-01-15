@@ -558,6 +558,11 @@ class Parsedown
             return $Block;
         }
 
+        if ($Line['text'][0] === '[' and $this->blockReference($Line))
+        {
+            return $Block;
+        }
+
         if ( ! isset($Block['interrupted']))
         {
             $text = preg_replace('/^[ ]{0,4}/', '', $Line['body']);
