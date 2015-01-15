@@ -891,6 +891,11 @@ class Parsedown
 
     protected function blockTableContinue($Line, array $Block)
     {
+        if (isset($Block['interrupted']))
+        {
+            return;
+        }
+
         if ($Line['text'][0] === '|' or strpos($Line['text'], '|'))
         {
             $Elements = array();
