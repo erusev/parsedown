@@ -1030,7 +1030,7 @@ class Parsedown
         '!' => array('Image'),
         '&' => array('Ampersand'),
         '*' => array('Emphasis'),
-        '<' => array('UrlTag', 'EmailTag', 'Tag', 'LessThan'),
+        '<' => array('Url', 'Email', 'Markup', 'LessThan'),
         '>' => array('GreaterThan'),
         '[' => array('Link'),
         '_' => array('Emphasis'),
@@ -1167,7 +1167,7 @@ class Parsedown
         );
     }
 
-    protected function inlineUrlTag($excerpt)
+    protected function inlineUrl($excerpt)
     {
         if (strpos($excerpt, '>') !== false and preg_match('/^<(\w+:\/{2}[^ >]+)>/i', $excerpt, $matches))
         {
@@ -1186,7 +1186,7 @@ class Parsedown
         }
     }
 
-    protected function inlineEmailTag($excerpt)
+    protected function inlineEmail($excerpt)
     {
         if (strpos($excerpt, '>') !== false and preg_match('/^<((mailto:)?\S+?@\S+?)>/i', $excerpt, $matches))
         {
@@ -1210,7 +1210,7 @@ class Parsedown
         }
     }
 
-    protected function inlineTag($excerpt)
+    protected function inlineMarkup($excerpt)
     {
         if ($this->markupEscaped or strpos($excerpt, '>') === false)
         {
