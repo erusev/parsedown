@@ -1233,7 +1233,7 @@ class Parsedown
             );
         }
 
-        if (preg_match('/^<\w*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $excerpt, $matches))
+        if ($excerpt[1] !== ' ' and preg_match('/^<\w*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $excerpt, $matches))
         {
             return array(
                 'markup' => $matches[0],
