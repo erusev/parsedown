@@ -1169,7 +1169,7 @@ class Parsedown
 
     protected function inlineUrlTag($excerpt)
     {
-        if (strpos($excerpt, '>') !== false and preg_match('/^<(https?:[\/]{2}[^\s]+?)>/i', $excerpt, $matches))
+        if (strpos($excerpt, '>') !== false and preg_match('/^<(\w+:\/{2}[^ >]+)>/i', $excerpt, $matches))
         {
             $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
 
