@@ -968,12 +968,12 @@ class Parsedown
     #
 
     protected $InlineTypes = array(
-        '"' => array('QuotationMark'),
+        '"' => array('SpecialCharacter'),
         '!' => array('Image'),
-        '&' => array('Ampersand'),
+        '&' => array('SpecialCharacter'),
         '*' => array('Emphasis'),
-        '<' => array('Url', 'Email', 'Markup', 'LessThan'),
-        '>' => array('GreaterThan'),
+        '<' => array('Url', 'Email', 'Markup', 'SpecialCharacter'),
+        '>' => array('SpecialCharacter'),
         '[' => array('Link'),
         '_' => array('Emphasis'),
         '`' => array('Code'),
@@ -1042,17 +1042,6 @@ class Parsedown
     #
     # ~
     #
-
-    protected function inlineAmpersand($excerpt)
-    {
-        if ( ! preg_match('/^&#?\w+;/', $excerpt))
-        {
-            return array(
-                'markup' => '&amp;',
-                'extent' => 1,
-            );
-        }
-    }
 
     protected function inlineCode($excerpt)
     {
@@ -1139,14 +1128,6 @@ class Parsedown
                 'extent' => 2,
             );
         }
-    }
-
-    protected function inlineGreaterThan()
-    {
-        return array(
-            'markup' => '&gt;',
-            'extent' => 1,
-        );
     }
 
     protected function inlineImage($excerpt)
@@ -1296,12 +1277,25 @@ class Parsedown
         }
     }
 
-    protected function inlineQuotationMark()
+    protected function inlineSpecialCharacter($excerpt)
     {
-        return array(
-            'markup' => '&quot;',
-            'extent' => 1,
-        );
+        if ($excerpt[0] === '&' and ! preg_match('/^&#?\w+;/', $excerpt))
+        {
+            return array(
+                'markup' => '&amp;',
+                'extent' => 1,
+            );
+        }
+
+        $SpecialCharacter = array('>' => 'gt', '<' => 'lt', '"' => 'quot');
+
+        if (isset($SpecialCharacter[$excerpt[0]]))
+        {
+            return array(
+                'markup' => '&'.$SpecialCharacter[$excerpt[0]].';',
+                'extent' => 1,
+            );
+        }
     }
 
     protected function inlineStrikethrough($excerpt)
