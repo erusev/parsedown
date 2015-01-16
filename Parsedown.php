@@ -653,7 +653,7 @@ class Parsedown
 
     protected function blockSetextHeader($Line, array $Block = null)
     {
-        if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
+        if ( ! isset($Block) || isset($Block['type']) || isset($Block['interrupted']))
         {
             return;
         }
@@ -1212,7 +1212,7 @@ class Parsedown
 
     protected function inlineTag($excerpt)
     {
-        if ($this->markupEscaped or strpos($excerpt, '>') === false)
+        if ($this->markupEscaped === false || strpos($excerpt, '>') === false)
         {
             return;
         }
@@ -1264,7 +1264,7 @@ class Parsedown
 
     protected function inlineImage($excerpt)
     {
-        if ( ! isset($excerpt[1]) or $excerpt[1] !== '[')
+        if ( ! isset($excerpt[1]) || $excerpt[1] !== '[')
         {
             return;
         }
