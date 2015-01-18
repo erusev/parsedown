@@ -53,8 +53,6 @@ class Parsedown
     # Setters
     #
 
-    private $breaksEnabled;
-
     function setBreaksEnabled($breaksEnabled)
     {
         $this->breaksEnabled = $breaksEnabled;
@@ -62,7 +60,7 @@ class Parsedown
         return $this;
     }
 
-    private $markupEscaped;
+    protected $breaksEnabled;
 
     function setMarkupEscaped($markupEscaped)
     {
@@ -71,7 +69,7 @@ class Parsedown
         return $this;
     }
 
-    private $urlsLinked = true;
+    protected $markupEscaped;
 
     function setUrlsLinked($urlsLinked)
     {
@@ -79,6 +77,8 @@ class Parsedown
 
         return $this;
     }
+
+    protected $urlsLinked = true;
 
     #
     # Lines
