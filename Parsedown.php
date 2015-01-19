@@ -17,6 +17,10 @@ class Parsedown
 {
     # ~
 
+    const version = '1.5.0';
+
+    # ~
+
     function text($text)
     {
         # make sure no definitions are set
