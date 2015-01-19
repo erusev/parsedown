@@ -15,15 +15,6 @@
 
 class Parsedown
 {
-    #
-    # Philosophy
-
-    # Parsedown recognises that the Markdown syntax is optimised for humans so
-    # it tries to read like one. It goes through text line by line. It looks at
-    # how lines start to identify blocks. It looks for special characters to
-    # identify inline elements.
-
-    #
     # ~
 
     function text($text)
