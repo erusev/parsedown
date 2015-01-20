@@ -14,5 +14,8 @@
     ],
     "autoload": {
         "psr-0": {"Parsedown": ""}
-    }
+    },
+    "bin": [
+    	"parsedown"
+    ]
 }

@@ -25,6 +25,19 @@ $Parsedown = new Parsedown();
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
 
+Or as a command line tool:
+
+``` bash
+# from a file
+./parsedown README.md
+
+# redirect HTML to a file:
+./parsedown README.md > README.html
+
+# or from standard input
+curl https://raw.githubusercontent.com/erusev/parsedown/master/README.md | ./parsedown
+```
+
 More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
 ### Questions

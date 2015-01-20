@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+require(dirname(__FILE__).'/Parsedown.php');
+
+// From a file
+if (isset($argv[1])) {
+
+	if ( ! is_readable($argv[1])) {
+		throw new RuntimeException(sprintf(
+			'Could not read "%s"',
+			$argv[1]
+		));
+	}
+
+	$markdown = file_get_contents($argv[1]);
+} else {
+	// From standard input
+	$markdown = file_get_contents('php://stdin');
+}
+
+$Parsedown = new Parsedown();
+
+echo $Parsedown->text($markdown);
