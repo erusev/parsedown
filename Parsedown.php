@@ -75,6 +75,15 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+    function setSafeLinksEnabled($safeLinksEnabled)
+    {
+        $this->safeLinksEnabled = $safeLinksEnabled;
+
+        return $this;
+    }
+
+    protected $safeLinksEnabled = true;
+
     #
     # Lines
     #
@@ -1253,7 +1262,13 @@ class Parsedown
             $Element['attributes']['title'] = $Definition['title'];
         }
 
-        $Element['attributes']['href'] = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Element['attributes']['href']);
+        if ( $this->safeLinksEnabled && stripos($Element['attributes']['href'], 'javascript:') === 0 )
+        {
+            return;
+        }
+
+        $Element['attributes']['href'] = htmlspecialchars($Element['attributes']['href']);
+        $Element['text'] = htmlspecialchars($Element['text']);
 
         return array(
             'extent' => $extent,
