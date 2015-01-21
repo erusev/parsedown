@@ -7,10 +7,8 @@ require(dirname(__FILE__).'/Parsedown.php');
 if (isset($argv[1])) {
 
 	if ( ! is_readable($argv[1])) {
-		throw new RuntimeException(sprintf(
-			'Could not read "%s"',
-			$argv[1]
-		));
+		printf('Count not read "%s"', $argv[1]);
+		exit(1);
 	}
 
 	$markdown = file_get_contents($argv[1]);
