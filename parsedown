@@ -6,9 +6,14 @@ require(dirname(__FILE__).'/Parsedown.php');
 // From a file
 if (isset($argv[1])) {
 
+	if ( ! is_file($argv[1])) {
+		printf('"%s" is not a file', $argv[1]);
+		exit(1);
+	}
+
 	if ( ! is_readable($argv[1])) {
 		printf('Count not read "%s"', $argv[1]);
-		exit(1);
+		exit(2);
 	}
 
 	$markdown = file_get_contents($argv[1]);
