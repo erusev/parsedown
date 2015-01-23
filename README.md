@@ -35,14 +35,14 @@ It tries to read Markdown like a human. First, it looks at the lines. It’s int
 
 We call this approach "line based". We believe that Parsedown is the first Markdown parser to use it. Since the release of Parsedown, other developers have used the same approach to develop other Markdown parsers in PHP and in other languages.
 
-**Is Parsedown compliant with CommonMark?**
+**Is it compliant with CommonMark?**
 
 It passes most of the CommonMark tests. As CommonMark matures, compliance should improve.
 
-**Who uses Parsedown?**
+**Who uses it?**
 
 [phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/), [Grav CMS](http://getgrav.org/), [Statamic CMS](http://www.statamic.com/),  [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
 
-**What can I do to improve Parsedown?**
+**What can I do to help?**
 
 Use it, star it, share it, report issues, send pull requests and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
