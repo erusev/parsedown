@@ -45,4 +45,4 @@ It passes most of the CommonMark tests. As CommonMark matures, compliance should
 
 **What can I do to improve Parsedown?**
 
-Use it, star it, share it and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
+Use it, star it, share it, report issues, send pull requests and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
