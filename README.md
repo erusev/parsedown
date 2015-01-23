@@ -37,12 +37,12 @@ We call this approach "line based". We believe that Parsedown is the first Markd
 
 **Is Parsedown compliant with CommonMark?**
 
-The majority of the CommonMark tests pass. Most of the tests that don't pass deal with cases that are quite extreme. Yet, we are working on them. As CommonMark matures, compliance should improve.
+It passes most of the CommonMark tests. As CommonMark matures, compliance should improve.
 
 **Who uses Parsedown?**
 
 [phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/), [Grav CMS](http://getgrav.org/), [Statamic CMS](http://www.statamic.com/),  [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
 
-**How can I help?**
+**How can I improve Parsedown?**
 
-Use the project, tell friends about it and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
+Use it, star it, share it and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
