@@ -12,6 +12,9 @@ paragraph
 
 <style type="text/css">
     p {
-        color: red;
+        color: #789;
     }
 </style>
+
+<div>
+<a href="/">home</a></div>

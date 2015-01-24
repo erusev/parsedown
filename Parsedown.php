@@ -736,8 +736,6 @@ class Parsedown
             {
                 $Block['closed'] = true;
             }
-
-            $Block['markup'] .= $matches[1];
         }
 
         if (isset($Block['interrupted']))
