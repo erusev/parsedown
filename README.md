@@ -37,7 +37,7 @@ We call this approach "line based". We believe that Parsedown is the first Markd
 
 **Is it compliant with CommonMark?**
 
-It passes most of the tests. As CommonMark matures, compliance should improve.
+It passes most of the CommonMark tests. As CommonMark matures, compliance should improve.
 
 **Who uses it?**
 
