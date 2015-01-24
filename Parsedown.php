@@ -1244,13 +1244,18 @@ class Parsedown
             $Element['attributes']['title'] = $Definition['title'];
         }
 
-        if ( $this->safeLinksEnabled && stripos($Element['attributes']['href'], 'javascript:') === 0 )
+        if ( $this->safeLinksEnabled && preg_match("/^(\/|https?:\/\/|ftps?:\/\/)/ui", $Element['attributes']['href']) === 0 )
         {
             return;
         }
 
-        $Element['attributes']['href'] = htmlspecialchars($Element['attributes']['href']);
-        $Element['text'] = htmlspecialchars($Element['text']);
+        $Element['attributes']['href'] = htmlspecialchars($Element['attributes']['href'], ENT_QUOTES);
+        $Element['text'] = htmlspecialchars($Element['text'], ENT_QUOTES);
+
+        if ( $Element['attributes']['title'] !== null )
+        {
+            $Element['attributes']['title'] = htmlspecialchars($Element['attributes']['title'], ENT_QUOTES);
+        }
 
         return array(
             'extent' => $extent,
