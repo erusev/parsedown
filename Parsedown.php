@@ -84,6 +84,14 @@ class Parsedown
 
     protected $safeLinksEnabled = true;
 
+    protected $safeLinksWhitelist = array(
+        'http://',
+        'https://',
+        '/',
+        'ftp://',
+        'ftps://'
+    );
+
     #
     # Lines
     #
@@ -1244,9 +1252,22 @@ class Parsedown
             $Element['attributes']['title'] = $Definition['title'];
         }
 
-        if ( $this->safeLinksEnabled && preg_match("/^(\/|https?:\/\/|ftps?:\/\/)/ui", $Element['attributes']['href']) === 0 )
+        if ( $this->safeLinksEnabled )
         {
-            return;
+            $matched = false;
+            foreach ( $this->safeLinksWhitelist as $scheme )
+            {
+                if ( stripos($Element['attributes']['href'], $scheme) === 0 )
+                {
+                    $matched = true;
+                    break;
+                }
+            }
+
+            if ( ! $matched )
+            {
+                return;
+            }
         }
 
         $Element['attributes']['href'] = htmlspecialchars($Element['attributes']['href'], ENT_QUOTES);
