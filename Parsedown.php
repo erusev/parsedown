@@ -420,7 +420,7 @@ class Parsedown
 
             if (isset($matches[2]))
             {
-                $class = 'language-'.$matches[2];
+                $class = 'language-'.htmlspecialchars($matches[2], ENT_QUOTES, 'UTF-8');
 
                 $Element['attributes'] = array(
                     'class' => $class,
@@ -1090,7 +1090,7 @@ class Parsedown
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<((mailto:)?\S+?@\S+?)>/i', $Excerpt['text'], $matches))
         {
-            $url = $matches[1];
+            $url = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
 
             if ( ! isset($matches[2]))
             {
@@ -1270,12 +1270,12 @@ class Parsedown
             }
         }
 
-        $Element['attributes']['href'] = htmlspecialchars($Element['attributes']['href'], ENT_QUOTES);
-        $Element['text'] = htmlspecialchars($Element['text'], ENT_QUOTES);
+        $Element['attributes']['href'] = htmlspecialchars($Element['attributes']['href'], ENT_QUOTES, 'UTF-8');
+        $Element['text'] = htmlspecialchars($Element['text'], ENT_QUOTES, 'UTF-8');
 
         if ( $Element['attributes']['title'] !== null )
         {
-            $Element['attributes']['title'] = htmlspecialchars($Element['attributes']['title'], ENT_QUOTES);
+            $Element['attributes']['title'] = htmlspecialchars($Element['attributes']['title'], ENT_QUOTES, 'UTF-8');
         }
 
         return array(
@@ -1366,14 +1366,16 @@ class Parsedown
 
         if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
         {
+            $url = htmlspecialchars($matches[0][0], ENT_QUOTES, 'UTF-8');
+
             $Inline = array(
                 'extent' => strlen($matches[0][0]),
                 'position' => $matches[0][1],
                 'element' => array(
                     'name' => 'a',
-                    'text' => $matches[0][0],
+                    'text' => $url,
                     'attributes' => array(
-                        'href' => $matches[0][0],
+                        'href' => $url,
                     ),
                 ),
             );
@@ -1386,7 +1388,7 @@ class Parsedown
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\w+:\/{2}[^ >]+)>/i', $Excerpt['text'], $matches))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
+            $url = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
 
             return array(
                 'extent' => strlen($matches[0]),
