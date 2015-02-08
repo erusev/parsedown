@@ -19,6 +19,8 @@ class Parsedown
 
     const version = '1.5.1';
 
+    private $headingSlugs = array();
+
     # ~
 
     function text($text)
@@ -462,6 +464,33 @@ class Parsedown
         return $Block;
     }
 
+    protected function slugify($text)
+    {
+        $slug = trim($text);
+        $slug = strtr($slug, ' ', '-');
+        $slug = strtolower($slug);
+
+        return preg_replace('/[^a-z0-9_-]/', '', $slug);
+    }
+
+    protected function getHeadingId($text)
+    {
+        $slug           = $this->slugify($text);
+        $attributeId    = $slug;
+
+        if (!isset($this->headingSlugs[$slug])) {
+            $this->headingSlugs[$slug] = 0;
+        }
+
+        if ($this->headingSlugs[$slug] > 0) {
+            $attributeId .= '-'.$this->headingSlugs[$slug];
+        }
+
+        $this->headingSlugs[$slug]++;
+
+        return $attributeId;
+    }
+
     #
     # Header
 
@@ -488,6 +517,9 @@ class Parsedown
                     'name' => 'h' . min(6, $level),
                     'text' => $text,
                     'handler' => 'line',
+                    'attributes' => array(
+                        'id' => $this->getHeadingId($text),
+                    ),
                 ),
             );
 
