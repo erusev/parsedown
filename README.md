@@ -1,18 +1,16 @@
 ## Parsedown
 
 [![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
-[![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)
+<!--[![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)-->
 
-Better Markdown Parser in PHP
-
-[[ demo ]](http://parsedown.org/demo)
+Better Markdown Parser in PHP - [ Demo ](http://parsedown.org/demo)
 
 ### Features
 
 * [Fast](http://parsedown.org/speed)
 * [Consistent](http://parsedown.org/consistency)
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
-* [Tested](http://parsedown.org/tests/) in PHP 5.3, 5.4, 5.5, 5.6 and [hhvm](http://www.hhvm.com/)
+* [Tested](http://parsedown.org/tests/) in PHP 5.3, 5.4, 5.5, 5.6 and [HHVM](http://www.hhvm.com/)
 * [Extensible](https://github.com/erusev/parsedown/wiki/Writing-Extensions)
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
