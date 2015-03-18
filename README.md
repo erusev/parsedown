@@ -1,5 +1,7 @@
 ## Parsedown
 
+[![Build Status](https://travis-ci.org/erusev/parsedown.svg?branch=master)](https://travis-ci.org/erusev/parsedown)
+
 Better Markdown Parser in PHP
 
 [[ demo ]](http://parsedown.org/demo)
