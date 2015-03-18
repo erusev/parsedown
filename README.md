@@ -5,7 +5,7 @@
 
 Better Markdown Parser in PHP
 
-[ Demo ](http://parsedown.org/demo)
+[See Demo](http://parsedown.org/demo)
 
 ### Features
 
