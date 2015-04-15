@@ -75,6 +75,15 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+	function setLineBreaks($lineBreaks)
+	{
+		$this->lineBreaks = $lineBreaks;
+
+		return $this;
+	}
+
+	protected $lineBreaks = true;
+
     #
     # Lines
     #
@@ -275,11 +284,17 @@ class Parsedown
                 continue;
             }
 
-            $markup .= "\n";
+			if ($this->lineBreaks)
+			{
+				$markup .= "\n";
+			}
             $markup .= isset($Block['markup']) ? $Block['markup'] : $this->element($Block['element']);
         }
 
-        $markup .= "\n";
+		if ($this->lineBreaks)
+		{
+			$markup .= "\n";
+		}
 
         # ~
 
