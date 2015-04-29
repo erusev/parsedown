@@ -17,7 +17,7 @@ class Parsedown
 {
     # ~
 
-    const version = '1.5.1';
+    const version = '1.5.3';
 
     # ~
 
