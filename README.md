@@ -12,7 +12,7 @@ Better Markdown Parser in PHP
 * [Fast](http://parsedown.org/speed)
 * [Extensible](https://github.com/erusev/parsedown/wiki/Writing-Extensions)
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
-* [Tested](http://parsedown.org/tests/) in 5.3, 5.4, 5.5, 5.6 and [HHVM](http://www.hhvm.com/)
+* [Tested](http://parsedown.org/tests/) in 5.3 to 5.6 and [HHVM](http://www.hhvm.com/)
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ### Installation
@@ -47,4 +47,4 @@ It passes most of the CommonMark tests. Most of the tests that don't pass deal w
 
 **How can I help?**
 
-Use it, star it, share it and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
+Use it, star it, share it and if you feel generous, [donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
