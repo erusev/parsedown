@@ -107,12 +107,6 @@ class Parsedown
 
     # ~
 
-    protected $DefinitionTypes = array(
-        '[' => array('Reference'),
-    );
-
-    # ~
-
     protected $unmarkedBlockTypes = array(
         'Code',
     );
