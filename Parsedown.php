@@ -1315,7 +1315,10 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
+        if (preg_match('/\b(?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,32}\/)' .
+            '(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\))+' .
+            '(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’])/ui',
+            $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
         {
             $Inline = array(
                 'extent' => strlen($matches[0][0]),
