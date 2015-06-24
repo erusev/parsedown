@@ -981,15 +981,14 @@ class Parsedown
     {
         $markup = '';
 
-        $unexaminedText = $text;
+        # $text contains the unexamined text
+        # $excerpt is based on the first occurrence of a marker
 
-        $markerPosition = 0;
-
-        while ($excerpt = strpbrk($unexaminedText, $this->inlineMarkerList))
+        while ($excerpt = strpbrk($text, $this->inlineMarkerList))
         {
             $marker = $excerpt[0];
 
-            $markerPosition += strpos($unexaminedText, $marker);
+            $markerPosition = strpos($text, $marker);
 
             $Excerpt = array('text' => $excerpt, 'context' => $text);
 
@@ -1002,34 +1001,42 @@ class Parsedown
                     continue;
                 }
 
-                if (isset($Inline['position']) and $Inline['position'] > $markerPosition) # position is ahead of marker
+                # makes sure that the inline belongs to "our" marker
+
+                if (isset($Inline['position']) and $Inline['position'] > $markerPosition)
                 {
                     continue;
                 }
+
+                # sets a default inline position
 
                 if ( ! isset($Inline['position']))
                 {
                     $Inline['position'] = $markerPosition;
                 }
 
+                # the text that comes before the inline
                 $unmarkedText = substr($text, 0, $Inline['position']);
 
+                # compile the unmarked text
                 $markup .= $this->unmarkedText($unmarkedText);
 
+                # compile the inline
                 $markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
 
+                # remove the examined text
                 $text = substr($text, $Inline['position'] + $Inline['extent']);
-
-                $unexaminedText = $text;
-
-                $markerPosition = 0;
 
                 continue 2;
             }
 
-            $unexaminedText = substr($excerpt, 1);
+            # the marker does not belong to an inline
 
-            $markerPosition ++;
+            $unmarkedText = substr($text, 0, $markerPosition + 1);
+
+            $markup .= $this->unmarkedText($unmarkedText);
+
+            $text = substr($text, $markerPosition + 1);
         }
 
         $markup .= $this->unmarkedText($text);
