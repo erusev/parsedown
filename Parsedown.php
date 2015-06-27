@@ -264,6 +264,13 @@ class Parsedown
 
         foreach ($Blocks as $Block)
         {
+            if (isset($Block['type']) and isset($this->EventListeners[$Block['type']]))
+            {
+                foreach ($this->EventListeners[$Block['type']] as $callback) {
+                  $callback($Block);
+                }
+            }
+
             if (isset($Block['hidden']))
             {
                 continue;
@@ -278,6 +285,51 @@ class Parsedown
         # ~
 
         return $markup;
+    }
+
+    #
+    # Unique Block Types
+
+    private $UniqueBlockNames = array();
+
+    private function getUniqueBlockNames()
+    {
+        if (empty($this->UniqueBlockNames))
+        {
+            foreach ($this->BlockTypes as $BlockTypes)
+            {
+              $this->UniqueBlockNames = array_merge($this->UniqueBlockNames, $BlockTypes);
+            }
+
+            $this->UniqueBlockNames = array_unique($this->UniqueBlockNames);
+        }
+
+        return $this->UniqueBlockNames;
+    }
+
+    #
+    # Events
+
+    private $EventListeners = array();
+
+    public function addEventListener($Event, $Callback) {
+      $BlockTypes = array_flip($this->getUniqueBlockNames());
+
+      if (!isset($BlockTypes[$Event]))
+      {
+          throw new \InvalidArgumentException(
+              sprintf('You trying to attach non-existent event. Available events are: "%s"', implode('", "', array_keys($BlockTypes)))
+          );
+      }
+
+      if (!is_callable($Callback))
+      {
+          throw new \InvalidArgumentException('Specified an invalid callback function!');
+      }
+
+      $this->EventListeners[$Event][] = $Callback;
+
+      return $this;
     }
 
     #
