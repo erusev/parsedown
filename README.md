@@ -29,6 +29,43 @@ echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</e
 
 More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
+### Event listeners
+
+For example, you have a block with code in your MD syntax, but it not always present. May happen that you want to highlight it only when it exist. An event listener help you to do that.
+
+```php
+$Parsedown = new Parsedown();
+/**
+ * @param string $Event
+ *   Event name. All available events can be returned by {@link getUniqueBlockNames()} method.
+ * @param callable $Callback
+ *   Callback function.
+ * @param bool $Onetime
+ *   Execute callback function only once.
+ *
+ * @throws \InvalidArgumentException
+ *   When you trying to attach non-existent event.
+ * @throws \RuntimeException
+ *   When $Callback is not valid callback function.
+ *
+ * @return self
+ */
+$Parsedown->addEventListener('FencedCode', function (array $block) {
+    add_css_function('/highlight/styles/default.css');
+    add_js_function('/highlight/highlight.js');
+}, true);
+```
+
+Also, you can attach an event listener that will be executed on every block processing.
+
+```php
+$Parsedown = new Parsedown();
+// Set the "data-id=test" for each list element in HTML.
+$Parsedown->addEventListener('List', function (array &$block) {
+    $block['element']['attributes']['data-id'] = 'test';
+});
+```
+
 ### Questions
 
 **How does Parsedown work?**
