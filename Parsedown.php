@@ -352,8 +352,8 @@ class Parsedown
       }
 
       $this->EventListeners[$Event][] = array(
-        'callback' => $Callback,
-        'onetime' => (bool) $Onetime,
+          'callback' => $Callback,
+          'onetime' => (bool) $Onetime,
       );
 
       return $this;
