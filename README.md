@@ -66,6 +66,22 @@ $Parsedown->addEventListener('List', function (array &$block) {
 });
 ```
 
+Or, imagine that you need to colorize table rows.
+
+```php
+$Parsedown->addEventListener('Table', function (array &$block) {
+    $item = 0;
+
+    // thead and tbody.
+    foreach ($block['element']['text'] as &$section) {
+        // tr.
+        foreach ($section['text'] as &$rows) {
+            $rows['attributes']['class'] = $item++ % 2 ? 'odd' : 'even';
+        }
+    }
+});
+```
+
 ### Questions
 
 **How does Parsedown work?**
