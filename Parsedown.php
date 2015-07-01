@@ -163,7 +163,7 @@ class Parsedown
 
             # ~
 
-            if (isset($CurrentBlock['incomplete']))
+            if (isset($CurrentBlock['continuable']))
             {
                 $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
 
@@ -179,8 +179,6 @@ class Parsedown
                     {
                         $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
                     }
-
-                    unset($CurrentBlock['incomplete']);
                 }
             }
 
@@ -220,7 +218,7 @@ class Parsedown
 
                     if (method_exists($this, 'block'.$blockType.'Continue'))
                     {
-                        $Block['incomplete'] = true;
+                        $Block['continuable'] = true;
                     }
 
                     $CurrentBlock = $Block;
@@ -247,7 +245,7 @@ class Parsedown
 
         # ~
 
-        if (isset($CurrentBlock['incomplete']) and method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
+        if (isset($CurrentBlock['continuable']) and method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
         {
             $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
         }
