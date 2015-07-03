@@ -5,9 +5,9 @@
 
 Better Markdown Parser in PHP
 
-[[ Demo ]](http://parsedown.org/demo) &nbsp;
-[[ Benchmarks ]](http://parsedown.org/speed) &nbsp;
-[[ Tests ]](http://parsedown.org/tests/)
+[Demo](http://parsedown.org/demo) &nbsp;
+[Benchmarks](http://parsedown.org/speed) &nbsp;
+[Tests](http://parsedown.org/tests/)
 
 ### Features
 
