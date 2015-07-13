@@ -323,7 +323,7 @@ class Parsedown
 
     /**
      * @param string $Event
-     *   Event name. All available events can be returned by {@link getUniqueBlockNames()} method.
+     *   Event name. All available events that can be returned by {@link getUniqueBlockNames()} method.
      * @param callable $Callback
      *   Callback function.
      * @param bool $Onetime
@@ -337,26 +337,27 @@ class Parsedown
      * @return self
      */
     public function addEventListener($Event, $Callback, $Onetime = false) {
-      $BlockTypes = array_flip($this->getUniqueBlockNames());
+        $BlockTypes = array_flip($this->getUniqueBlockNames());
 
-      if (!isset($BlockTypes[$Event]))
-      {
-          throw new \InvalidArgumentException(
-              sprintf('You trying to attach non-existent event. Available events are: "%s"', implode('", "', array_keys($BlockTypes)))
-          );
-      }
+        if (!isset($BlockTypes[$Event]))
+        {
+            throw new \InvalidArgumentException(sprintf(
+                'You trying to attach non-existent event. Available events are: "%s"',
+                implode('", "', array_keys($BlockTypes))
+            ));
+        }
 
-      if (!is_callable($Callback))
-      {
-          throw new \RuntimeException('Specified an invalid callback function!');
-      }
+        if (!is_callable($Callback))
+        {
+            throw new \RuntimeException('Invalid callback function was specified!');
+        }
 
-      $this->EventListeners[$Event][] = array(
-          'callback' => $Callback,
-          'onetime' => (bool) $Onetime,
-      );
+        $this->EventListeners[$Event][] = array(
+            'callback' => $Callback,
+            'onetime' => (bool) $Onetime,
+        );
 
-      return $this;
+        return $this;
     }
 
     #
