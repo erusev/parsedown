@@ -301,6 +301,8 @@ class Parsedown
             if ($text[$pos]==="\t"){
                 return substr($text,$pos+1);
             }
+            if($text[$pos]!==' ')
+                return substr($text,$pos);
         }
         return substr($text,4);
     }
@@ -578,7 +580,7 @@ class Parsedown
 
         if ( ! isset($Block['interrupted']))
         {
-            $text = preg_replace('/^[ ]{0,4}/', '', $Line['body']);
+            $text = $this->stripIndent($Line['body']);
 
             $Block['li']['text'] []= $text;
 
@@ -589,7 +591,7 @@ class Parsedown
         {
             $Block['li']['text'] []= '';
 
-            $text = preg_replace('/^[ ]{0,4}/', '', $Line['body']);
+            $text = $this->stripIndent($Line['body']);
 
             $Block['li']['text'] []= $text;
 
