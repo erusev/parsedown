@@ -649,7 +649,8 @@ class Parsedown
 
     protected function blockRule($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].'])(\s*\1){2,}\s*$/', $Line['text']))
+        if (($Line['indent']<4) and
+            preg_match('/^(['.$Line['text'][0].'])(\s*\1){2,}\s*$/', $Line['text']))
         {
             $Block = array(
                 'element' => array(
