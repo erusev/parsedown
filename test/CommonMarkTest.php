@@ -23,6 +23,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         $Parsedown = new Parsedown();
         $Parsedown->setUrlsLinked(false);
         $Parsedown->setTabsExpanded(false);
+        $Parsedown->setCommonMarkHtmlBlocks(true);
 
         $actualHtml = $Parsedown->text($markdown);
         $actualHtml = $this->normalizeMarkup($actualHtml);

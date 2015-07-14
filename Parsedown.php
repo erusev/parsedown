@@ -83,7 +83,15 @@ class Parsedown
     }
 
     protected $tabsExpanded = true;
-    
+
+    function setCommonMarkHtmlBlocks($commonMarkHtmlBlocks)
+    {
+        $this->commonMarkHtmlBlocks = $commonMarkHtmlBlocks;
+
+        return $this;
+    }
+
+    protected $commonMarkHtmlBlocks = false;
     #
     # Lines
     #
@@ -160,7 +168,7 @@ class Parsedown
             $indent = 0;
             $effective_indent=0;
 
-            while (isset($line[$indent]) and ($line[$indent] === ' ' or $line[$indent] === "\t")) 
+            while (isset($line[$indent]) and ($line[$indent] === ' ' or $line[$indent] === "\t"))
             {
                 $effective_indent++;
                 if($line[$indent]==="\t")
@@ -306,7 +314,7 @@ class Parsedown
         }
         return substr($text,4);
     }
-        
+
     protected function blockCode($Line, $Block = null)
     {
         if (isset($Block) and ! isset($Block['type']) and ! isset($Block['interrupted']))
@@ -690,6 +698,20 @@ class Parsedown
             return;
         }
 
+        if($this->commonMarkHtmlBlocks){
+            if (preg_match('/^<\/?(\w+)((\s|>).*)?$/', $Line['text'], $matches)){
+                if(in_array(strtolower($matches[1]),$this->commonMarkHtmlElements))
+                {
+                    $Block = array(
+                        'name' => $matches[1],
+                        'markup' => $Line['text'],
+                        );
+                    return $Block;
+                }
+            }
+            return;
+        }
+
         if (preg_match('/^<(\w*)(?:\s*'.$this->regexHtmlAttribute.')*\s*(\/)?>/', $Line['text'], $matches))
         {
             if (in_array($matches[1], $this->textLevelElements))
@@ -740,6 +762,18 @@ class Parsedown
             return;
         }
 
+        if($this->commonMarkHtmlBlocks)
+        {
+            if(isset($Block['interrupted']))
+            {
+                unset($Block['interrupted']);
+                $Block['markup'] .= "\n";
+                return;
+            }
+            $Block['markup'] .= "\n".$Line['text'];
+            return $Block;
+        }
+
         if (preg_match('/^<'.$Block['name'].'(?:\s*'.$this->regexHtmlAttribute.')*\s*>/i', $Line['text'])) # open
         {
             $Block['depth'] ++;
@@ -760,7 +794,6 @@ class Parsedown
         if (isset($Block['interrupted']))
         {
             $Block['markup'] .= "\n";
-
             unset($Block['interrupted']);
         }
 
@@ -1539,6 +1572,17 @@ class Parsedown
     protected $voidElements = array(
         'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
     );
+
+    protected $commonMarkHtmlElements = array(
+        'address','article', 'aside', 'base', 'basefont', 'blockquote', 'body',
+        'caption', 'center', 'col', 'colgroup', 'dd', 'details', 'dialog',
+        'dir', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure',
+        'footer', 'form', 'frame', 'frameset', 'h1', 'head', 'header', 'hr',
+        'html', 'legend', 'li', 'link', 'main', 'menu', 'menuitem', 'meta',
+        'nav', 'noframes', 'ol', 'optgroup', 'option', 'p', 'param', 'pre',
+        'section', 'source', 'title', 'summary', 'table', 'tbody', 'td',
+        'tfoot', 'th', 'thead', 'title', 'tr', 'track', 'ul'
+        );
 
     protected $textLevelElements = array(
         'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
