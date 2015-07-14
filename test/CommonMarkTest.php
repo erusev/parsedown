@@ -22,6 +22,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
     {
         $Parsedown = new Parsedown();
         $Parsedown->setUrlsLinked(false);
+        $Parsedown->setTabsExpanded(false);
 
         $actualHtml = $Parsedown->text($markdown);
         $actualHtml = $this->normalizeMarkup($actualHtml);
@@ -48,6 +49,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
                     $markdown = preg_replace('/→/', "\t", $markdown);
                     $expectedHtml = $matches[2];
                     $expectedHtml = $this->normalizeMarkup($expectedHtml);
+                    $expectedHtml = preg_replace('/→/', "\t", $expectedHtml);
                     $tests []= array(
                         $currentSection, # section
                         $markdown, # markdown

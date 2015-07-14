@@ -75,6 +75,15 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+    function setTabsExpanded($tabsExpanded)
+    {
+        $this->tabsExpanded = $tabsExpanded;
+
+        return $this;
+    }
+
+    protected $tabsExpanded = true;
+    
     #
     # Lines
     #
@@ -131,7 +140,7 @@ class Parsedown
                 continue;
             }
 
-            if (strpos($line, "\t") !== false)
+            if ($this->tabsExpanded && (strpos($line, "\t") !== false))
             {
                 $parts = explode("\t", $line);
 
@@ -149,9 +158,15 @@ class Parsedown
             }
 
             $indent = 0;
+            $effective_indent=0;
 
-            while (isset($line[$indent]) and $line[$indent] === ' ')
+            while (isset($line[$indent]) and ($line[$indent] === ' ' or $line[$indent] === "\t")) 
             {
+                $effective_indent++;
+                if($line[$indent]==="\t")
+                {
+                    $effective_indent+=4-$effective_indent%4;
+                }
                 $indent ++;
             }
 
@@ -159,7 +174,7 @@ class Parsedown
 
             # ~
 
-            $Line = array('body' => $line, 'indent' => $indent, 'text' => $text);
+            $Line = array('body' => $line, 'indent' => $effective_indent, 'text' => $text);
 
             # ~
 
@@ -281,6 +296,15 @@ class Parsedown
     #
     # Code
 
+    protected function stripIndent($text){
+        for ($pos=0;$pos<4;++$pos){
+            if ($text[$pos]==="\t"){
+                return substr($text,$pos+1);
+            }
+        }
+        return substr($text,4);
+    }
+        
     protected function blockCode($Line, $Block = null)
     {
         if (isset($Block) and ! isset($Block['type']) and ! isset($Block['interrupted']))
@@ -290,7 +314,7 @@ class Parsedown
 
         if ($Line['indent'] >= 4)
         {
-            $text = substr($Line['body'], 4);
+            $text = $this->stripIndent($Line['body']);
 
             $Block = array(
                 'element' => array(
@@ -320,7 +344,7 @@ class Parsedown
 
             $Block['element']['text']['text'] .= "\n";
 
-            $text = substr($Line['body'], 4);
+            $text = $this->stripIndent($Line['body']);
 
             $Block['element']['text']['text'] .= $text;
 
