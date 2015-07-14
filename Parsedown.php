@@ -709,6 +709,13 @@ class Parsedown
                     return $Block;
                 }
             }
+            if (preg_match('/^<\/?(\w+)(\s[^>]*)?>$/', $Line['text'], $matches)){
+                $Block = array(
+                    'name' => $matches[1],
+                    'markup' => $Line['text'],
+                    );
+                return $Block;
+            }
             return;
         }
 
