@@ -412,7 +412,7 @@ class Parsedown
 
     protected function blockFencedCode($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].']{3,})[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^(['.$Line['text'][0].']{3,})\s*([\w-]+)?\s*$/', $Line['text'], $matches))
         {
             $Element = array(
                 'name' => 'code',
@@ -455,7 +455,7 @@ class Parsedown
             unset($Block['interrupted']);
         }
 
-        if (preg_match('/^'.$Block['char'].'{3,}[ ]*$/', $Line['text']))
+        if (preg_match('/^'.$Block['char'].'{3,}\s*$/', $Line['text']))
         {
             $Block['element']['text']['text'] = substr($Block['element']['text']['text'], 1);
 
@@ -520,7 +520,7 @@ class Parsedown
     {
         list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.]');
 
-        if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
+        if (preg_match('/^('.$pattern.'\s+)(.*)/', $Line['text'], $matches))
         {
             $Block = array(
                 'indent' => $Line['indent'],
@@ -547,7 +547,7 @@ class Parsedown
 
     protected function blockListContinue($Line, array $Block)
     {
-        if ($Block['indent'] === $Line['indent'] and preg_match('/^'.$Block['pattern'].'(?:[ ]+(.*)|$)/', $Line['text'], $matches))
+        if ($Block['indent'] === $Line['indent'] and preg_match('/^'.$Block['pattern'].'(?:\s+(.*)|$)/', $Line['text'], $matches))
         {
             if (isset($Block['interrupted']))
             {
@@ -606,7 +606,7 @@ class Parsedown
 
     protected function blockQuote($Line)
     {
-        if (preg_match('/^>[ ]?(.*)/', $Line['text'], $matches))
+        if (preg_match('/^>\s?(.*)/', $Line['text'], $matches))
         {
             $Block = array(
                 'element' => array(
@@ -622,7 +622,7 @@ class Parsedown
 
     protected function blockQuoteContinue($Line, array $Block)
     {
-        if ($Line['text'][0] === '>' and preg_match('/^>[ ]?(.*)/', $Line['text'], $matches))
+        if ($Line['text'][0] === '>' and preg_match('/^>\s?(.*)/', $Line['text'], $matches))
         {
             if (isset($Block['interrupted']))
             {
@@ -649,7 +649,7 @@ class Parsedown
 
     protected function blockRule($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].'])([ ]*\1){2,}[ ]*$/', $Line['text']))
+        if (preg_match('/^(['.$Line['text'][0].'])(\s*\1){2,}\s*$/', $Line['text']))
         {
             $Block = array(
                 'element' => array(
@@ -689,7 +689,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^<(\w*)(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*(\/)?>/', $Line['text'], $matches))
+        if (preg_match('/^<(\w*)(?:\s*'.$this->regexHtmlAttribute.')*\s*(\/)?>/', $Line['text'], $matches))
         {
             if (in_array($matches[1], $this->textLevelElements))
             {
@@ -722,7 +722,7 @@ class Parsedown
                     return;
                 }
 
-                if (preg_match('/<\/'.$matches[1].'>[ ]*$/i', $remainder))
+                if (preg_match('/<\/'.$matches[1].'>\s*$/i', $remainder))
                 {
                     $Block['closed'] = true;
                 }
@@ -739,12 +739,12 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^<'.$Block['name'].'(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*>/i', $Line['text'])) # open
+        if (preg_match('/^<'.$Block['name'].'(?:\s*'.$this->regexHtmlAttribute.')*\s*>/i', $Line['text'])) # open
         {
             $Block['depth'] ++;
         }
 
-        if (preg_match('/(.*?)<\/'.$Block['name'].'>[ ]*$/i', $Line['text'], $matches)) # close
+        if (preg_match('/(.*?)<\/'.$Block['name'].'>\s*$/i', $Line['text'], $matches)) # close
         {
             if ($Block['depth'] > 0)
             {
@@ -773,7 +773,7 @@ class Parsedown
 
     protected function blockReference($Line)
     {
-        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^\[(.+?)\]:\s*<?(\S+?)>?(?:\s+["\'(](.+)["\')])?\s*$/', $Line['text'], $matches))
         {
             $id = strtolower($matches[1]);
 
@@ -1076,11 +1076,11 @@ class Parsedown
     {
         $marker = $Excerpt['text'][0];
 
-        if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
+        if (preg_match('/^('.$marker.'+)\s*(.+?)\s*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
         {
             $text = $matches[2];
             $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
-            $text = preg_replace("/[ ]*\n/", ' ', $text);
+            $text = preg_replace("/\s*\n/", ' ', $text);
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1222,7 +1222,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^[(]((?:[^ ()]|[(][^ )]+[)])+)(?:[ ]+("[^"]*"|\'[^\']*\'))?[)]/', $remainder, $matches))
+        if (preg_match('/^[(]((?:[^ ()]|[(][^ )]+[)])+)(?:\s+("[^"]*"|\'[^\']*\'))?[)]/', $remainder, $matches))
         {
             $Element['attributes']['href'] = $matches[1];
 
@@ -1273,7 +1273,7 @@ class Parsedown
             return;
         }
 
-        if ($Excerpt['text'][1] === '/' and preg_match('/^<\/\w*[ ]*>/s', $Excerpt['text'], $matches))
+        if ($Excerpt['text'][1] === '/' and preg_match('/^<\/\w*\s*>/s', $Excerpt['text'], $matches))
         {
             return array(
                 'markup' => $matches[0],
@@ -1289,7 +1289,7 @@ class Parsedown
             );
         }
 
-        if ($Excerpt['text'][1] !== ' ' and preg_match('/^<\w*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $Excerpt['text'], $matches))
+        if ($Excerpt['text'][1] !== ' ' and preg_match('/^<\w*(?:\s*'.$this->regexHtmlAttribute.')*\s*\/?>/s', $Excerpt['text'], $matches))
         {
             return array(
                 'markup' => $matches[0],
@@ -1389,11 +1389,11 @@ class Parsedown
     {
         if ($this->breaksEnabled)
         {
-            $text = preg_replace('/[ ]*\n/', "<br />\n", $text);
+            $text = preg_replace('/\s*\n/', "<br />\n", $text);
         }
         else
         {
-            $text = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br />\n", $text);
+            $text = preg_replace('/(?:\s\s+|\s*\\\\)\n/', "<br />\n", $text);
             $text = str_replace(" \n", "\n", $text);
         }
 
