@@ -700,7 +700,8 @@ class Parsedown
 
         if($this->commonMarkHtmlBlocks){
             if (preg_match('/^<\/?(\w+)((\s|>).*)?$/', $Line['text'], $matches)){
-                if(in_array(strtolower($matches[1]),$this->commonMarkHtmlElements))
+                if(in_array(strtolower($matches[1]),$this->commonMarkHtmlElements) or
+                   in_array(strtolower($matches[1]),$this->commonMarkLiteralHtmlElements))
                 {
                     $Block = array(
                         'name' => $matches[1],
@@ -775,7 +776,9 @@ class Parsedown
             {
                 unset($Block['interrupted']);
                 $Block['markup'] .= "\n";
-                return;
+                if(!in_array(strtolower($Block['name']),$this->commonMarkLiteralHtmlElements)){
+                    return;
+                }
             }
             $Block['markup'] .= "\n".$Line['text'];
             return $Block;
@@ -1591,6 +1594,11 @@ class Parsedown
         'tfoot', 'th', 'thead', 'title', 'tr', 'track', 'ul'
         );
 
+    protected $commonMarkLiteralHtmlElements = array(
+        'script','pre','style'
+        );
+
+    
     protected $textLevelElements = array(
         'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
         'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
