@@ -12,9 +12,10 @@ Better Markdown Parser in PHP
 
 ### Features
 
-* Fast
-* Extensible
+* Single Class
+* Super Fast
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
+* Extensible
 * Tested in 5.3 to 5.6
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
