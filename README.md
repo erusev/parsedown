@@ -12,7 +12,7 @@ Better Markdown Parser in PHP
 
 ### Features
 
-* One Class
+* Single File
 * Super Fast
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
 * Extensible
