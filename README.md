@@ -12,7 +12,6 @@ Better Markdown Parser in PHP
 
 ### Features
 
-* Single File
 * Super Fast
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
 * Extensible
