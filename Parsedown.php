@@ -981,7 +981,6 @@ class Parsedown
     {
         $markup = '';
 
-        # $text contains the unexamined text
         # $excerpt is based on the first occurrence of a marker
 
         while ($excerpt = strpbrk($text, $this->inlineMarkerList))
