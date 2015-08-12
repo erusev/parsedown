@@ -470,6 +470,10 @@ class Parsedown
     {
         if (preg_match('/^(['.$Line['text'][0].']{3,})[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches))
         {
+            $Block = array(
+                'char' => $Line['text'][0],
+            );
+
             $Element = array(
                 'name' => 'code',
                 'text' => '',
@@ -477,15 +481,13 @@ class Parsedown
 
             if (isset($matches[2]))
             {
-                $class = 'language-'.$matches[2];
-
+                $Block['language'] = $matches[2];
                 $Element['attributes'] = array(
-                    'class' => $class,
+                    'class' => 'language-'.$matches[2],
                 );
             }
 
-            $Block = array(
-                'char' => $Line['text'][0],
+            $Block += array(
                 'element' => array(
                     'name' => 'pre',
                     'handler' => 'element',
