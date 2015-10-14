@@ -17,7 +17,7 @@ class Parsedown
 {
     # ~
 
-    const version = '1.5.3';
+    const version = '1.6.0';
 
     # ~
 
@@ -427,9 +427,9 @@ class Parsedown
                 'text' => '',
             );
 
-            if (isset($matches[2]))
+            if (isset($matches[1]))
             {
-                $class = 'language-'.$matches[2];
+                $class = 'language-'.$matches[1];
 
                 $Element['attributes'] = array(
                     'class' => $class,
@@ -722,7 +722,9 @@ class Parsedown
 
         if (preg_match('/^<(\w*)(?:\s*'.$this->regexHtmlAttribute.')*\s*(\/)?>/', $Line['text'], $matches))
         {
-            if (in_array($matches[1], $this->textLevelElements))
+            $element = strtolower($matches[1]);
+
+            if (in_array($element, $this->textLevelElements))
             {
                 return;
             }
@@ -1049,7 +1051,6 @@ class Parsedown
     {
         $markup = '';
 
-        # $text contains the unexamined text
         # $excerpt is based on the first occurrence of a marker
 
         while ($excerpt = strpbrk($text, $this->inlineMarkerList))
@@ -1545,7 +1546,7 @@ class Parsedown
             return self::$instances[$name];
         }
 
-        $instance = new self();
+        $instance = new static();
 
         self::$instances[$name] = $instance;
 
