@@ -1,4 +1,4 @@
-> I have also been working on a [Markdown editor for the desktop](http://caret.io) - I'd appreciate it if you had a look at it and let me know what you think.
+> I'm also working on a [Markdown editor for the desktop](http://caret.io) - I'd appreciate it if you had a look at it and let me know what you think.
 
 ## Parsedown
 
