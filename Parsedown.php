@@ -165,7 +165,7 @@ class Parsedown
 
             if (isset($CurrentBlock['continuable']))
             {
-                $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
+                $Block = call_user_func($this->getBlockMethod($CurrentBlock['type'], 'Continue'), $Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -175,9 +175,9 @@ class Parsedown
                 }
                 else
                 {
-                    if (method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
+                    if ($this->hasBlockMethod($CurrentBlock['type'], 'Complete'))
                     {
-                        $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
+                        $CurrentBlock = call_user_func($this->getBlockMethod($CurrentBlock['type'], 'Complete'), $CurrentBlock);
                     }
                 }
             }
@@ -203,7 +203,7 @@ class Parsedown
 
             foreach ($blockTypes as $blockType)
             {
-                $Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
+                $Block = call_user_func($this->getBlockMethod($blockType), $Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -216,7 +216,7 @@ class Parsedown
                         $Block['identified'] = true;
                     }
 
-                    if (method_exists($this, 'block'.$blockType.'Continue'))
+                    if ($this->hasBlockMethod($blockType, 'Continue'))
                     {
                         $Block['continuable'] = true;
                     }
@@ -245,9 +245,9 @@ class Parsedown
 
         # ~
 
-        if (isset($CurrentBlock['continuable']) and method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
+        if (isset($CurrentBlock['continuable']) and $this->hasBlockMethod($CurrentBlock['type'], 'Complete'))
         {
-            $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
+            $CurrentBlock = call_user_func($this->getBlockMethod($CurrentBlock['type'], 'Complete'), $CurrentBlock);
         }
 
         # ~
@@ -276,6 +276,61 @@ class Parsedown
         # ~
 
         return $markup;
+    }
+
+    #
+    # Extensibility
+    #
+
+    protected $elementClosures = array();
+
+    protected function hasElementMethod($FullMethodName)
+    {
+        return !!$this->getElementMethod($FullMethodName);
+    }
+
+    protected function getElementMethod($FullMethodName)
+    {
+        if (isset($this->elementClosures[$FullMethodName]))
+        {
+            $blockClosure = $this->elementClosures[$FullMethodName];
+
+            if (is_callable($blockClosure))
+            {
+                return $blockClosure;
+            }
+        }
+
+        if (method_exists($this, $FullMethodName))
+        {
+            return array(
+                $this,
+                $FullMethodName,
+            );
+        }
+    }
+
+    #
+    # Extension Check Aliases
+
+    protected function hasBlockMethod($BlockType, $MethodName = "")
+    {
+        return $this->hasElementMethod("block".$BlockType.$MethodName);
+    }
+
+    protected function getBlockMethod($BlockType, $MethodName = "")
+    {
+        return $this->getElementMethod("block".$BlockType.$MethodName);
+    }
+
+    protected function hasInlineMethod($InlineType, $MethodName = "")
+    {
+        return $this->hasElementMethod("inline".$InlineType.$MethodName);
+    }
+
+    protected function getInlineMethod($InlineType, $MethodName = "")
+    {
+        return $this->getElementMethod("inline".$InlineType.$MethodName);
     }
 
     #
@@ -993,7 +1048,7 @@ class Parsedown
 
             foreach ($this->InlineTypes[$marker] as $inlineType)
             {
-                $Inline = $this->{'inline'.$inlineType}($Excerpt);
+                $Inline = call_user_func($this->getInlineMethod($inlineType), $Excerpt);
 
                 if ( ! isset($Inline))
                 {
