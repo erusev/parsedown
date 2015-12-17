@@ -121,7 +121,7 @@ class Parsedown
     # Blocks
     #
 
-    private function lines(array $lines)
+    protected function lines(array $lines)
     {
         $CurrentBlock = null;
 
