@@ -1534,8 +1534,8 @@ class Parsedown
         'q', 'rt', 'ins', 'font',          'strong',
         's', 'tt', 'sub', 'mark',
         'u', 'xm', 'sup', 'nobr',
-        'var', 'ruby',
-        'wbr', 'span',
-        'time',
+                   'var', 'ruby',
+                   'wbr', 'span',
+                          'time',
     );
 }
