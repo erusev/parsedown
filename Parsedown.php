@@ -175,7 +175,7 @@ class Parsedown
                 }
                 else
                 {
-                    if (method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
+                    if ($this->isBlockCompleteable($CurrentBlock['type']))
                     {
                         $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
                     }
@@ -216,7 +216,7 @@ class Parsedown
                         $Block['identified'] = true;
                     }
 
-                    if (method_exists($this, 'block'.$blockType.'Continue'))
+                    if ($this->isBlockContinueable($blockType))
                     {
                         $Block['continuable'] = true;
                     }
@@ -245,7 +245,7 @@ class Parsedown
 
         # ~
 
-        if (isset($CurrentBlock['continuable']) and method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
+        if (isset($CurrentBlock['continuable']) and $this->isBlockCompleteable($CurrentBlock['type']))
         {
             $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
         }
@@ -276,6 +276,19 @@ class Parsedown
         # ~
 
         return $markup;
+    }
+
+    #
+    # Allow for plugin extensibility
+    #
+    protected function isBlockContinueable($Type)
+    {
+        return method_exists($this, 'block'.$Type.'Continue');
+    }
+
+    protected function isBlockCompleteable($Type)
+    {
+        return method_exists($this, 'block'.$Type.'Complete');
     }
 
     #
@@ -1521,8 +1534,8 @@ class Parsedown
         'q', 'rt', 'ins', 'font',          'strong',
         's', 'tt', 'sub', 'mark',
         'u', 'xm', 'sup', 'nobr',
-                   'var', 'ruby',
-                   'wbr', 'span',
-                          'time',
+        'var', 'ruby',
+        'wbr', 'span',
+        'time',
     );
 }
