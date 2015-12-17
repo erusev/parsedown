@@ -181,7 +181,7 @@ class Parsedown
                 }
                 else
                 {
-                    if (method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
+                    if ($this->isBlockCompleteable($CurrentBlock['type']))
                     {
                         $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
                     }
@@ -224,7 +224,7 @@ class Parsedown
                         $Block['identified'] = true;
                     }
 
-                    if (method_exists($this, 'block'.$blockType.'Continue'))
+                    if ($this->isBlockContinueable($blockType))
                     {
                         $Block['incomplete'] = true;
                     }
@@ -253,7 +253,7 @@ class Parsedown
 
         # ~
 
-        if (isset($CurrentBlock['incomplete']) and method_exists($this, 'block'.$CurrentBlock['type'].'Complete'))
+        if (isset($CurrentBlock['incomplete']) and $this->isBlockCompleteable($CurrentBlock['type']))
         {
             $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
         }
@@ -284,6 +284,20 @@ class Parsedown
         # ~
 
         return $markup;
+    }
+
+
+    #
+    # Allow for plugin extensibility
+    #
+    protected function isBlockContinueable($Type)
+    {
+        return method_exists($this, 'block'.$Type.'Continue');
+    }
+
+    protected function isBlockCompleteable($Type)
+    {
+        return method_exists($this, 'block'.$Type.'Complete');
     }
 
     #
