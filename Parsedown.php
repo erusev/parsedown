@@ -175,7 +175,7 @@ class Parsedown
                 }
                 else
                 {
-                    if ($this->isBlockCompleteable($CurrentBlock['type']))
+                    if ($this->isBlockCompletable($CurrentBlock['type']))
                     {
                         $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
                     }
@@ -216,7 +216,7 @@ class Parsedown
                         $Block['identified'] = true;
                     }
 
-                    if ($this->isBlockContinueable($blockType))
+                    if ($this->isBlockContinuable($blockType))
                     {
                         $Block['continuable'] = true;
                     }
@@ -245,7 +245,7 @@ class Parsedown
 
         # ~
 
-        if (isset($CurrentBlock['continuable']) and $this->isBlockCompleteable($CurrentBlock['type']))
+        if (isset($CurrentBlock['continuable']) and $this->isBlockCompletable($CurrentBlock['type']))
         {
             $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
         }
@@ -281,12 +281,12 @@ class Parsedown
     #
     # Allow for plugin extensibility
     #
-    protected function isBlockContinueable($Type)
+    protected function isBlockContinuable($Type)
     {
         return method_exists($this, 'block'.$Type.'Continue');
     }
 
-    protected function isBlockCompleteable($Type)
+    protected function isBlockCompletable($Type)
     {
         return method_exists($this, 'block'.$Type.'Complete');
     }
