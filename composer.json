@@ -12,6 +12,10 @@
             "homepage": "http://erusev.com"
         }
     ],
+    "require": {
+        "php": ">=5.3.3",
+        "ext-mbstring": "*"
+    },
     "autoload": {
         "psr-0": {"Parsedown": ""}
     }
