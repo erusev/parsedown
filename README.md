@@ -1,3 +1,5 @@
+> You might also like [Caret](http://caret.io?ref=parsedown) - our Markdown editor for Mac / Windows / Linux.
+
 ## Parsedown
 
 [![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
@@ -15,12 +17,12 @@ Better Markdown Parser in PHP
 * Super Fast
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
 * Extensible
-* Tested in 5.3 to 5.6
+* Tested in 5.3 to 7.0 and in HHVM
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ### Installation
 
-Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown).
+Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown). Parsedown requires PHP 5.3+
 
 ### Example
 
@@ -46,12 +48,8 @@ It passes most of the CommonMark tests. Most of the tests that don't pass deal w
 
 **Who uses it?**
 
-[phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/), [Grav CMS](http://getgrav.org/), [Statamic CMS](http://www.statamic.com/),  [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
+[phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/), [Grav CMS](http://getgrav.org/), [Statamic CMS](http://www.statamic.com/), [Herbie CMS](http://www.getherbie.org/), [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
 
 **How can I help?**
 
 Use it, star it, share it and if you feel generous, [donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
-
----
-
-You might also like [Caret](http://caret.io) - our Markdown editor for the desktop.
