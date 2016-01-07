@@ -22,7 +22,7 @@ Better Markdown Parser in PHP
 
 ### Installation
 
-Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown).
+Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown). Parsedown requires PHP 5.3+
 
 ### Example
 
