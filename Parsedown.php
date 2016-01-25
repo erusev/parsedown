@@ -1459,9 +1459,8 @@ class Parsedown
             $markup = $trimmedMarkup;
             $markup = substr($markup, 3);
 
-            $position = strpos($markup, "</p>");
-
-            $markup = substr_replace($markup, '', $position, 4);
+            $count = 1;
+            $markup = str_replace('</p>', '', $markup, $count);
         }
 
         return $markup;
