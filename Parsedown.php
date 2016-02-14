@@ -1494,7 +1494,7 @@ class Parsedown
     /**
      * Called in each method which supports hooks.
      * @param String method name
-     * @param Mixed arguments passed in the original method
+     * @param Mixed return value from original method
      * @return Mixed return value passed through the hook method
      */
     protected function runHooks($methodName, $return)
