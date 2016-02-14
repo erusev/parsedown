@@ -41,7 +41,7 @@ class Parsedown
         # trim line breaks
         $markup = trim($markup, "\n");
 
-        return $markup;
+        return $this->runHooks(__FUNCTION__, $markup);
     }
 
     #
@@ -275,7 +275,7 @@ class Parsedown
 
         # ~
 
-        return $markup;
+        return $this->runHooks(__FUNCTION__, $markup);
     }
 
     #
@@ -316,7 +316,7 @@ class Parsedown
                 ),
             );
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -337,7 +337,7 @@ class Parsedown
 
             $Block['element']['text']['text'] .= $text;
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -349,7 +349,7 @@ class Parsedown
 
         $Block['element']['text']['text'] = $text;
 
-        return $Block;
+        return $this->runHooks(__FUNCTION__, $Block);
     }
 
     #
@@ -373,7 +373,7 @@ class Parsedown
                 $Block['closed'] = true;
             }
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -391,7 +391,7 @@ class Parsedown
             $Block['closed'] = true;
         }
 
-        return $Block;
+        return $this->runHooks(__FUNCTION__, $Block);
     }
 
     #
@@ -424,7 +424,7 @@ class Parsedown
                 ),
             );
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -448,12 +448,12 @@ class Parsedown
 
             $Block['complete'] = true;
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
 
         $Block['element']['text']['text'] .= "\n".$Line['body'];;
 
-        return $Block;
+        return $this->runHooks(__FUNCTION__, $Block);
     }
 
     protected function blockFencedCodeComplete($Block)
@@ -464,7 +464,7 @@ class Parsedown
 
         $Block['element']['text']['text'] = $text;
 
-        return $Block;
+        return $this->runHooks(__FUNCTION__, $Block);
     }
 
     #
@@ -496,7 +496,7 @@ class Parsedown
                 ),
             );
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -528,7 +528,7 @@ class Parsedown
 
             $Block['element']['text'] []= & $Block['li'];
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -557,12 +557,12 @@ class Parsedown
 
             $Block['element']['text'] []= & $Block['li'];
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
 
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
         {
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
 
         if ( ! isset($Block['interrupted']))
@@ -571,7 +571,7 @@ class Parsedown
 
             $Block['li']['text'] []= $text;
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
 
         if ($Line['indent'] > 0)
@@ -584,7 +584,7 @@ class Parsedown
 
             unset($Block['interrupted']);
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -603,7 +603,7 @@ class Parsedown
                 ),
             );
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -620,14 +620,14 @@ class Parsedown
 
             $Block['element']['text'] []= $matches[1];
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
 
         if ( ! isset($Block['interrupted']))
         {
             $Block['element']['text'] []= $Line['text'];
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -644,7 +644,7 @@ class Parsedown
                 ),
             );
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -662,7 +662,7 @@ class Parsedown
         {
             $Block['element']['name'] = $Line['text'][0] === '=' ? 'h1' : 'h2';
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -717,7 +717,7 @@ class Parsedown
                 }
             }
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -754,7 +754,7 @@ class Parsedown
 
         $Block['markup'] .= "\n".$Line['body'];
 
-        return $Block;
+        return $this->runHooks(__FUNCTION__, $Block);
     }
 
     #
@@ -782,7 +782,7 @@ class Parsedown
                 'hidden' => true,
             );
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -892,7 +892,7 @@ class Parsedown
                 'text' => $HeaderElements,
             );
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -942,7 +942,7 @@ class Parsedown
 
             $Block['element']['text'][1]['text'] []= $Element;
 
-            return $Block;
+            return $this->runHooks(__FUNCTION__, $Block);
         }
     }
 
@@ -960,7 +960,7 @@ class Parsedown
             ),
         );
 
-        return $Block;
+        return $this->runHooks(__FUNCTION__, $Block);
     }
 
     #
@@ -1053,7 +1053,7 @@ class Parsedown
 
         $markup .= $this->unmarkedText($text);
 
-        return $markup;
+        return $this->runHooks(__FUNCTION__, $markup);
     }
 
     #
@@ -1070,13 +1070,15 @@ class Parsedown
             $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
             $text = preg_replace("/[ ]*\n/", ' ', $text);
 
-            return array(
+            $return = array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
                     'name' => 'code',
                     'text' => $text,
                 ),
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
     }
 
@@ -1091,7 +1093,7 @@ class Parsedown
                 $url = 'mailto:' . $url;
             }
 
-            return array(
+            $return = array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
                     'name' => 'a',
@@ -1101,6 +1103,8 @@ class Parsedown
                     ),
                 ),
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
     }
 
@@ -1126,7 +1130,7 @@ class Parsedown
             return;
         }
 
-        return array(
+        $return = array(
             'extent' => strlen($matches[0]),
             'element' => array(
                 'name' => $emphasis,
@@ -1134,16 +1138,20 @@ class Parsedown
                 'text' => $matches[1],
             ),
         );
+
+        return $this->runHooks(__FUNCTION__, $return);
     }
 
     protected function inlineEscapeSequence($Excerpt)
     {
         if (isset($Excerpt['text'][1]) and in_array($Excerpt['text'][1], $this->specialCharacters))
         {
-            return array(
+            $return = array(
                 'markup' => $Excerpt['text'][1],
                 'extent' => 2,
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
     }
 
@@ -1178,7 +1186,7 @@ class Parsedown
 
         unset($Inline['element']['attributes']['href']);
 
-        return $Inline;
+        return $this->runHooks(__FUNCTION__, $Inline);
     }
 
     protected function inlineLink($Excerpt)
@@ -1248,10 +1256,12 @@ class Parsedown
 
         $Element['attributes']['href'] = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Element['attributes']['href']);
 
-        return array(
+        $return = array(
             'extent' => $extent,
             'element' => $Element,
         );
+
+        return $this->runHooks(__FUNCTION__, $return);
     }
 
     protected function inlineMarkup($Excerpt)
@@ -1263,26 +1273,32 @@ class Parsedown
 
         if ($Excerpt['text'][1] === '/' and preg_match('/^<\/\w*[ ]*>/s', $Excerpt['text'], $matches))
         {
-            return array(
+            $return = array(
                 'markup' => $matches[0],
                 'extent' => strlen($matches[0]),
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
 
         if ($Excerpt['text'][1] === '!' and preg_match('/^<!---?[^>-](?:-?[^-])*-->/s', $Excerpt['text'], $matches))
         {
-            return array(
+            $return = array(
                 'markup' => $matches[0],
                 'extent' => strlen($matches[0]),
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
 
         if ($Excerpt['text'][1] !== ' ' and preg_match('/^<\w*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $Excerpt['text'], $matches))
         {
-            return array(
+            $return = array(
                 'markup' => $matches[0],
                 'extent' => strlen($matches[0]),
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
     }
 
@@ -1290,20 +1306,24 @@ class Parsedown
     {
         if ($Excerpt['text'][0] === '&' and ! preg_match('/^&#?\w+;/', $Excerpt['text']))
         {
-            return array(
+            $return = array(
                 'markup' => '&amp;',
                 'extent' => 1,
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
 
         $SpecialCharacter = array('>' => 'gt', '<' => 'lt', '"' => 'quot');
 
         if (isset($SpecialCharacter[$Excerpt['text'][0]]))
         {
-            return array(
+            $return = array(
                 'markup' => '&'.$SpecialCharacter[$Excerpt['text'][0]].';',
                 'extent' => 1,
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
     }
 
@@ -1316,7 +1336,7 @@ class Parsedown
 
         if ($Excerpt['text'][1] === '~' and preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $Excerpt['text'], $matches))
         {
-            return array(
+            $return = array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
                     'name' => 'del',
@@ -1324,6 +1344,8 @@ class Parsedown
                     'handler' => 'line',
                 ),
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
     }
 
@@ -1348,7 +1370,7 @@ class Parsedown
                 ),
             );
 
-            return $Inline;
+            return $this->runHooks(__FUNCTION__, $Inline);
         }
     }
 
@@ -1358,7 +1380,7 @@ class Parsedown
         {
             $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
 
-            return array(
+            $return = array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
                     'name' => 'a',
@@ -1368,6 +1390,8 @@ class Parsedown
                     ),
                 ),
             );
+
+            return $this->runHooks(__FUNCTION__, $return);
         }
     }
 
@@ -1385,7 +1409,7 @@ class Parsedown
             $text = str_replace(" \n", "\n", $text);
         }
 
-        return $text;
+        return $this->runHooks(__FUNCTION__, $text);
     }
 
     #
@@ -1429,7 +1453,7 @@ class Parsedown
             $markup .= ' />';
         }
 
-        return $markup;
+        return $this->runHooks(__FUNCTION__, $markup);
     }
 
     protected function elements(array $Elements)
@@ -1443,7 +1467,7 @@ class Parsedown
 
         $markup .= "\n";
 
-        return $markup;
+        return $this->runHooks(__FUNCTION__, $markup);
     }
 
     # ~
@@ -1464,7 +1488,24 @@ class Parsedown
             $markup = substr_replace($markup, '', $position, 4);
         }
 
-        return $markup;
+        return $this->runHooks(__FUNCTION__, $markup);
+    }
+
+    /**
+     * Called in each method which supports hooks.
+     * @param String method name
+     * @param Mixed arguments passed in the original method
+     * @return Mixed return value passed through the hook method
+     */
+    protected function runHooks($methodName, $return)
+    {
+        foreach (self::$hooks as $hook) {
+            if (method_exists($hook, $methodName)) {
+                return $hook::$methodName($return);
+            }
+        }
+
+        return $return;
     }
 
     #
@@ -1495,6 +1536,19 @@ class Parsedown
 
         return $instance;
     }
+
+    /**
+     * Registers a hook class
+     * @param String $className
+     */
+    static function registerHook($className = NULL)
+    {
+        if (class_exists($className)) {
+            self::$hooks[] = $className;
+        }
+    }
+
+    private static $hooks = array();
 
     private static $instances = array();
 

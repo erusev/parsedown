@@ -32,6 +32,21 @@ $Parsedown = new Parsedown();
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
 
+### Example Hook
+This fork adds hook functionality.  To use, write a class that declares static methods with the same name as the methods which 
+you would like to modify the output.  Then register the class with Parsedown.
+``` php
+class HookExample
+{
+	public static function inlineUrl($url) {
+		$url['element']['attributes']['rel'] = 'nofollow';
+		return $url;
+	}
+}
+
+Parsedown::registerHook('HookExample');
+```
+
 More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
 ### Questions
