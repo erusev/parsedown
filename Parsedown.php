@@ -1501,7 +1501,7 @@ class Parsedown
     {
         foreach (self::$hooks as $hook) {
             if (method_exists($hook, $methodName)) {
-                return $hook::$methodName($return);
+                $return = $hook::$methodName($return);
             }
         }
 
