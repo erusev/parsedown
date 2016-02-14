@@ -32,9 +32,10 @@ $Parsedown = new Parsedown();
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
 
-### Example Hook
-This fork adds hook functionality.  To use, write a class that declares static methods with the same name as the methods which 
+### Hooks
+This fork adds hook functionality that allows you to extend Parsedown.  To use, write a class that declares static methods with the same name as the methods which 
 you would like to modify the output.  Then register the class with Parsedown.
+#### Hook Example
 ``` php
 class HookExample
 {
