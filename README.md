@@ -41,7 +41,7 @@ you would like to modify the output.  Then register the class with Parsedown.
 ``` php
 class HookExample
 {
-	public static function inlineUrl($url) {
+	public function inlineUrl($url) {
 		$url['element']['attributes']['rel'] = 'nofollow';
 		return $url;
 	}

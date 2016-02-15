@@ -1501,7 +1501,7 @@ class Parsedown
     {
         foreach ($this->hooks as $hook) {
             if (method_exists($hook, $methodName)) {
-                $return = $hook::$methodName($return);
+                $return = $hook->$methodName($return);
             }
         }
 
@@ -1544,7 +1544,7 @@ class Parsedown
     public function registerHook($className = NULL)
     {
         if (class_exists($className)) {
-            $this->hooks[] = $className;
+            $this->hooks[] = new $className($this);
         }
 
         return $this;
