@@ -1499,7 +1499,7 @@ class Parsedown
      */
     protected function runHooks($methodName, $return)
     {
-        foreach (self::$hooks as $hook) {
+        foreach ($this->hooks as $hook) {
             if (method_exists($hook, $methodName)) {
                 $return = $hook::$methodName($return);
             }
@@ -1541,14 +1541,16 @@ class Parsedown
      * Registers a hook class
      * @param String $className
      */
-    static function registerHook($className = NULL)
+    public function registerHook($className = NULL)
     {
         if (class_exists($className)) {
-            self::$hooks[] = $className;
+            $this->hooks[] = $className;
         }
+
+        return $this;
     }
 
-    private static $hooks = array();
+    private $hooks = array();
 
     private static $instances = array();
 

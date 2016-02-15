@@ -31,9 +31,11 @@ $Parsedown = new Parsedown();
 
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
+More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
+
 
 ### Hooks
-This fork adds hook functionality that allows you to extend Parsedown.  To use, write a class that declares static methods with the same name as the methods which 
+You can write hooks that extend Parsedown's functionality.  To use, write a class that declares static methods with the same name as the methods which 
 you would like to modify the output.  Then register the class with Parsedown.
 #### Hook Example
 ``` php
@@ -45,10 +47,11 @@ class HookExample
 	}
 }
 
-Parsedown::registerHook('HookExample');
+$Parsedown = new Parsedown;
+$Parsedown->registerHook('HookExample');
+echo $Parsedown->text('http://google.com');
 ```
 
-More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
 ### Questions
 
