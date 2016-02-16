@@ -486,7 +486,12 @@ class Parsedown
                 return;
             }
 
-            $text = trim($Line['text'], '# ');
+            $text = substr($Line['text'], $level);
+            if (substr_compare($text, str_repeat('#', $level), strlen($text) - $level, $level) === 0)
+            {
+                $text = substr($text, 0, strlen($text) - $level);
+            }
+            $text = trim($text);
 
             $Block = array(
                 'element' => array(
