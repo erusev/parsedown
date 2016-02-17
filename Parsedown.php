@@ -74,7 +74,12 @@ class Parsedown
     }
 
     protected $urlsLinked = true;
-
+	private $relativePath;
+	function setRelativePath($relativePath)
+	{
+		$this->relativePath = $relativePath;
+		return $this;
+	}
     #
     # Lines
     #
@@ -1163,12 +1168,18 @@ class Parsedown
             return;
         }
 
+        $url = $Link['element']['attributes']['href'];
+        if (isset($this->relativePath) && !isset(parse_url($url)['host']))
+        {
+        	$url = $this->relativePath . $url;
+        }
+        
         $Inline = array(
             'extent' => $Link['extent'] + 1,
             'element' => array(
                 'name' => 'img',
                 'attributes' => array(
-                    'src' => $Link['element']['attributes']['href'],
+                    'src' => $url,
                     'alt' => $Link['element']['text'],
                 ),
             ),
@@ -1357,7 +1368,7 @@ class Parsedown
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\w+:\/{2}[^ >]+)>/i', $Excerpt['text'], $matches))
         {
             $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
-
+			
             return array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
