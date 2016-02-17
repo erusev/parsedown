@@ -1169,7 +1169,8 @@ class Parsedown
         }
 
         $url = $Link['element']['attributes']['href'];
-        if (isset($this->relativePath) && !isset(parse_url($url)['host']))
+        $hostURL = parse_url($url);
+        if (isset($this->relativePath) && !isset($hostURL['host']))
         {
         	$url = $this->relativePath . $url;
         }
