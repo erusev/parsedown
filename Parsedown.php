@@ -1577,9 +1577,10 @@ class Parsedown
     {
         if (class_exists($className)) {
             $this->hooks[] = new $className($this);
+            return end($this->hooks);
         }
 
-        return end($this->hooks);
+        return FALSE;
     }
 
     private $hooks = array();
