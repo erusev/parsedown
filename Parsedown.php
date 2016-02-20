@@ -283,12 +283,14 @@ class Parsedown
     #
     protected function isBlockContinuable($Type)
     {
-        return method_exists($this, 'block'.$Type.'Continue');
+        $return = method_exists($this, 'block'.$Type.'Continue');
+        return $this->runHooks(__FUNCTION__, $return);
     }
 
     protected function isBlockCompletable($Type)
     {
-        return method_exists($this, 'block'.$Type.'Complete');
+        $return = method_exists($this, 'block'.$Type.'Complete');
+        return $this->runHooks(__FUNCTION__, $return);
     }
 
     #
@@ -1538,6 +1540,36 @@ class Parsedown
     }
 
     /**
+     * @param Array $blockType
+     * @return Array $BlockTypes
+     */
+    public function addBlockType(array $blockType)
+    {
+        $this->BlockTypes[] = $blockType;
+        return $this->BlockTypes;
+    }
+
+    /**
+     * @param String $unmarkedBlockType
+     * @return Array $UnmarkedBlockTypes
+     */
+    public function addUnmarkedBlockType($unmarkedBlockType)
+    {
+        $this->UnmarkedBlockTypes[] = $unmarkedBlockType;
+        return $this->UnmarkedBlockTypes;
+    }
+
+    /**
+     * @param Array $inlineType
+     * @return Array $InlineTypes
+     */
+    public function addInlineType(array $inlineType)
+    {
+        $this->InlineTypes[] = $inlineType;
+        return $this->InlineTypes;
+    }
+
+    /**
      * Registers a hook class
      * @param String $className
      */
@@ -1547,7 +1579,7 @@ class Parsedown
             $this->hooks[] = new $className($this);
         }
 
-        return $this;
+        return end($this->hooks);
     }
 
     private $hooks = array();
