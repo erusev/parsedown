@@ -278,9 +278,6 @@ class Parsedown
         return $markup;
     }
 
-    #
-    # Allow for plugin extensibility
-    #
     protected function isBlockContinuable($Type)
     {
         return method_exists($this, 'block'.$Type.'Continue');
