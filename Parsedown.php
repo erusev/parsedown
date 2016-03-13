@@ -488,11 +488,12 @@ class Parsedown
                 $class = 'language-'.$matches[1];
 
                 $Element['attributes'] = array(
-                  'class' => $class,
+                    'class' => $class,
                 );
             }
 
             $Block = array(
+                'char' => $Line['text'][0],
                 'element' => array(
                     'name' => 'pre',
                     'handler' => 'element',
