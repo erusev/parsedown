@@ -42,7 +42,7 @@ class Parsedown
         $markup = trim($markup, "\n");
 
         # avoid XSS in links via javascript:dosomething()
-        $markup = str_replace('<a href="javascript:', '<a href="', $markup);
+        $markup = str_ireplace('<a href="javascript:', '<a href="', $markup);
 
         return $markup;
     }
