@@ -75,6 +75,15 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+    function setAllowedInlineTypes($allowedInlineTypes)
+    {
+        // Inline types => array('"', '!', '&', '*', ':', '<', '>', '[', '_', '`', '~', '\\');
+        $allowedInlineTypes = array_combine($allowedInlineTypes, $allowedInlineTypes);
+        $this->InlineTypes = array_intersect_key($this->InlineTypes, $allowedInlineTypes);
+
+        return $this;
+    }
+
     #
     # Lines
     #
