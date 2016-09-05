@@ -43,7 +43,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         $spec = strstr($spec, '<!-- END TESTS -->', true);
 
         $matches = array();
-        preg_match_all('/^(?s)`{32} example\n(.*?)\n\.\n(.*?)\n`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
+        preg_match_all('/^`{32} example\n((?s).*?)\n\.\n((?s).*?)\n`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
 
         $data = array();
         $currentSection = '';
