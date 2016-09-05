@@ -49,7 +49,7 @@ It passes most of the CommonMark tests. Most of the tests that don't pass deal w
 
 **Who uses it?**
 
-[phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/), [Grav CMS](http://getgrav.org/), [Statamic CMS](http://www.statamic.com/), [Herbie CMS](http://www.getherbie.org/), [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://www.versioneye.com/php/erusev:parsedown/references).
+[phpDocumentor](http://www.phpdoc.org/), [October CMS](http://octobercms.com/), [Bolt CMS](http://bolt.cm/), [Kirby CMS](http://getkirby.com/), [Grav CMS](http://getgrav.org/), [Statamic CMS](http://www.statamic.com/), [Herbie CMS](http://www.getherbie.org/), [RaspberryPi.org](http://www.raspberrypi.org/) and [more](https://packagist.org/packages/erusev/parsedown/dependents).
 
 **How can I help?**
 
