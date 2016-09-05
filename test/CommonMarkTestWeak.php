@@ -49,8 +49,8 @@ class CommonMarkTestWeak extends CommonMarkTest
         // however, whitespaces at the beginning of <pre> elements do matter
         $markup = preg_replace(
             array(
-                '/(<(?!(?:' . $this->textLevelElementRegex . '|\bpre\b))\w+\b[^>]*>(?:<' . $this->textLevelElementRegex . '[^>]*>)?)\s+/s',
-                '/\s+((?:<\/' . $this->textLevelElementRegex . '>)?<\/(?!' . $this->textLevelElementRegex . ')\w+\b>)/s'
+                '/(<(?!(?:' . $this->textLevelElementRegex . '|\bpre\b))\w+\b[^>]*>(?:<' . $this->textLevelElementRegex . '[^>]*>)*)\s+/s',
+                '/\s+((?:<\/' . $this->textLevelElementRegex . '>)*<\/(?!' . $this->textLevelElementRegex . ')\w+\b>)/s'
             ),
             '$1',
             $markup
