@@ -15,12 +15,13 @@ require_once(__DIR__ . '/CommonMarkTest.php');
  */
 class CommonMarkTestWeak extends CommonMarkTest
 {
+    protected $textLevelElementRegex;
+
     protected function setUp()
     {
         parent::setUp();
 
         $textLevelElements = $this->parsedown->getTextLevelElements();
-
         array_walk($textLevelElements, function (&$element) {
             $element = preg_quote($element, '/');
         });
