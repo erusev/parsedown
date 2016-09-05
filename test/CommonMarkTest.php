@@ -13,7 +13,9 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->parsedown = new Parsedown();
+        require_once(__DIR__ . '/TestParsedown.php');
+
+        $this->parsedown = new TestParsedown();
         $this->parsedown->setUrlsLinked(false);
     }
 
