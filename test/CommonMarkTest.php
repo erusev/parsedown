@@ -1,16 +1,21 @@
 <?php
 
 /**
- * Test Parsedown against the CommonMark spec.
- *
- * Some code based on the original JavaScript test runner by jgm.
+ * Test Parsedown against the CommonMark spec
  *
  * @link http://commonmark.org/ CommonMark
- * @link http://git.io/8WtRvQ JavaScript test runner
  */
 class CommonMarkTest extends PHPUnit_Framework_TestCase
 {
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/stmd/master/spec.txt';
+
+    protected $parsedown;
+
+    protected function setUp()
+    {
+        $this->parsedown = new Parsedown();
+        $this->parsedown->setUrlsLinked(false);
+    }
 
     /**
      * @dataProvider data
@@ -18,57 +23,42 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
      * @param $markdown
      * @param $expectedHtml
      */
-    function test_($section, $markdown, $expectedHtml)
+    public function testExample($section, $markdown, $expectedHtml)
     {
-        $Parsedown = new Parsedown();
-        $Parsedown->setUrlsLinked(false);
-
-        $actualHtml = $Parsedown->text($markdown);
-        $actualHtml = $this->normalizeMarkup($actualHtml);
-
+        $actualHtml = $this->parsedown->text($markdown);
         $this->assertEquals($expectedHtml, $actualHtml);
     }
 
-    function data()
+    /**
+     * @return array
+     */
+    public function data()
     {
         $spec = file_get_contents(self::SPEC_URL);
+        if ($spec === false) {
+            $this->fail('Unable to load CommonMark spec from ' . self::SPEC_URL);
+        }
+
+        $spec = str_replace("\r\n", "\n", $spec);
         $spec = strstr($spec, '<!-- END TESTS -->', true);
 
-        $tests = array();
+        $matches = array();
+        preg_match_all('/^(?s)`{32} example\n(.*?)\n\.\n(.*?)\n`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
+
+        $data = array();
         $currentSection = '';
+        foreach ($matches as $match) {
+            if (isset($match[3])) {
+                $currentSection = $match[3];
+            } else {
+                $data[] = array(
+                    'section' => $currentSection,
+                    'markdown' => str_replace('→', "\t", $match[1]),
+                    'expectedHtml' => str_replace('→', "\t", $match[2])
+                );
+            }
+        }
 
-        preg_replace_callback(
-            '/^\.\n([\s\S]*?)^\.\n([\s\S]*?)^\.$|^#{1,6} *(.*)$/m',
-            function($matches) use ( & $tests, & $currentSection, & $testCount) {
-                if (isset($matches[3]) and $matches[3]) {
-                    $currentSection = $matches[3];
-                } else {
-                    $testCount++;
-                    $markdown = $matches[1];
-                    $markdown = preg_replace('/→/', "\t", $markdown);
-                    $expectedHtml = $matches[2];
-                    $expectedHtml = $this->normalizeMarkup($expectedHtml);
-                    $tests []= array(
-                        $currentSection, # section
-                        $markdown, # markdown
-                        $expectedHtml, # html
-                    );
-                }
-            },
-            $spec
-        );
-
-        return $tests;
-    }
-
-    private function normalizeMarkup($markup)
-    {
-        $markup = preg_replace("/\n+/", "\n", $markup);
-        $markup = preg_replace('/^\s+/m', '', $markup);
-        $markup = preg_replace('/^((?:<[\w]+>)+)\n/m', '$1', $markup);
-        $markup = preg_replace('/\n((?:<\/[\w]+>)+)$/m', '$1', $markup);
-        $markup = trim($markup);
-
-        return $markup;
+        return $data;
     }
 }
