@@ -502,10 +502,10 @@ class Parsedown
 
     protected function blockList($Line)
     {
-        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.]');
-
+        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '([*+-])') : array('ol', '([0-9]+)[.]');
         if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
         {
+            if($name === 'ol' && $matches[2] !== '1') $name. = ' start="' . $matches[2] . '"';
             $Block = array(
                 'indent' => $Line['indent'],
                 'pattern' => $pattern,
@@ -514,17 +514,14 @@ class Parsedown
                     'handler' => 'elements',
                 ),
             );
-
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
                 'text' => array(
-                    $matches[2],
+                    $matches[3],
                 ),
             );
-
             $Block['element']['text'] []= & $Block['li'];
-
             return $Block;
         }
     }
@@ -1419,7 +1416,7 @@ class Parsedown
                 $markup .= $Element['text'];
             }
 
-            $markup .= '</'.$Element['name'].'>';
+            $markup .= '</'.preg_replace('/[ ].*/', '', $Element['name']).'>';
         }
         else
         {
