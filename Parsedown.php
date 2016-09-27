@@ -505,7 +505,6 @@ class Parsedown
         list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '([*+-])') : array('ol', '([0-9]+)[.]');
         if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
         {
-            if($name === 'ol' && $matches[2] !== '1') $name .= ' start="' . $matches[2] . '"';
             $Block = array(
                 'indent' => $Line['indent'],
                 'pattern' => preg_replace('/\(|\)/', '', $pattern),
@@ -514,6 +513,7 @@ class Parsedown
                     'handler' => 'elements',
                 ),
             );
+            if($name === 'ol' && $matches[2] !== '1') $Block['element']['attributes'] = array('start' => $matches[2]);
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
@@ -1416,7 +1416,7 @@ class Parsedown
                 $markup .= $Element['text'];
             }
 
-            $markup .= '</'.preg_replace('/[ ].*/', '', $Element['name']).'>';
+            $markup .= '</'.$Element['name']).'>';
         }
         else
         {
