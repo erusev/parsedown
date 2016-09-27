@@ -1416,7 +1416,7 @@ class Parsedown
                 $markup .= $Element['text'];
             }
 
-            $markup .= '</'.$Element['name']).'>';
+            $markup .= '</'.$Element['name'].'>';
         }
         else
         {
