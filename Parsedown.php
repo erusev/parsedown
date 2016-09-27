@@ -508,7 +508,7 @@ class Parsedown
             if($name === 'ol' && $matches[2] !== '1') $name .= ' start="' . $matches[2] . '"';
             $Block = array(
                 'indent' => $Line['indent'],
-                'pattern' => $pattern,
+                'pattern' => preg_replace('/\(|\)/', '', $pattern),
                 'element' => array(
                     'name' => $name,
                     'handler' => 'elements',
@@ -1416,7 +1416,7 @@ class Parsedown
                 $markup .= $Element['text'];
             }
 
-            $markup .= '</'.$Element['name'].'>';
+            $markup .= '</'.preg_replace('/[ ].*/', '', $Element['name']).'>';
         }
         else
         {
