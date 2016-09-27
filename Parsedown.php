@@ -1416,7 +1416,7 @@ class Parsedown
                 $markup .= $Element['text'];
             }
 
-            $markup .= '</'.preg_replace('/[ ].*/', '', $Element['name']).'>';
+            $markup .= '</'.$Element['name'].'>';
         }
         else
         {
