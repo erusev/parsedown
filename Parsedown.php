@@ -987,7 +987,7 @@ class Parsedown
     # ~
     #
 
-    public function line($text)
+    public function line($text, $non_nestables=array())
     {
         $markup = '';
 
@@ -1003,6 +1003,12 @@ class Parsedown
 
             foreach ($this->InlineTypes[$marker] as $inlineType)
             {
+                
+                if(in_array($inlineType, $non_nestables))
+                {
+                    continue;
+                }
+
                 $Inline = $this->{'inline'.$inlineType}($Excerpt);
 
                 if ( ! isset($Inline))
@@ -1183,6 +1189,7 @@ class Parsedown
         $Element = array(
             'name' => 'a',
             'handler' => 'line',
+            'non_nestables' => array('Url', 'Link'),
             'text' => null,
             'attributes' => array(
                 'href' => null,
@@ -1410,9 +1417,11 @@ class Parsedown
         {
             $markup .= '>';
 
+            if(!isset($Element['non_nestables'])) $Element['non_nestables'] = array();
+
             if (isset($Element['handler']))
             {
-                $markup .= $this->{$Element['handler']}($Element['text']);
+                $markup .= $this->{$Element['handler']}($Element['text'], $Element['non_nestables']);
             }
             else
             {
