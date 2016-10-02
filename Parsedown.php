@@ -1003,10 +1003,23 @@ class Parsedown
 
             foreach ($this->InlineTypes[$marker] as $inlineType)
             {
-                
-                if(in_array($inlineType, $non_nestables))
+                foreach ($non_nestables as $key => $non_nestable)
                 {
-                    continue;
+                    if (is_array($non_nestable))
+                    {
+                        
+                        if ($non_nestable[0] === $inlineType)
+                        {
+                            continue 2;
+                        }
+                    }
+                    else
+                    {
+                        if ($non_nestable === $inlineType)
+                        {
+                            continue 2;
+                        }
+                    }
                 }
 
                 $Inline = $this->{'inline'.$inlineType}($Excerpt);
@@ -1029,6 +1042,26 @@ class Parsedown
                 {
                     $Inline['position'] = $markerPosition;
                 }
+
+                foreach ($non_nestables as $key => $non_nestable)
+                {
+                    if (is_array($non_nestable) && isset($non_nestable[1]) && is_int($non_nestable[1])){
+                        if($non_nestable[1] > 1)
+                        {
+                            $Inline['element']['non_nestables'][] = array($non_nestable[0], $non_nestable[1] -1);
+                        }
+                        
+                    }
+                    elseif (is_array($non_nestable) && ! isset($non_nestable[1]))
+                    {
+                         $Inline['element']['non_nestables'][] = array($non_nestable[0]);
+                    }
+                    elseif ( ! is_array($non_nestable))
+                    {
+                        $Inline['element']['non_nestables'][] = $non_nestable;
+                    }
+                }
+                
 
                 # the text that comes before the inline
                 $unmarkedText = substr($text, 0, $Inline['position']);
