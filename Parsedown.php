@@ -1003,22 +1003,19 @@ class Parsedown
 
             foreach ($this->InlineTypes[$marker] as $inlineType)
             {
+                # check to see if the current inline type is nestable in the current context
+
                 foreach ($non_nestables as $key => $non_nestable)
                 {
-                    if (is_array($non_nestable))
+                    # case that we used array syntax 
+                    if (is_array($non_nestable) and $non_nestable[0] === $inlineType)
                     {
-                        
-                        if ($non_nestable[0] === $inlineType)
-                        {
-                            continue 2;
-                        }
+                        continue 2;
                     }
-                    else
+                    # case that we used plain string syntax
+                    elseif ( ! is_array($non_nestable) and $non_nestable === $inlineType)
                     {
-                        if ($non_nestable === $inlineType)
-                        {
-                            continue 2;
-                        }
+                        continue 2;
                     }
                 }
 
@@ -1043,25 +1040,27 @@ class Parsedown
                     $Inline['position'] = $markerPosition;
                 }
 
+                # cause the new element to 'inherit' our non nestables, if appropriate
+
                 foreach ($non_nestables as $key => $non_nestable)
                 {
-                    if (is_array($non_nestable) && isset($non_nestable[1]) && is_int($non_nestable[1])){
-                        if($non_nestable[1] > 1)
-                        {
-                            $Inline['element']['non_nestables'][] = array($non_nestable[0], $non_nestable[1] -1);
-                        }
-                        
+                    # array syntax, and depth is sufficient to pass on
+                    if (is_array($non_nestable) and isset($non_nestable[1]) and
+                        is_int($non_nestable[1]) and $non_nestable[1] > 1)
+                    {
+                        $Inline['element']['non_nestables'][] = array($non_nestable[0], $non_nestable[1] -1);
                     }
-                    elseif (is_array($non_nestable) && ! isset($non_nestable[1]))
+                    # array syntax, and depth is indefinite
+                    elseif (is_array($non_nestable) and ! isset($non_nestable[1]))
                     {
                          $Inline['element']['non_nestables'][] = array($non_nestable[0]);
                     }
+                    # string syntax, so depth is indefinite
                     elseif ( ! is_array($non_nestable))
                     {
                         $Inline['element']['non_nestables'][] = $non_nestable;
                     }
                 }
-                
 
                 # the text that comes before the inline
                 $unmarkedText = substr($text, 0, $Inline['position']);
@@ -1450,7 +1449,10 @@ class Parsedown
         {
             $markup .= '>';
 
-            if(!isset($Element['non_nestables'])) $Element['non_nestables'] = array();
+            if (!isset($Element['non_nestables'])) 
+            {
+                $Element['non_nestables'] = array();
+            }
 
             if (isset($Element['handler']))
             {
