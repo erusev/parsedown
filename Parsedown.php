@@ -1005,18 +1005,9 @@ class Parsedown
             {
                 # check to see if the current inline type is nestable in the current context
 
-                foreach ($non_nestables as $key => $non_nestable)
+                if (in_array($inlineType, $non_nestables))
                 {
-                    # case that we used array syntax 
-                    if (is_array($non_nestable) and $non_nestable[0] === $inlineType)
-                    {
-                        continue 2;
-                    }
-                    # case that we used plain string syntax
-                    elseif ( ! is_array($non_nestable) and $non_nestable === $inlineType)
-                    {
-                        continue 2;
-                    }
+                    continue;
                 }
 
                 $Inline = $this->{'inline'.$inlineType}($Excerpt);
@@ -1040,26 +1031,11 @@ class Parsedown
                     $Inline['position'] = $markerPosition;
                 }
 
-                # cause the new element to 'inherit' our non nestables, if appropriate
+                # cause the new element to 'inherit' our non nestables
 
-                foreach ($non_nestables as $key => $non_nestable)
+                foreach ($non_nestables as $non_nestable)
                 {
-                    # array syntax, and depth is sufficient to pass on
-                    if (is_array($non_nestable) and isset($non_nestable[1]) and
-                        is_int($non_nestable[1]) and $non_nestable[1] > 1)
-                    {
-                        $Inline['element']['non_nestables'][] = array($non_nestable[0], $non_nestable[1] -1);
-                    }
-                    # array syntax, and depth is indefinite
-                    elseif (is_array($non_nestable) and ! isset($non_nestable[1]))
-                    {
-                         $Inline['element']['non_nestables'][] = array($non_nestable[0]);
-                    }
-                    # string syntax, so depth is indefinite
-                    elseif ( ! is_array($non_nestable))
-                    {
-                        $Inline['element']['non_nestables'][] = $non_nestable;
-                    }
+                    $Inline['element']['non_nestables'][] = $non_nestable;
                 }
 
                 # the text that comes before the inline
