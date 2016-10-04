@@ -1005,7 +1005,7 @@ class Parsedown
             {
                 # check to see if the current inline type is nestable in the current context
 
-                if (in_array($inlineType, $non_nestables))
+                if ( ! empty($non_nestables) and in_array($inlineType, $non_nestables))
                 {
                     continue;
                 }
