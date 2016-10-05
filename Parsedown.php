@@ -515,7 +515,7 @@ class Parsedown
             );
             if($name === 'ol') 
             {
-                $list_num = preg_replace ('/^([0-9]+)[.].*+$/', '$1', $matches[0]);
+                $list_num = stristr($matches[0], ".", true);
                 if($list_num !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $list_num);
