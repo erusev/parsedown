@@ -502,23 +502,30 @@ class Parsedown
 
     protected function blockList($Line)
     {
-        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '([*+-])') : array('ol', '([0-9]+)[.]');
+        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.]');
         if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
         {
             $Block = array(
                 'indent' => $Line['indent'],
-                'pattern' => preg_replace('/\(|\)/', '', $pattern),
+                'pattern' => $pattern,
                 'element' => array(
                     'name' => $name,
                     'handler' => 'elements',
                 ),
             );
-            if($name === 'ol' && $matches[2] !== '1') $Block['element']['attributes'] = array('start' => $matches[2]);
+            if($name === 'ol') 
+            {
+                $list_num = explode ('.', $matches[0], 1)[0];
+                if($list_num !== '1')
+                {
+                    $Block['element']['attributes'] = array('start' => $list_num);
+                }
+            }
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
                 'text' => array(
-                    $matches[3],
+                    $matches[2],
                 ),
             );
             $Block['element']['text'] []= & $Block['li'];
