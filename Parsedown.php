@@ -515,7 +515,7 @@ class Parsedown
             );
             if($name === 'ol') 
             {
-                $list_num = explode ('.', $matches[0], 1)[0];
+                $list_num = explode ('.', $matches[0], 2)[0];
                 if($list_num !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $list_num);
