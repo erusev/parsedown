@@ -987,7 +987,7 @@ class Parsedown
     # ~
     #
 
-    public function line($text, $non_nestables=array())
+    public function line($text, $nonNestables=array())
     {
         $markup = '';
 
@@ -1005,7 +1005,7 @@ class Parsedown
             {
                 # check to see if the current inline type is nestable in the current context
 
-                if ( ! empty($non_nestables) and in_array($inlineType, $non_nestables))
+                if ( ! empty($nonNestables) and in_array($inlineType, $nonNestables))
                 {
                     continue;
                 }
@@ -1033,9 +1033,9 @@ class Parsedown
 
                 # cause the new element to 'inherit' our non nestables
 
-                foreach ($non_nestables as $non_nestable)
+                foreach ($nonNestables as $non_nestable)
                 {
-                    $Inline['element']['non_nestables'][] = $non_nestable;
+                    $Inline['element']['nonNestables'][] = $non_nestable;
                 }
 
                 # the text that comes before the inline
@@ -1197,7 +1197,7 @@ class Parsedown
         $Element = array(
             'name' => 'a',
             'handler' => 'line',
-            'non_nestables' => array('Url', 'Link'),
+            'nonNestables' => array('Url', 'Link'),
             'text' => null,
             'attributes' => array(
                 'href' => null,
@@ -1425,14 +1425,14 @@ class Parsedown
         {
             $markup .= '>';
 
-            if (!isset($Element['non_nestables'])) 
+            if (!isset($Element['nonNestables'])) 
             {
-                $Element['non_nestables'] = array();
+                $Element['nonNestables'] = array();
             }
 
             if (isset($Element['handler']))
             {
-                $markup .= $this->{$Element['handler']}($Element['text'], $Element['non_nestables']);
+                $markup .= $this->{$Element['handler']}($Element['text'], $Element['nonNestables']);
             }
             else
             {
