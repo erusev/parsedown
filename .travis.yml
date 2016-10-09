@@ -18,4 +18,5 @@ install:
   - composer install
 
 script:
+  - phpunit
   - phpunit test/CommonMarkTestWeak.php || true
