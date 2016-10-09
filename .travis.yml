@@ -16,3 +16,6 @@ matrix:
 
 install:
   - composer install
+
+script:
+  - phpunit test/CommonMarkTestWeak.php || true
