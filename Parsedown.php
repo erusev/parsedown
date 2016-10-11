@@ -583,7 +583,7 @@ class Parsedown
 
             return $Block;
         }
-        elseif ($Block['indent'] === $Line['indent'])
+        elseif ($Block['indent'] === $Line['indent'] and $l = $this->blockList($Line))
         {
             return null;
         }
