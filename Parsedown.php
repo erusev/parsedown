@@ -509,6 +509,11 @@ class Parsedown
             $Block = array(
                 'indent' => $Line['indent'],
                 'pattern' => $pattern,
+                'data' => array(
+                    'type' => $name,
+                    'matchText' => ($name === 'ul' ? stristr($matches[1], ' ', true) : stristr($matches[1], '.', true)),
+                    'rootItem' => $matches[2]
+                ),
                 'element' => array(
                     'name' => $name,
                     'handler' => 'elements',
@@ -541,7 +546,19 @@ class Parsedown
 
     protected function blockListContinue($Line, array $Block)
     {
-        if ($Block['indent'] === $Line['indent'] and preg_match('/^'.$Block['pattern'].'(?:[ ]+(.*)|$)/', $Line['text'], $matches))
+        if (
+            (
+                    $Block['indent'] === $Line['indent'] 
+                and $Block['data']['type'] === 'ol'
+                and preg_match('/^'.$Block['pattern'].'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+            )
+            or
+            (
+                    $Block['indent'] === $Line['indent']
+                and $Block['data']['type'] === 'ul'
+                and preg_match('/^'.preg_quote($Block['data']['matchText']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+            )
+        )
         {
             if (isset($Block['interrupted']))
             {
@@ -565,6 +582,11 @@ class Parsedown
             $Block['element']['text'] []= & $Block['li'];
 
             return $Block;
+        }
+        elseif ($Block['indent'] === $Line['indent'])
+        {
+            echo $Block['data']['rootItem'] ."\t" . $Block['indent'] ."\t" . $Block['data']['type'] ."\t" . $Line['indent'] . "\t". $Block['data']['matchText'] ."\t" .$Line['text'] . "\n";
+            return null;
         }
 
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
