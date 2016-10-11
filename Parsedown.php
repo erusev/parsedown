@@ -585,7 +585,6 @@ class Parsedown
         }
         elseif ($Block['indent'] === $Line['indent'])
         {
-            echo $Block['data']['rootItem'] ."\t" . $Block['indent'] ."\t" . $Block['data']['type'] ."\t" . $Line['indent'] . "\t". $Block['data']['matchText'] ."\t" .$Line['text'] . "\n";
             return null;
         }
 
@@ -596,7 +595,7 @@ class Parsedown
 
         if ( ! isset($Block['interrupted']))
         {
-            $text = preg_replace('/^[ ]{0,4}/', '', $Line['body']);
+            $text = preg_replace('/^[ ]{0,'.($Block['indent'] + 1).'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
 
@@ -607,7 +606,7 @@ class Parsedown
         {
             $Block['li']['text'] []= '';
 
-            $text = preg_replace('/^[ ]{0,4}/', '', $Line['body']);
+            $text = preg_replace('/^[ ]{0,'.($Block['indent'] + 1).'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
 
