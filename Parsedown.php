@@ -502,7 +502,7 @@ class Parsedown
 
     protected function blockList($Line)
     {
-        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.]');
+        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.\)]');
 
         if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
         {
@@ -511,8 +511,7 @@ class Parsedown
                 'pattern' => $pattern,
                 'data' => array(
                     'type' => $name,
-                    'matchText' => ($name === 'ul' ? stristr($matches[1], ' ', true) : stristr($matches[1], '.', true)),
-                    'rootItem' => $matches[2]
+                    'marker' => ($name === 'ul' ? stristr($matches[1], ' ', true) : substr(stristr($matches[1], ' ', true), -1)),
                 ),
                 'element' => array(
                     'name' => $name,
@@ -522,7 +521,7 @@ class Parsedown
 
             if($name === 'ol') 
             {
-                $listStart = stristr($matches[0], '.', true);
+                $listStart = stristr($matches[1], $Block['data']['marker'], true);
                 
                 if($listStart !== '1')
                 {
@@ -547,16 +546,18 @@ class Parsedown
     protected function blockListContinue($Line, array $Block)
     {
         if (
+            $Block['indent'] === $Line['indent']
+            and
             (
-                    $Block['indent'] === $Line['indent'] 
-                and $Block['data']['type'] === 'ol'
-                and preg_match('/^'.$Block['pattern'].'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
-            )
-            or
-            (
-                    $Block['indent'] === $Line['indent']
-                and $Block['data']['type'] === 'ul'
-                and preg_match('/^'.preg_quote($Block['data']['matchText']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                (
+                    $Block['data']['type'] === 'ol'
+                    and preg_match('/^[0-9]+'.preg_quote($Block['data']['marker']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                )
+                or
+                (
+                    $Block['data']['type'] === 'ul'
+                    and preg_match('/^'.preg_quote($Block['data']['marker']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                )
             )
         )
         {
@@ -583,10 +584,12 @@ class Parsedown
 
             return $Block;
         }
-        elseif ($Block['indent'] === $Line['indent'] and $l = $this->blockList($Line))
+        elseif ($Block['indent'] === $Line['indent'] and $placeholder = $this->blockList($Line))
         {
             return null;
         }
+
+        unset($placeholder);
 
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
         {
@@ -595,7 +598,7 @@ class Parsedown
 
         if ( ! isset($Block['interrupted']))
         {
-            $text = preg_replace('/^[ ]{0,'.($Block['indent'] + 1).'}/', '', $Line['body']);
+            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent'] + 1).'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
 
@@ -606,7 +609,7 @@ class Parsedown
         {
             $Block['li']['text'] []= '';
 
-            $text = preg_replace('/^[ ]{0,'.($Block['indent'] + 1).'}/', '', $Line['body']);
+            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent'] + 1).'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
 
