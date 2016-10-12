@@ -5,7 +5,7 @@
  *
  * @link http://commonmark.org/ CommonMark
  */
-class CommonMarkTest extends PHPUnit_Framework_TestCase
+class CommonMarkTestStrict extends PHPUnit_Framework_TestCase
 {
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/stmd/master/spec.txt';
 
@@ -19,11 +19,12 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider data
+     * @param $id
      * @param $section
      * @param $markdown
      * @param $expectedHtml
      */
-    public function testExample($section, $markdown, $expectedHtml)
+    public function testExample($id, $section, $markdown, $expectedHtml)
     {
         $actualHtml = $this->parsedown->text($markdown);
         $this->assertEquals($expectedHtml, $actualHtml);
@@ -46,12 +47,14 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         preg_match_all('/^`{32} example\n((?s).*?)\n\.\n((?s).*?)\n`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
 
         $data = array();
+        $currentId = 0;
         $currentSection = '';
         foreach ($matches as $match) {
             if (isset($match[3])) {
                 $currentSection = $match[3];
             } else {
                 $data[] = array(
+                    'id' => ++$currentId,
                     'section' => $currentSection,
                     'markdown' => str_replace('→', "\t", $match[1]),
                     'expectedHtml' => str_replace('→', "\t", $match[2])

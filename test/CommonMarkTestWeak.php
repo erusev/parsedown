@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/CommonMarkTest.php');
+require_once(__DIR__ . '/CommonMarkTestStrict.php');
 
 /**
  * Test Parsedown against the CommonMark spec, but less aggressive
@@ -13,7 +13,7 @@ require_once(__DIR__ . '/CommonMarkTest.php');
  *
  * @link http://commonmark.org/ CommonMark
  */
-class CommonMarkTestWeak extends CommonMarkTest
+class CommonMarkTestWeak extends CommonMarkTestStrict
 {
     protected $textLevelElementRegex;
 
@@ -30,11 +30,12 @@ class CommonMarkTestWeak extends CommonMarkTest
 
     /**
      * @dataProvider data
+     * @param $id
      * @param $section
      * @param $markdown
      * @param $expectedHtml
      */
-    public function testExample($section, $markdown, $expectedHtml)
+    public function testExample($id, $section, $markdown, $expectedHtml)
     {
         $expectedHtml = $this->cleanupHtml($expectedHtml);
 
