@@ -3,6 +3,12 @@
 	<testsuites>
 		<testsuite name="ParsedownTests">
 			<file>tests/ParsedownTest.php</file>
+			<file>tests/CommonMarkTest.php</file>			
 		</testsuite>
 	</testsuites>
+	<groups>
+		<exclude>
+			<group>update</group>
+		</exclude>
+	</groups>
 </phpunit>
