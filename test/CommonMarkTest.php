@@ -48,7 +48,7 @@ class CommonMarkTest extends CommonMarkTestWeak
                         $markdown = file_get_contents($dir . $testName . '.md');
                         $expectedHtml = file_get_contents($dir . $testName . '.html');
 
-                        $data[] = array(
+                        $data[$id] = array(
                             'id' => $id,
                             'section' => $section,
                             'markdown' => $markdown,
