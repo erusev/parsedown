@@ -506,7 +506,12 @@ class Parsedown
 
         if (preg_match('/^('.$pattern.'([ ]+|$))(.*)/', $Line['text'], $matches))
         {
-            if ($matches[2] === '') {
+            $contentIndent = strlen($matches[2]);
+            if ($contentIndent >= 5) {
+                $contentIndent -= 1;
+                $matches[1] = substr($matches[1], 0, -$contentIndent);
+                $matches[3] = str_repeat(' ', $contentIndent) . $matches[3];
+            } elseif ($contentIndent === 0) {
                 $matches[1] .= ' ';
             }
 
