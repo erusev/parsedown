@@ -562,8 +562,10 @@ class Parsedown
             return null;
         }
 
+        $requiredIndent = ($Block['indent'] + strlen($Block['data']['marker']));
+
         if (
-            $Block['indent'] === $Line['indent']
+            $Line['indent'] < $requiredIndent
             and
             (
                 (
@@ -589,6 +591,8 @@ class Parsedown
 
             $text = isset($matches[1]) ? $matches[1] : '';
 
+            $Block['indent'] = $Line['indent'];
+
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
@@ -601,7 +605,7 @@ class Parsedown
 
             return $Block;
         }
-        elseif ($Block['indent'] === $Line['indent'] and $this->blockList($Line))
+        elseif ($Line['indent'] < $requiredIndent and $this->blockList($Line))
         {
             return null;
         }
@@ -610,8 +614,6 @@ class Parsedown
         {
             return $Block;
         }
-
-        $requiredIndent = ($Block['indent'] + strlen($Block['data']['marker']));
 
         if ($Line['indent'] >= $requiredIndent)
         {
@@ -631,7 +633,6 @@ class Parsedown
 
         if ( ! isset($Block['interrupted']))
         {
-            // TODO: force multi-line paragraph, this must not parse any new block
             $text = preg_replace('/^[ ]{0,'.$requiredIndent.'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
