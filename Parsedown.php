@@ -520,7 +520,8 @@ class Parsedown
                 'pattern' => $pattern,
                 'data' => array(
                     'type' => $name,
-                    'marker' => ($name === 'ul' ? stristr($matches[1], ' ', true) : substr(stristr($matches[1], ' ', true), -1)),
+                    'marker' => $matches[1],
+                    'markerType' => ($name === 'ul' ? strstr($matches[1], ' ', true) : substr(strstr($matches[1], ' ', true), -1)),
                 ),
                 'element' => array(
                     'name' => $name,
@@ -530,7 +531,7 @@ class Parsedown
 
             if($name === 'ol') 
             {
-                $listStart = ltrim(strstr($matches[1], $Block['data']['marker'], true), '0') ?: '0';
+                $listStart = ltrim(strstr($matches[1], $Block['data']['markerType'], true), '0') ?: '0';
                 
                 if($listStart !== '1')
                 {
@@ -562,12 +563,12 @@ class Parsedown
             (
                 (
                     $Block['data']['type'] === 'ol'
-                    and preg_match('/^[0-9]+'.preg_quote($Block['data']['marker']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                    and preg_match('/^[0-9]+'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
                 )
                 or
                 (
                     $Block['data']['type'] === 'ul'
-                    and preg_match('/^'.preg_quote($Block['data']['marker']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                    and preg_match('/^'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
                 )
             )
         )
@@ -605,24 +606,30 @@ class Parsedown
             return $Block;
         }
 
-        if ( ! isset($Block['interrupted']))
+        $requiredIndent = ($Block['indent'] + strlen($Block['data']['marker']));
+
+        if ($Line['indent'] >= $requiredIndent)
         {
-            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent'] + 1).'}/', '', $Line['body']);
+            if (isset($Block['interrupted']))
+            {
+                $Block['li']['text'] []= '';
+
+                unset($Block['interrupted']);
+            }
+
+            $text = substr($Line['body'], $requiredIndent);
 
             $Block['li']['text'] []= $text;
 
             return $Block;
         }
 
-        if ($Line['indent'] > 0)
+        if ( ! isset($Block['interrupted']))
         {
-            $Block['li']['text'] []= '';
-
-            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent'] + 1).'}/', '', $Line['body']);
+            // TODO: force multi-line paragraph, this must not parse any new block
+            $text = preg_replace('/^[ ]{0,'.$requiredIndent.'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
-
-            unset($Block['interrupted']);
 
             return $Block;
         }
