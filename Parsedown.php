@@ -502,7 +502,7 @@ class Parsedown
 
     protected function blockList($Line)
     {
-        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.\)]');
+        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]{1,9}[.\)]');
 
         if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
         {
@@ -521,7 +521,7 @@ class Parsedown
 
             if($name === 'ol') 
             {
-                $listStart = stristr($matches[1], $Block['data']['marker'], true);
+                $listStart = ltrim(strstr($matches[1], $Block['data']['marker'], true), '0') ?: '0';
                 
                 if($listStart !== '1')
                 {
