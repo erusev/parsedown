@@ -165,7 +165,7 @@ class Parsedown
 
             if (isset($CurrentBlock['continuable']))
             {
-                $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock, $parentType);
+                $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -449,7 +449,7 @@ class Parsedown
         }
     }
 
-    protected function blockFencedCodeContinue($Line, $Block, $parentType)
+    protected function blockFencedCodeContinue($Line, $Block)
     {
         if (isset($Block['complete']))
         {
@@ -470,11 +470,6 @@ class Parsedown
             $Block['complete'] = true;
 
             return $Block;
-        }
-
-        if ($parentType === 'List')
-        {
-            $Line['body'] = preg_replace('/^[ ]{0,'.min(4, $Line['indent']).'}/', '', $Line['body']);
         }
 
         $Block['element']['text']['text'] .= "\n".$Line['body'];;
