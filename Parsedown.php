@@ -507,11 +507,15 @@ class Parsedown
         if (preg_match('/^('.$pattern.'([ ]+|$))(.*)/', $Line['text'], $matches))
         {
             $contentIndent = strlen($matches[2]);
-            if ($contentIndent >= 5) {
+
+            if ($contentIndent >= 5)
+            {
                 $contentIndent -= 1;
                 $matches[1] = substr($matches[1], 0, -$contentIndent);
                 $matches[3] = str_repeat(' ', $contentIndent) . $matches[3];
-            } elseif ($contentIndent === 0) {
+            }
+            elseif ($contentIndent === 0)
+            {
                 $matches[1] .= ' ';
             }
 
@@ -553,7 +557,8 @@ class Parsedown
 
     protected function blockListContinue($Line, array $Block)
     {
-        if (isset($Block['interrupted']) and empty($Block['li']['text'])) {
+        if (isset($Block['interrupted']) and empty($Block['li']['text']))
+        {
             return null;
         }
 
