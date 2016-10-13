@@ -7,7 +7,7 @@
  */
 class CommonMarkTestStrict extends PHPUnit_Framework_TestCase
 {
-    const SPEC_URL = 'https://raw.githubusercontent.com/jgm/stmd/master/spec.txt';
+    const SPEC_URL = 'https://raw.githubusercontent.com/jgm/CommonMark/master/spec.txt';
 
     protected $parsedown;
 
@@ -44,7 +44,7 @@ class CommonMarkTestStrict extends PHPUnit_Framework_TestCase
         $spec = strstr($spec, '<!-- END TESTS -->', true);
 
         $matches = array();
-        preg_match_all('/^`{32} example\n((?s).*?)\n\.\n((?s).*?)\n`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
+        preg_match_all('/^`{32} example\n((?s).*?)\n\.\n(?:|((?s).*?)\n)`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
 
         $data = array();
         $currentId = 0;
@@ -53,11 +53,15 @@ class CommonMarkTestStrict extends PHPUnit_Framework_TestCase
             if (isset($match[3])) {
                 $currentSection = $match[3];
             } else {
-                $data[] = array(
-                    'id' => ++$currentId,
+                $currentId++;
+                $markdown = str_replace('→', "\t", $match[1]);
+                $expectedHtml = isset($match[2]) ? str_replace('→', "\t", $match[2]) : '';
+
+                $data[$currentId] = array(
+                    'id' => $currentId,
                     'section' => $currentSection,
-                    'markdown' => str_replace('→', "\t", $match[1]),
-                    'expectedHtml' => str_replace('→', "\t", $match[2])
+                    'markdown' => $markdown,
+                    'expectedHtml' => $expectedHtml
                 );
             }
         }
