@@ -188,33 +188,15 @@ class Parsedown
 
             # ~
 
-            $highPriority = array();
-
             $blockTypes = $this->unmarkedBlockTypes;
 
             if (isset($this->BlockTypes[$marker]))
             {
                 foreach ($this->BlockTypes[$marker] as $blockType)
                 {
-                    if 
-                    (
-                            isset($CurrentBlock['type']) 
-                        and $CurrentBlock['type'] === $blockType 
-                        and ! isset($CurrentBlock['interrupted']) 
-                        and isset($CurrentBlock['continuable']) 
-                        and ! isset($CurrentBlock['complete'])
-                    )
-                    {
-                        $highPriority[] = $CurrentBlock['type'];
-                    }
-                    else
-                    {
-                        $blockTypes []= $blockType;
-                    }
+                    $blockTypes []= $blockType;
                 }
             }
-
-            $blockTypes = array_merge($highPriority, $blockTypes);
 
             #
             # ~
@@ -607,6 +589,8 @@ class Parsedown
             return null;
         }
 
+        unset($placeholder);
+
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
         {
             return $Block;
@@ -614,7 +598,7 @@ class Parsedown
 
         if ( ! isset($Block['interrupted']))
         {
-            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent']).'}/', '', $Line['body']);
+            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent'] + 1).'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
 
@@ -625,12 +609,7 @@ class Parsedown
         {
             $Block['li']['text'] []= '';
 
-            $text = preg_replace('/^[ ]{0,4}/', '', $Line['body']);
-
-            if ($placeholder = $this->blockList($Line))
-            {
-                $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent']).'}/', '', $Line['body']);
-            }
+            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent'] + 1).'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
 
