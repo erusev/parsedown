@@ -584,12 +584,10 @@ class Parsedown
 
             return $Block;
         }
-        elseif ($Block['indent'] === $Line['indent'] and $placeholder = $this->blockList($Line))
+        elseif ($Block['indent'] === $Line['indent'] and $this->blockList($Line))
         {
             return null;
         }
-
-        unset($placeholder);
 
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
         {
