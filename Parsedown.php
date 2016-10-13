@@ -115,7 +115,7 @@ class Parsedown
     # Blocks
     #
 
-    protected function lines(array $lines)
+    protected function lines(array $lines, $parentType = null)
     {
         $CurrentBlock = null;
 
@@ -215,6 +215,12 @@ class Parsedown
             }
 
             $blockTypes = array_merge($highPriority, $blockTypes);
+
+            if ( $parentType === 'List' and ($a = array_search('List', $blockTypes)) !== false and ($b = array_search('Code', $blockTypes)) !== false and $a > $b and ($placeholder = $this->blockList($Line)))
+            {
+                unset($blockTypes[$b]);
+                array_splice($blockTypes, $a + 1, 0, 'Code');
+            }
 
             #
             # ~
@@ -1502,7 +1508,7 @@ class Parsedown
 
     protected function li($lines)
     {
-        $markup = $this->lines($lines);
+        $markup = $this->lines($lines, 'List');
 
         $trimmedMarkup = trim($markup);
 
