@@ -115,7 +115,7 @@ class Parsedown
     # Blocks
     #
 
-    protected function lines(array $lines, $parentType = null)
+    protected function lines(array $lines)
     {
         $CurrentBlock = null;
 
@@ -165,7 +165,7 @@ class Parsedown
 
             if (isset($CurrentBlock['continuable']))
             {
-                $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock, $parentType);
+                $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -188,38 +188,14 @@ class Parsedown
 
             # ~
 
-            $highPriority = array();
-
             $blockTypes = $this->unmarkedBlockTypes;
 
             if (isset($this->BlockTypes[$marker]))
             {
                 foreach ($this->BlockTypes[$marker] as $blockType)
                 {
-                    if 
-                    (
-                            isset($CurrentBlock['type']) 
-                        and $CurrentBlock['type'] === $blockType 
-                        and ! isset($CurrentBlock['interrupted']) 
-                        and isset($CurrentBlock['continuable']) 
-                        and ! isset($CurrentBlock['complete'])
-                    )
-                    {
-                        $highPriority[] = $CurrentBlock['type'];
-                    }
-                    else
-                    {
-                        $blockTypes []= $blockType;
-                    }
+                    $blockTypes []= $blockType;
                 }
-            }
-
-            $blockTypes = array_merge($highPriority, $blockTypes);
-
-            if ( $parentType === 'List' and ($a = array_search('List', $blockTypes)) !== false and ($b = array_search('Code', $blockTypes)) !== false and $a > $b and ($placeholder = $this->blockList($Line)))
-            {
-                unset($blockTypes[$b]);
-                array_splice($blockTypes, $a + 1, 0, 'Code');
             }
 
             #
@@ -449,7 +425,7 @@ class Parsedown
         }
     }
 
-    protected function blockFencedCodeContinue($Line, $Block, $parentType)
+    protected function blockFencedCodeContinue($Line, $Block)
     {
         if (isset($Block['complete']))
         {
@@ -470,11 +446,6 @@ class Parsedown
             $Block['complete'] = true;
 
             return $Block;
-        }
-
-        if ($parentType === 'List')
-        {
-            $Line['body'] = preg_replace('/^[ ]{0,'.min(4, $Line['indent']).'}/', '', $Line['body']);
         }
 
         $Block['element']['text']['text'] .= "\n".$Line['body'];;
@@ -531,16 +502,30 @@ class Parsedown
 
     protected function blockList($Line)
     {
-        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.\)]');
+        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]{1,9}[.\)]');
 
-        if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
+        if (preg_match('/^('.$pattern.'([ ]+|$))(.*)/', $Line['text'], $matches))
         {
+            $contentIndent = strlen($matches[2]);
+
+            if ($contentIndent >= 5)
+            {
+                $contentIndent -= 1;
+                $matches[1] = substr($matches[1], 0, -$contentIndent);
+                $matches[3] = str_repeat(' ', $contentIndent) . $matches[3];
+            }
+            elseif ($contentIndent === 0)
+            {
+                $matches[1] .= ' ';
+            }
+
             $Block = array(
                 'indent' => $Line['indent'],
                 'pattern' => $pattern,
                 'data' => array(
                     'type' => $name,
-                    'marker' => ($name === 'ul' ? stristr($matches[1], ' ', true) : substr(stristr($matches[1], ' ', true), -1)),
+                    'marker' => $matches[1],
+                    'markerType' => ($name === 'ul' ? strstr($matches[1], ' ', true) : substr(strstr($matches[1], ' ', true), -1)),
                 ),
                 'element' => array(
                     'name' => $name,
@@ -550,7 +535,7 @@ class Parsedown
 
             if($name === 'ol') 
             {
-                $listStart = stristr($matches[1], $Block['data']['marker'], true);
+                $listStart = ltrim(strstr($matches[1], $Block['data']['markerType'], true), '0') ?: '0';
                 
                 if($listStart !== '1')
                 {
@@ -561,9 +546,7 @@ class Parsedown
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
-                'text' => array(
-                    $matches[2],
-                ),
+                'text' => !empty($matches[3]) ? array($matches[3]) : array(),
             );
 
             $Block['element']['text'] []= & $Block['li'];
@@ -574,18 +557,25 @@ class Parsedown
 
     protected function blockListContinue($Line, array $Block)
     {
+        if (isset($Block['interrupted']) and empty($Block['li']['text']))
+        {
+            return null;
+        }
+
+        $requiredIndent = ($Block['indent'] + strlen($Block['data']['marker']));
+
         if (
-            $Block['indent'] === $Line['indent']
+            $Line['indent'] < $requiredIndent
             and
             (
                 (
                     $Block['data']['type'] === 'ol'
-                    and preg_match('/^[0-9]+'.preg_quote($Block['data']['marker']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                    and preg_match('/^[0-9]+'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
                 )
                 or
                 (
                     $Block['data']['type'] === 'ul'
-                    and preg_match('/^'.preg_quote($Block['data']['marker']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                    and preg_match('/^'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
                 )
             )
         )
@@ -601,6 +591,8 @@ class Parsedown
 
             $text = isset($matches[1]) ? $matches[1] : '';
 
+            $Block['indent'] = $Line['indent'];
+
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
@@ -613,7 +605,7 @@ class Parsedown
 
             return $Block;
         }
-        elseif ($Block['indent'] === $Line['indent'] and $placeholder = $this->blockList($Line))
+        elseif ($Line['indent'] < $requiredIndent and $this->blockList($Line))
         {
             return null;
         }
@@ -623,29 +615,27 @@ class Parsedown
             return $Block;
         }
 
-        if ( ! isset($Block['interrupted']))
+        if ($Line['indent'] >= $requiredIndent)
         {
-            $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent']).'}/', '', $Line['body']);
+            if (isset($Block['interrupted']))
+            {
+                $Block['li']['text'] []= '';
+
+                unset($Block['interrupted']);
+            }
+
+            $text = substr($Line['body'], $requiredIndent);
 
             $Block['li']['text'] []= $text;
 
             return $Block;
         }
 
-        if ($Line['indent'] > 0)
+        if ( ! isset($Block['interrupted']))
         {
-            $Block['li']['text'] []= '';
-
-            $text = preg_replace('/^[ ]{0,4}/', '', $Line['body']);
-
-            if ($placeholder = $this->blockList($Line))
-            {
-                $text = preg_replace('/^[ ]{0,'.min(4, $Block['indent']).'}/', '', $Line['body']);
-            }
+            $text = preg_replace('/^[ ]{0,'.$requiredIndent.'}/', '', $Line['body']);
 
             $Block['li']['text'] []= $text;
-
-            unset($Block['interrupted']);
 
             return $Block;
         }
@@ -1513,7 +1503,7 @@ class Parsedown
 
     protected function li($lines)
     {
-        $markup = $this->lines($lines, 'List');
+        $markup = $this->lines($lines);
 
         $trimmedMarkup = trim($markup);
 
