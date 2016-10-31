@@ -1,4 +1,4 @@
-<p>Without additional checks, this file causes a segfault in PHP &lt; 7.0, which is caused by Regex Backtrack*
+Without additional checks, this file causes a segfault in PHP < 7.0, which is caused by Regex Backtrack**
 example
 example
 example
@@ -2546,4 +2546,4 @@ example
 example
 example
 example
-example</p>
+example
