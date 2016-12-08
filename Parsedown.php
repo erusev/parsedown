@@ -21,6 +21,21 @@ class Parsedown
 
     # ~
 
+     /**
+     * Reads a file and returns the parsed markdown text.
+     * @param $file_path
+     * @return string
+     */
+    function read_file($file_path) {
+        if (file_exists($file_path)) {
+            $file_read = file_get_contents($file_path);
+            return $this->text($file_read);
+        }
+        return '';
+    }
+    
+    
+    
     function text($text)
     {
         # make sure no definitions are set
