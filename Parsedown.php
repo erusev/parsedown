@@ -483,6 +483,11 @@ class Parsedown
                 return;
             }
 
+            if ($Line['text'][$level] !== ' ')
+            {
+                return;
+            }
+
             $text = trim($Line['text'], '# ');
 
             $Block = array(
