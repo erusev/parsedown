@@ -163,6 +163,15 @@ class Parsedown
 
             # ~
 
+            $NewBlock = $this->block($Line, $CurrentBlock);
+
+            if (isset($CurrentBlock['indent']) and isset($NewBlock) and $NewBlock['indent'] < $CurrentBlock['indent'])
+            {
+                $CurrentBlock['interrupted'] = true;
+            }
+
+            # ~
+
             if (isset($CurrentBlock['continuable']))
             {
                 $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
@@ -189,47 +198,15 @@ class Parsedown
 
             # ~
 
-            $marker = $text[0];
+            $Block = $this->block($Line, $CurrentBlock, $Blocks);
 
-            # ~
-
-            $blockTypes = $this->unmarkedBlockTypes;
-
-            if (isset($this->BlockTypes[$marker]))
+            if (isset($Block))
             {
-                foreach ($this->BlockTypes[$marker] as $blockType)
-                {
-                    $blockTypes []= $blockType;
-                }
-            }
+                $CurrentBlock = $Block;
 
-            #
-            # ~
+                unset($Block);
 
-            foreach ($blockTypes as $blockType)
-            {
-                $Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
-
-                if (isset($Block))
-                {
-                    $Block['type'] = $blockType;
-
-                    if ( ! isset($Block['identified']))
-                    {
-                        $Blocks []= $CurrentBlock;
-
-                        $Block['identified'] = true;
-                    }
-
-                    if ($this->isBlockContinuable($blockType))
-                    {
-                        $Block['continuable'] = true;
-                    }
-
-                    $CurrentBlock = $Block;
-
-                    continue 2;
-                }
+                continue;
             }
 
             # ~
@@ -291,6 +268,66 @@ class Parsedown
     protected function isBlockCompletable($Type)
     {
         return method_exists($this, 'block'.$Type.'Complete');
+    }
+
+    protected function block($Line, $CurrentBlock = null, &$Blocks = null)
+    {
+        if ( ! isset($Blocks))
+        {
+            $Blocks = array();
+        }
+
+        # ~
+
+        $marker = $Line['text'][0];
+
+        # ~
+
+        $blockTypes = $this->unmarkedBlockTypes;
+
+        if (isset($this->BlockTypes[$marker]))
+        {
+            foreach ($this->BlockTypes[$marker] as $blockType)
+            {
+                $blockTypes []= $blockType;
+            }
+        }
+
+        #
+        # ~
+
+        $Block = null;
+
+        foreach ($blockTypes as $blockType)
+        {
+            $Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
+
+            if (isset($Block))
+            {
+                $Block['type'] = $blockType;
+
+                if ( ! isset($Block['identified']))
+                {
+                    $Blocks []= $CurrentBlock;
+
+                    $Block['identified'] = true;
+                }
+
+                if ($this->isBlockContinuable($blockType))
+                {
+                    $Block['continuable'] = true;
+                }
+
+                if ( ! isset($Block['indent']))
+                {
+                    $Block['indent'] = $Line['indent'];
+                }
+
+                continue;
+            }
+        }
+
+        return $Block;
     }
 
     #
