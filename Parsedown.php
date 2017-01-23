@@ -171,6 +171,11 @@ class Parsedown
                 {
                     $CurrentBlock = $Block;
 
+                    if ( ! isset($CurrentBlock['indent']))
+                    {
+                        $CurrentBlock['indent'] = $Line['indent'];
+                    }
+
                     continue;
                 }
                 else
@@ -506,8 +511,13 @@ class Parsedown
 
         if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
         {
+            $markerWhitespace = strlen($matches[1]);
+
+            $indent = $Line['indent'] + $markerWhitespace;
+
             $Block = array(
-                'indent' => $Line['indent'],
+                'indent' => $indent,
+                'markerWhitespace' => $markerWhitespace,
                 'pattern' => $pattern,
                 'element' => array(
                     'name' => $name,
@@ -541,8 +551,20 @@ class Parsedown
 
     protected function blockListContinue($Line, array $Block)
     {
-        if ($Block['indent'] === $Line['indent'] and preg_match('/^'.$Block['pattern'].'(?:[ ]+(.*)|$)/', $Line['text'], $matches))
+        if (preg_match('/^('.$Block['pattern'].')(?:[ ]+(.*)|$)/', $Line['text'], $matches))
         {
+            $text = isset($matches[2]) ? $matches[2] : '';
+
+            if (isset($Block['markerWhitespace']))
+            {
+                $Line['indent'] += strlen($matches[1]) + $Block['markerWhitespace'];
+            }
+
+            if ($Block['indent'] === $Line['indent'])
+            {
+                return;
+            }
+
             if (isset($Block['interrupted']))
             {
                 $Block['li']['text'] []= '';
@@ -551,8 +573,6 @@ class Parsedown
             }
 
             unset($Block['li']);
-
-            $text = isset($matches[1]) ? $matches[1] : '';
 
             $Block['li'] = array(
                 'name' => 'li',
