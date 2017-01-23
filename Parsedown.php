@@ -163,11 +163,14 @@ class Parsedown
 
             # ~
 
-            $NewBlock = $this->block($Line, $CurrentBlock);
-
-            if (isset($CurrentBlock['indent']) and isset($NewBlock) and $NewBlock['indent'] < $CurrentBlock['indent'])
+            if (isset($CurrentBlock))
             {
-                $CurrentBlock['interrupted'] = true;
+                $NewBlock = $this->block($Line, $CurrentBlock);
+
+                if (isset($CurrentBlock['indent']) and isset($NewBlock) and $NewBlock['indent'] < $CurrentBlock['indent'])
+                {
+                    $CurrentBlock['interrupted'] = true;
+                }
             }
 
             # ~
@@ -208,6 +211,7 @@ class Parsedown
 
                 continue;
             }
+
 
             # ~
 
@@ -323,11 +327,9 @@ class Parsedown
                     $Block['indent'] = $Line['indent'];
                 }
 
-                continue;
+                return $Block;
             }
         }
-
-        return $Block;
     }
 
     #
@@ -546,11 +548,13 @@ class Parsedown
     {
         list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.]');
 
-        if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
+        if (preg_match('/^('.$pattern.')([ ]+)(.*)/', $Line['text'], $matches))
         {
-            $markerWhitespace = strlen($matches[1]);
+            $markerLength = strlen($matches[1]);
 
-            $indent = $Line['indent'] + $markerWhitespace;
+            $markerWhitespace = strlen($matches[2]);
+
+            $indent = $Line['indent'] + $markerLength + $markerWhitespace;
 
             $Block = array(
                 'indent' => $indent,
@@ -576,7 +580,7 @@ class Parsedown
                 'name' => 'li',
                 'handler' => 'li',
                 'text' => array(
-                    $matches[2],
+                    $matches[3],
                 ),
             );
 
@@ -590,8 +594,6 @@ class Parsedown
     {
         if (preg_match('/^('.$Block['pattern'].')(?:[ ]+(.*)|$)/', $Line['text'], $matches))
         {
-            $text = isset($matches[2]) ? $matches[2] : '';
-
             if (isset($Block['markerWhitespace']))
             {
                 $Line['indent'] += strlen($matches[1]) + $Block['markerWhitespace'];
@@ -599,29 +601,29 @@ class Parsedown
 
             if ($Block['indent'] === $Line['indent'])
             {
-                return;
+                if (isset($Block['interrupted']))
+                {
+                    $Block['li']['text'] []= '';
+
+                    unset($Block['interrupted']);
+                }
+
+                unset($Block['li']);
+
+                $text = isset($matches[2]) ? $matches[2] : '';
+
+                $Block['li'] = array(
+                    'name' => 'li',
+                    'handler' => 'li',
+                    'text' => array(
+                        $text,
+                    ),
+                );
+
+                $Block['element']['text'] []= & $Block['li'];
+
+                return $Block;
             }
-
-            if (isset($Block['interrupted']))
-            {
-                $Block['li']['text'] []= '';
-
-                unset($Block['interrupted']);
-            }
-
-            unset($Block['li']);
-
-            $Block['li'] = array(
-                'name' => 'li',
-                'handler' => 'li',
-                'text' => array(
-                    $text,
-                ),
-            );
-
-            $Block['element']['text'] []= & $Block['li'];
-
-            return $Block;
         }
 
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
