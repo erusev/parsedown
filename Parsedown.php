@@ -279,6 +279,8 @@ class Parsedown
         if ( ! isset($Blocks))
         {
             $Blocks = array();
+
+            $this->PreserveState = true;
         }
 
         # ~
@@ -327,9 +329,13 @@ class Parsedown
                     $Block['indent'] = $Line['indent'];
                 }
 
+                $this->PreserveState = false;
+
                 return $Block;
             }
         }
+
+        $this->PreserveState = false;
     }
 
     #
@@ -842,7 +848,10 @@ class Parsedown
                 $Data['title'] = $matches[3];
             }
 
-            $this->DefinitionData['Reference'][$id] = $Data;
+            if ( ! $this->PreserveState)
+            {
+                $this->DefinitionData['Reference'][$id] = $Data;
+            }
 
             $Block = array(
                 'hidden' => true,
@@ -1306,7 +1315,10 @@ class Parsedown
                 return;
             }
 
-            $Definition = $this->DefinitionData['Reference'][$definition];
+            if ( ! $this->PreserveState)
+            {
+                $Definition = $this->DefinitionData['Reference'][$definition];
+            }
 
             $Element['attributes']['href'] = $Definition['url'];
             $Element['attributes']['title'] = $Definition['title'];
@@ -1569,6 +1581,8 @@ class Parsedown
     #
 
     protected $DefinitionData;
+
+    protected $PreserveState = false;
 
     #
     # Read-Only
