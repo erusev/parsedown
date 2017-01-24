@@ -603,7 +603,7 @@ class Parsedown
         {
             $Line['indent'] += strlen($matches[1]) + strlen($matches[2]);
 
-            if ($Block['indent'] - $Block['markerWhitespace'] <= $Line['indent'])
+            if ($Block['indent'] === $Line['indent'])
             {
                 if (isset($Block['interrupted']))
                 {
