@@ -361,6 +361,7 @@ class Parsedown
                         'text' => $text,
                     ),
                 ),
+                'indent' => 4,
             );
 
             return $Block;
