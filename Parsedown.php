@@ -448,7 +448,7 @@ class Parsedown
             return $Block;
         }
 
-        $Block['element']['text']['text'] .= "\n".$Line['body'];;
+        $Block['element']['text']['text'] .= "\n".$Line['body'];
 
         return $Block;
     }
