@@ -1,6 +1,6 @@
 <?php
 
-class ParsedownTest extends PHPUnit_Framework_TestCase
+class ParsedownTest extends \PHPUnit\Framework\TestCase
 {
     final function __construct($name = null, array $data = array(), $dataName = '')
     {

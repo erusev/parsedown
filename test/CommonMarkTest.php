@@ -8,7 +8,7 @@
  * @link http://commonmark.org/ CommonMark
  * @link http://git.io/8WtRvQ JavaScript test runner
  */
-class CommonMarkTest extends PHPUnit_Framework_TestCase
+class CommonMarkTest extends \PHPUnit\Framework\TestCase
 {
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/stmd/master/spec.txt';
 
