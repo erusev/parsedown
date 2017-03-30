@@ -21,6 +21,10 @@ Better Markdown Parser in PHP
 * Tested in 5.3 to 7.1 and in HHVM
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
+### Requirements
+
+Parsedown supports PHP 5.2+ and does not have any external dependencies.
+
 ### Installation
 
 Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown).
