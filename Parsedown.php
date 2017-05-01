@@ -89,7 +89,9 @@ class Parsedown
         'https://',
         '/',
         'ftp://',
-        'ftps://'
+        'ftps://',
+        'mailto:',
+        'data:image/png;',
     );
 
     #
@@ -359,8 +361,6 @@ class Parsedown
     {
         $text = $Block['element']['text']['text'];
 
-        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
-
         $Block['element']['text']['text'] = $text;
 
         return $Block;
@@ -422,7 +422,7 @@ class Parsedown
 
             if (isset($matches[1]))
             {
-                $class = 'language-'.htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+                $class = 'language-'.$matches[1];
 
                 $Element['attributes'] = array(
                     'class' => $class,
@@ -473,8 +473,6 @@ class Parsedown
     protected function blockFencedCodeComplete($Block)
     {
         $text = $Block['element']['text']['text'];
-
-        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
 
@@ -1091,7 +1089,6 @@ class Parsedown
         if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
         {
             $text = $matches[2];
-            $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
             $text = preg_replace("/[ ]*\n/", ' ', $text);
 
             return array(
@@ -1108,7 +1105,7 @@ class Parsedown
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<((mailto:)?\S+?@\S+?)>/i', $Excerpt['text'], $matches))
         {
-            $url = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+            $url = $matches[1];
 
             if ( ! isset($matches[2]))
             {
@@ -1270,32 +1267,6 @@ class Parsedown
             $Element['attributes']['title'] = $Definition['title'];
         }
 
-        if ( $this->safeLinksEnabled )
-        {
-            $matched = false;
-            foreach ( $this->safeLinksWhitelist as $scheme )
-            {
-                if ( stripos($Element['attributes']['href'], $scheme) === 0 )
-                {
-                    $matched = true;
-                    break;
-                }
-            }
-
-            if ( ! $matched )
-            {
-                return;
-            }
-        }
-
-        $Element['attributes']['href'] = htmlspecialchars($Element['attributes']['href'], ENT_QUOTES, 'UTF-8');
-        $Element['text'] = htmlspecialchars($Element['text'], ENT_QUOTES, 'UTF-8');
-
-        if ( $Element['attributes']['title'] !== null )
-        {
-            $Element['attributes']['title'] = htmlspecialchars($Element['attributes']['title'], ENT_QUOTES, 'UTF-8');
-        }
-
         return array(
             'extent' => $extent,
             'element' => $Element,
@@ -1384,7 +1355,7 @@ class Parsedown
 
         if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
         {
-            $url = htmlspecialchars($matches[0][0], ENT_QUOTES, 'UTF-8');
+            $url = $matches[0][0];
 
             $Inline = array(
                 'extent' => strlen($matches[0][0]),
@@ -1406,7 +1377,7 @@ class Parsedown
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\w+:\/{2}[^ >]+)>/i', $Excerpt['text'], $matches))
         {
-            $url = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+            $url = $matches[1];
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1444,6 +1415,8 @@ class Parsedown
 
     protected function element(array $Element)
     {
+        $Element = $this->sanitiseElement($Element);
+
         $markup = '<'.$Element['name'];
 
         if (isset($Element['attributes']))
@@ -1455,7 +1428,7 @@ class Parsedown
                     continue;
                 }
 
-                $markup .= ' '.$name.'="'.$value.'"';
+                $markup .= ' '.$name.'="'.self::escape($value).'"';
             }
         }
 
@@ -1469,7 +1442,7 @@ class Parsedown
             }
             else
             {
-                $markup .= $Element['text'];
+                $markup .= self::escape($Element['text'], true);
             }
 
             $markup .= '</'.$Element['name'].'>';
@@ -1528,9 +1501,54 @@ class Parsedown
         return $markup;
     }
 
+    protected function sanitiseElement(array $Element)
+    {
+        $safeUrlNameToAtt = array(
+            'a'   => 'href',
+            'img' => 'src',
+        );
+
+        if (isset($safeUrlNameToAtt[$Element['name']]))
+        {
+            $Element = $this->filterUnsafeUrlInAttribute($Element, $safeUrlNameToAtt[$Element['name']]);
+        }
+
+        return $Element;
+    }
+
+    protected function filterUnsafeUrlInAttribute(array $Element, $attribute)
+    {
+        if ($this->safeLinksEnabled)
+        {
+            $safe = false;
+
+            foreach ($this->safeLinksWhitelist as $scheme)
+            {
+                if (stripos($Element['attributes'][$attribute], $scheme) === 0)
+                {
+                    $safe = true;
+
+                    break;
+                }
+            }
+
+            if ( ! $safe)
+            {
+                unset($Element['attributes'][$attribute]);
+            }
+        }
+
+        return $Element;
+    }
+
     #
     # Static Methods
     #
+
+    protected static function escape($text, $allowQuotes = false)
+    {
+        return htmlspecialchars($text, $allowQuotes ? ENT_NOQUOTES : ENT_QUOTES, 'UTF-8');
+    }
 
     static function instance($name = 'default')
     {
