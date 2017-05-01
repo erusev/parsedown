@@ -1503,7 +1503,8 @@ class Parsedown
 
     protected function sanitiseElement(array $Element)
     {
-        $safeUrlNameToAtt = array(
+        static $badAttributeChars = "\"'= \t\n\r\0\x0B";
+        static $safeUrlNameToAtt  = array(
             'a'   => 'href',
             'img' => 'src',
         );
@@ -1515,13 +1516,21 @@ class Parsedown
 
         if ( ! empty($Element['attributes']))
         {
-            # clear out nulls
-            $Element['attributes'] = array_filter(
-                $Element['attributes'],
-                function ($v) {return $v !== null;}
-            );
+            foreach ($Element['attributes'] as $att => $val)
+            {
+                # clear out nulls
+                if ($val === null)
+                {
+                    unset($Element['attributes'][$att]);
+                }
+                # filter out badly parsed attribute
+                elseif (strpbrk($att, $badAttributeChars) !== false)
+                {
+                    unset($Element['attributes'][$att]);
+                }
+            }
 
-            $onEventAttributes = preg_grep('/^\s*+on/i', array_flip($Element['attributes']));
+            $onEventAttributes = preg_grep('/^on/i', array_flip($Element['attributes']));
 
             foreach ($onEventAttributes as $att)
             {
