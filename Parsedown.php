@@ -1513,6 +1513,22 @@ class Parsedown
             $Element = $this->filterUnsafeUrlInAttribute($Element, $safeUrlNameToAtt[$Element['name']]);
         }
 
+        if ( ! empty($Element['attributes']))
+        {
+            # clear out nulls
+            $Element['attributes'] = array_filter(
+                $Element['attributes'],
+                function ($v) {return $v !== null;}
+            );
+
+            $onEventAttributes = preg_grep('/^\s*+on/i', array_flip($Element['attributes']));
+
+            foreach ($onEventAttributes as $att)
+            {
+                unset($Element['attributes'][$att]);
+            }
+        }
+
         return $Element;
     }
 
