@@ -1,4 +1,4 @@
-> You might also like [Caret](http://caret.io?ref=parsedown) - our Markdown editor for Mac / Windows / Linux.
+> You might also like [Caret](http://caret.io) - our Markdown editor for Mac / Windows / Linux.
 
 ## Parsedown
 
