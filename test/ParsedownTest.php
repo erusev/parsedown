@@ -46,6 +46,8 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
         $expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
         $expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
 
+        $this->Parsedown->setMarkupEscaped($test === 'xss_text_encoding');
+
         $actualMarkup = $this->Parsedown->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
