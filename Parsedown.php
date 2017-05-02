@@ -93,7 +93,7 @@ class Parsedown
         'mailto:',
         'data:image/png;base64,',
         'data:image/gif;base64,',
-        'data:image/jpg;base64,',
+        'data:image/jpeg;base64,',
     );
 
     #
