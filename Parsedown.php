@@ -1530,9 +1530,9 @@ class Parsedown
                 }
             }
 
-            $onEventAttributes = preg_grep('/^on/i', array_flip($Element['attributes']));
+            $onEventAttributeKeys = preg_grep('/^on/i', array_keys($Element['attributes']));
 
-            foreach ($onEventAttributes as $att)
+            foreach ($onEventAttributeKeys as $att)
             {
                 unset($Element['attributes'][$att]);
             }
