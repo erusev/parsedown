@@ -91,7 +91,9 @@ class Parsedown
         'ftp://',
         'ftps://',
         'mailto:',
-        'data:image/png;',
+        'data:image/png;base64,',
+        'data:image/gif;base64,',
+        'data:image/jpg;base64,',
     );
 
     #
