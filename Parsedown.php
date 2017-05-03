@@ -87,7 +87,6 @@ class Parsedown
     protected $safeLinksWhitelist = array(
         'http://',
         'https://',
-        '/',
         'ftp://',
         'ftps://',
         'mailto:',
@@ -1554,7 +1553,14 @@ class Parsedown
 
             if ( ! $safe)
             {
-                unset($Element['attributes'][$attribute]);
+                $Element['attributes'][$attribute] = preg_replace_callback(
+                    '/[^\/#?&=%]++/',
+                    function (array $match)
+                    {
+                        return urlencode($match[0]);
+                    },
+                    $Element['attributes'][$attribute]
+                );
             }
         }
 
