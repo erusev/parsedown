@@ -1533,7 +1533,7 @@ class Parsedown
                     unset($Element['attributes'][$att]);
                 }
                 # dump onevent attribute
-                elseif (preg_match('/^on/i', $att))
+                elseif (self::striAtStart($att, 'on'))
                 {
                     unset($Element['attributes'][$att]);
                 }
@@ -1551,7 +1551,7 @@ class Parsedown
 
             foreach ($this->safeLinksWhitelist as $scheme)
             {
-                if (stripos($Element['attributes'][$attribute], $scheme) === 0)
+                if (self::striAtStart($Element['attributes'][$attribute], $scheme))
                 {
                     $safe = true;
 
@@ -1582,6 +1582,20 @@ class Parsedown
     protected static function escape($text, $allowQuotes = false)
     {
         return htmlspecialchars($text, $allowQuotes ? ENT_NOQUOTES : ENT_QUOTES, 'UTF-8');
+    }
+
+    protected static function striAtStart($string, $needle)
+    {
+        $len = strlen($needle);
+
+        if ($len > strlen($string))
+        {
+            return false;
+        }
+        else
+        {
+            return strtolower(substr($string, 0, $len)) === strtolower($needle);
+        }
     }
 
     static function instance($name = 'default')
