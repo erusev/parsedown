@@ -93,6 +93,14 @@ class Parsedown
         'data:image/png;base64,',
         'data:image/gif;base64,',
         'data:image/jpeg;base64,',
+        'irc:',
+        'ircs:',
+        'git:',
+        'ssh:',
+        'ftp:',
+        'ftps:',
+        'news:',
+        'steam:',
     );
 
     #
