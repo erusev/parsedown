@@ -75,6 +75,16 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+    function setImagesEnabled($imagesEnabled)
+    # Note: You should also set markupEscaped to disable images, otherwise people can still use <img> tags.
+    {
+        $this->imagesEnabled = $imagesEnabled;
+
+        return $this;
+    }
+
+    protected $imagesEnabled = true;
+
     #
     # Lines
     #
@@ -1156,7 +1166,7 @@ class Parsedown
 
     protected function inlineImage($Excerpt)
     {
-        if ( ! isset($Excerpt['text'][1]) or $Excerpt['text'][1] !== '[')
+        if ( ! isset($Excerpt['text'][1]) or $Excerpt['text'][1] !== '[' or ! $this->imagesEnabled )
         {
             return;
         }
