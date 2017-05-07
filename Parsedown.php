@@ -1547,29 +1547,23 @@ class Parsedown
     {
         if ($this->safeLinksEnabled)
         {
-            $safe = false;
-
             foreach ($this->safeLinksWhitelist as $scheme)
             {
                 if (self::striAtStart($Element['attributes'][$attribute], $scheme))
                 {
-                    $safe = true;
-
-                    break;
+                    return $Element;
                 }
             }
 
-            if ( ! $safe)
-            {
-                $Element['attributes'][$attribute] = preg_replace_callback(
-                    '/[^\/#?&=%]++/',
-                    function (array $match)
-                    {
-                        return urlencode($match[0]);
-                    },
-                    $Element['attributes'][$attribute]
-                );
-            }
+            $Element['attributes'][$attribute] = preg_replace_callback(
+                '/[^\/#?&=%]++/',
+                function (array $match)
+                {
+                    return urlencode($match[0]);
+                },
+                $Element['attributes'][$attribute]
+            );
+
         }
 
         return $Element;
