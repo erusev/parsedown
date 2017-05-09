@@ -97,8 +97,6 @@ class Parsedown
         'ircs:',
         'git:',
         'ssh:',
-        'ftp:',
-        'ftps:',
         'news:',
         'steam:',
     );
