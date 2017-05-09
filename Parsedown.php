@@ -75,14 +75,14 @@ class Parsedown
 
     protected $urlsLinked = true;
 
-    function setSafeLinksEnabled($safeLinksEnabled)
+    function setSafeMode($safeMode)
     {
-        $this->safeLinksEnabled = $safeLinksEnabled;
+        $this->safeMode = (bool) $safeMode;
 
         return $this;
     }
 
-    protected $safeLinksEnabled = true;
+    protected $safeMode;
 
     protected $safeLinksWhitelist = array(
         'http://',
@@ -378,7 +378,7 @@ class Parsedown
 
     protected function blockComment($Line)
     {
-        if ($this->markupEscaped)
+        if ($this->markupEscaped or $this->safeMode)
         {
             return;
         }
@@ -700,7 +700,7 @@ class Parsedown
 
     protected function blockMarkup($Line)
     {
-        if ($this->markupEscaped)
+        if ($this->markupEscaped or $this->safeMode)
         {
             return;
         }
@@ -1282,7 +1282,7 @@ class Parsedown
 
     protected function inlineMarkup($Excerpt)
     {
-        if ($this->markupEscaped or strpos($Excerpt['text'], '>') === false)
+        if ($this->markupEscaped or $this->safeMode or strpos($Excerpt['text'], '>') === false)
         {
             return;
         }
@@ -1543,7 +1543,7 @@ class Parsedown
 
     protected function filterUnsafeUrlInAttribute(array $Element, $attribute)
     {
-        if ($this->safeLinksEnabled)
+        if ($this->safeMode)
         {
             foreach ($this->safeLinksWhitelist as $scheme)
             {
