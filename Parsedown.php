@@ -1422,7 +1422,10 @@ class Parsedown
 
     protected function element(array $Element)
     {
-        $Element = $this->sanitiseElement($Element);
+        if ($this->safeMode)
+        {
+            $Element = $this->sanitiseElement($Element);
+        }
 
         $markup = '<'.$Element['name'];
 
@@ -1543,26 +1546,22 @@ class Parsedown
 
     protected function filterUnsafeUrlInAttribute(array $Element, $attribute)
     {
-        if ($this->safeMode)
+        foreach ($this->safeLinksWhitelist as $scheme)
         {
-            foreach ($this->safeLinksWhitelist as $scheme)
+            if (self::striAtStart($Element['attributes'][$attribute], $scheme))
             {
-                if (self::striAtStart($Element['attributes'][$attribute], $scheme))
-                {
-                    return $Element;
-                }
+                return $Element;
             }
-
-            $Element['attributes'][$attribute] = preg_replace_callback(
-                '/[^\/#?&=%]++/',
-                function (array $match)
-                {
-                    return urlencode($match[0]);
-                },
-                $Element['attributes'][$attribute]
-            );
-
         }
+
+        $Element['attributes'][$attribute] = preg_replace_callback(
+            '/[^\/#?&=%]++/',
+            function (array $match)
+            {
+                return urlencode($match[0]);
+            },
+            $Element['attributes'][$attribute]
+        );
 
         return $Element;
     }
