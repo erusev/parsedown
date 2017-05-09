@@ -1554,14 +1554,7 @@ class Parsedown
             }
         }
 
-        $Element['attributes'][$attribute] = preg_replace_callback(
-            '/[^\/#?&=%]++/',
-            function (array $match)
-            {
-                return urlencode($match[0]);
-            },
-            $Element['attributes'][$attribute]
-        );
+        $Element['attributes'][$attribute] = str_replace(':', '%3A', $Element['attributes'][$attribute]);
 
         return $Element;
     }
