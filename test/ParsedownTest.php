@@ -2,7 +2,7 @@
 
 class ParsedownTest extends PHPUnit_Framework_TestCase
 {
-    final function __construct($name = null, array $data = array(), $dataName = '')
+    final public function __construct($name = null, array $data = array(), $dataName = '')
     {
         $this->dirs = $this->initDirs();
         $this->Parsedown = $this->initParsedown();
@@ -37,7 +37,7 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
      * @param $test
      * @param $dir
      */
-    function test_($test, $dir)
+    public function test_($test, $dir)
     {
         $markdown = file_get_contents($dir . $test . '.md');
 
@@ -51,20 +51,17 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
 
-    function data()
+    public function data()
     {
         $data = array();
 
-        foreach ($this->dirs as $dir)
-        {
+        foreach ($this->dirs as $dir) {
             $Folder = new DirectoryIterator($dir);
 
-            foreach ($Folder as $File)
-            {
+            foreach ($Folder as $File) {
                 /** @var $File DirectoryIterator */
 
-                if ( ! $File->isFile())
-                {
+                if (! $File->isFile()) {
                     continue;
                 }
 
@@ -72,15 +69,13 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
 
                 $extension = pathinfo($filename, PATHINFO_EXTENSION);
 
-                if ($extension !== 'md')
-                {
+                if ($extension !== 'md') {
                     continue;
                 }
 
                 $basename = $File->getBasename('.md');
 
-                if (file_exists($dir . $basename . '.html'))
-                {
+                if (file_exists($dir . $basename . '.html')) {
                     $data []= array($basename, $dir);
                 }
             }

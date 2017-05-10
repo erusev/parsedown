@@ -18,7 +18,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
      * @param $markdown
      * @param $expectedHtml
      */
-    function test_($section, $markdown, $expectedHtml)
+    public function test_($section, $markdown, $expectedHtml)
     {
         $Parsedown = new Parsedown();
         $Parsedown->setUrlsLinked(false);
@@ -29,7 +29,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedHtml, $actualHtml);
     }
 
-    function data()
+    public function data()
     {
         $spec = file_get_contents(self::SPEC_URL);
         $spec = strstr($spec, '<!-- END TESTS -->', true);
@@ -39,7 +39,7 @@ class CommonMarkTest extends PHPUnit_Framework_TestCase
 
         preg_replace_callback(
             '/^\.\n([\s\S]*?)^\.\n([\s\S]*?)^\.$|^#{1,6} *(.*)$/m',
-            function($matches) use ( & $tests, & $currentSection, & $testCount) {
+            function ($matches) use (& $tests, & $currentSection, & $testCount) {
                 if (isset($matches[3]) and $matches[3]) {
                     $currentSection = $matches[3];
                 } else {
