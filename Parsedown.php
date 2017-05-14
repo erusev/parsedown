@@ -1253,7 +1253,7 @@ class Parsedown
             $Element['attributes']['title'] = $Definition['title'];
         }
 
-        $Element['attributes']['href'] = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Element['attributes']['href']);
+        $Element['attributes']['href'] = str_replace('<', '&lt;', $Element['attributes']['href']);
 
         return array(
             'extent' => $extent,
