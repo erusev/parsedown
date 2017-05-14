@@ -1219,7 +1219,14 @@ class Parsedown
 
         if (preg_match('/^[(]\s*+((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*"|\'[^\']*\'))?\s*[)]/', $remainder, $matches))
         {
-            $Element['attributes']['href'] = $matches[1];
+            $TentativeHRef = $matches[1];
+            if ($TentativeHRef[0] == "+")
+            {
+				$Element['attributes']['target'] = "_blank";
+				$Element['attributes']['href'] = substr($TentativeHRef, 1);
+            }	else	{
+	            $Element['attributes']['href'] = $TentativeHRef;
+	        }
 
             if (isset($matches[2]))
             {
