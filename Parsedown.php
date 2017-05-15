@@ -165,7 +165,7 @@ class Parsedown
 
             if (isset($CurrentBlock['continuable']))
             {
-                $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
+                $Block = call_user_func_array(array($this, 'block'.$CurrentBlock['type'].'Continue'), array($Line, $CurrentBlock));
 
                 if (isset($Block))
                 {
@@ -177,7 +177,7 @@ class Parsedown
                 {
                     if ($this->isBlockCompletable($CurrentBlock['type']))
                     {
-                        $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
+                        $CurrentBlock = call_user_func(array($this, 'block'.$CurrentBlock['type'].'Complete'), $CurrentBlock);
                     }
                 }
             }
@@ -203,7 +203,7 @@ class Parsedown
 
             foreach ($blockTypes as $blockType)
             {
-                $Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
+                $Block = call_user_func_array(array($this, 'block'.$blockType), array($Line, $CurrentBlock));
 
                 if (isset($Block))
                 {
@@ -247,7 +247,7 @@ class Parsedown
 
         if (isset($CurrentBlock['continuable']) and $this->isBlockCompletable($CurrentBlock['type']))
         {
-            $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
+            $CurrentBlock = call_user_func(array($this, 'block'.$CurrentBlock['type'].'Complete'), $CurrentBlock);
         }
 
         # ~
@@ -1013,7 +1013,7 @@ class Parsedown
 
             foreach ($this->InlineTypes[$marker] as $inlineType)
             {
-                $Inline = $this->{'inline'.$inlineType}($Excerpt);
+                $Inline = call_user_func(array($this, 'inline'.$inlineType), $Excerpt);
 
                 if ( ! isset($Inline))
                 {
@@ -1422,7 +1422,7 @@ class Parsedown
 
             if (isset($Element['handler']))
             {
-                $markup .= $this->{$Element['handler']}($Element['text']);
+                $markup .= call_user_func(array($this, $Element['handler']), $Element['text']);
             }
             else
             {
