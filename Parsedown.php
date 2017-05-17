@@ -259,12 +259,28 @@ class Parsedown
         # ~
 
         $markup = '';
+        $onetimeEvents = array();
 
         foreach ($Blocks as $Block)
         {
             if (isset($Block['hidden']))
             {
                 continue;
+            }
+
+            if (isset($Block['type']) and isset($this->EventListeners[$Block['type']]))
+            {
+                foreach ($this->EventListeners[$Block['type']] as $listener)
+                {
+                    $hash = spl_object_hash($listener['callback']);
+                    $executed = empty($onetimeEvents[$hash]);
+
+                    if ($executed)
+                    {
+                        $listener['callback']($Block);
+                        $onetimeEvents[$hash] = $listener['onetime'] and !$executed;
+                    }
+                }
             }
 
             $markup .= "\n";
@@ -286,6 +302,70 @@ class Parsedown
     protected function isBlockCompletable($Type)
     {
         return method_exists($this, 'block'.$Type.'Complete');
+    }
+
+    #
+    # Unique Block Types
+
+    private $UniqueBlockNames = array();
+
+    public function getUniqueBlockNames()
+    {
+        if (empty($this->UniqueBlockNames))
+        {
+            foreach ($this->BlockTypes as $BlockTypes)
+            {
+                $this->UniqueBlockNames = array_merge($this->UniqueBlockNames, $BlockTypes);
+            }
+
+            $this->UniqueBlockNames = array_unique($this->UniqueBlockNames);
+        }
+
+        return $this->UniqueBlockNames;
+    }
+
+    #
+    # Events
+
+    private $EventListeners = array();
+
+    /**
+     * @param string $Event
+     *   Event name. All available events that can be returned by {@link getUniqueBlockNames()} method.
+     * @param callable $Callback
+     *   Callback function.
+     * @param bool $Onetime
+     *   Execute callback function only once.
+     *
+     * @throws \InvalidArgumentException
+     *   When you trying to attach non-existent event.
+     * @throws \RuntimeException
+     *   When $Callback is not valid callback function.
+     *
+     * @return self
+     */
+    public function addEventListener($Event, $Callback, $Onetime = false) {
+        $BlockTypes = array_flip($this->getUniqueBlockNames());
+
+        if (!isset($BlockTypes[$Event]))
+        {
+            throw new \InvalidArgumentException(sprintf(
+                'You trying to attach non-existent event. Available events are: "%s"',
+                implode('", "', array_keys($BlockTypes))
+            ));
+        }
+
+        if (!is_callable($Callback))
+        {
+            throw new \RuntimeException('Invalid callback function was specified!');
+        }
+
+        $this->EventListeners[$Event][] = array(
+            'callback' => $Callback,
+            'onetime' => (bool) $Onetime,
+        );
+
+        return $this;
     }
 
     #
