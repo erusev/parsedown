@@ -21,7 +21,7 @@ class Parsedown
 
     # ~
 
-    function text($text)
+    public function text($text)
     {
         # make sure no definitions are set
         $this->DefinitionData = array();
