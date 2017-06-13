@@ -1460,26 +1460,33 @@ class Parsedown
             $Element = $this->sanitiseElement($Element);
         }
 
-        $markup = '<'.$Element['name'];
+        $hasName = isset($Element['name']);
 
-        if (isset($Element['attributes']))
+        $markup = '';
+
+        if ($hasName)
         {
-            foreach ($Element['attributes'] as $name => $value)
-            {
-                if ($value === null)
-                {
-                    continue;
-                }
+            $markup .= '<'.$Element['name'];
 
-                $markup .= ' '.$name.'="'.self::escape($value).'"';
+            if (isset($Element['attributes']))
+            {
+                foreach ($Element['attributes'] as $name => $value)
+                {
+                    if ($value === null)
+                    {
+                        continue;
+                    }
+
+                    $markup .= ' '.$name.'="'.self::escape($value).'"';
+                }
             }
         }
 
         if (isset($Element['text']))
         {
-            $markup .= '>';
+            $markup .= $hasName ? '>' : '';
 
-            if (!isset($Element['nonNestables'])) 
+            if (!isset($Element['nonNestables']))
             {
                 $Element['nonNestables'] = array();
             }
@@ -1493,9 +1500,9 @@ class Parsedown
                 $markup .= self::escape($Element['text'], true);
             }
 
-            $markup .= '</'.$Element['name'].'>';
+            $markup .= $hasName ? '</'.$Element['name'].'>' : '';
         }
-        else
+        elseif ($hasName)
         {
             $markup .= ' />';
         }
