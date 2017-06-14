@@ -6,13 +6,16 @@ php:
   - 5.6
   - 5.5
   - 5.4
-  - 5.3
   - hhvm
   - nightly
 
 matrix:
+  include:
+    - php: 5.3
+      dist: precise
   fast_finish: true
   allow_failures:
     - php: nightly
 
+dist: trusty
 sudo: false
