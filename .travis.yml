@@ -8,6 +8,7 @@ php:
   - 5.4
   - hhvm
   - nightly
+  - hhvm-nightly
 
 matrix:
   include:
@@ -16,6 +17,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - php: nightly
+    - php: hhvm-nightly
 
 dist: trusty
 sudo: false
