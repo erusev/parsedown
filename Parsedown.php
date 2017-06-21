@@ -515,10 +515,10 @@ class Parsedown
                 ),
             );
 
-            if($name === 'ol') 
+            if($name === 'ol')
             {
                 $listStart = stristr($matches[0], '.', true);
-                
+
                 if($listStart !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $listStart);
@@ -696,32 +696,6 @@ class Parsedown
                 'name' => $matches[1],
                 'markup' => $Line['text'],
             );
-
-            $length = strlen($matches[0]);
-
-            $remainder = substr($Line['text'], $length);
-
-            if (trim($remainder) === '')
-            {
-                if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
-                {
-                    $Block['closed'] = true;
-
-                    $Block['void'] = true;
-                }
-            }
-            else
-            {
-                if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
-                {
-                    return;
-                }
-
-                if (preg_match('/<\/'.$matches[1].'>[ ]*$/i', $remainder))
-                {
-                    $Block['closed'] = true;
-                }
-            }
 
             return $Block;
         }
