@@ -413,7 +413,7 @@ class Parsedown
     protected function blockFencedCode($Line)
     {
         $firstCharacter = self::substr($Line['text'], 0, 1);
-        if (preg_match('/^[' . $firstCharacter . ']{3,}[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^[' . preg_quote($firstCharacter, '/') . ']{3,}[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches))
         {
             $Element = array(
                 'name' => 'code',
@@ -456,7 +456,7 @@ class Parsedown
             unset($Block['interrupted']);
         }
 
-        if (preg_match('/^'.$Block['char'].'{3,}[ ]*$/', $Line['text']))
+        if (preg_match('/^' . $Block['char'] . '{3,}[ ]*$/', $Line['text']))
         {
             $Block['element']['text']['text'] = self::substr($Block['element']['text']['text'], 1);
 
@@ -660,7 +660,8 @@ class Parsedown
 
     protected function blockRule($Line)
     {
-        if (preg_match('/^([' . self::substr($Line['text'], 0, 1) . '])([ ]*\1){2,}[ ]*$/', $Line['text']))
+        $firstCharacter = self::substr($Line['text'], 0, 1);
+        if (preg_match('/^([' . preg_quote($firstCharacter, '/') . '])([ ]*\1){2,}[ ]*$/', $Line['text']))
         {
             $Block = array(
                 'element' => array(
@@ -1037,9 +1038,9 @@ class Parsedown
 
     protected function inlineCode($Excerpt)
     {
-        $marker = $Excerpt['text'][0];
-
-        if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
+        $marker = self::substr($Excerpt['text'], 0, 1);
+        $quotedMarker = preg_quote($marker, '/');
+        if (preg_match('/^(' . $quotedMarker . '+)[ ]*(.+?)[ ]*(?<!' . $quotedMarker . ')\1(?!' . $quotedMarker .')/s', $Excerpt['text'], $matches))
         {
             $text = $matches[2];
             $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
