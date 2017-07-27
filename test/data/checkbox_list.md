@@ -1,0 +1,6 @@
+- [ ] foo
+- [x] bar
+- [x] foo
+  - [ ] bar
+  - [x] baz
+- [ ] bim
