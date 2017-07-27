@@ -515,15 +515,17 @@ class Parsedown
                 ),
             );
 
-            if($name === 'ol') 
+            if($name === 'ol')
             {
                 $listStart = stristr($matches[0], '.', true);
-                
+
                 if($listStart !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $listStart);
                 }
             }
+
+            $this->checkbox($matches[2],$attributes);
 
             $Block['li'] = array(
                 'name' => 'li',
@@ -532,7 +534,7 @@ class Parsedown
                     $matches[2],
                 ),
             );
-
+            $attributes && $Block['li']['attributes'] = $attributes;
             $Block['element']['text'] []= & $Block['li'];
 
             return $Block;
@@ -554,6 +556,8 @@ class Parsedown
 
             $text = isset($matches[1]) ? $matches[1] : '';
 
+            $this->checkbox($text,$attributes);
+
             $Block['li'] = array(
                 'name' => 'li',
                 'handler' => 'li',
@@ -561,6 +565,7 @@ class Parsedown
                     $text,
                 ),
             );
+            $attributes && $Block['li']['attributes'] = $attributes;
 
             $Block['element']['text'] []= & $Block['li'];
 
@@ -1453,8 +1458,19 @@ class Parsedown
         return $markup;
     }
 
+    #
+    # - [x] AND - [ ]
+    protected function checkbox(&$text,&$attributes)
+    {
+        if(strpos($text,'[x]')!==false||strpos($text,'[ ]')!==false){
+            $attributes = array("style"=>"list-style: none;");
+            $text = str_replace(array('[x]','[ ]'), array(
+                '<input type="checkbox" checked="true" disabled="true">',
+                '<input type="checkbox" disabled="true">',
+            ), $text);
+        }
+    }
     # ~
-
     protected function li($lines)
     {
         $markup = $this->lines($lines);
