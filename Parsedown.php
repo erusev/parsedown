@@ -1453,11 +1453,27 @@ class Parsedown
         return $markup;
     }
 
+    # - [x] AND - [ ]
+
+    protected function checkbox($markup)
+    {
+        if (strpos($markup,'[x]') !== false or strpos($markup,'[ ]') !== false)
+        {
+            $markup = str_replace(array('[x]','[ ]'), array(
+                '<input type="checkbox" checked="" disabled="">',
+                '<input type="checkbox" disabled="">',
+            ), $markup);
+        }
+	
+        return $markup;
+    }
     # ~
 
     protected function li($lines)
     {
         $markup = $this->lines($lines);
+
+        $markup = $this->checkbox($markup);
 
         $trimmedMarkup = trim($markup);
 
