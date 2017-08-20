@@ -12,3 +12,7 @@ tilde
 ```php
 echo 'language identifier';
 ```
+
+```c#
+echo 'language identifier with non words';
+```
