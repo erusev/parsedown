@@ -21,6 +21,8 @@ Better Markdown Parser in PHP
 * Tested in 5.3 to 7.1 and in HHVM
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
+Note that when you deal with untrusted content (ex: user commnets) you should also use a HTML sanitizer like [HTML Purifier](http://htmlpurifier.org/).
+
 ### Installation
 
 Include `Parsedown.php` or install [the composer package](https://packagist.org/packages/erusev/parsedown).
