@@ -37,7 +37,7 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [t
 
 ### Security
 
-Parsedownw does not sanitize the outut HTML. When you deal with untrusted content (ex: user commnets) you should also use a HTML sanitizer like [HTML Purifier](http://htmlpurifier.org/).
+Parsedown does not sanitize the HTML that it generates. When you deal with untrusted content (ex: user commnets) you should also use a HTML sanitizer like [HTML Purifier](http://htmlpurifier.org/).
 
 ### Questions
 
