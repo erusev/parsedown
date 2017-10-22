@@ -10,7 +10,8 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
     }
 
-    private $dirs, $Parsedown;
+    private $dirs;
+    protected $Parsedown;
 
     /**
      * @return array

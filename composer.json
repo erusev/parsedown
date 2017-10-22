@@ -15,6 +15,10 @@
     "require": {
         "php": ">=5.3.0"
     },
+    "suggest": {
+        "ext-mbstring": "Required when the source files or the system is not utf-8 compliant.",
+        "ext-iconv": "When mbstring is not available, iconv may be a fallback required for utf-8 compliance."
+    },
     "autoload": {
         "psr-0": {"Parsedown": ""}
     }
