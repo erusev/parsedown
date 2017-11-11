@@ -14,5 +14,10 @@ matrix:
   fast_finish: true
   allow_failures:
     - php: nightly
+    - php: 5.3
 
-sudo: false
+before_script:
+  - composer install --prefer-dist --no-interaction --no-progress
+
+script:
+  - vendor/bin/phpunit
