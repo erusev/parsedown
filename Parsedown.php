@@ -515,10 +515,10 @@ class Parsedown
                 ),
             );
 
-            if($name === 'ol') 
+            if($name === 'ol')
             {
                 $listStart = stristr($matches[0], '.', true);
-                
+
                 if($listStart !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $listStart);
@@ -848,27 +848,30 @@ class Parsedown
             $header = trim($header, '|');
 
             $headerCells = explode('|', $header);
+            $headerHasContent = strlen($header) > 0;
 
-            foreach ($headerCells as $index => $headerCell)
-            {
-                $headerCell = trim($headerCell);
-
-                $HeaderElement = array(
-                    'name' => 'th',
-                    'text' => $headerCell,
-                    'handler' => 'line',
-                );
-
-                if (isset($alignments[$index]))
+            if ($headerHasContent) {
+                foreach ($headerCells as $index => $headerCell)
                 {
-                    $alignment = $alignments[$index];
+                    $headerCell = trim($headerCell);
 
-                    $HeaderElement['attributes'] = array(
-                        'style' => 'text-align: '.$alignment.';',
+                    $HeaderElement = array(
+                        'name' => 'th',
+                        'text' => $headerCell,
+                        'handler' => 'line',
                     );
-                }
 
-                $HeaderElements []= $HeaderElement;
+                    if (isset($alignments[$index]))
+                    {
+                        $alignment = $alignments[$index];
+
+                        $HeaderElement['attributes'] = array(
+                            'style' => 'text-align: '.$alignment.';',
+                        );
+                    }
+
+                    $HeaderElements []= $HeaderElement;
+                }
             }
 
             # ~
@@ -882,21 +885,24 @@ class Parsedown
                 ),
             );
 
-            $Block['element']['text'] []= array(
-                'name' => 'thead',
-                'handler' => 'elements',
-            );
+            if ($headerHasContent) {
+                $Block['element']['text'] [] = array(
+                    'name' => 'thead',
+                    'handler' => 'elements',
+                    'text' => array(
+                        array(
+                            'name' => 'tr',
+                            'handler' => 'elements',
+                            'text' => $HeaderElements,
+                        )
+                    )
+                );
+            }
 
             $Block['element']['text'] []= array(
                 'name' => 'tbody',
                 'handler' => 'elements',
                 'text' => array(),
-            );
-
-            $Block['element']['text'][0]['text'] []= array(
-                'name' => 'tr',
-                'handler' => 'elements',
-                'text' => $HeaderElements,
             );
 
             return $Block;
@@ -947,7 +953,8 @@ class Parsedown
                 'text' => $Elements,
             );
 
-            $Block['element']['text'][1]['text'] []= $Element;
+            $tbody = count($Block['element']['text']) == 2 ? 1 : 0;
+            $Block['element']['text'][$tbody]['text'] []= $Element;
 
             return $Block;
         }
