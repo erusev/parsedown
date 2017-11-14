@@ -1,24 +1,28 @@
 language: php
 
-php:
-  - 7.0
-  - 5.6
-  - 5.5
-  - 5.4
-  - 5.3
-  - nightly
-  - hhvm
-  - hhvm-nightly
+dist: trusty
+sudo: false
 
 matrix:
+  include:
+    - php: 5.3
+      dist: precise
+    - php: 5.4
+    - php: 5.5
+    - php: 5.6
+    - php: 7.0
+    - php: 7.1
+    - php: nightly
+    - php: hhvm
+    - php: hhvm-nightly
   fast_finish: true
   allow_failures:
     - php: nightly
     - php: hhvm-nightly
 
 install:
-  - composer install
+  - composer install --prefer-dist --no-interaction --no-progress
 
 script:
-  - phpunit
-  - phpunit test/CommonMarkTestWeak.php || true
+  - vendor/bin/phpunit
+  - vendor/bin/phpunit test/CommonMarkTestWeak.php || true
