@@ -147,7 +147,7 @@ class Parsedown
                     }
                     elseif(function_exists('iconv_strlen'))
                     {
-                        $shortage = 4 - iconv_strlen($line, 'UTF-8') % 4;
+                        $shortage = 4 - @iconv_strlen($line, 'UTF-8') % 4;
                     }
                     else
                     {
