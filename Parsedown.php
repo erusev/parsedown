@@ -141,11 +141,11 @@ class Parsedown
 
                 foreach ($parts as $part)
                 {
-                    if(function_exists(mb_strlen))
+                    if(function_exists('mb_strlen'))
                     {
                         $shortage = 4 - mb_strlen($line, 'UTF-8') % 4;
                     }
-                    elseif(function_exists(iconv_strlen))
+                    elseif(function_exists('iconv_strlen'))
                     {
                         $shortage = 4 - iconv_strlen($line, 'UTF-8') % 4;
                     }
