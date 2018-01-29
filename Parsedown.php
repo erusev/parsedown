@@ -309,6 +309,9 @@ class Parsedown
                     'text' => array(
                         'name' => 'code',
                         'text' => $text,
+                        'attributes' => array(
+                            'v-pre' => ''
+                        ),
                     ),
                 ),
             );
@@ -401,14 +404,18 @@ class Parsedown
             $Element = array(
                 'name' => 'code',
                 'text' => '',
+                'attributes' => array(
+                    'v-pre' => ''
+                ),
             );
 
             if (isset($matches[1]))
             {
                 $class = 'language-'.$matches[1];
 
-                $Element['attributes'] = array(
-                    'class' => $class,
+                $Element['attributes'] = array_merge(
+                    $Element['attributes'],
+                    array('class' => $class)
                 );
             }
 
@@ -1082,6 +1089,9 @@ class Parsedown
                 'element' => array(
                     'name' => 'code',
                     'text' => $text,
+                    'attributes' => array(
+                        'v-pre' => ''
+                    ),
                 ),
             );
         }
