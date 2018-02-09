@@ -41,6 +41,9 @@ class Parsedown
         # trim line breaks
         $markup = trim($markup, "\n");
 
+        # avoid XSS in links via javascript:dosomething()
+        $markup = str_ireplace('<a href="javascript:', '<a href="', $markup);
+
         return $markup;
     }
 
@@ -1219,7 +1222,7 @@ class Parsedown
 
         if (preg_match('/^[(]\s*+((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*"|\'[^\']*\'))?\s*[)]/', $remainder, $matches))
         {
-            $Element['attributes']['href'] = $matches[1];
+            $Element['attributes']['href'] = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
 
             if (isset($matches[2]))
             {
