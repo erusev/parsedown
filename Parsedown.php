@@ -163,6 +163,18 @@ class Parsedown
 
             # ~
 
+            if (isset($CurrentBlock))
+            {
+                $NewBlock = $this->block($Line, $CurrentBlock);
+
+                if (isset($CurrentBlock['indent']) and isset($NewBlock) and $NewBlock['indent'] < $CurrentBlock['indent'])
+                {
+                    $CurrentBlock['interrupted'] = true;
+                }
+            }
+
+            # ~
+
             if (isset($CurrentBlock['continuable']))
             {
                 $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
@@ -170,6 +182,11 @@ class Parsedown
                 if (isset($Block))
                 {
                     $CurrentBlock = $Block;
+
+                    if ( ! isset($CurrentBlock['indent']))
+                    {
+                        $CurrentBlock['indent'] = $Line['indent'];
+                    }
 
                     continue;
                 }
@@ -184,48 +201,17 @@ class Parsedown
 
             # ~
 
-            $marker = $text[0];
+            $Block = $this->block($Line, $CurrentBlock, $Blocks);
 
-            # ~
-
-            $blockTypes = $this->unmarkedBlockTypes;
-
-            if (isset($this->BlockTypes[$marker]))
+            if (isset($Block))
             {
-                foreach ($this->BlockTypes[$marker] as $blockType)
-                {
-                    $blockTypes []= $blockType;
-                }
+                $CurrentBlock = $Block;
+
+                unset($Block);
+
+                continue;
             }
 
-            #
-            # ~
-
-            foreach ($blockTypes as $blockType)
-            {
-                $Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
-
-                if (isset($Block))
-                {
-                    $Block['type'] = $blockType;
-
-                    if ( ! isset($Block['identified']))
-                    {
-                        $Blocks []= $CurrentBlock;
-
-                        $Block['identified'] = true;
-                    }
-
-                    if ($this->isBlockContinuable($blockType))
-                    {
-                        $Block['continuable'] = true;
-                    }
-
-                    $CurrentBlock = $Block;
-
-                    continue 2;
-                }
-            }
 
             # ~
 
@@ -288,6 +274,70 @@ class Parsedown
         return method_exists($this, 'block'.$Type.'Complete');
     }
 
+    protected function block($Line, $CurrentBlock = null, &$Blocks = null)
+    {
+        if ( ! isset($Blocks))
+        {
+            $Blocks = array();
+
+            $this->PreserveState = true;
+        }
+
+        # ~
+
+        $marker = $Line['text'][0];
+
+        # ~
+
+        $blockTypes = $this->unmarkedBlockTypes;
+
+        if (isset($this->BlockTypes[$marker]))
+        {
+            foreach ($this->BlockTypes[$marker] as $blockType)
+            {
+                $blockTypes []= $blockType;
+            }
+        }
+
+        #
+        # ~
+
+        $Block = null;
+
+        foreach ($blockTypes as $blockType)
+        {
+            $Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
+
+            if (isset($Block))
+            {
+                $Block['type'] = $blockType;
+
+                if ( ! isset($Block['identified']))
+                {
+                    $Blocks []= $CurrentBlock;
+
+                    $Block['identified'] = true;
+                }
+
+                if ($this->isBlockContinuable($blockType))
+                {
+                    $Block['continuable'] = true;
+                }
+
+                if ( ! isset($Block['indent']))
+                {
+                    $Block['indent'] = $Line['indent'];
+                }
+
+                $this->PreserveState = false;
+
+                return $Block;
+            }
+        }
+
+        $this->PreserveState = false;
+    }
+
     #
     # Code
 
@@ -311,6 +361,7 @@ class Parsedown
                         'text' => $text,
                     ),
                 ),
+                'indent' => 4,
             );
 
             return $Block;
@@ -504,10 +555,17 @@ class Parsedown
     {
         list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]+[.]');
 
-        if (preg_match('/^('.$pattern.'[ ]+)(.*)/', $Line['text'], $matches))
+        if (preg_match('/^('.$pattern.')([ ]+)(.*)/', $Line['text'], $matches))
         {
+            $markerLength = strlen($matches[1]);
+
+            $markerWhitespace = strlen($matches[2]);
+
+            $indent = $Line['indent'] + $markerLength + $markerWhitespace;
+
             $Block = array(
-                'indent' => $Line['indent'],
+                'indent' => $indent,
+                'markerWhitespace' => $markerWhitespace,
                 'pattern' => $pattern,
                 'element' => array(
                     'name' => $name,
@@ -529,7 +587,7 @@ class Parsedown
                 'name' => 'li',
                 'handler' => 'li',
                 'text' => array(
-                    $matches[2],
+                    $matches[3],
                 ),
             );
 
@@ -541,30 +599,35 @@ class Parsedown
 
     protected function blockListContinue($Line, array $Block)
     {
-        if ($Block['indent'] === $Line['indent'] and preg_match('/^'.$Block['pattern'].'(?:[ ]+(.*)|$)/', $Line['text'], $matches))
+        if (preg_match('/^('.$Block['pattern'].')([ ]+)(?:(.*)|$)/', $Line['text'], $matches))
         {
-            if (isset($Block['interrupted']))
+            $Line['indent'] += strlen($matches[1]) + strlen($matches[2]);
+
+            if ($Block['indent'] === $Line['indent'])
             {
-                $Block['li']['text'] []= '';
+                if (isset($Block['interrupted']))
+                {
+                    $Block['li']['text'] []= '';
 
-                unset($Block['interrupted']);
+                    unset($Block['interrupted']);
+                }
+
+                unset($Block['li']);
+
+                $text = isset($matches[3]) ? $matches[3] : '';
+
+                $Block['li'] = array(
+                    'name' => 'li',
+                    'handler' => 'li',
+                    'text' => array(
+                        $text,
+                    ),
+                );
+
+                $Block['element']['text'] []= & $Block['li'];
+
+                return $Block;
             }
-
-            unset($Block['li']);
-
-            $text = isset($matches[1]) ? $matches[1] : '';
-
-            $Block['li'] = array(
-                'name' => 'li',
-                'handler' => 'li',
-                'text' => array(
-                    $text,
-                ),
-            );
-
-            $Block['element']['text'] []= & $Block['li'];
-
-            return $Block;
         }
 
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
@@ -783,7 +846,10 @@ class Parsedown
                 $Data['title'] = $matches[3];
             }
 
-            $this->DefinitionData['Reference'][$id] = $Data;
+            if ( ! $this->PreserveState)
+            {
+                $this->DefinitionData['Reference'][$id] = $Data;
+            }
 
             $Block = array(
                 'hidden' => true,
@@ -1247,7 +1313,10 @@ class Parsedown
                 return;
             }
 
-            $Definition = $this->DefinitionData['Reference'][$definition];
+            if ( ! $this->PreserveState)
+            {
+                $Definition = $this->DefinitionData['Reference'][$definition];
+            }
 
             $Element['attributes']['href'] = $Definition['url'];
             $Element['attributes']['title'] = $Definition['title'];
@@ -1510,6 +1579,8 @@ class Parsedown
     #
 
     protected $DefinitionData;
+
+    protected $PreserveState = false;
 
     #
     # Read-Only
