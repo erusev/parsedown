@@ -1420,13 +1420,24 @@ class Parsedown
         {
             $markup .= '>';
 
+            $elementContent = '';
             if (isset($Element['handler']))
             {
-                $markup .= $this->{$Element['handler']}($Element['text']);
+                $elementContent .= $this->{$Element['handler']}($Element['text']);
             }
             else
             {
-                $markup .= $Element['text'];
+                $elementContent .= $Element['text'];
+            }
+
+            if (!empty($elementContent))
+            {
+                $markup .= $elementContent;
+            }
+            else
+            {
+                // Element has set $Element['text'] but no content, so don't return this useless empty tag.
+                return '';
             }
 
             $markup .= '</'.$Element['name'].'>';
