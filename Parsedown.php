@@ -569,6 +569,8 @@ class Parsedown
             {
                 $Block['li']['text'] []= '';
 
+                $Block['loose'] = true;
+
                 unset($Block['interrupted']);
             }
 
@@ -615,6 +617,22 @@ class Parsedown
 
             return $Block;
         }
+    }
+
+    protected function blockListComplete(array $Block)
+    {
+        if (isset($Block['loose']))
+        {
+            foreach ($Block['element']['text'] as &$li)
+            {
+                if (end($li['text']) !== '')
+                {
+                    $li['text'] []= '';
+                }
+            }
+        }
+
+        return $Block;
     }
 
     #
