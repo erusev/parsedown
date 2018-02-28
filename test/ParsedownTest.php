@@ -29,7 +29,7 @@ class ParsedownTest extends TestCase
      */
     protected function initParsedown()
     {
-        $Parsedown = new Parsedown();
+        $Parsedown = new TestParsedown();
 
         return $Parsedown;
     }
@@ -136,15 +136,14 @@ color: red;
 <p>comment</p>
 <p>&lt;!-- html comment --&gt;</p>
 EXPECTED_HTML;
-        $parsedownWithNoMarkup = new Parsedown();
+
+        $parsedownWithNoMarkup = new TestParsedown();
         $parsedownWithNoMarkup->setMarkupEscaped(true);
         $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
     }
 
     public function testLateStaticBinding()
     {
-        include __DIR__ . '/TestParsedown.php';
-
         $parsedown = Parsedown::instance();
         $this->assertInstanceOf('Parsedown', $parsedown);
 

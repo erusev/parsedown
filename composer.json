@@ -20,5 +20,13 @@
     },
     "autoload": {
         "psr-0": {"Parsedown": ""}
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "TestParsedown": "test/",
+            "ParsedownTest": "test/",
+            "CommonMarkTest": "test/",
+            "CommonMarkTestWeak": "test/"
+        }
     }
 }

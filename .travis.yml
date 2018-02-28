@@ -20,8 +20,9 @@ matrix:
     - php: nightly
     - php: hhvm-nightly
 
-before_script:
+install:
   - composer install --prefer-dist --no-interaction --no-progress
 
 script:
   - vendor/bin/phpunit
+  - vendor/bin/phpunit test/CommonMarkTestWeak.php || true
