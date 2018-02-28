@@ -38,7 +38,20 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [t
 
 ### Security
 
-Parsedown does not sanitize the HTML that it generates. When you deal with untrusted content (ex: user comments) you should also use a HTML sanitizer like [HTML Purifier](http://htmlpurifier.org/).
+Parsedown is capable of escaping user-input within the HTML that it generates.
+Additionally Parsedown can attempt to sanitize additional scriping vectors (such
+as scripting link destinations). To tell Parsedown that it is processing untrusted
+user input, use the following:
+```php
+$parsedown = new Parsedown;
+$parsedown->setSafeMode(true);
+```
+
+It is recommended that when you deal with untrusted content (ex: user comments)
+you should employ defense-in-depth measures, like making use of a HTML sanitizer
+that allows HTML tags to be whitelisted, like [HTML Purifier](http://htmlpurifier.org/).
+Additionally, you should strongly consider 
+[deploying a Content-Secuity-Policy](https://scotthelme.co.uk/content-security-policy-an-introduction/).
 
 ### Questions
 
