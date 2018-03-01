@@ -47,7 +47,7 @@ $parsedown = new Parsedown;
 $parsedown->setSafeMode(true);
 ```
 
-If instead, you wish to allow HTML within untrusted user input, but still want
+If instead, you wish to allow HTML within untrusted user-input, but still want
 output to be free from XSS it is recommended that you make use of a HTML sanitiser
 that allows HTML tags to be whitelisted, like [HTML Purifier](http://htmlpurifier.org/).
 
