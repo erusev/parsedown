@@ -38,23 +38,17 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [t
 
 ### Security
 
-Parsedown is capable of escaping user-input within the HTML that it generates.
-Additionally Parsedown will apply sanitisation to additional scripting vectors (such
-as scripting link destinations) that are introduced by the markdown syntax itself.
+Parsedown is capable of escaping user-input within the HTML that it generates. Additionally Parsedown will apply sanitisation to additional scripting vectors (such as scripting link destinations) that are introduced by the markdown syntax itself.
+
 To tell Parsedown that it is processing untrusted user-input, use the following:
 ```php
 $parsedown = new Parsedown;
 $parsedown->setSafeMode(true);
 ```
 
-If instead, you wish to allow HTML within untrusted user-input, but still want
-output to be free from XSS it is recommended that you make use of a HTML sanitiser
-that allows HTML tags to be whitelisted, like [HTML Purifier](http://htmlpurifier.org/).
+If instead, you wish to allow HTML within untrusted user-input, but still want output to be free from XSS it is recommended that you make use of a HTML sanitiser that allows HTML tags to be whitelisted, like [HTML Purifier](http://htmlpurifier.org/).
 
-In both cases you should strongly consider employing defence-in-depth measures, 
-like [deploying a Content-Secuity-Policy](https://scotthelme.co.uk/content-security-policy-an-introduction/)
-(making use of browser security feature) so that your page is likely to be safe even if an
-attacker finds a vulnerability in one of the first lines of defence above.
+In both cases you should strongly consider employing defence-in-depth measures, like [deploying a Content-Secuity-Policy](https://scotthelme.co.uk/content-security-policy-an-introduction/) (making use of browser security feature) so that your page is likely to be safe even if an attacker finds a vulnerability in one of the first lines of defence above.
 
 #### Security of Parsedown Extensions
 
