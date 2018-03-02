@@ -48,7 +48,7 @@ $parsedown->setSafeMode(true);
 
 If instead, you wish to allow HTML within untrusted user-input, but still want output to be free from XSS it is recommended that you make use of a HTML sanitiser that allows HTML tags to be whitelisted, like [HTML Purifier](http://htmlpurifier.org/).
 
-In both cases you should strongly consider employing defence-in-depth measures, like [deploying a Content-Secuity-Policy](https://scotthelme.co.uk/content-security-policy-an-introduction/) (making use of browser security feature) so that your page is likely to be safe even if an attacker finds a vulnerability in one of the first lines of defence above.
+In both cases you should strongly consider employing defence-in-depth measures, like [deploying a Content-Security-Policy](https://scotthelme.co.uk/content-security-policy-an-introduction/) (a browser security feature) so that your page is likely to be safe even if an attacker finds a vulnerability in one of the first lines of defence above.
 
 #### Security of Parsedown Extensions
 
