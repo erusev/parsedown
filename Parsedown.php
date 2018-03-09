@@ -1142,10 +1142,10 @@ class Parsedown
 
     protected function inlineEmailTag($Excerpt)
     {
-        $commonMarkEmail = '[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]++@[a-zA-Z0-9]'
-            .'(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?'
-            .'(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*'
-        ;
+        $hostnameLabel = '[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?';
+
+        $commonMarkEmail = '[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]++@'
+            . $hostnameLabel . '(?:\.' . $hostnameLabel . ')*';
 
         if (strpos($Excerpt['text'], '>') !== false
             and preg_match("/^<((mailto:)?$commonMarkEmail)>/i", $Excerpt['text'], $matches)
