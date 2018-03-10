@@ -167,7 +167,18 @@ class Parsedown
 
                 foreach ($parts as $part)
                 {
-                    $shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+                    if(function_exists('mb_strlen'))
+                    {
+                        $shortage = 4 - mb_strlen($line, 'UTF-8') % 4;
+                    }
+                    elseif(function_exists('iconv_strlen'))
+                    {
+                        $shortage = 4 - @iconv_strlen($line, 'UTF-8') % 4;
+                    }
+                    else
+                    {
+                        $shortage = 4 - preg_match_all("/.{1}/us",$line) % 4;
+                    }
 
                     $line .= str_repeat(' ', $shortage);
                     $line .= $part;
