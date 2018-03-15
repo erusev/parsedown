@@ -1495,9 +1495,10 @@ class Parsedown
         }
         // very strongly consider an alternative if you're writing an
         // extension
-        elseif (isset($Element['unsafeHtml']) and !$this->safeMode)
+        elseif (isset($Element['unsafeHtml']))
         {
             $text = $Element['unsafeHtml'];
+
             $unsafeHtml = true;
         }
 

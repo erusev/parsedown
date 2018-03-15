@@ -60,11 +60,17 @@ class ParsedownTest extends TestCase
     {
         $markdown = "```php\nfoobar\n```";
         $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
+        $expectedSafeMarkup = '<pre><code class="language-php">&lt;p&gt;foobar&lt;/p&gt;</code></pre>';
 
         $unsafeExtension = new UnsafeExtension;
         $actualMarkup = $unsafeExtension->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
+
+        $unsafeExtension->setSafeMode(true);
+        $actualSafeMarkup = $unsafeExtension->text($markdown);
+
+        $this->assertEquals($expectedSafeMarkup, $actualSafeMarkup);
     }
 
     function data()
