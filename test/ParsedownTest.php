@@ -1,4 +1,5 @@
 <?php
+require 'UnsafeExtension.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -51,6 +52,17 @@ class ParsedownTest extends TestCase
         $this->Parsedown->setSafeMode(substr($test, 0, 3) === 'xss');
 
         $actualMarkup = $this->Parsedown->text($markdown);
+
+        $this->assertEquals($expectedMarkup, $actualMarkup);
+    }
+
+    function testUnsafeHtml()
+    {
+        $markdown = "```php\nfoobar\n```";
+        $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
+
+        $unsafeExtension = new UnsafeExtension;
+        $actualMarkup = $unsafeExtension->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }

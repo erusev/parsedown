@@ -1488,7 +1488,20 @@ class Parsedown
             }
         }
 
+        $unsafeHtml = false;
         if (isset($Element['text']))
+        {
+            $text = $Element['text'];
+        }
+        // very strongly consider an alternative if you're writing an
+        // extension
+        elseif (isset($Element['unsafeHtml']) and !$this->safeMode)
+        {
+            $text = $Element['unsafeHtml'];
+            $unsafeHtml = true;
+        }
+
+        if (isset($text))
         {
             $markup .= $hasName ? '>' : '';
 
@@ -1499,11 +1512,15 @@ class Parsedown
 
             if (isset($Element['handler']))
             {
-                $markup .= $this->{$Element['handler']}($Element['text'], $Element['nonNestables']);
+                $markup .= $this->{$Element['handler']}($text, $Element['nonNestables']);
+            }
+            elseif ($unsafeHtml !== true or $this->safeMode)
+            {
+                $markup .= self::escape($text, true);
             }
             else
             {
-                $markup .= self::escape($Element['text'], true);
+                $markup .= $text;
             }
 
             $markup .= $hasName ? '</'.$Element['name'].'>' : '';
