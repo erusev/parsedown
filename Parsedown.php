@@ -1070,6 +1070,41 @@ class Parsedown
     # ~
     #
 
+    protected function inlineText($text)
+    {
+        $Inline = array(
+            'extent' => strlen($text),
+            'element' => array(
+                'handler' => 'elements',
+            ),
+        );
+
+        if ($this->breaksEnabled)
+        {
+            $Inline['element']['text'] = self::pregReplaceElements(
+                '/[ ]*\n/',
+                array(
+                    array('name' => 'br'),
+                    array('text' => "\n"),
+                ),
+                $text
+            );
+        }
+        else
+        {
+            $Inline['element']['text'] = self::pregReplaceElements(
+                '/(?:[ ][ ]+|[ ]*\\\\)\n/',
+                array(
+                    array('name' => 'br'),
+                    array('text' => "\n"),
+                ),
+                $text
+            );
+        }
+
+        return $Inline;
+    }
+
     protected function inlineCode($Excerpt)
     {
         $marker = $Excerpt['text'][0];
@@ -1391,17 +1426,7 @@ class Parsedown
 
     protected function unmarkedText($text)
     {
-        if ($this->breaksEnabled)
-        {
-            $text = preg_replace('/[ ]*\n/', "<br />\n", $text);
-        }
-        else
-        {
-            $text = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br />\n", $text);
-            $text = str_replace(" \n", "\n", $text);
-        }
-
-        return $text;
+        return $this->element($this->inlineText($text)['element']);
     }
 
     #
@@ -1524,6 +1549,39 @@ class Parsedown
         }
 
         return $markup;
+    }
+
+    #
+    # AST Convenience
+    #
+
+    /**
+     * Replace occurrences $regexp with $Elements in $text. Return an array of
+     * elements representing the replacement.
+     */
+    protected static function pregReplaceElements($regexp, $Elements, $text)
+    {
+        $newElements = array();
+
+        while (preg_match($regexp, $text, $matches, PREG_OFFSET_CAPTURE))
+        {
+            $offset = $matches[0][1];
+            $before = substr($text, 0, $offset);
+            $after = substr($text, $offset + strlen($matches[0][0]));
+
+            $newElements[] = array('text' => $before);
+
+            foreach ($Elements as $Element)
+            {
+                $newElements[] = $Element;
+            }
+
+            $text = $after;
+        }
+
+        $newElements[] = array('text' => $text);
+
+        return $newElements;
     }
 
     #
