@@ -1500,21 +1500,8 @@ class Parsedown
         {
             $text = $Element['rawHtml'];
 
-            $allowRawHtmlInSafeMode = false;
-
-            if (isset($Element['allowRawHtmlInSafeMode']))
-            {
-                $allowRawHtmlInSafeMode = (true === $Element['allowRawHtmlInSafeMode']);
-            }
-
-            if ($this->safeMode !== true)
-            {
-                $permitRawHtml = true;
-            }
-            elseif ($this->safeMode and $allowRawHtmlInSafeMode)
-            {
-                $permitRawHtml = true;
-            }
+            $allowRawHtmlInSafeMode = isset($Element['allowRawHtmlInSafeMode']) && $Element['allowRawHtmlInSafeMode'];
+            $permitRawHtml = !$this->safeMode || $allowRawHtmlInSafeMode;
         }
 
         if (isset($text))
@@ -1530,7 +1517,7 @@ class Parsedown
             {
                 $markup .= $this->{$Element['handler']}($text, $Element['nonNestables']);
             }
-            elseif ($permitRawHtml !== true)
+            elseif (!$permitRawHtml)
             {
                 $markup .= self::escape($text, true);
             }
