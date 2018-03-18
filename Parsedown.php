@@ -1416,7 +1416,8 @@ class Parsedown
 
     protected function unmarkedText($text)
     {
-        return $this->element($this->inlineText($text)['element']);
+        $Inline = $this->inlineText($text);
+        return $this->element($Inline['element']);
     }
 
     #
