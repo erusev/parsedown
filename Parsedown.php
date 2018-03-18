@@ -386,7 +386,7 @@ class Parsedown
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(
-                'markup' => $Line['body'],
+                'element' => array('rawHtml' => $Line['body']),
             );
 
             if (preg_match('/-->$/', $Line['text']))
@@ -405,7 +405,7 @@ class Parsedown
             return;
         }
 
-        $Block['markup'] .= "\n" . $Line['body'];
+        $Block['element']['rawHtml'] .= "\n" . $Line['body'];
 
         if (preg_match('/-->$/', $Line['text']))
         {
@@ -734,7 +734,7 @@ class Parsedown
 
             $Block = array(
                 'name' => $matches[1],
-                'markup' => $Line['text'],
+                'element' => array('rawHtml' => $Line['text']),
             );
 
             return $Block;
@@ -748,7 +748,7 @@ class Parsedown
             return;
         }
 
-        $Block['markup'] .= "\n".$Line['body'];
+        $Block['element']['rawHtml'] .= "\n".$Line['body'];
 
         return $Block;
     }
@@ -1311,7 +1311,7 @@ class Parsedown
         if ($Excerpt['text'][1] === '/' and preg_match('/^<\/\w[\w-]*[ ]*>/s', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => $matches[0],
+                'element' => array('rawHtml' => $matches[0]),
                 'extent' => strlen($matches[0]),
             );
         }
@@ -1319,7 +1319,7 @@ class Parsedown
         if ($Excerpt['text'][1] === '!' and preg_match('/^<!---?[^>-](?:-?[^-])*-->/s', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => $matches[0],
+                'element' => array('rawHtml' => $matches[0]),
                 'extent' => strlen($matches[0]),
             );
         }
@@ -1327,7 +1327,7 @@ class Parsedown
         if ($Excerpt['text'][1] !== ' ' and preg_match('/^<\w[\w-]*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => $matches[0],
+                'element' => array('rawHtml' => $matches[0]),
                 'extent' => strlen($matches[0]),
             );
         }
