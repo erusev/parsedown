@@ -1189,7 +1189,7 @@ class Parsedown
         if (isset($Excerpt['text'][1]) and in_array($Excerpt['text'][1], $this->specialCharacters))
         {
             return array(
-                'markup' => $Excerpt['text'][1],
+                'element' => array('rawHtml' => $Excerpt['text'][1]),
                 'extent' => 2,
             );
         }
