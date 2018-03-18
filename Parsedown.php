@@ -964,13 +964,11 @@ class Parsedown
     #
 
     protected $InlineTypes = array(
-        '"' => array('SpecialCharacter'),
         '!' => array('Image'),
         '&' => array('SpecialCharacter'),
         '*' => array('Emphasis'),
         ':' => array('Url'),
-        '<' => array('UrlTag', 'EmailTag', 'Markup', 'SpecialCharacter'),
-        '>' => array('SpecialCharacter'),
+        '<' => array('UrlTag', 'EmailTag', 'Markup'),
         '[' => array('Link'),
         '_' => array('Emphasis'),
         '`' => array('Code'),
@@ -980,7 +978,7 @@ class Parsedown
 
     # ~
 
-    protected $inlineMarkerList = '!"*_&[:<>`~\\';
+    protected $inlineMarkerList = '!*_&[:<`~\\';
 
     #
     # ~
@@ -1337,23 +1335,15 @@ class Parsedown
 
     protected function inlineSpecialCharacter($Excerpt)
     {
-        if ($Excerpt['text'][0] === '&' and ! preg_match('/^&#?\w+;/', $Excerpt['text']))
+        if (preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => '&amp;',
-                'extent' => 1,
+                'element' => array('rawHtml' => '&'.$matches[1].';'),
+                'extent' => strlen($matches[0]),
             );
         }
 
-        $SpecialCharacter = array('>' => 'gt', '<' => 'lt', '"' => 'quot');
-
-        if (isset($SpecialCharacter[$Excerpt['text'][0]]))
-        {
-            return array(
-                'markup' => '&'.$SpecialCharacter[$Excerpt['text'][0]].';',
-                'extent' => 1,
-            );
-        }
+        return;
     }
 
     protected function inlineStrikethrough($Excerpt)
