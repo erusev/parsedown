@@ -1489,12 +1489,18 @@ class Parsedown
     {
         $markup = '';
 
+        $autoBreak = true;
+
         foreach ($Elements as $Element)
         {
-            $markup .= "\n" . $this->element($Element);
+            // (autobreak === false) covers both sides of an element
+            $autoBreak = !$autoBreak ? $autoBreak : isset($Element['name']);
+
+            $markup .= ($autoBreak ? "\n" : '') . $this->element($Element);
+            $autoBreak = isset($Element['name']);
         }
 
-        $markup .= "\n";
+        $markup .= $autoBreak ? "\n" : '';
 
         return $markup;
     }
@@ -1538,6 +1544,12 @@ class Parsedown
             'a'   => 'href',
             'img' => 'src',
         );
+
+        if ( ! isset($Element['name']))
+        {
+            unset($Element['attributes']);
+            return $Element;
+        }
 
         if (isset($safeUrlNameToAtt[$Element['name']]))
         {
