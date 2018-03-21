@@ -143,6 +143,11 @@ class Parsedown
 
     protected function lines(array $lines)
     {
+        return $this->elements($this->linesElements($lines));
+    }
+
+    protected function linesElements(array $lines)
+    {
         $CurrentBlock = null;
 
         foreach ($lines as $line)
@@ -284,7 +289,7 @@ class Parsedown
 
         # ~
 
-        $markup = '';
+        $Elements = array();
 
         foreach ($Blocks as $Block)
         {
@@ -293,15 +298,12 @@ class Parsedown
                 continue;
             }
 
-            $markup .= "\n";
-            $markup .= $this->element($Block['element']);
+            $Elements[] = $Block['element'];
         }
-
-        $markup .= "\n";
 
         # ~
 
-        return $markup;
+        return $Elements;
     }
 
     protected function isBlockContinuable($Type)
@@ -386,7 +388,10 @@ class Parsedown
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(
-                'element' => array('rawHtml' => $Line['body']),
+                'element' => array(
+                    'rawHtml' => $Line['body'],
+                    'autobreak' => true,
+                ),
             );
 
             if (preg_match('/-->$/', $Line['text']))
@@ -776,7 +781,10 @@ class Parsedown
 
             $Block = array(
                 'name' => $matches[1],
-                'element' => array('rawHtml' => $Line['text']),
+                'element' => array(
+                    'rawHtml' => $Line['text'],
+                    'autobreak' => true,
+                ),
             );
 
             return $Block;
@@ -1045,7 +1053,12 @@ class Parsedown
 
     public function line($text, $nonNestables=array())
     {
-        $markup = '';
+        return $this->elements($this->lineElements($text, $nonNestables));
+    }
+
+    protected function lineElements($text, $nonNestables = array())
+    {
+        $Elements = array();
 
         # $excerpt is based on the first occurrence of a marker
 
@@ -1098,10 +1111,11 @@ class Parsedown
                 $unmarkedText = substr($text, 0, $Inline['position']);
 
                 # compile the unmarked text
-                $markup .= $this->unmarkedText($unmarkedText);
+                $InlineText = $this->inlineText($unmarkedText);
+                $Elements[] = $InlineText['element'];
 
                 # compile the inline
-                $markup .= $this->element($Inline['element']);
+                $Elements[] = $Inline['element'];
 
                 # remove the examined text
                 $text = substr($text, $Inline['position'] + $Inline['extent']);
@@ -1113,14 +1127,25 @@ class Parsedown
 
             $unmarkedText = substr($text, 0, $markerPosition + 1);
 
-            $markup .= $this->unmarkedText($unmarkedText);
+            $InlineText = $this->inlineText($unmarkedText);
+            $Elements[] = $InlineText['element'];
 
             $text = substr($text, $markerPosition + 1);
         }
 
-        $markup .= $this->unmarkedText($text);
+        $InlineText = $this->inlineText($text);
+        $Elements[] = $InlineText['element'];
 
-        return $markup;
+        $Elements = array_map(
+            function ($Element) {
+                $Element['autobreak'] = isset($Element['autobreak'])
+                    ? $Element['autobreak'] : false;
+                return $Element;
+            },
+            $Elements
+        );
+
+        return $Elements;
     }
 
     #
@@ -1568,11 +1593,14 @@ class Parsedown
 
         foreach ($Elements as $Element)
         {
+            $autoBreakNext = (isset($Element['name'])
+                || isset($Element['autobreak']) && $Element['autobreak']
+            );
             // (autobreak === false) covers both sides of an element
-            $autoBreak = !$autoBreak ? $autoBreak : isset($Element['name']);
+            $autoBreak = !$autoBreak ? $autoBreak : $autoBreakNext;
 
             $markup .= ($autoBreak ? "\n" : '') . $this->element($Element);
-            $autoBreak = isset($Element['name']);
+            $autoBreak = $autoBreakNext;
         }
 
         $markup .= $autoBreak ? "\n" : '';
