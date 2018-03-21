@@ -1546,9 +1546,18 @@ class Parsedown
                 $Element['nonNestables'] = array();
             }
 
-            $function = $Element['handler']['function'];
-            $argument = $Element['handler']['argument'];
-            $destination = $Element['handler']['destination'];
+            if (is_string($Element['handler']))
+            {
+                $function = $Element['handler'];
+                $argument = $Element['text'];
+                $destination = 'rawHtml';
+            }
+            else
+            {
+                $function = $Element['handler']['function'];
+                $argument = $Element['handler']['argument'];
+                $destination = $Element['handler']['destination'];
+            }
 
             $Element[$destination] = $this->{$function}($argument, $Element['nonNestables']);
         }
