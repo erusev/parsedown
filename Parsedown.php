@@ -723,7 +723,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^<(\w[\w-]*)(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*(\/)?>/', $Line['text'], $matches))
+        if (preg_match('/^<[\/]?+(\w*)(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*(\/)?>/', $Line['text'], $matches))
         {
             $element = strtolower($matches[1]);
 
@@ -734,35 +734,8 @@ class Parsedown
 
             $Block = array(
                 'name' => $matches[1],
-                'depth' => 0,
                 'markup' => $Line['text'],
             );
-
-            $length = strlen($matches[0]);
-
-            $remainder = substr($Line['text'], $length);
-
-            if (trim($remainder) === '')
-            {
-                if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
-                {
-                    $Block['closed'] = true;
-
-                    $Block['void'] = true;
-                }
-            }
-            else
-            {
-                if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
-                {
-                    return;
-                }
-
-                if (preg_match('/<\/'.$matches[1].'>[ ]*$/i', $remainder))
-                {
-                    $Block['closed'] = true;
-                }
-            }
 
             return $Block;
         }
@@ -770,33 +743,9 @@ class Parsedown
 
     protected function blockMarkupContinue($Line, array $Block)
     {
-        if (isset($Block['closed']))
+        if (isset($Block['closed']) or isset($Block['interrupted']))
         {
             return;
-        }
-
-        if (preg_match('/^<'.$Block['name'].'(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*>/i', $Line['text'])) # open
-        {
-            $Block['depth'] ++;
-        }
-
-        if (preg_match('/(.*?)<\/'.$Block['name'].'>[ ]*$/i', $Line['text'], $matches)) # close
-        {
-            if ($Block['depth'] > 0)
-            {
-                $Block['depth'] --;
-            }
-            else
-            {
-                $Block['closed'] = true;
-            }
-        }
-
-        if (isset($Block['interrupted']))
-        {
-            $Block['markup'] .= "\n";
-
-            unset($Block['interrupted']);
         }
 
         $Block['markup'] .= "\n".$Line['body'];

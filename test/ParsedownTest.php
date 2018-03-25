@@ -13,7 +13,8 @@ class ParsedownTest extends TestCase
         parent::__construct($name, $data, $dataName);
     }
 
-    private $dirs, $Parsedown;
+    private $dirs;
+    protected $Parsedown;
 
     /**
      * @return array
