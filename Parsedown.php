@@ -586,22 +586,17 @@ class Parsedown
 
         $requiredIndent = ($Block['indent'] + strlen($Block['data']['marker']));
 
-        if (
-            $Line['indent'] < $requiredIndent
-            and
-            (
+        if ($Line['indent'] < $requiredIndent
+            and (
                 (
                     $Block['data']['type'] === 'ol'
                     and preg_match('/^[0-9]+'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
-                )
-                or
-                (
+                ) or (
                     $Block['data']['type'] === 'ul'
                     and preg_match('/^'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
                 )
             )
-        )
-        {
+        ) {
             if (isset($Block['interrupted']))
             {
                 $Block['li']['text'] []= '';
