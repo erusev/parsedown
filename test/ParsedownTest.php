@@ -1,6 +1,9 @@
 <?php
+require 'SampleExtensions.php';
 
-class ParsedownTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ParsedownTest extends TestCase
 {
     final function __construct($name = null, array $data = array(), $dataName = '')
     {
@@ -10,7 +13,8 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
     }
 
-    private $dirs, $Parsedown;
+    private $dirs;
+    protected $Parsedown;
 
     /**
      * @return array
@@ -27,7 +31,7 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
      */
     protected function initParsedown()
     {
-        $Parsedown = new Parsedown();
+        $Parsedown = new TestParsedown();
 
         return $Parsedown;
     }
@@ -46,9 +50,45 @@ class ParsedownTest extends PHPUnit_Framework_TestCase
         $expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
         $expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
 
+        $this->Parsedown->setSafeMode(substr($test, 0, 3) === 'xss');
+
         $actualMarkup = $this->Parsedown->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
+    }
+
+    function testRawHtml()
+    {
+        $markdown = "```php\nfoobar\n```";
+        $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
+        $expectedSafeMarkup = '<pre><code class="language-php">&lt;p&gt;foobar&lt;/p&gt;</code></pre>';
+
+        $unsafeExtension = new UnsafeExtension;
+        $actualMarkup = $unsafeExtension->text($markdown);
+
+        $this->assertEquals($expectedMarkup, $actualMarkup);
+
+        $unsafeExtension->setSafeMode(true);
+        $actualSafeMarkup = $unsafeExtension->text($markdown);
+
+        $this->assertEquals($expectedSafeMarkup, $actualSafeMarkup);
+    }
+
+    function testTrustDelegatedRawHtml()
+    {
+        $markdown = "```php\nfoobar\n```";
+        $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
+        $expectedSafeMarkup = $expectedMarkup;
+
+        $unsafeExtension = new TrustDelegatedExtension;
+        $actualMarkup = $unsafeExtension->text($markdown);
+
+        $this->assertEquals($expectedMarkup, $actualMarkup);
+
+        $unsafeExtension->setSafeMode(true);
+        $actualSafeMarkup = $unsafeExtension->text($markdown);
+
+        $this->assertEquals($expectedSafeMarkup, $actualSafeMarkup);
     }
 
     function data()
@@ -132,15 +172,14 @@ color: red;
 <p>comment</p>
 <p>&lt;!-- html comment --&gt;</p>
 EXPECTED_HTML;
-        $parsedownWithNoMarkup = new Parsedown();
+
+        $parsedownWithNoMarkup = new TestParsedown();
         $parsedownWithNoMarkup->setMarkupEscaped(true);
         $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
     }
 
     public function testLateStaticBinding()
     {
-        include 'test/TestParsedown.php';
-
         $parsedown = Parsedown::instance();
         $this->assertInstanceOf('Parsedown', $parsedown);
 
