@@ -505,7 +505,8 @@ class Parsedown
                 return;
             }
 
-            $text = trim($Line['text'], '# ');
+            $text = trim($Line['text'], '#');
+            $text = trim($text, ' ');
 
             $Block = array(
                 'element' => array(
