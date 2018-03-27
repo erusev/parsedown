@@ -558,7 +558,7 @@ class Parsedown
             if($name === 'ol')
             {
                 $listStart = ltrim(strstr($matches[1], $Block['data']['markerType'], true), '0') ?: '0';
-                
+
                 if($listStart !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $listStart);
