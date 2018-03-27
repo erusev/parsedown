@@ -159,12 +159,12 @@ MARKDOWN_WITH_MARKUP;
 <p>&lt;div&gt;<em>content</em>&lt;/div&gt;</p>
 <p>sparse:</p>
 <p>&lt;div&gt;
-&lt;div class=&quot;inner&quot;&gt;
+&lt;div class="inner"&gt;
 <em>content</em>
 &lt;/div&gt;
 &lt;/div&gt;</p>
 <p>paragraph</p>
-<p>&lt;style type=&quot;text/css&quot;&gt;
+<p>&lt;style type="text/css"&gt;
 p {
 color: red;
 }

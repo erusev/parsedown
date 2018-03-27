@@ -294,7 +294,7 @@ class Parsedown
             }
 
             $markup .= "\n";
-            $markup .= isset($Block['markup']) ? $Block['markup'] : $this->element($Block['element']);
+            $markup .= $this->element($Block['element']);
         }
 
         $markup .= "\n";
@@ -386,7 +386,7 @@ class Parsedown
         if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
         {
             $Block = array(
-                'markup' => $Line['body'],
+                'element' => array('rawHtml' => $Line['body']),
             );
 
             if (preg_match('/-->$/', $Line['text']))
@@ -405,7 +405,7 @@ class Parsedown
             return;
         }
 
-        $Block['markup'] .= "\n" . $Line['body'];
+        $Block['element']['rawHtml'] .= "\n" . $Line['body'];
 
         if (preg_match('/-->$/', $Line['text']))
         {
@@ -777,7 +777,7 @@ class Parsedown
 
             $Block = array(
                 'name' => $matches[1],
-                'markup' => $Line['text'],
+                'element' => array('rawHtml' => $Line['text']),
             );
 
             return $Block;
@@ -791,7 +791,7 @@ class Parsedown
             return;
         }
 
-        $Block['markup'] .= "\n".$Line['body'];
+        $Block['element']['rawHtml'] .= "\n".$Line['body'];
 
         return $Block;
     }
@@ -1007,13 +1007,11 @@ class Parsedown
     #
 
     protected $InlineTypes = array(
-        '"' => array('SpecialCharacter'),
         '!' => array('Image'),
         '&' => array('SpecialCharacter'),
         '*' => array('Emphasis'),
         ':' => array('Url'),
-        '<' => array('UrlTag', 'EmailTag', 'Markup', 'SpecialCharacter'),
-        '>' => array('SpecialCharacter'),
+        '<' => array('UrlTag', 'EmailTag', 'Markup'),
         '[' => array('Link'),
         '_' => array('Emphasis'),
         '`' => array('Code'),
@@ -1023,7 +1021,7 @@ class Parsedown
 
     # ~
 
-    protected $inlineMarkerList = '!"*_&[:<>`~\\';
+    protected $inlineMarkerList = '!*_&[:<`~\\';
 
     #
     # ~
@@ -1087,7 +1085,7 @@ class Parsedown
                 $markup .= $this->unmarkedText($unmarkedText);
 
                 # compile the inline
-                $markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
+                $markup .= $this->element($Inline['element']);
 
                 # remove the examined text
                 $text = substr($text, $Inline['position'] + $Inline['extent']);
@@ -1112,6 +1110,41 @@ class Parsedown
     #
     # ~
     #
+
+    protected function inlineText($text)
+    {
+        $Inline = array(
+            'extent' => strlen($text),
+            'element' => array(
+                'handler' => 'elements',
+            ),
+        );
+
+        if ($this->breaksEnabled)
+        {
+            $Inline['element']['text'] = self::pregReplaceElements(
+                '/[ ]*\n/',
+                array(
+                    array('name' => 'br'),
+                    array('text' => "\n"),
+                ),
+                $text
+            );
+        }
+        else
+        {
+            $Inline['element']['text'] = self::pregReplaceElements(
+                '/(?:[ ][ ]+|[ ]*\\\\)\n/',
+                array(
+                    array('name' => 'br'),
+                    array('text' => "\n"),
+                ),
+                $text
+            );
+        }
+
+        return $Inline;
+    }
 
     protected function inlineCode($Excerpt)
     {
@@ -1199,7 +1232,7 @@ class Parsedown
         if (isset($Excerpt['text'][1]) and in_array($Excerpt['text'][1], $this->specialCharacters))
         {
             return array(
-                'markup' => $Excerpt['text'][1],
+                'element' => array('rawHtml' => $Excerpt['text'][1]),
                 'extent' => 2,
             );
         }
@@ -1321,7 +1354,7 @@ class Parsedown
         if ($Excerpt['text'][1] === '/' and preg_match('/^<\/\w[\w-]*[ ]*>/s', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => $matches[0],
+                'element' => array('rawHtml' => $matches[0]),
                 'extent' => strlen($matches[0]),
             );
         }
@@ -1329,7 +1362,7 @@ class Parsedown
         if ($Excerpt['text'][1] === '!' and preg_match('/^<!---?[^>-](?:-?[^-])*-->/s', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => $matches[0],
+                'element' => array('rawHtml' => $matches[0]),
                 'extent' => strlen($matches[0]),
             );
         }
@@ -1337,7 +1370,7 @@ class Parsedown
         if ($Excerpt['text'][1] !== ' ' and preg_match('/^<\w[\w-]*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => $matches[0],
+                'element' => array('rawHtml' => $matches[0]),
                 'extent' => strlen($matches[0]),
             );
         }
@@ -1345,23 +1378,15 @@ class Parsedown
 
     protected function inlineSpecialCharacter($Excerpt)
     {
-        if ($Excerpt['text'][0] === '&' and ! preg_match('/^&#?\w+;/', $Excerpt['text']))
+        if (preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches))
         {
             return array(
-                'markup' => '&amp;',
-                'extent' => 1,
+                'element' => array('rawHtml' => '&'.$matches[1].';'),
+                'extent' => strlen($matches[0]),
             );
         }
 
-        $SpecialCharacter = array('>' => 'gt', '<' => 'lt', '"' => 'quot');
-
-        if (isset($SpecialCharacter[$Excerpt['text'][0]]))
-        {
-            return array(
-                'markup' => '&'.$SpecialCharacter[$Excerpt['text'][0]].';',
-                'extent' => 1,
-            );
-        }
+        return;
     }
 
     protected function inlineStrikethrough($Excerpt)
@@ -1434,17 +1459,8 @@ class Parsedown
 
     protected function unmarkedText($text)
     {
-        if ($this->breaksEnabled)
-        {
-            $text = preg_replace('/[ ]*\n/', "<br />\n", $text);
-        }
-        else
-        {
-            $text = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br />\n", $text);
-            $text = str_replace(" \n", "\n", $text);
-        }
-
-        return $text;
+        $Inline = $this->inlineText($text);
+        return $this->element($Inline['element']);
     }
 
     #
@@ -1532,12 +1548,18 @@ class Parsedown
     {
         $markup = '';
 
+        $autoBreak = true;
+
         foreach ($Elements as $Element)
         {
-            $markup .= "\n" . $this->element($Element);
+            // (autobreak === false) covers both sides of an element
+            $autoBreak = !$autoBreak ? $autoBreak : isset($Element['name']);
+
+            $markup .= ($autoBreak ? "\n" : '') . $this->element($Element);
+            $autoBreak = isset($Element['name']);
         }
 
-        $markup .= "\n";
+        $markup .= $autoBreak ? "\n" : '';
 
         return $markup;
     }
@@ -1564,6 +1586,39 @@ class Parsedown
     }
 
     #
+    # AST Convenience
+    #
+
+    /**
+     * Replace occurrences $regexp with $Elements in $text. Return an array of
+     * elements representing the replacement.
+     */
+    protected static function pregReplaceElements($regexp, $Elements, $text)
+    {
+        $newElements = array();
+
+        while (preg_match($regexp, $text, $matches, PREG_OFFSET_CAPTURE))
+        {
+            $offset = $matches[0][1];
+            $before = substr($text, 0, $offset);
+            $after = substr($text, $offset + strlen($matches[0][0]));
+
+            $newElements[] = array('text' => $before);
+
+            foreach ($Elements as $Element)
+            {
+                $newElements[] = $Element;
+            }
+
+            $text = $after;
+        }
+
+        $newElements[] = array('text' => $text);
+
+        return $newElements;
+    }
+
+    #
     # Deprecated Methods
     #
 
@@ -1581,6 +1636,12 @@ class Parsedown
             'a'   => 'href',
             'img' => 'src',
         );
+
+        if ( ! isset($Element['name']))
+        {
+            unset($Element['attributes']);
+            return $Element;
+        }
 
         if (isset($safeUrlNameToAtt[$Element['name']]))
         {
