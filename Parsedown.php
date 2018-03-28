@@ -1567,6 +1567,27 @@ class Parsedown
         return $Element;
     }
 
+    protected function handleElementRecursive(array $Element)
+    {
+        $Element = $this->handle($Element);
+
+        if (isset($Element['elements']))
+        {
+            $Element['elements'] = $this->handleElementsRecursive($Element['elements']);
+        }
+        elseif (isset($Element['element']))
+        {
+            $Element['element'] = $this->handleElementRecursive($Element['element']);
+        }
+
+        return $Element;
+    }
+
+    protected function handleElementsRecursive(array $Elements)
+    {
+        return array_map(array($this, 'handleElementRecursive'), $Elements);
+    }
+
 
     protected function element(array $Element)
     {
@@ -1575,6 +1596,7 @@ class Parsedown
             $Element = $this->sanitiseElement($Element);
         }
 
+        # identity map if element has no handler
         $Element = $this->handle($Element);
 
         $hasName = isset($Element['name']);
