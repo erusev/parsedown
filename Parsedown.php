@@ -523,7 +523,7 @@ class Parsedown
     #
     # List
 
-    protected function blockList($Line)
+    protected function blockList($Line, array $CurrentBlock = null)
     {
         list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]{1,9}[.\)]');
 
@@ -556,12 +556,20 @@ class Parsedown
                 ),
             );
 
-            if($name === 'ol')
+            if ($name === 'ol')
             {
                 $listStart = ltrim(strstr($matches[1], $Block['data']['markerType'], true), '0') ?: '0';
 
-                if($listStart !== '1')
+                if ($listStart !== '1')
                 {
+                    if (
+                        isset($CurrentBlock)
+                        and ! isset($CurrentBlock['type'])
+                        and ! isset($CurrentBlock['interrupted'])
+                    ) {
+                        return;
+                    }
+
                     $Block['element']['attributes'] = array('start' => $listStart);
                 }
             }
