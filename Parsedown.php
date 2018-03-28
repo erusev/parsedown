@@ -698,15 +698,13 @@ class Parsedown
 
     protected function blockQuoteContinue($Line, array $Block)
     {
+        if (isset($Block['interrupted']))
+        {
+            return;
+        }
+
         if ($Line['text'][0] === '>' and preg_match('/^>[ ]?(.*)/', $Line['text'], $matches))
         {
-            if (isset($Block['interrupted']))
-            {
-                $Block['element']['text'] []= '';
-
-                unset($Block['interrupted']);
-            }
-
             $Block['element']['text'] []= $matches[1];
 
             return $Block;
