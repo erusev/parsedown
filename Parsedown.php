@@ -519,6 +519,11 @@ class Parsedown
             }
 
             $text = trim($Line['text'], '#');
+
+            if (!isset($text[0]) or $text[0] !== ' ') {
+                return;
+            }
+
             $text = trim($text, ' ');
 
             $Block = array(
