@@ -90,6 +90,15 @@ class Parsedown
 
     protected $safeMode;
 
+    function setHastagsEnabled($hashtagsEnabled)
+    {
+        $this->hashtagsEnabled = (bool) $hashtagsEnabled;
+
+        return $this;
+    }
+
+    protected $hashtagsEnabled;
+
     protected $safeLinksWhitelist = array(
         'http://',
         'https://',
@@ -520,7 +529,7 @@ class Parsedown
 
             $text = trim($Line['text'], '#');
 
-            if (!isset($text[0]) or $text[0] !== ' ') {
+            if ($this->hashtagsEnabled and (!isset($text[0]) or $text[0] !== ' ')) {
                 return;
             }
 

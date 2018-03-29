@@ -32,6 +32,7 @@ class ParsedownTest extends TestCase
     protected function initParsedown()
     {
         $Parsedown = new TestParsedown();
+        $Parsedown->setHastagsEnabled(true);
 
         return $Parsedown;
     }
