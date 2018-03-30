@@ -1,0 +1,1 @@
+[This has some special characters - öäüßąóśŁęźńć - these can cause trouble](http://www.example.com/file.html)
