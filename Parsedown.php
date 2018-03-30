@@ -383,13 +383,13 @@ class Parsedown
             return;
         }
 
-        if (isset($Line['text'][3]) and $Line['text'][3] === '-' and $Line['text'][2] === '-' and $Line['text'][1] === '!')
+        if (strpos($Line['text'], '<!--') === 0)
         {
             $Block = array(
                 'element' => array('rawHtml' => $Line['body']),
             );
 
-            if (preg_match('/-->$/', $Line['text']))
+            if (strpos($Line['text'], '-->') !== false)
             {
                 $Block['closed'] = true;
             }
@@ -407,7 +407,7 @@ class Parsedown
 
         $Block['element']['rawHtml'] .= "\n" . $Line['body'];
 
-        if (preg_match('/-->$/', $Line['text']))
+        if (strpos($Line['text'], '-->') !== false)
         {
             $Block['closed'] = true;
         }
