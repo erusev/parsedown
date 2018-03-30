@@ -1277,6 +1277,16 @@ class Parsedown
         {
             return;
         }
+        
+        $src = $Link['element']['attributes']['href'];
+        //check for absolute image path
+        if(substr($src,0,4) != 'http') {
+            //relative image found, add the script path
+            $pos = strrpos($_SERVER['SCRIPT_NAME'],'/');
+            if ($pos !== false) {
+                $src = substr($_SERVER['SCRIPT_NAME'],0,$pos+1).$src;
+            }
+        }
 
         $Inline = array(
             'extent' => $Link['extent'] + 1,
