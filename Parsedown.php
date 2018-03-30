@@ -131,6 +131,7 @@ class Parsedown
         '~' => array('FencedCode'),
     );
 
+    protected $headercounts = array();
     # ~
 
     protected $unmarkedBlockTypes = array(
@@ -491,6 +492,11 @@ class Parsedown
 
     protected function blockHeader($Line)
     {
+        if ($this->headercounts['0xffff'] == null)
+        {
+            $this->headercounts['0xffff'] = 0;
+        }
+
         if (isset($Line['text'][1]))
         {
             $level = 1;
@@ -508,11 +514,37 @@ class Parsedown
             $text = trim($Line['text'], '#');
             $text = trim($text, ' ');
 
+            if (preg_match_all('/[a-zA-Z0-9]+/',strtolower(str_replace(' ','-',rtrim(ltrim($text)))),$arr))
+            {
+                foreach ($arr[0] as $ar)
+                {
+                    $headerid .= $ar;
+                }
+            
+                if (isset($this->headercounts[$headerid]))
+                {
+                    $this->headercounts[$headerid] += 1;
+                    $headerid .= '_'.$this->headercounts[$headerid];
+                }
+                else
+                {
+                    $this->headercounts[$headerid] = 0;
+                }
+            }
+            else
+            {
+                $this->headercounts['0xffff'] += 1;
+                $headerid = '_'.$this->headercounts['0xffff'];
+            }
+
             $Block = array(
                 'element' => array(
                     'name' => 'h' . min(6, $level),
                     'text' => $text,
                     'handler' => 'line',
+                    'attributes' => array(
+                        'id' => $headerid,
+                    ),
                 ),
             );
 
