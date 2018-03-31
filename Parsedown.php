@@ -1560,6 +1560,11 @@ class Parsedown
             }
 
             $Element[$destination] = $this->{$function}($argument, $Element['nonNestables']);
+
+            if ($destination === 'handler')
+            {
+                $Element = $this->handle($Element);
+            }
         }
 
         unset($Element['handler']);
