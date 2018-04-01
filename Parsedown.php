@@ -1588,25 +1588,38 @@ class Parsedown
 
     protected function handleElementRecursive(array $Element)
     {
-        $Element = $this->handle($Element);
+        return $this->elementApplyRecursive(array($this, 'handle'), $Element);
+    }
+
+    protected function handleElementsRecursive(array $Elements)
+    {
+        return $this->elementsApplyRecursive(array($this, 'handle'), $Elements);
+    }
+
+    protected function elementApplyRecursive($closure, array $Element)
+    {
+        $Element = call_user_func($closure, $Element);
 
         if (isset($Element['elements']))
         {
-            $Element['elements'] = $this->handleElementsRecursive($Element['elements']);
+            $Element['elements'] = $this->elementsApplyRecursive($closure, $Element['elements']);
         }
         elseif (isset($Element['element']))
         {
-            $Element['element'] = $this->handleElementRecursive($Element['element']);
+            $Element['element'] = $this->elementApplyRecursive($closure, $Element['element']);
         }
 
         return $Element;
     }
 
-    protected function handleElementsRecursive(array $Elements)
+    protected function elementsApplyRecursive($closure, array $Elements)
     {
-        return array_map(array($this, 'handleElementRecursive'), $Elements);
+        return array_map(
+            array($this, 'elementApplyRecursive'),
+            array_fill(0, count($Elements), $closure),
+            $Elements
+        );
     }
-
 
     protected function element(array $Element)
     {
