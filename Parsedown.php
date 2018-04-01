@@ -36,7 +36,13 @@ class Parsedown
         $lines = explode("\n", $text);
 
         # iterate through lines to identify blocks
-        $markup = $this->lines($lines);
+        $Elements = $this->linesElements($lines);
+
+        # process elements
+        $Elements = $this->process($Elements);
+
+        # convert to markup
+        $markup = $this->elements($Elements);
 
         # trim line breaks
         $markup = trim($markup, "\n");
@@ -1707,6 +1713,11 @@ class Parsedown
         $markup .= $autoBreak ? "\n" : '';
 
         return $markup;
+    }
+
+    protected function process(array $Elements)
+    {
+        return $Elements;
     }
 
     # ~
