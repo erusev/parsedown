@@ -1614,10 +1614,13 @@ class Parsedown
 
     protected function elementsApplyRecursive($closure, array $Elements)
     {
-        return array_map(
-            array($this, 'elementApplyRecursive'),
-            array_fill(0, count($Elements), $closure),
-            $Elements
+        return array_reduce(
+            $Elements,
+            function (array $Elements, array $Element) use ($closure) {
+                $Elements[] = $this->elementApplyRecursive($closure, $Element);
+                return $Elements;
+            },
+            array()
         );
     }
 
