@@ -12,6 +12,8 @@
 
 ####### not a heading
 
+#not a heading
+
 # closed h1 #
 
 #
@@ -21,5 +23,3 @@
 # # of levels
 
 # # of levels # #
-
-#heading

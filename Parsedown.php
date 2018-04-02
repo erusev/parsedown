@@ -90,6 +90,15 @@ class Parsedown
 
     protected $safeMode;
 
+    function setStrictMode($strictMode)
+    {
+        $this->strictMode = (bool) $strictMode;
+
+        return $this;
+    }
+
+    protected $strictMode;
+
     protected $safeLinksWhitelist = array(
         'http://',
         'https://',
@@ -504,36 +513,39 @@ class Parsedown
 
     protected function blockHeader($Line)
     {
-        if (isset($Line['text'][1]))
+        $level = 1;
+
+        while (isset($Line['text'][$level]) and $Line['text'][$level] === '#')
         {
-            $level = 1;
-
-            while (isset($Line['text'][$level]) and $Line['text'][$level] === '#')
-            {
-                $level ++;
-            }
-
-            if ($level > 6)
-            {
-                return;
-            }
-
-            $text = trim($Line['text'], '#');
-            $text = trim($text, ' ');
-
-            $Block = array(
-                'element' => array(
-                    'name' => 'h' . min(6, $level),
-                    'handler' => array(
-                        'function' => 'lineElements',
-                        'argument' => $text,
-                        'destination' => 'elements',
-                    )
-                ),
-            );
-
-            return $Block;
+            $level ++;
         }
+
+        if ($level > 6)
+        {
+            return;
+        }
+
+        $text = trim($Line['text'], '#');
+
+        if ($this->strictMode and isset($text[0]) and $text[0] !== ' ')
+        {
+            return;
+        }
+
+        $text = trim($text, ' ');
+
+        $Block = array(
+            'element' => array(
+                'name' => 'h' . min(6, $level),
+                'handler' => array(
+                    'function' => 'lineElements',
+                    'argument' => $text,
+                    'destination' => 'elements',
+                )
+            ),
+        );
+
+        return $Block;
     }
 
     #
