@@ -443,16 +443,16 @@ class Parsedown
 
     protected function blockFencedCode($Line)
     {
-        if (preg_match('/^['.$Line['text'][0].']{3,}[ ]*([^`]+)?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^(['.$Line['text'][0].']{3,})[ ]*([^`]+)?[ ]*$/', $Line['text'], $matches))
         {
             $Element = array(
                 'name' => 'code',
                 'text' => '',
             );
 
-            if (isset($matches[1]))
+            if (isset($matches[2]))
             {
-                $class = 'language-'.$matches[1];
+                $class = 'language-'.$matches[2];
 
                 $Element['attributes'] = array(
                     'class' => $class,
@@ -461,6 +461,7 @@ class Parsedown
 
             $Block = array(
                 'char' => $Line['text'][0],
+                'openerLength' => mb_strlen($matches[1]),
                 'element' => array(
                     'name' => 'pre',
                     'element' => $Element,
@@ -485,8 +486,10 @@ class Parsedown
             unset($Block['interrupted']);
         }
 
-        if (preg_match('/^'.$Block['char'].'{3,}[ ]*$/', $Line['text']))
-        {
+        if (
+            preg_match('/^(['.preg_quote($Block['char']).']{3,})[ ]*$/', $Line['text'], $matches)
+            and mb_strlen($matches[1]) >= $Block['openerLength']
+        ) {
             $Block['element']['element']['text'] = substr($Block['element']['element']['text'], 1);
 
             $Block['complete'] = true;
