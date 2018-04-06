@@ -1750,8 +1750,8 @@ class Parsedown
 
         foreach ($Elements as $Element)
         {
-            $autoBreakNext = (isset($Element['name'])
-                || isset($Element['autobreak']) && $Element['autobreak']
+            $autoBreakNext = (isset($Element['autobreak']) && $Element['autobreak']
+                || ! isset($Element['autobreak']) && isset($Element['name'])
             );
             // (autobreak === false) covers both sides of an element
             $autoBreak = !$autoBreak ? $autoBreak : $autoBreakNext;
