@@ -1632,8 +1632,6 @@ class Parsedown
 
     protected function elementApplyRecursive($closure, array $Element)
     {
-        $Element = call_user_func($closure, $Element);
-
         if (isset($Element['elements']))
         {
             $Element['elements'] = $this->elementsApplyRecursive($closure, $Element['elements']);
@@ -1642,6 +1640,8 @@ class Parsedown
         {
             $Element['element'] = $this->elementApplyRecursive($closure, $Element['element']);
         }
+
+        $Element = call_user_func($closure, $Element);
 
         return $Element;
     }
