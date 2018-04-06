@@ -1648,10 +1648,13 @@ class Parsedown
 
     protected function elementsApplyRecursive($closure, array $Elements)
     {
+        # PHP 5.3 compat
+        $instance = $this;
+
         return array_reduce(
             $Elements,
-            function (array $Elements, array $Element) use ($closure) {
-                $Elements[] = $this->elementApplyRecursive($closure, $Element);
+            function (array $Elements, array $Element) use ($instance, $closure) {
+                $Elements[] = $instance->elementApplyRecursive($closure, $Element);
                 return $Elements;
             },
             array()
