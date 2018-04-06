@@ -23,6 +23,19 @@ class Parsedown
 
     function text($text)
     {
+        $Elements = $this->textElements($text);
+
+        # convert to markup
+        $markup = $this->elements($Elements);
+
+        # trim line breaks
+        $markup = trim($markup, "\n");
+
+        return $markup;
+    }
+
+    protected function textElements($text)
+    {
         # make sure no definitions are set
         $this->DefinitionData = array();
 
@@ -36,18 +49,7 @@ class Parsedown
         $lines = explode("\n", $text);
 
         # iterate through lines to identify blocks
-        $Elements = $this->linesElements($lines);
-
-        # process elements
-        $Elements = $this->process($Elements);
-
-        # convert to markup
-        $markup = $this->elements($Elements);
-
-        # trim line breaks
-        $markup = trim($markup, "\n");
-
-        return $markup;
+        return $this->linesElements($lines);
     }
 
     #
@@ -1761,11 +1763,6 @@ class Parsedown
         $markup .= $autoBreak ? "\n" : '';
 
         return $markup;
-    }
-
-    protected function process(array $Elements)
-    {
-        return $Elements;
     }
 
     # ~
