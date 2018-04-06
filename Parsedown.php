@@ -63,6 +63,15 @@ class Parsedown
 
     protected $breaksEnabled;
 
+    function setLiteralBreaks($literalBreaks)
+    {
+        $this->literalBreaks = $literalBreaks;
+
+        return $this;
+    }
+
+    protected $literalBreaks;
+
     function setMarkupEscaped($markupEscaped)
     {
         $this->markupEscaped = $markupEscaped;
@@ -167,7 +176,7 @@ class Parsedown
 
         foreach ($lines as $line)
         {
-            if (chop($line) === '')
+            if ( ! $this->literalBreaks and chop($line) === '')
             {
                 if (isset($CurrentBlock))
                 {
@@ -230,7 +239,15 @@ class Parsedown
 
             # ~
 
-            $marker = $text[0];
+            if (isset($text[0]))
+            {
+                $marker = $text[0];
+            }
+            elseif ($this->literalBreaks)
+            {
+                $marker = '\n';
+                $text = '  ';
+            }
 
             # ~
 

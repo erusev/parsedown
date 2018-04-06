@@ -52,6 +52,7 @@ class ParsedownTest extends TestCase
 
         $this->Parsedown->setSafeMode(substr($test, 0, 3) === 'xss');
         $this->Parsedown->setStrictMode(substr($test, 0, 6) === 'strict');
+        $this->Parsedown->setLiteralBreaks(substr($test, 0, 14) === 'literal_breaks');
 
         $actualMarkup = $this->Parsedown->text($markdown);
 
