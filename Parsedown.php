@@ -1218,12 +1218,12 @@ class Parsedown
 
         if ($this->breaksEnabled)
         {
-            $Inline['element']['rawHtml'] = preg_replace('/[ ]*\n/', "<br />\n", $safeText);
+            $Inline['element']['rawHtml'] = preg_replace('/[ ]*+\n/', "<br />\n", $safeText);
             $Inline['element']['allowRawHtmlInSafeMode'] = true;
         }
         else
         {
-            $Inline['element']['rawHtml'] = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br />\n", $safeText);
+            $Inline['element']['rawHtml'] = preg_replace('/(?:[ ]*+\\\\|[ ]{2,}+)\n/', "<br />\n", $safeText);
             $Inline['element']['allowRawHtmlInSafeMode'] = true;
         }
 
