@@ -383,15 +383,6 @@ class Parsedown
         }
     }
 
-    protected function blockCodeComplete($Block)
-    {
-        $text = $Block['element']['element']['text'];
-
-        $Block['element']['element']['text'] = $text;
-
-        return $Block;
-    }
-
     #
     # Comment
 
