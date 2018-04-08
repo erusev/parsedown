@@ -1114,6 +1114,8 @@ class Parsedown
     {
         $Elements = array();
 
+        $nonNestables = array_combine($nonNestables, $nonNestables);
+
         # $excerpt is based on the first occurrence of a marker
 
         while ($excerpt = strpbrk($text, $this->inlineMarkerList))
@@ -1128,7 +1130,7 @@ class Parsedown
             {
                 # check to see if the current inline type is nestable in the current context
 
-                if ( ! empty($nonNestables) and in_array($inlineType, $nonNestables))
+                if (isset($nonNestables[$inlineType]))
                 {
                     continue;
                 }
