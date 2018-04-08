@@ -572,13 +572,15 @@ class Parsedown
                 $matches[1] .= ' ';
             }
 
+            $markerWithoutWhitespace = strstr($matches[1], ' ', true);
+
             $Block = array(
                 'indent' => $Line['indent'],
                 'pattern' => $pattern,
                 'data' => array(
                     'type' => $name,
                     'marker' => $matches[1],
-                    'markerType' => ($name === 'ul' ? strstr($matches[1], ' ', true) : substr(strstr($matches[1], ' ', true), -1)),
+                    'markerType' => ($name === 'ul' ? $markerWithoutWhitespace : substr($markerWithoutWhitespace, -1)),
                 ),
                 'element' => array(
                     'name' => $name,
