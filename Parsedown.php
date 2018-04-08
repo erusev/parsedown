@@ -1650,11 +1650,11 @@ class Parsedown
     {
         if (isset($Element['elements']))
         {
-            $Element['elements'] = $this->elementsApplyRecursive($closure, $Element['elements']);
+            $Element['elements'] = $this->elementsApplyRecursiveDepthFirst($closure, $Element['elements']);
         }
         elseif (isset($Element['element']))
         {
-            $Element['element'] = $this->elementApplyRecursive($closure, $Element['element']);
+            $Element['element'] = $this->elementsApplyRecursiveDepthFirst($closure, $Element['element']);
         }
 
         $Element = call_user_func($closure, $Element);
