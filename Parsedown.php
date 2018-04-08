@@ -182,21 +182,17 @@ class Parsedown
                 continue;
             }
 
-            if (strpos($line, "\t") !== false)
-            {
-                $parts = explode("\t", $line);
+            for (
+                $beforeTab = strstr($line, "\t", true);
+                $beforeTab !== false;
+                $beforeTab = strstr($line, "\t", true)
+            ) {
+                $shortage = 4 - mb_strlen($beforeTab, 'utf-8') % 4;
 
-                $line = $parts[0];
-
-                unset($parts[0]);
-
-                foreach ($parts as $part)
-                {
-                    $shortage = 4 - mb_strlen($line, 'utf-8') % 4;
-
-                    $line .= str_repeat(' ', $shortage);
-                    $line .= $part;
-                }
+                $line = $beforeTab
+                    . str_repeat(' ', $shortage)
+                    . substr($line, strlen($beforeTab) + 1)
+                ;
             }
 
             $indent = strspn($line, ' ');
