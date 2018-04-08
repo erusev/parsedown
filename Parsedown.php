@@ -497,12 +497,7 @@ class Parsedown
 
     protected function blockHeader($Line)
     {
-        $level = 1;
-
-        while (isset($Line['text'][$level]) and $Line['text'][$level] === '#')
-        {
-            $level ++;
-        }
+        $level = strspn($Line['text'], '#');
 
         if ($level > 6)
         {
