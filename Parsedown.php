@@ -878,18 +878,13 @@ class Parsedown
 
             $Data = array(
                 'url' => $matches[2],
-                'title' => null,
+                'title' => isset($matches[3]) ? $matches[3] : null,
             );
-
-            if (isset($matches[3]))
-            {
-                $Data['title'] = $matches[3];
-            }
 
             $this->DefinitionData['Reference'][$id] = $Data;
 
             $Block = array(
-                'hidden' => true,
+                'element' => array(),
             );
 
             return $Block;
@@ -1776,6 +1771,11 @@ class Parsedown
 
         foreach ($Elements as $Element)
         {
+            if (empty($Element))
+            {
+                continue;
+            }
+
             $autoBreakNext = (isset($Element['autobreak']) && $Element['autobreak']
                 || ! isset($Element['autobreak']) && isset($Element['name'])
             );
