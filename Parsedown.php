@@ -174,6 +174,7 @@ class Parsedown
 
     protected function linesElements(array $lines)
     {
+        $Elements = array();
         $CurrentBlock = null;
 
         foreach ($lines as $line)
@@ -278,7 +279,10 @@ class Parsedown
 
                     if ( ! isset($Block['identified']))
                     {
-                        $Blocks []= $CurrentBlock;
+                        if (isset($CurrentBlock))
+                        {
+                            $Elements[] = $CurrentBlock['element'];
+                        }
 
                         $Block['identified'] = true;
                     }
@@ -306,7 +310,10 @@ class Parsedown
             }
             else
             {
-                $Blocks []= $CurrentBlock;
+                if (isset($CurrentBlock))
+                {
+                    $Elements[] = $CurrentBlock['element'];
+                }
 
                 $CurrentBlock = $this->paragraph($Line);
 
@@ -323,22 +330,9 @@ class Parsedown
 
         # ~
 
-        $Blocks []= $CurrentBlock;
-
-        unset($Blocks[0]);
-
-        # ~
-
-        $Elements = array();
-
-        foreach ($Blocks as $Block)
+        if (isset($CurrentBlock))
         {
-            if (isset($Block['hidden']))
-            {
-                continue;
-            }
-
-            $Elements[] = $Block['element'];
+            $Elements[] = $CurrentBlock['element'];
         }
 
         # ~
