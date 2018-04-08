@@ -302,8 +302,7 @@ class Parsedown
 
             if (
                 isset($CurrentBlock)
-                and isset($CurrentBlock['element']['name'])
-                and $CurrentBlock['element']['name'] === 'p'
+                and $CurrentBlock['type'] === 'Paragraph'
                 and ! isset($CurrentBlock['interrupted'])
             ) {
                 $CurrentBlock['element']['handler']['argument'] .= "\n".$text;
@@ -355,7 +354,7 @@ class Parsedown
 
     protected function blockCode($Line, $Block = null)
     {
-        if (isset($Block) and ! isset($Block['type']) and ! isset($Block['interrupted']))
+        if (isset($Block) and $Block['type'] === 'Paragraph' and ! isset($Block['interrupted']))
         {
             return;
         }
@@ -610,7 +609,7 @@ class Parsedown
                 {
                     if (
                         isset($CurrentBlock)
-                        and ! isset($CurrentBlock['type'])
+                        and $CurrentBlock['type'] === 'Paragraph'
                         and ! isset($CurrentBlock['interrupted'])
                     ) {
                         return;
@@ -803,7 +802,7 @@ class Parsedown
 
     protected function blockSetextHeader($Line, array $Block = null)
     {
-        if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
+        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
         {
             return;
         }
@@ -890,7 +889,7 @@ class Parsedown
 
     protected function blockTable($Line, array $Block = null)
     {
-        if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
+        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
         {
             return;
         }
@@ -1070,18 +1069,17 @@ class Parsedown
 
     protected function paragraph($Line)
     {
-        $Block = array(
+        return array(
+            'type' => 'Paragraph',
             'element' => array(
                 'name' => 'p',
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $Line['text'],
                     'destination' => 'elements',
-                )
+                ),
             ),
         );
-
-        return $Block;
     }
 
     #
