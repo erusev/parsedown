@@ -1597,9 +1597,9 @@ class Parsedown
             {
                 $Element = $this->handle($Element);
             }
-        }
 
-        unset($Element['handler']);
+            unset($Element['handler']);
+        }
 
         return $Element;
     }
