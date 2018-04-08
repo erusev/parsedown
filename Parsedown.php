@@ -442,7 +442,7 @@ class Parsedown
 
     protected function blockFencedCode($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].']{3,})[ ]*([^`]+)?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^(['.$Line['text'][0].']{3,}+)[ ]*+([^`]++)?+[ ]*+$/', $Line['text'], $matches))
         {
             $Element = array(
                 'name' => 'code',
@@ -486,7 +486,7 @@ class Parsedown
         }
 
         if (
-            preg_match('/^(['.preg_quote($Block['char']).']{3,})[ ]*$/', $Line['text'], $matches)
+            preg_match('/^(['.preg_quote($Block['char']).']{3,}+)[ ]*+$/', $Line['text'], $matches)
             and mb_strlen($matches[1]) >= $Block['openerLength']
         ) {
             $Block['element']['element']['text'] = substr($Block['element']['element']['text'], 1);
@@ -555,9 +555,9 @@ class Parsedown
 
     protected function blockList($Line, array $CurrentBlock = null)
     {
-        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]{1,9}[.\)]');
+        list($name, $pattern) = $Line['text'][0] <= '-' ? array('ul', '[*+-]') : array('ol', '[0-9]{1,9}+[.\)]');
 
-        if (preg_match('/^('.$pattern.'([ ]+|$))(.*)/', $Line['text'], $matches))
+        if (preg_match('/^('.$pattern.'([ ]++|$))(.*+)/', $Line['text'], $matches))
         {
             $contentIndent = strlen($matches[2]);
 
@@ -587,6 +587,7 @@ class Parsedown
                     'elements' => array(),
                 ),
             );
+            $Block['data']['markerTypeRegex'] = preg_quote($Block['data']['markerType'], '/');
 
             if ($name === 'ol')
             {
@@ -634,10 +635,10 @@ class Parsedown
             and (
                 (
                     $Block['data']['type'] === 'ol'
-                    and preg_match('/^[0-9]+'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                    and preg_match('/^[0-9]++'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line['text'], $matches)
                 ) or (
                     $Block['data']['type'] === 'ul'
-                    and preg_match('/^'.preg_quote($Block['data']['markerType']).'(?:[ ]+(.*)|$)/', $Line['text'], $matches)
+                    and preg_match('/^'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line['text'], $matches)
                 )
             )
         ) {
@@ -699,7 +700,7 @@ class Parsedown
 
         if ( ! isset($Block['interrupted']))
         {
-            $text = preg_replace('/^[ ]{0,'.$requiredIndent.'}/', '', $Line['body']);
+            $text = preg_replace('/^[ ]{0,'.$requiredIndent.'}+/', '', $Line['body']);
 
             $Block['li']['handler']['argument'] []= $text;
 
@@ -728,7 +729,7 @@ class Parsedown
 
     protected function blockQuote($Line)
     {
-        if (preg_match('/^>[ ]?(.*)/', $Line['text'], $matches))
+        if (preg_match('/^>[ ]?+(.*+)/', $Line['text'], $matches))
         {
             $Block = array(
                 'element' => array(
@@ -752,7 +753,7 @@ class Parsedown
             return;
         }
 
-        if ($Line['text'][0] === '>' and preg_match('/^>[ ]?(.*)/', $Line['text'], $matches))
+        if ($Line['text'][0] === '>' and preg_match('/^>[ ]?+(.*+)/', $Line['text'], $matches))
         {
             $Block['element']['handler']['argument'] []= $matches[1];
 
@@ -772,7 +773,7 @@ class Parsedown
 
     protected function blockRule($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].'])([ ]*\1){2,}[ ]*$/', $Line['text']))
+        if (preg_match('/^(['.$Line['text'][0].'])([ ]*+\1){2,}+[ ]*+$/', $Line['text']))
         {
             $Block = array(
                 'element' => array(
@@ -814,7 +815,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^<[\/]?+(\w*)(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*(\/)?>/', $Line['text'], $matches))
+        if (preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+(\/)?>/', $Line['text'], $matches))
         {
             $element = strtolower($matches[1]);
 
@@ -852,7 +853,7 @@ class Parsedown
 
     protected function blockReference($Line)
     {
-        if (preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches))
+        if (preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Line['text'], $matches))
         {
             $id = strtolower($matches[1]);
 
@@ -1013,7 +1014,7 @@ class Parsedown
             $row = trim($row);
             $row = trim($row, '|');
 
-            preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]+`|`)+/', $row, $matches);
+            preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]++`|`)++/', $row, $matches);
 
             $cells = array_slice($matches[0], 0, count($Block['alignments']));
 
@@ -1236,10 +1237,10 @@ class Parsedown
     {
         $marker = $Excerpt['text'][0];
 
-        if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
+        if (preg_match('/^(['.$marker.']++)[ ]*+(.+?)[ ]*+(?<!['.$marker.'])\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
         {
             $text = $matches[2];
-            $text = preg_replace("/[ ]*\n/", ' ', $text);
+            $text = preg_replace('/[ ]*+\n/', ' ', $text);
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1395,7 +1396,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^[(]\s*+((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*"|\'[^\']*\'))?\s*[)]/', $remainder, $matches))
+        if (preg_match('/^[(]\s*+((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*+"|\'[^\']*+\'))?\s*+[)]/', $remainder, $matches))
         {
             $Element['attributes']['href'] = $matches[1];
 
@@ -1444,7 +1445,7 @@ class Parsedown
             return;
         }
 
-        if ($Excerpt['text'][1] === '/' and preg_match('/^<\/\w[\w-]*[ ]*>/s', $Excerpt['text'], $matches))
+        if ($Excerpt['text'][1] === '/' and preg_match('/^<\/\w[\w-]*+[ ]*+>/s', $Excerpt['text'], $matches))
         {
             return array(
                 'element' => array('rawHtml' => $matches[0]),
@@ -1452,7 +1453,7 @@ class Parsedown
             );
         }
 
-        if ($Excerpt['text'][1] === '!' and preg_match('/^<!---?[^>-](?:-?[^-])*-->/s', $Excerpt['text'], $matches))
+        if ($Excerpt['text'][1] === '!' and preg_match('/^<!---?[^>-](?:-?+[^-])*-->/s', $Excerpt['text'], $matches))
         {
             return array(
                 'element' => array('rawHtml' => $matches[0]),
@@ -1460,7 +1461,7 @@ class Parsedown
             );
         }
 
-        if ($Excerpt['text'][1] !== ' ' and preg_match('/^<\w[\w-]*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $Excerpt['text'], $matches))
+        if ($Excerpt['text'][1] !== ' ' and preg_match('/^<\w[\w-]*+(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+\/?>/s', $Excerpt['text'], $matches))
         {
             return array(
                 'element' => array('rawHtml' => $matches[0]),
@@ -1512,7 +1513,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/\bhttps?:[\/]{2}[^\s<]+\b\/*/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
+        if (preg_match('/\bhttps?+:[\/]{2}[^\s<]+\b\/*+/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
         {
             $url = $matches[0][0];
 
@@ -1534,7 +1535,7 @@ class Parsedown
 
     protected function inlineUrlTag($Excerpt)
     {
-        if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\w+:\/{2}[^ >]+)>/i', $Excerpt['text'], $matches))
+        if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\w++:\/{2}[^ >]++)>/i', $Excerpt['text'], $matches))
         {
             $url = $matches[1];
 
@@ -1939,8 +1940,8 @@ class Parsedown
     );
 
     protected $StrongRegex = array(
-        '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
-        '_' => '/^__((?:\\\\_|[^_]|_[^_]*_)+?)__(?!_)/us',
+        '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*+[*])+?)[*]{2}(?![*])/s',
+        '_' => '/^__((?:\\\\_|[^_]|_[^_]*+_)+?)__(?!_)/us',
     );
 
     protected $EmRegex = array(
@@ -1948,7 +1949,7 @@ class Parsedown
         '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
     );
 
-    protected $regexHtmlAttribute = '[a-zA-Z_:][\w:.-]*(?:\s*=\s*(?:[^"\'=<>`\s]+|"[^"]*"|\'[^\']*\'))?';
+    protected $regexHtmlAttribute = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
 
     protected $voidElements = array(
         'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
