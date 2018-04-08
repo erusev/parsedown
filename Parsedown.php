@@ -216,7 +216,7 @@ class Parsedown
 
             if (isset($CurrentBlock['continuable']))
             {
-                $Block = $this->{'block'.$CurrentBlock['type'].'Continue'}($Line, $CurrentBlock);
+                $Block = $this->{"block{$CurrentBlock['type']}Continue"}($Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -228,7 +228,7 @@ class Parsedown
                 {
                     if ($this->isBlockCompletable($CurrentBlock['type']))
                     {
-                        $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
+                        $CurrentBlock = $this->{"block{$CurrentBlock['type']}Complete"}($CurrentBlock);
                     }
                 }
             }
@@ -254,7 +254,7 @@ class Parsedown
 
             foreach ($blockTypes as $blockType)
             {
-                $Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
+                $Block = $this->{"block$blockType"}($Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -309,7 +309,7 @@ class Parsedown
 
         if (isset($CurrentBlock['continuable']) and $this->isBlockCompletable($CurrentBlock['type']))
         {
-            $CurrentBlock = $this->{'block'.$CurrentBlock['type'].'Complete'}($CurrentBlock);
+            $CurrentBlock = $this->{"block{$CurrentBlock['type']}Complete"}($CurrentBlock);
         }
 
         # ~
@@ -326,12 +326,12 @@ class Parsedown
 
     protected function isBlockContinuable($Type)
     {
-        return method_exists($this, 'block'.$Type.'Continue');
+        return method_exists($this, "block${Type}Continue");
     }
 
     protected function isBlockCompletable($Type)
     {
-        return method_exists($this, 'block'.$Type.'Complete');
+        return method_exists($this, "block${Type}Complete");
     }
 
     #
@@ -427,7 +427,7 @@ class Parsedown
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n" . $Line['body'];
+        $Block['element']['rawHtml'] .= "\n{$Line['body']}";
 
         if (strpos($Line['text'], '-->') !== false)
         {
@@ -451,7 +451,7 @@ class Parsedown
 
             if (isset($matches[2]))
             {
-                $class = 'language-'.$matches[2];
+                $class = "language-{$matches[2]}";
 
                 $Element['attributes'] = array(
                     'class' => $class,
@@ -496,7 +496,7 @@ class Parsedown
             return $Block;
         }
 
-        $Block['element']['element']['text'] .= "\n".$Line['body'];
+        $Block['element']['element']['text'] .= "\n{$Line['body']}";
 
         return $Block;
     }
@@ -840,7 +840,7 @@ class Parsedown
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n".$Line['body'];
+        $Block['element']['rawHtml'] .= "\n{$Line['body']}";
 
         return $Block;
     }
@@ -960,7 +960,7 @@ class Parsedown
                 $alignment = $alignments[$index];
 
                 $HeaderElement['attributes'] = array(
-                    'style' => 'text-align: '.$alignment.';',
+                    'style' => "text-align: $alignment;",
                 );
             }
 
@@ -1031,7 +1031,7 @@ class Parsedown
                 if (isset($Block['alignments'][$index]))
                 {
                     $Element['attributes'] = array(
-                        'style' => 'text-align: '.$Block['alignments'][$index].';',
+                        'style' => "text-align: {$Block['alignments'][$index]};",
                     );
                 }
 
@@ -1135,7 +1135,7 @@ class Parsedown
                     continue;
                 }
 
-                $Inline = $this->{'inline'.$inlineType}($Excerpt);
+                $Inline = $this->{"inline$inlineType"}($Excerpt);
 
                 if ( ! isset($Inline))
                 {
@@ -1263,7 +1263,7 @@ class Parsedown
 
             if ( ! isset($matches[2]))
             {
-                $url = 'mailto:' . $url;
+                $url = "mailto:$url";
             }
 
             return array(
@@ -1472,7 +1472,7 @@ class Parsedown
         if (preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches))
         {
             return array(
-                'element' => array('rawHtml' => '&'.$matches[1].';'),
+                'element' => array('rawHtml' => "&{$matches[1]};"),
                 'extent' => strlen($matches[0]),
             );
         }
@@ -1674,7 +1674,7 @@ class Parsedown
 
         if ($hasName)
         {
-            $markup .= '<'.$Element['name'];
+            $markup .= "<{$Element['name']}";
 
             if (isset($Element['attributes']))
             {
@@ -1685,7 +1685,7 @@ class Parsedown
                         continue;
                     }
 
-                    $markup .= ' '.$name.'="'.self::escape($value).'"';
+                    $markup .= " $name=\"".self::escape($value).'"';
                 }
             }
         }
@@ -1732,7 +1732,7 @@ class Parsedown
                 }
             }
 
-            $markup .= $hasName ? '</'.$Element['name'].'>' : '';
+            $markup .= $hasName ? "</{$Element['name']}>" : '';
         }
         elseif ($hasName)
         {
