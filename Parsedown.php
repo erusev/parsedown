@@ -1632,6 +1632,22 @@ class Parsedown
 
     protected function elementApplyRecursive($closure, array $Element)
     {
+        $Element = call_user_func($closure, $Element);
+
+        if (isset($Element['elements']))
+        {
+            $Element['elements'] = $this->elementsApplyRecursive($closure, $Element['elements']);
+        }
+        elseif (isset($Element['element']))
+        {
+            $Element['element'] = $this->elementApplyRecursive($closure, $Element['element']);
+        }
+
+        return $Element;
+    }
+
+    protected function elementApplyRecursiveDepthFirst($closure, array $Element)
+    {
         if (isset($Element['elements']))
         {
             $Element['elements'] = $this->elementsApplyRecursive($closure, $Element['elements']);
@@ -1648,14 +1664,22 @@ class Parsedown
 
     protected function elementsApplyRecursive($closure, array $Elements)
     {
-        $newElements = array();
-
-        foreach ($Elements as $Element)
+        foreach ($Elements as &$Element)
         {
-            $newElements[] = $this->elementApplyRecursive($closure, $Element);
+            $Element = $this->elementApplyRecursive($closure, $Element);
         }
 
-        return $newElements;
+        return $Elements;
+    }
+
+    protected function elementsApplyRecursiveDepthFirst($closure, array $Elements)
+    {
+        foreach ($Elements as &$Element)
+        {
+            $Element = $this->elementApplyRecursiveDepthFirst($closure, $Element);
+        }
+
+        return $Elements;
     }
 
     protected function element(array $Element)
