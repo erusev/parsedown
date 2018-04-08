@@ -1190,14 +1190,11 @@ class Parsedown
         $InlineText = $this->inlineText($text);
         $Elements[] = $InlineText['element'];
 
-        $Elements = array_map(
-            function ($Element) {
-                $Element['autobreak'] = isset($Element['autobreak'])
-                    ? $Element['autobreak'] : false;
-                return $Element;
-            },
-            $Elements
-        );
+        foreach ($Elements as &$Element)
+        {
+            $Element['autobreak'] = isset($Element['autobreak'])
+                ? $Element['autobreak'] : false;
+        }
 
         return $Elements;
     }
