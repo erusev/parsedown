@@ -199,12 +199,7 @@ class Parsedown
                 }
             }
 
-            $indent = 0;
-
-            while (isset($line[$indent]) and $line[$indent] === ' ')
-            {
-                $indent ++;
-            }
+            $indent = strspn($line, ' ');
 
             $text = $indent > 0 ? substr($line, $indent) : $line;
 
