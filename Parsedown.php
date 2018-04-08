@@ -1211,32 +1211,20 @@ class Parsedown
     {
         $Inline = array(
             'extent' => strlen($text),
-            'element' => array(
-                'elements' => array(),
-            ),
+            'element' => array(),
         );
+
+        $safeText = self::escape($text, true);
 
         if ($this->breaksEnabled)
         {
-            $Inline['element']['elements'] = self::pregReplaceElements(
-                '/[ ]*\n/',
-                array(
-                    array('name' => 'br'),
-                    array('text' => "\n"),
-                ),
-                $text
-            );
+            $Inline['element']['rawHtml'] = preg_replace('/[ ]*\n/', "<br />\n", $safeText);
+            $Inline['element']['allowRawHtmlInSafeMode'] = true;
         }
         else
         {
-            $Inline['element']['elements'] = self::pregReplaceElements(
-                '/(?:[ ][ ]+|[ ]*\\\\)\n/',
-                array(
-                    array('name' => 'br'),
-                    array('text' => "\n"),
-                ),
-                $text
-            );
+            $Inline['element']['rawHtml'] = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br />\n", $safeText);
+            $Inline['element']['allowRawHtmlInSafeMode'] = true;
         }
 
         return $Inline;
