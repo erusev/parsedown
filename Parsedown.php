@@ -1105,7 +1105,7 @@ class Parsedown
     # ~
     #
 
-    public function line($text, $nonNestables=array())
+    public function line($text, $nonNestables = array())
     {
         return $this->elements($this->lineElements($text, $nonNestables));
     }
@@ -1156,9 +1156,9 @@ class Parsedown
 
                 # cause the new element to 'inherit' our non nestables
 
-                foreach ($nonNestables as $non_nestable)
+                foreach ($nonNestables as $nonNestable)
                 {
-                    $Inline['element']['nonNestables'][] = $non_nestable;
+                    $Inline['element']['nonNestables'][] = $nonNestable;
                 }
 
                 # the text that comes before the inline
@@ -1192,8 +1192,10 @@ class Parsedown
 
         foreach ($Elements as &$Element)
         {
-            $Element['autobreak'] = isset($Element['autobreak'])
-                ? $Element['autobreak'] : false;
+            if ( ! isset($Element['autobreak']))
+            {
+                $Element['autobreak'] = false;
+            }
         }
 
         return $Elements;
@@ -1763,8 +1765,8 @@ class Parsedown
                 continue;
             }
 
-            $autoBreakNext = (isset($Element['autobreak']) && $Element['autobreak']
-                || ! isset($Element['autobreak']) && isset($Element['name'])
+            $autoBreakNext = (isset($Element['autobreak'])
+                ? $Element['autobreak'] : isset($Element['name'])
             );
             // (autobreak === false) covers both sides of an element
             $autoBreak = !$autoBreak ? $autoBreak : $autoBreakNext;
