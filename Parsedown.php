@@ -773,10 +773,8 @@ class Parsedown
             return;
         }
 
-        if (
-            chop(chop($Line['text'], ' '), $Line['text'][0]) === ''
-            and $Line['indent'] < 4
-        ) {
+        if ($Line['indent'] < 4 and chop(chop($Line['text'], ' '), $Line['text'][0]) === '')
+        {
             $Block['element']['name'] = $Line['text'][0] === '=' ? 'h1' : 'h2';
 
             return $Block;
