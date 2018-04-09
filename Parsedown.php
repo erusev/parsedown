@@ -424,33 +424,42 @@ class Parsedown
 
     protected function blockFencedCode($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].']{3,}+)[ ]*+([^`]++)?+[ ]*+$/', $Line['text'], $matches))
+        $marker = $Line['text'][0];
+
+        $openerLength = strspn($Line['text'], $marker);
+
+        if ($openerLength < 3)
         {
-            $Element = array(
-                'name' => 'code',
-                'text' => '',
-            );
-
-            if (isset($matches[2]))
-            {
-                $class = "language-{$matches[2]}";
-
-                $Element['attributes'] = array(
-                    'class' => $class,
-                );
-            }
-
-            $Block = array(
-                'char' => $Line['text'][0],
-                'openerLength' => mb_strlen($matches[1]),
-                'element' => array(
-                    'name' => 'pre',
-                    'element' => $Element,
-                ),
-            );
-
-            return $Block;
+            return;
         }
+
+        $infostring = trim(substr($Line['text'], $openerLength), "\t ");
+
+        if (strpos($infostring, '`') !== false)
+        {
+            return;
+        }
+
+        $Element = array(
+            'name' => 'code',
+            'text' => '',
+        );
+
+        if ($infostring !== '')
+        {
+            $Element['attributes'] = array('class' => "language-$infostring");
+        }
+
+        $Block = array(
+            'char' => $marker,
+            'openerLength' => $openerLength,
+            'element' => array(
+                'name' => 'pre',
+                'element' => $Element,
+            ),
+        );
+
+        return $Block;
     }
 
     protected function blockFencedCodeContinue($Line, $Block)
@@ -467,9 +476,8 @@ class Parsedown
             unset($Block['interrupted']);
         }
 
-        if (
-            preg_match('/^(['.preg_quote($Block['char']).']{3,}+)[ ]*+$/', $Line['text'], $matches)
-            and mb_strlen($matches[1]) >= $Block['openerLength']
+        if (($len = strspn($Line['text'], $Block['char'])) >= $Block['openerLength']
+            and chop(substr($Line['text'], $len), ' ') === ''
         ) {
             $Block['element']['element']['text'] = substr($Block['element']['element']['text'], 1);
 
@@ -479,15 +487,6 @@ class Parsedown
         }
 
         $Block['element']['element']['text'] .= "\n{$Line['body']}";
-
-        return $Block;
-    }
-
-    protected function blockFencedCodeComplete($Block)
-    {
-        $text = $Block['element']['element']['text'];
-
-        $Block['element']['element']['text'] = $text;
 
         return $Block;
     }
