@@ -883,6 +883,7 @@ class Parsedown
             strpos($Block['element']['handler']['argument'], '|') === false
             and strpos($Line['text'], '|') === false
             and strpos($Line['text'], ':') === false
+            or strpos($Block['element']['handler']['argument'], "\n") !== false
         ) {
             return;
         }
