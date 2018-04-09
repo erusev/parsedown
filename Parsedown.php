@@ -749,7 +749,9 @@ class Parsedown
 
     protected function blockRule($Line)
     {
-        if (preg_match('/^(['.$Line['text'][0].'])([ ]*+\1){2,}+[ ]*+$/', $Line['text']))
+        $marker = $Line['text'][0];
+
+        if (substr_count($Line['text'], $marker) >= 3 and chop($Line['text'], " $marker") === '')
         {
             $Block = array(
                 'element' => array(
