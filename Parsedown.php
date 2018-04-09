@@ -1102,7 +1102,7 @@ class Parsedown
         {
             $marker = $excerpt[0];
 
-            $markerPosition = strpos($text, $marker);
+            $markerPosition = strlen($text) - strlen($excerpt);
 
             $Excerpt = array('text' => $excerpt, 'context' => $text);
 
