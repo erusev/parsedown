@@ -182,7 +182,9 @@ class Parsedown
             {
                 if (isset($CurrentBlock))
                 {
-                    $CurrentBlock['interrupted'] = true;
+                    $CurrentBlock['interrupted'] = (isset($CurrentBlock['interrupted'])
+                        ? $CurrentBlock['interrupted'] + 1 : 1
+                    );
                 }
 
                 continue;
@@ -388,7 +390,7 @@ class Parsedown
         {
             if (isset($Block['interrupted']))
             {
-                $Block['element']['element']['text'] .= "\n";
+                $Block['element']['element']['text'] .= str_repeat("\n", $Block['interrupted']);
 
                 unset($Block['interrupted']);
             }
@@ -500,7 +502,7 @@ class Parsedown
 
         if (isset($Block['interrupted']))
         {
-            $Block['element']['element']['text'] .= "\n";
+            $Block['element']['element']['text'] .= str_repeat("\n", $Block['interrupted']);
 
             unset($Block['interrupted']);
         }
