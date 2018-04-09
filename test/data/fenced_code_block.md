@@ -29,3 +29,10 @@ the following isn't quite enough to close
 ```
 still a fenced code block
 ````
+
+```
+foo
+
+
+bar
+```
