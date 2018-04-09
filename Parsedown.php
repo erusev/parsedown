@@ -283,12 +283,14 @@ class Parsedown
 
             # ~
 
-            if (
-                isset($CurrentBlock)
-                and $CurrentBlock['type'] === 'Paragraph'
-                and ! isset($CurrentBlock['interrupted'])
-            ) {
-                $CurrentBlock['element']['handler']['argument'] .= "\n".$text;
+            if (isset($CurrentBlock) and $CurrentBlock['type'] === 'Paragraph')
+            {
+                $Block = $this->paragraphContinue($Line, $CurrentBlock);
+            }
+
+            if (isset($Block))
+            {
+                $CurrentBlock = $Block;
             }
             else
             {
@@ -1063,6 +1065,18 @@ class Parsedown
                 ),
             ),
         );
+    }
+
+    protected function paragraphContinue($Line, array $Block)
+    {
+        if (isset($Block['interrupted']))
+        {
+            return;
+        }
+
+        $Block['element']['handler']['argument'] .= "\n".$Line['text'];
+
+        return $Block;
     }
 
     #
