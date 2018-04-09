@@ -829,8 +829,9 @@ class Parsedown
 
     protected function blockReference($Line)
     {
-        if (preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Line['text'], $matches))
-        {
+        if (strpos($Line['text'], ']') !== false
+            and preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Line['text'], $matches)
+        ) {
             $id = strtolower($matches[1]);
 
             $Data = array(
@@ -1448,8 +1449,9 @@ class Parsedown
 
     protected function inlineSpecialCharacter($Excerpt)
     {
-        if (preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches))
-        {
+        if ($Excerpt['text'][1] !== ' ' and strpos($Excerpt['text'], ';') !== false
+            and preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches)
+        ) {
             return array(
                 'element' => array('rawHtml' => "&{$matches[1]};"),
                 'extent' => strlen($matches[0]),
@@ -1489,8 +1491,9 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/\bhttps?+:[\/]{2}[^\s<]+\b\/*+/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE))
-        {
+        if (strpos($Excerpt['context'], 'http') !== false
+            and preg_match('/\bhttps?+:[\/]{2}[^\s<]+\b\/*+/ui', $Excerpt['context'], $matches, PREG_OFFSET_CAPTURE)
+        ) {
             $url = $matches[0][0];
 
             $Inline = array(
