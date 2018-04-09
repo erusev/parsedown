@@ -65,15 +65,6 @@ class Parsedown
 
     protected $breaksEnabled;
 
-    function setLiteralBreaks($literalBreaks)
-    {
-        $this->literalBreaks = $literalBreaks;
-
-        return $this;
-    }
-
-    protected $literalBreaks;
-
     function setMarkupEscaped($markupEscaped)
     {
         $this->markupEscaped = $markupEscaped;
@@ -174,11 +165,12 @@ class Parsedown
 
     protected function linesElements(array $lines)
     {
+        $Elements = array();
         $CurrentBlock = null;
 
         foreach ($lines as $line)
         {
-            if ( ! $this->literalBreaks and chop($line) === '')
+            if (chop($line) === '')
             {
                 if (isset($CurrentBlock))
                 {
@@ -243,15 +235,7 @@ class Parsedown
 
             # ~
 
-            if (isset($text[0]))
-            {
-                $marker = $text[0];
-            }
-            elseif ($this->literalBreaks)
-            {
-                $marker = '\n';
-                $text = '  ';
-            }
+            $marker = $text[0];
 
             # ~
 
@@ -278,7 +262,10 @@ class Parsedown
 
                     if ( ! isset($Block['identified']))
                     {
-                        $Blocks []= $CurrentBlock;
+                        if (isset($CurrentBlock))
+                        {
+                            $Elements[] = $CurrentBlock['element'];
+                        }
 
                         $Block['identified'] = true;
                     }
@@ -296,17 +283,21 @@ class Parsedown
 
             # ~
 
-            if (
-                isset($CurrentBlock)
-                and isset($CurrentBlock['element']['name'])
-                and $CurrentBlock['element']['name'] === 'p'
-                and ! isset($CurrentBlock['interrupted'])
-            ) {
-                $CurrentBlock['element']['handler']['argument'] .= "\n".$text;
+            if (isset($CurrentBlock) and $CurrentBlock['type'] === 'Paragraph')
+            {
+                $Block = $this->paragraphContinue($Line, $CurrentBlock);
+            }
+
+            if (isset($Block))
+            {
+                $CurrentBlock = $Block;
             }
             else
             {
-                $Blocks []= $CurrentBlock;
+                if (isset($CurrentBlock))
+                {
+                    $Elements[] = $CurrentBlock['element'];
+                }
 
                 $CurrentBlock = $this->paragraph($Line);
 
@@ -323,22 +314,9 @@ class Parsedown
 
         # ~
 
-        $Blocks []= $CurrentBlock;
-
-        unset($Blocks[0]);
-
-        # ~
-
-        $Elements = array();
-
-        foreach ($Blocks as $Block)
+        if (isset($CurrentBlock))
         {
-            if (isset($Block['hidden']))
-            {
-                continue;
-            }
-
-            $Elements[] = $Block['element'];
+            $Elements[] = $CurrentBlock['element'];
         }
 
         # ~
@@ -361,7 +339,7 @@ class Parsedown
 
     protected function blockCode($Line, $Block = null)
     {
-        if (isset($Block) and ! isset($Block['type']) and ! isset($Block['interrupted']))
+        if (isset($Block) and $Block['type'] === 'Paragraph' and ! isset($Block['interrupted']))
         {
             return;
         }
@@ -616,7 +594,7 @@ class Parsedown
                 {
                     if (
                         isset($CurrentBlock)
-                        and ! isset($CurrentBlock['type'])
+                        and $CurrentBlock['type'] === 'Paragraph'
                         and ! isset($CurrentBlock['interrupted'])
                     ) {
                         return;
@@ -809,7 +787,7 @@ class Parsedown
 
     protected function blockSetextHeader($Line, array $Block = null)
     {
-        if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
+        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
         {
             return;
         }
@@ -878,18 +856,13 @@ class Parsedown
 
             $Data = array(
                 'url' => $matches[2],
-                'title' => null,
+                'title' => isset($matches[3]) ? $matches[3] : null,
             );
-
-            if (isset($matches[3]))
-            {
-                $Data['title'] = $matches[3];
-            }
 
             $this->DefinitionData['Reference'][$id] = $Data;
 
             $Block = array(
-                'hidden' => true,
+                'element' => array(),
             );
 
             return $Block;
@@ -901,7 +874,7 @@ class Parsedown
 
     protected function blockTable($Line, array $Block = null)
     {
-        if ( ! isset($Block) or isset($Block['type']) or isset($Block['interrupted']))
+        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
         {
             return;
         }
@@ -1081,16 +1054,27 @@ class Parsedown
 
     protected function paragraph($Line)
     {
-        $Block = array(
+        return array(
+            'type' => 'Paragraph',
             'element' => array(
                 'name' => 'p',
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $Line['text'],
                     'destination' => 'elements',
-                )
+                ),
             ),
         );
+    }
+
+    protected function paragraphContinue($Line, array $Block)
+    {
+        if (isset($Block['interrupted']))
+        {
+            return;
+        }
+
+        $Block['element']['handler']['argument'] .= "\n".$Line['text'];
 
         return $Block;
     }
@@ -1776,6 +1760,11 @@ class Parsedown
 
         foreach ($Elements as $Element)
         {
+            if (empty($Element))
+            {
+                continue;
+            }
+
             $autoBreakNext = (isset($Element['autobreak']) && $Element['autobreak']
                 || ! isset($Element['autobreak']) && isset($Element['name'])
             );
