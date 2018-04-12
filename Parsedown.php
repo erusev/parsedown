@@ -182,11 +182,8 @@ class Parsedown
                 continue;
             }
 
-            for (
-                $beforeTab = strstr($line, "\t", true);
-                $beforeTab !== false;
-                $beforeTab = strstr($line, "\t", true)
-            ) {
+            while (($beforeTab = strstr($line, "\t", true)) !== false)
+            {
                 $shortage = 4 - mb_strlen($beforeTab, 'utf-8') % 4;
 
                 $line = $beforeTab
@@ -207,7 +204,8 @@ class Parsedown
 
             if (isset($CurrentBlock['continuable']))
             {
-                $Block = $this->{"block{$CurrentBlock['type']}Continue"}($Line, $CurrentBlock);
+                $methodName = 'block' . $CurrentBlock['type'] . 'Continue';
+                $Block = $this->$methodName($Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -219,7 +217,8 @@ class Parsedown
                 {
                     if ($this->isBlockCompletable($CurrentBlock['type']))
                     {
-                        $CurrentBlock = $this->{"block{$CurrentBlock['type']}Complete"}($CurrentBlock);
+                        $methodName = 'block' . $CurrentBlock['type'] . 'Complete';
+                        $CurrentBlock = $this->$methodName($CurrentBlock);
                     }
                 }
             }
@@ -300,7 +299,8 @@ class Parsedown
 
         if (isset($CurrentBlock['continuable']) and $this->isBlockCompletable($CurrentBlock['type']))
         {
-            $CurrentBlock = $this->{"block{$CurrentBlock['type']}Complete"}($CurrentBlock);
+            $methodName = 'block' . $CurrentBlock['type'] . 'Complete';
+            $CurrentBlock = $this->$methodName($CurrentBlock);
         }
 
         # ~
@@ -317,12 +317,12 @@ class Parsedown
 
     protected function isBlockContinuable($Type)
     {
-        return method_exists($this, "block${Type}Continue");
+        return method_exists($this, 'block' . $Type . 'Continue');
     }
 
     protected function isBlockCompletable($Type)
     {
-        return method_exists($this, "block${Type}Complete");
+        return method_exists($this, 'block' . $Type . 'Complete');
     }
 
     #
@@ -1138,10 +1138,11 @@ class Parsedown
 
                 # cause the new element to 'inherit' our non nestables
 
-                foreach ($nonNestables as $nonNestable)
-                {
-                    $Inline['element']['nonNestables'][] = $nonNestable;
-                }
+
+                $Inline['element']['nonNestables'] = isset($Inline['element']['nonNestables'])
+                    ? array_merge($Inline['element']['nonNestables'], $nonNestables)
+                    : $nonNestables
+                ;
 
                 # the text that comes before the inline
                 $unmarkedText = substr($text, 0, $Inline['position']);
