@@ -1196,16 +1196,12 @@ class Parsedown
 
         $safeText = self::escape($text, true);
 
-        if ($this->breaksEnabled)
-        {
-            $Inline['element']['rawHtml'] = preg_replace('/[ ]*+\n/', "<br />\n", $safeText);
-            $Inline['element']['allowRawHtmlInSafeMode'] = true;
-        }
-        else
-        {
-            $Inline['element']['rawHtml'] = preg_replace('/(?:[ ]*+\\\\|[ ]{2,}+)\n/', "<br />\n", $safeText);
-            $Inline['element']['allowRawHtmlInSafeMode'] = true;
-        }
+        $Inline['element']['rawHtml'] = preg_replace(
+            $this->breaksEnabled ? '/[ ]*+\n/' : '/(?:[ ]*+\\\\|[ ]{2,}+)\n/',
+            "<br />\n",
+            $safeText
+        );
+        $Inline['element']['allowRawHtmlInSafeMode'] = true;
 
         return $Inline;
     }
