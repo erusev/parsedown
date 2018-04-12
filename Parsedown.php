@@ -1585,6 +1585,7 @@ class Parsedown
             {
                 $function = $Element['handler'];
                 $argument = $Element['text'];
+                unset($Element['text']);
                 $destination = 'rawHtml';
             }
             else
