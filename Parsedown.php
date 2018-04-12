@@ -264,7 +264,7 @@ class Parsedown
                     {
                         if (isset($CurrentBlock))
                         {
-                            $Elements[] = $CurrentBlock['element'];
+                            $Elements[] = $this->extractElement($CurrentBlock);
                         }
 
                         $Block['identified'] = true;
@@ -296,7 +296,7 @@ class Parsedown
             {
                 if (isset($CurrentBlock))
                 {
-                    $Elements[] = $CurrentBlock['element'];
+                    $Elements[] = $this->extractElement($CurrentBlock);
                 }
 
                 $CurrentBlock = $this->paragraph($Line);
@@ -316,12 +316,22 @@ class Parsedown
 
         if (isset($CurrentBlock))
         {
-            $Elements[] = $CurrentBlock['element'];
+            $Elements[] = $this->extractElement($CurrentBlock);
         }
 
         # ~
 
         return $Elements;
+    }
+
+    protected function extractElement(array $Component)
+    {
+        if ( ! isset($Component['element']) and isset($Component['markup']))
+        {
+            $Component['element'] = array('rawHtml' => $Component['markup']);
+        }
+
+        return $Component['element'];
     }
 
     protected function isBlockContinuable($Type)
@@ -1169,7 +1179,7 @@ class Parsedown
                 $Elements[] = $InlineText['element'];
 
                 # compile the inline
-                $Elements[] = $Inline['element'];
+                $Elements[] = $this->extractElement($Inline);
 
                 # remove the examined text
                 $text = substr($text, $Inline['position'] + $Inline['extent']);
@@ -1585,6 +1595,7 @@ class Parsedown
             {
                 $function = $Element['handler'];
                 $argument = $Element['text'];
+                unset($Element['text']);
                 $destination = 'rawHtml';
             }
             else
