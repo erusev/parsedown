@@ -1094,7 +1094,10 @@ class Parsedown
     {
         $Elements = array();
 
-        $nonNestables = array_combine($nonNestables, $nonNestables);
+        $nonNestables = (empty($nonNestables)
+            ? array()
+            : array_combine($nonNestables, $nonNestables)
+        );
 
         # $excerpt is based on the first occurrence of a marker
 
