@@ -409,7 +409,7 @@ class Parsedown
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n{$Line['body']}";
+        $Block['element']['rawHtml'] .= "\n" . $Line['body'];
 
         if (strpos($Line['text'], '-->') !== false)
         {
@@ -486,7 +486,7 @@ class Parsedown
             return $Block;
         }
 
-        $Block['element']['element']['text'] .= "\n{$Line['body']}";
+        $Block['element']['element']['text'] .= "\n" . $Line['body'];
 
         return $Block;
     }
@@ -819,7 +819,7 @@ class Parsedown
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n{$Line['body']}";
+        $Block['element']['rawHtml'] .= "\n" . $Line['body'];
 
         return $Block;
     }
@@ -1011,7 +1011,7 @@ class Parsedown
                 if (isset($Block['alignments'][$index]))
                 {
                     $Element['attributes'] = array(
-                        'style' => "text-align: {$Block['alignments'][$index]};",
+                        'style' => 'text-align: ' . $Block['alignments'][$index] . ';',
                     );
                 }
 
@@ -1453,7 +1453,7 @@ class Parsedown
             and preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches)
         ) {
             return array(
-                'element' => array('rawHtml' => "&{$matches[1]};"),
+                'element' => array('rawHtml' => '&' . $matches[1] . ';'),
                 'extent' => strlen($matches[0]),
             );
         }
@@ -1656,7 +1656,7 @@ class Parsedown
 
         if ($hasName)
         {
-            $markup .= "<{$Element['name']}";
+            $markup .= '<' . $Element['name'];
 
             if (isset($Element['attributes']))
             {
@@ -1714,7 +1714,7 @@ class Parsedown
                 }
             }
 
-            $markup .= $hasName ? "</{$Element['name']}>" : '';
+            $markup .= $hasName ? '</' . $Element['name'] . '>' : '';
         }
         elseif ($hasName)
         {
