@@ -888,6 +888,11 @@ class Parsedown
             isset($Block) and $Block['type'] === 'Paragraph' and ! isset($Block['interrupted'])
         );
 
+        if ( ! $hasHeader and $this->strictMode)
+        {
+            return;
+        }
+
         $headerHasDelimiters = (
             $hasHeader and strpos($Block['element']['handler']['argument'], '|') !== false
         );
