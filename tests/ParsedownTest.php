@@ -1,7 +1,10 @@
 <?php
-require 'SampleExtensions.php';
+declare(strict_types=1);
+
+namespace Erusev\Parsedown\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Erusev\Parsedown\Parsedown;
 
 class ParsedownTest extends TestCase
 {
@@ -64,7 +67,7 @@ class ParsedownTest extends TestCase
         $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
         $expectedSafeMarkup = '<pre><code class="language-php">&lt;p&gt;foobar&lt;/p&gt;</code></pre>';
 
-        $unsafeExtension = new UnsafeExtension;
+        $unsafeExtension = new SampleExtensions\UnsafeExtension;
         $actualMarkup = $unsafeExtension->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
@@ -81,7 +84,7 @@ class ParsedownTest extends TestCase
         $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
         $expectedSafeMarkup = $expectedMarkup;
 
-        $unsafeExtension = new TrustDelegatedExtension;
+        $unsafeExtension = new SampleExtensions\TrustDelegatedExtension;
         $actualMarkup = $unsafeExtension->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
@@ -98,7 +101,7 @@ class ParsedownTest extends TestCase
 
         foreach ($this->dirs as $dir)
         {
-            $Folder = new DirectoryIterator($dir);
+            $Folder = new \DirectoryIterator($dir);
 
             foreach ($Folder as $File)
             {
@@ -182,16 +185,16 @@ EXPECTED_HTML;
     public function testLateStaticBinding()
     {
         $parsedown = Parsedown::instance();
-        $this->assertInstanceOf('Parsedown', $parsedown);
+        $this->assertInstanceOf(Parsedown::class, $parsedown);
 
         // After instance is already called on Parsedown
         // subsequent calls with the same arguments return the same instance
         $sameParsedown = TestParsedown::instance();
-        $this->assertInstanceOf('Parsedown', $sameParsedown);
+        $this->assertInstanceOf(Parsedown::class, $sameParsedown);
         $this->assertSame($parsedown, $sameParsedown);
 
         $testParsedown = TestParsedown::instance('test late static binding');
-        $this->assertInstanceOf('TestParsedown', $testParsedown);
+        $this->assertInstanceOf(TestParsedown::class, $testParsedown);
 
         $sameInstanceAgain = TestParsedown::instance('test late static binding');
         $this->assertSame($testParsedown, $sameInstanceAgain);

@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace Erusev\Parsedown\Tests;
 
 /**
  * Test Parsedown against the CommonMark spec
