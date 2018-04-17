@@ -184,16 +184,16 @@ EXPECTED_HTML;
     public function testLateStaticBinding()
     {
         $parsedown = Parsedown::instance();
-        $this->assertInstanceOf(Parsedown::class, $parsedown);
+        $this->assertInstanceOf('Erusev\Parsedown\Parsedown', $parsedown);
 
         // After instance is already called on Parsedown
         // subsequent calls with the same arguments return the same instance
         $sameParsedown = TestParsedown::instance();
-        $this->assertInstanceOf(Parsedown::class, $sameParsedown);
+        $this->assertInstanceOf('Erusev\Parsedown\Parsedown', $sameParsedown);
         $this->assertSame($parsedown, $sameParsedown);
 
         $testParsedown = TestParsedown::instance('test late static binding');
-        $this->assertInstanceOf(TestParsedown::class, $testParsedown);
+        $this->assertInstanceOf('Erusev\Parsedown\Parsedown', $testParsedown);
 
         $sameInstanceAgain = TestParsedown::instance('test late static binding');
         $this->assertSame($testParsedown, $sameInstanceAgain);
