@@ -20,14 +20,9 @@
         "phpunit/phpunit": "^4.8.35"
     },
     "autoload": {
-        "psr-0": {"Parsedown": ""}
+        "psr-4": {"Erusev\\Parsedown\\": "src/"}
     },
     "autoload-dev": {
-        "psr-0": {
-            "TestParsedown": "test/",
-            "ParsedownTest": "test/",
-            "CommonMarkTest": "test/",
-            "CommonMarkTestWeak": "test/"
-        }
+        "psr-4": {"Erusev\\Parsedown\\Tests\\": "tests/"}
     }
 }
