@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Erusev\Parsedown\Tests\SampleExtensions;
 
 use Erusev\Parsedown\Tests\TestParsedown;
