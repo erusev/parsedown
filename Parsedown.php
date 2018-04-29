@@ -884,17 +884,29 @@ class Parsedown
 
     protected function blockTable($Line, array $Block = null)
     {
-        if ( ! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted']))
+        $hasHeader = (
+            isset($Block) and $Block['type'] === 'Paragraph' and ! isset($Block['interrupted'])
+        );
+
+        if ( ! $hasHeader and $this->strictMode)
         {
             return;
         }
 
-        if (
-            strpos($Block['element']['handler']['argument'], '|') === false
-            and strpos($Line['text'], '|') === false
-            and strpos($Line['text'], ':') === false
-            or strpos($Block['element']['handler']['argument'], "\n") !== false
-        ) {
+        $headerHasDelimiters = (
+            $hasHeader and strpos($Block['element']['handler']['argument'], '|') !== false
+        );
+
+        $headerHasNewlines = (
+            $hasHeader and strpos($Block['element']['handler']['argument'], "\n") !== false
+        );
+
+        $dividerHasDelimiters = (
+            strpos($Line['text'], '|') !== false or strpos($Line['text'], ':') !== false
+        );
+
+        if ($headerHasNewlines or ! ($headerHasDelimiters or $dividerHasDelimiters))
+        {
             return;
         }
 
@@ -938,68 +950,77 @@ class Parsedown
 
         # ~
 
-        $HeaderElements = array();
-
-        $header = $Block['element']['handler']['argument'];
-
-        $header = trim($header);
-        $header = trim($header, '|');
-
-        $headerCells = explode('|', $header);
-
-        if (count($headerCells) !== count($alignments))
+        if ($hasHeader)
         {
-            return;
-        }
+            $HeaderElements = array();
 
-        foreach ($headerCells as $index => $headerCell)
-        {
-            $headerCell = trim($headerCell);
+            $header = $Block['element']['handler']['argument'];
 
-            $HeaderElement = array(
-                'name' => 'th',
-                'handler' => array(
-                    'function' => 'lineElements',
-                    'argument' => $headerCell,
-                    'destination' => 'elements',
-                )
-            );
+            $header = trim($header);
+            $header = trim($header, '|');
 
-            if (isset($alignments[$index]))
+            $headerCells = explode('|', $header);
+
+            if (count($headerCells) !== count($alignments))
             {
-                $alignment = $alignments[$index];
-
-                $HeaderElement['attributes'] = array(
-                    'style' => 'text-align: '.$alignment.';',
-                );
+                return;
             }
 
-            $HeaderElements []= $HeaderElement;
+            foreach ($headerCells as $index => $headerCell)
+            {
+                $headerCell = trim($headerCell);
+
+                $HeaderElement = array(
+                    'name' => 'th',
+                    'handler' => array(
+                        'function' => 'lineElements',
+                        'argument' => $headerCell,
+                        'destination' => 'elements',
+                    )
+                );
+
+                if (isset($alignments[$index]))
+                {
+                    $alignment = $alignments[$index];
+
+                    $HeaderElement['attributes'] = array(
+                        'style' => 'text-align: '.$alignment.';',
+                    );
+                }
+
+                $HeaderElements []= $HeaderElement;
+            }
         }
 
         # ~
 
         $Block = array(
             'alignments' => $alignments,
-            'identified' => true,
             'element' => array(
                 'name' => 'table',
                 'elements' => array(),
             ),
         );
 
-        $Block['element']['elements'] []= array(
-            'name' => 'thead',
-        );
+        if ($hasHeader)
+        {
+            # if we have a header, tell the main loop we absorbed the
+            # previous unidentified block's text
+            $Block['identified'] = true;
 
-        $Block['element']['elements'] []= array(
+            $Block['element']['elements'][0] = array(
+                'name' => 'thead',
+            );
+
+            $Block['element']['elements'][0]['elements'] []= array(
+                'name' => 'tr',
+                'elements' => $HeaderElements,
+            );
+        }
+
+        $Block['element']['elements'][1] = array(
             'name' => 'tbody',
             'elements' => array(),
-        );
-
-        $Block['element']['elements'][0]['elements'] []= array(
-            'name' => 'tr',
-            'elements' => $HeaderElements,
         );
 
         return $Block;
