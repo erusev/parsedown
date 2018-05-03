@@ -1696,6 +1696,21 @@ class Parsedown
 
         if ($hasName)
         {
+            if (in_array($Element['name'],array('h1','h2','h3','h4','h5','h6'))) { 
+                if (isset($Element['elements']))
+                    $value = $this->elements($Element['elements']);
+                elseif (isset($Element['element']))
+                    $value = $this->element($Element['elements']);
+                elseif (isset($Element['text']))
+                    $value = $Element['text'];
+                elseif (isset($Element['rawHtml']))
+                    $value = $Element['rawHtml'];
+                else
+                    $value = '';
+                if ($value != '')
+                    $Element['attributes']['id'] = str_replace(array(' ','/','.','#'),array('-','','',''),strtolower($value)); 
+            }
+
             $markup .= '<'.$Element['name'];
 
             if (isset($Element['attributes']))
