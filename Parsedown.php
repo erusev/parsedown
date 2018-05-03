@@ -1970,7 +1970,7 @@ class Parsedown
     # Read-Only
 
     protected $specialCharacters = array(
-        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|',
+        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|', '~'
     );
 
     protected $StrongRegex = array(
