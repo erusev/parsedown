@@ -1258,7 +1258,7 @@ class Parsedown
         if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
         {
             $text = $matches[2];
-            $text = preg_replace("/[ ]*\n/", '', $text);
+            $text = preg_replace("/[ ]*\r\n/", ' ', $text);
 
             return array(
                 'extent' => strlen($matches[0]),
