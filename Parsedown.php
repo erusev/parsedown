@@ -1215,14 +1215,14 @@ class Parsedown
             'element' => array(),
         );
 
-        $safeText = self::escape($text, true);
-
-        $Inline['element']['rawHtml'] = preg_replace(
+        $Inline['element']['elements'] = self::pregReplaceElements(
             $this->breaksEnabled ? '/[ ]*+\n/' : '/(?:[ ]*+\\\\|[ ]{2,}+)\n/',
-            "<br />\n",
-            $safeText
+            array(
+                array('name' => 'br'),
+                array('text' => "\n"),
+            ),
+            $text
         );
-        $Inline['element']['allowRawHtmlInSafeMode'] = true;
 
         return $Inline;
     }
