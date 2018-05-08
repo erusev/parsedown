@@ -317,9 +317,16 @@ class Parsedown
 
     protected function extractElement(array $Component)
     {
-        if ( ! isset($Component['element']) and isset($Component['markup']))
+        if ( ! isset($Component['element']))
         {
-            $Component['element'] = array('rawHtml' => $Component['markup']);
+            if (isset($Component['markup']))
+            {
+                $Component['element'] = array('rawHtml' => $Component['markup']);
+            }
+            elseif (isset($Component['hidden']))
+            {
+                $Component['element'] = array();
+            }
         }
 
         return $Component['element'];
