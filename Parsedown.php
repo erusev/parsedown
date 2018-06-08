@@ -391,6 +391,11 @@ class Parsedown
         }
     }
 
+    protected function blockCodeComplete($Block)
+    {
+        return $Block;
+    }
+
     #
     # Comment
 
@@ -505,6 +510,11 @@ class Parsedown
 
         $Block['element']['element']['text'] .= "\n" . $Line['body'];
 
+        return $Block;
+    }
+
+    protected function blockFencedCodeComplete($Block)
+    {
         return $Block;
     }
 
