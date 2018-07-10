@@ -1695,7 +1695,7 @@ class Parsedown
                         continue;
                     }
 
-                    $markup .= " $name=\"".self::escape($value).'"';
+                    $markup .= " $name=\"".static::escape($value).'"';
                 }
             }
         }
@@ -1734,7 +1734,7 @@ class Parsedown
             {
                 if (!$permitRawHtml)
                 {
-                    $markup .= self::escape($text, true);
+                    $markup .= static::escape($text, true);
                 }
                 else
                 {
