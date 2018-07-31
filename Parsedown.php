@@ -101,6 +101,15 @@ class Parsedown
 
     protected $strictMode;
 
+    function setHeaderOffset($headerOffset)
+    {
+        $this->headerOffset = $headerOffset;
+
+        return $this;
+    }
+
+    protected $headerOffset = 0;
+
     protected $safeLinksWhitelist = array(
         'http://',
         'https://',
@@ -542,7 +551,7 @@ class Parsedown
 
         $Block = array(
             'element' => array(
-                'name' => 'h' . $level,
+                'name' => 'h' . min(6, $level + $this->headerOffset),
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $text,
