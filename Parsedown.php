@@ -541,7 +541,7 @@ class Parsedown
 
         $Block = array(
             'element' => array(
-                'name' => 'h' . min(6, $level),
+                'name' => 'h' . $level,
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $text,
