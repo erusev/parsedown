@@ -107,6 +107,7 @@ class Parsedown
         'ftp://',
         'ftps://',
         'mailto:',
+        'tel:',
         'data:image/png;base64,',
         'data:image/gif;base64,',
         'data:image/jpeg;base64,',
