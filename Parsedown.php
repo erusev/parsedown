@@ -1120,6 +1120,9 @@ class Parsedown
 
     protected function lineElements($text, $nonNestables = array())
     {
+        # standardize line breaks
+        $text = str_replace(array("\r\n", "\r"), "\n", $text);
+
         $Elements = array();
 
         $nonNestables = (empty($nonNestables)
