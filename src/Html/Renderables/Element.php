@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Erusev\Parsedown\Html\Components;
+namespace Erusev\Parsedown\Html\Renderables;
 
-use Erusev\Parsedown\Html\Component;
+use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Sanitisation\CharacterFilter;
 use Erusev\Parsedown\Html\Sanitisation\Escaper;
 
-final class Element implements Component
+final class Element implements Renderable
 {
     /** @var string */
     private $name;
@@ -14,13 +14,13 @@ final class Element implements Component
     /** @var array<string, string>*/
     private $attributes;
 
-    /** @var Component[]|null */
+    /** @var Renderable[]|null */
     private $Contents;
 
     /**
      * @param string $name
      * @param array<string, string> $attributes
-     * @param Component[]|null $Contents
+     * @param Renderable[]|null $Contents
      */
     public function __construct(
         string $name,
@@ -55,7 +55,7 @@ final class Element implements Component
     }
 
     /**
-     * @return Component[]|null
+     * @return Renderable[]|null
      */
     public function contents(): ?array
     {

@@ -2,7 +2,7 @@
 
 namespace Erusev\Parsedown\Html;
 
-interface Component
+interface Renderable
 {
     public function getHtml(): string;
 }
