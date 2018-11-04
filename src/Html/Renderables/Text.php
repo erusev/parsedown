@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Erusev\Parsedown\Html\Components;
+namespace Erusev\Parsedown\Html\Renderables;
 
-use Erusev\Parsedown\Html\Component;
+use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Sanitisation\CharacterFilter;
 use Erusev\Parsedown\Html\Sanitisation\Escaper;
 
-final class Text implements Component
+final class Text implements Renderable
 {
     /** @var string */
     private $text;
