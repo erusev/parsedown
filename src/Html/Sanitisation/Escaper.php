@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Erusev\Parsedown\Sanisisation;
+namespace Erusev\Parsedown\Html\Sanisisation;
 
 final class Escaper
 {
