@@ -1480,7 +1480,7 @@ class Parsedown
 
     protected function inlineSpecialCharacter($Excerpt)
     {
-        if ($Excerpt['text'][1] !== ' ' and strpos($Excerpt['text'], ';') !== false
+        if (substr($Excerpt['text'], 1, 1) !== ' ' and strpos($Excerpt['text'], ';') !== false
             and preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches)
         ) {
             return array(
