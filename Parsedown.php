@@ -470,7 +470,12 @@ class Parsedown
 
         if ($infostring !== '')
         {
-            $Element['attributes'] = array('class' => "language-$infostring");
+            $attrb = array('class' => 'brush:'.$infostring);
+            $Element = null;
+        }
+        else
+        {
+            $attrb = null;
         }
 
         $Block = array(
@@ -478,6 +483,7 @@ class Parsedown
             'openerLength' => $openerLength,
             'element' => array(
                 'name' => 'pre',
+                'attributes' => $attrb,
                 'element' => $Element,
             ),
         );
