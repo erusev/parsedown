@@ -11,7 +11,7 @@ final class Text implements Renderable
     /** @var string */
     private $text;
 
-    public function __construct(string $text)
+    public function __construct(string $text = '')
     {
         $this->text = $text;
     }
