@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Erusev\Parsedown\Html\Sanisisation;
+namespace Erusev\Parsedown\Html\Sanitisation;
 
 final class CharacterFilter
 {

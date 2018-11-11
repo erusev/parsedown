@@ -18,6 +18,6 @@ final class Text implements Renderable
 
     public function getHtml(): string
     {
-        return Escaper::htmlElementValue($text);
+        return Escaper::htmlElementValue($this->text);
     }
 }
