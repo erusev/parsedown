@@ -73,6 +73,27 @@ final class Element implements Renderable
         return $this->Contents;
     }
 
+    public function settingName(string $name): self
+    {
+        return new self($name, $this->attributes, $this->Contents);
+    }
+
+    /**
+     * @param array<string, string> $attributes
+     */
+    public function settingAttributes(array $attributes): self
+    {
+        return new self($this->name, $attributes, $this->Contents);
+    }
+
+    /**
+     * @param Renderable[]|null $Contents
+     */
+    public function settingContents(?array $Contents): self
+    {
+        return new self($this->name, $this->attributes, $Contents);
+    }
+
     public function getHtml(): string
     {
         $html = '';
