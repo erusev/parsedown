@@ -25,11 +25,22 @@ final class Element implements Renderable
     public function __construct(
         string $name,
         array $attributes,
-        ?array $Components
+        ?array $Contents
     ) {
         $this->name = $name;
         $this->attributes = $attributes;
-        $this->Components = $Components;
+        $this->Contents = $Contents;
+    }
+
+    /**
+     * @param string $name
+     * @param array<string, string> $attributes
+     * @param Renderable ...$Contents
+     *
+     */
+    public static function new(string $name, array $attributes, Renderable ...$Contents): self
+    {
+        return new self($name, $attributes, $Contents);
     }
 
     /**
