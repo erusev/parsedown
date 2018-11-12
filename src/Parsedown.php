@@ -84,6 +84,14 @@ class Parsedown
     }
 
     protected $urlsLinked = true;
+    
+    function setLinksOpenNewTab($linksOpenNewTab) {
+        $this->linksOpenNewTab = $linksOpenNewTab;
+        
+        return $this;
+    }
+    
+    protected $linksOpenNewTab = false;
 
     function setSafeMode($safeMode)
     {
@@ -1440,6 +1448,11 @@ class Parsedown
 
             $Element['attributes']['href'] = $Definition['url'];
             $Element['attributes']['title'] = $Definition['title'];
+        }
+        
+        if ($this->linksOpenNewTab)
+        {
+            $Element['attributes']['target'] = '_blank';
         }
 
         return array(
