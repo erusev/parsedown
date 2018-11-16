@@ -21,6 +21,7 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm-nightly
+    - php: 7.3
 
 install:
   - composer install --prefer-dist --no-interaction --no-progress
