@@ -38,11 +38,11 @@ Install the [composer package] by running the following command:
 ### Example
 
 ``` php
-$Parsedown = new Parsedown();
+$parsedown = new Parsedown();
 
-echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
+echo $parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 // you can also parse inline markdown only
-echo $Parsedown->line('Hello _Parsedown_!'); # prints: Hello <em>Parsedown</em>!
+echo $parsedown->line('Hello _Parsedown_!'); # prints: Hello <em>Parsedown</em>!
 ```
 
 More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
