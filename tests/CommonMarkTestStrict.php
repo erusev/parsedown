@@ -2,12 +2,14 @@
 
 namespace Erusev\Parsedown\Tests;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test Parsedown against the CommonMark spec
  *
  * @link http://commonmark.org/ CommonMark
  */
-class CommonMarkTestStrict extends PHPUnit_Framework_TestCase
+class CommonMarkTestStrict extends TestCase
 {
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/CommonMark/master/spec.txt';
 
