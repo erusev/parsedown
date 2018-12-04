@@ -2,12 +2,12 @@
 
 namespace Erusev\Parsedown\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Erusev\Parsedown\Parsedown;
+use PHPUnit\Framework\TestCase;
 
 class ParsedownTest extends TestCase
 {
-    final function __construct($name = null, array $data = array(), $dataName = '')
+    final public function __construct($name = null, array $data = [], $dataName = '')
     {
         $this->dirs = $this->initDirs();
         $this->Parsedown = $this->initParsedown();
@@ -23,7 +23,7 @@ class ParsedownTest extends TestCase
      */
     protected function initDirs()
     {
-        $dirs []= dirname(__FILE__).'/data/';
+        $dirs []= \dirname(__FILE__).'/data/';
 
         return $dirs;
     }
@@ -43,24 +43,24 @@ class ParsedownTest extends TestCase
      * @param $test
      * @param $dir
      */
-    function test_($test, $dir)
+    public function test_($test, $dir)
     {
-        $markdown = file_get_contents($dir . $test . '.md');
+        $markdown = \file_get_contents($dir . $test . '.md');
 
-        $expectedMarkup = file_get_contents($dir . $test . '.html');
+        $expectedMarkup = \file_get_contents($dir . $test . '.html');
 
-        $expectedMarkup = str_replace("\r\n", "\n", $expectedMarkup);
-        $expectedMarkup = str_replace("\r", "\n", $expectedMarkup);
+        $expectedMarkup = \str_replace("\r\n", "\n", $expectedMarkup);
+        $expectedMarkup = \str_replace("\r", "\n", $expectedMarkup);
 
-        $this->Parsedown->setSafeMode(substr($test, 0, 3) === 'xss');
-        $this->Parsedown->setStrictMode(substr($test, 0, 6) === 'strict');
+        $this->Parsedown->setSafeMode(\substr($test, 0, 3) === 'xss');
+        $this->Parsedown->setStrictMode(\substr($test, 0, 6) === 'strict');
 
         $actualMarkup = $this->Parsedown->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
 
-    function testRawHtml()
+    public function testRawHtml()
     {
         $markdown = "```php\nfoobar\n```";
         $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
@@ -77,7 +77,7 @@ class ParsedownTest extends TestCase
         $this->assertEquals($expectedSafeMarkup, $actualSafeMarkup);
     }
 
-    function testTrustDelegatedRawHtml()
+    public function testTrustDelegatedRawHtml()
     {
         $markdown = "```php\nfoobar\n```";
         $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
@@ -94,37 +94,32 @@ class ParsedownTest extends TestCase
         $this->assertEquals($expectedSafeMarkup, $actualSafeMarkup);
     }
 
-    function data()
+    public function data()
     {
-        $data = array();
+        $data = [];
 
-        foreach ($this->dirs as $dir)
-        {
+        foreach ($this->dirs as $dir) {
             $Folder = new \DirectoryIterator($dir);
 
-            foreach ($Folder as $File)
-            {
+            foreach ($Folder as $File) {
                 /** @var $File DirectoryIterator */
 
-                if ( ! $File->isFile())
-                {
+                if (! $File->isFile()) {
                     continue;
                 }
 
                 $filename = $File->getFilename();
 
-                $extension = pathinfo($filename, PATHINFO_EXTENSION);
+                $extension = \pathinfo($filename, \PATHINFO_EXTENSION);
 
-                if ($extension !== 'md')
-                {
+                if ($extension !== 'md') {
                     continue;
                 }
 
                 $basename = $File->getBasename('.md');
 
-                if (file_exists($dir . $basename . '.html'))
-                {
-                    $data []= array($basename, $dir);
+                if (\file_exists($dir . $basename . '.html')) {
+                    $data []= [$basename, $dir];
                 }
             }
         }

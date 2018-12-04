@@ -37,18 +37,18 @@ class CommonMarkTestStrict extends PHPUnit_Framework_TestCase
      */
     public function data()
     {
-        $spec = file_get_contents(self::SPEC_URL);
+        $spec = \file_get_contents(self::SPEC_URL);
         if ($spec === false) {
             $this->fail('Unable to load CommonMark spec from ' . self::SPEC_URL);
         }
 
-        $spec = str_replace("\r\n", "\n", $spec);
-        $spec = strstr($spec, '<!-- END TESTS -->', true);
+        $spec = \str_replace("\r\n", "\n", $spec);
+        $spec = \strstr($spec, '<!-- END TESTS -->', true);
 
-        $matches = array();
-        preg_match_all('/^`{32} example\n((?s).*?)\n\.\n(?:|((?s).*?)\n)`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
+        $matches = [];
+        \preg_match_all('/^`{32} example\n((?s).*?)\n\.\n(?:|((?s).*?)\n)`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, \PREG_SET_ORDER);
 
-        $data = array();
+        $data = [];
         $currentId = 0;
         $currentSection = '';
         foreach ($matches as $match) {
@@ -56,15 +56,15 @@ class CommonMarkTestStrict extends PHPUnit_Framework_TestCase
                 $currentSection = $match[3];
             } else {
                 $currentId++;
-                $markdown = str_replace('→', "\t", $match[1]);
-                $expectedHtml = isset($match[2]) ? str_replace('→', "\t", $match[2]) : '';
+                $markdown = \str_replace('→', "\t", $match[1]);
+                $expectedHtml = isset($match[2]) ? \str_replace('→', "\t", $match[2]) : '';
 
-                $data[$currentId] = array(
+                $data[$currentId] = [
                     'id' => $currentId,
                     'section' => $currentSection,
                     'markdown' => $markdown,
                     'expectedHtml' => $expectedHtml
-                );
+                ];
             }
         }
 
