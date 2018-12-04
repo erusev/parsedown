@@ -25,5 +25,15 @@
     },
     "autoload-dev": {
         "psr-4": {"Erusev\\Parsedown\\Tests\\": "tests/"}
+    },
+    "scripts": {
+        "test": [
+            "@test-units",
+            "@test-formatting"
+        ],
+        "test-units": "vendor/bin/phpunit",
+        "test-formatting": "@composer fix -- --dry-run",
+
+        "fix": "vendor/bin/php-cs-fixer fix --verbose --show-progress=dots --diff"
     }
 }
