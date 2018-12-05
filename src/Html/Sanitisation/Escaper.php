@@ -4,20 +4,31 @@ namespace Erusev\Parsedown\Html\Sanitisation;
 
 final class Escaper
 {
-    public static function htmlAttributeValue(string $text) : string
+    /**
+     * @param string $text
+     * @return string
+     */
+    public static function htmlAttributeValue($text)
     {
         return self::escape($text);
     }
 
-    public static function htmlElementValue(string $text) : string
+    /**
+     * @param string $text
+     * @return string
+     */
+    public static function htmlElementValue($text)
     {
         return self::escape($text, true);
     }
 
-    private static function escape(
-        string $text,
-        bool $allowQuotes = false
-    ) : string {
+    /**
+     * @param string $text
+     * @param bool $allowQuotes
+     * @return string
+     */
+    private static function escape($text, $allowQuotes = false)
+    {
         return \htmlentities(
             $text,
             $allowQuotes ? \ENT_NOQUOTES : \ENT_QUOTES,

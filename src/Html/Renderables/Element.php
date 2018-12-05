@@ -22,11 +22,8 @@ final class Element implements Renderable
      * @param array<string, string> $attributes
      * @param Renderable[]|null $Contents
      */
-    public function __construct(
-        string $name,
-        array $attributes,
-        ?array $Contents
-    ) {
+    public function __construct($name, $attributes, $Contents)
+    {
         $this->name = $name;
         $this->attributes = $attributes;
         $this->Contents = $Contents;
@@ -35,10 +32,10 @@ final class Element implements Renderable
     /**
      * @param string $name
      * @param array<string, string> $attributes
-     * @param Renderable ...$Contents
-     *
+     * @param Renderable[] $Contents
+     * @return self
      */
-    public static function new(string $name, array $attributes, Renderable ...$Contents): self
+    public static function create($name, array $attributes, array $Contents)
     {
         return new self($name, $attributes, $Contents);
     }
@@ -46,13 +43,15 @@ final class Element implements Renderable
     /**
      * @param string $name
      * @param array<string, string> $attributes
+     * @return self
      */
-    public static function selfClosing(string $name, array $attributes): self
+    public static function selfClosing($name, array $attributes)
     {
         return new self($name, $attributes, null);
     }
 
-    public function name(): string
+    /** @return string */
+    public function name()
     {
         return $this->name;
     }
@@ -60,7 +59,7 @@ final class Element implements Renderable
     /**
      * @return array<string, string>
      */
-    public function attributes(): array
+    public function attributes()
     {
         return $this->attributes;
     }
@@ -68,33 +67,40 @@ final class Element implements Renderable
     /**
      * @return Renderable[]|null
      */
-    public function contents(): ?array
+    public function contents()
     {
         return $this->Contents;
     }
 
-    public function settingName(string $name): self
+    /**
+     * @param string $name
+     * @return self
+     */
+    public function settingName($name)
     {
         return new self($name, $this->attributes, $this->Contents);
     }
 
     /**
      * @param array<string, string> $attributes
+     * @return self
      */
-    public function settingAttributes(array $attributes): self
+    public function settingAttributes(array $attributes)
     {
         return new self($this->name, $attributes, $this->Contents);
     }
 
     /**
      * @param Renderable[]|null $Contents
+     * @return self
      */
-    public function settingContents(?array $Contents): self
+    public function settingContents($Contents)
     {
         return new self($this->name, $this->attributes, $Contents);
     }
 
-    public function getHtml(): string
+    /** @return string */
+    public function getHtml()
     {
         $html = '';
 

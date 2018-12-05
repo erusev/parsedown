@@ -4,5 +4,6 @@ namespace Erusev\Parsedown\Html;
 
 interface Renderable
 {
-    public function getHtml(): string;
+    /** @return string */
+    public function getHtml();
 }

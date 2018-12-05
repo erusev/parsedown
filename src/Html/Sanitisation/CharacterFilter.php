@@ -4,7 +4,11 @@ namespace Erusev\Parsedown\Html\Sanitisation;
 
 final class CharacterFilter
 {
-    public static function htmlAttributeName(string $text) : string
+    /**
+     * @param string $text
+     * @return string
+     */
+    public static function htmlAttributeName($text)
     {
         /**
          * https://www.w3.org/TR/html/syntax.html#name
@@ -23,7 +27,11 @@ final class CharacterFilter
         );
     }
 
-    public static function htmlElementName(string $text) : string
+    /**
+     * @param string $text
+     * @return string
+     */
+    public static function htmlElementName($text)
     {
         /**
          * https://www.w3.org/TR/html/syntax.html#tag-name
