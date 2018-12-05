@@ -537,7 +537,7 @@ class Parsedown
                 'name' => 'li',
                 'handler' => [
                     'function' => 'li',
-                    'argument' => !empty($matches[3]) ? Lines::fromTextLines($matches[3], 0) : Lines::empty(),
+                    'argument' => !empty($matches[3]) ? Lines::fromTextLines($matches[3], 0) : Lines::none(),
                     'destination' => 'elements'
                 ]
             ];
