@@ -2,6 +2,8 @@
 
 namespace Erusev\Parsedown;
 
+use Erusev\Parsedown\Parsing\Line;
+
 #
 #
 # Parsedown
@@ -166,7 +168,8 @@ class Parsedown
         return $this->elements($this->linesElements($lines));
     }
 
-    protected function linesElements(array $lines)
+    /** @param int $indentOffset */
+    protected function linesElements(array $lines, array $nonNestables = [], $indentOffset = 0)
     {
         $Elements = [];
         $CurrentBlock = null;
@@ -183,24 +186,7 @@ class Parsedown
                 continue;
             }
 
-            while (($beforeTab = \strstr($line, "\t", true)) !== false) {
-                $shortage = 4 - \mb_strlen($beforeTab, 'utf-8') % 4;
-
-                $line = $beforeTab
-                    . \str_repeat(' ', $shortage)
-                    . \substr($line, \strlen($beforeTab) + 1)
-                ;
-            }
-
-            $indent = \strspn($line, ' ');
-
-            $text = $indent > 0 ? \substr($line, $indent) : $line;
-
-            # ~
-
-            $Line = ['body' => $line, 'indent' => $indent, 'text' => $text];
-
-            # ~
+            $Line = new Line($line, $indentOffset);
 
             if (isset($CurrentBlock['continuable'])) {
                 $methodName = 'block' . $CurrentBlock['type'] . 'Continue';
@@ -220,7 +206,7 @@ class Parsedown
 
             # ~
 
-            $marker = $text[0];
+            $marker = $Line->text()[0];
 
             # ~
 
@@ -322,21 +308,19 @@ class Parsedown
     #
     # Code
 
-    protected function blockCode($Line, $Block = null)
+    protected function blockCode(Line $Line, $Block = null)
     {
         if (isset($Block) and $Block['type'] === 'Paragraph' and ! isset($Block['interrupted'])) {
             return;
         }
 
-        if ($Line['indent'] >= 4) {
-            $text = \substr($Line['body'], 4);
-
+        if ($Line->indent() >= 4) {
             $Block = [
                 'element' => [
                     'name' => 'pre',
                     'element' => [
                         'name' => 'code',
-                        'text' => $text,
+                        'text' => $Line->ltrimBodyUpto(4),
                     ],
                 ],
             ];
@@ -345,9 +329,9 @@ class Parsedown
         }
     }
 
-    protected function blockCodeContinue($Line, $Block)
+    protected function blockCodeContinue(Line $Line, $Block)
     {
-        if ($Line['indent'] >= 4) {
+        if ($Line->indent() >= 4) {
             if (isset($Block['interrupted'])) {
                 $Block['element']['element']['text'] .= \str_repeat("\n", $Block['interrupted']);
 
@@ -356,9 +340,7 @@ class Parsedown
 
             $Block['element']['element']['text'] .= "\n";
 
-            $text = \substr($Line['body'], 4);
-
-            $Block['element']['element']['text'] .= $text;
+            $Block['element']['element']['text'] .= $Line->ltrimBodyUpto(4);
 
             return $Block;
         }
@@ -372,21 +354,21 @@ class Parsedown
     #
     # Comment
 
-    protected function blockComment($Line)
+    protected function blockComment(Line $Line)
     {
         if ($this->markupEscaped or $this->safeMode) {
             return;
         }
 
-        if (\strpos($Line['text'], '<!--') === 0) {
+        if (\strpos($Line->text(), '<!--') === 0) {
             $Block = [
                 'element' => [
-                    'rawHtml' => $Line['body'],
+                    'rawHtml' => $Line->rawLine(),
                     'autobreak' => true,
                 ],
             ];
 
-            if (\strpos($Line['text'], '-->') !== false) {
+            if (\strpos($Line->text(), '-->') !== false) {
                 $Block['closed'] = true;
             }
 
@@ -394,15 +376,15 @@ class Parsedown
         }
     }
 
-    protected function blockCommentContinue($Line, array $Block)
+    protected function blockCommentContinue(Line $Line, array $Block)
     {
         if (isset($Block['closed'])) {
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n" . $Line['body'];
+        $Block['element']['rawHtml'] .= "\n" . $Line->rawLine();
 
-        if (\strpos($Line['text'], '-->') !== false) {
+        if (\strpos($Line->text(), '-->') !== false) {
             $Block['closed'] = true;
         }
 
@@ -412,17 +394,17 @@ class Parsedown
     #
     # Fenced Code
 
-    protected function blockFencedCode($Line)
+    protected function blockFencedCode(Line $Line)
     {
-        $marker = $Line['text'][0];
+        $marker = $Line->text()[0];
 
-        $openerLength = \strspn($Line['text'], $marker);
+        $openerLength = \strspn($Line->text(), $marker);
 
         if ($openerLength < 3) {
             return;
         }
 
-        $infostring = \trim(\substr($Line['text'], $openerLength), "\t ");
+        $infostring = \trim(\substr($Line->text(), $openerLength), "\t ");
 
         if (\strpos($infostring, '`') !== false) {
             return;
@@ -449,7 +431,7 @@ class Parsedown
         return $Block;
     }
 
-    protected function blockFencedCodeContinue($Line, $Block)
+    protected function blockFencedCodeContinue(Line $Line, $Block)
     {
         if (isset($Block['complete'])) {
             return;
@@ -461,8 +443,8 @@ class Parsedown
             unset($Block['interrupted']);
         }
 
-        if (($len = \strspn($Line['text'], $Block['char'])) >= $Block['openerLength']
-            and \chop(\substr($Line['text'], $len), ' ') === ''
+        if (($len = \strspn($Line->text(), $Block['char'])) >= $Block['openerLength']
+            and \chop(\substr($Line->text(), $len), ' ') === ''
         ) {
             $Block['element']['element']['text'] = \substr($Block['element']['element']['text'], 1);
 
@@ -471,7 +453,7 @@ class Parsedown
             return $Block;
         }
 
-        $Block['element']['element']['text'] .= "\n" . $Line['body'];
+        $Block['element']['element']['text'] .= "\n" . $Line->rawLine();
 
         return $Block;
     }
@@ -484,15 +466,15 @@ class Parsedown
     #
     # Header
 
-    protected function blockHeader($Line)
+    protected function blockHeader(Line $Line)
     {
-        $level = \strspn($Line['text'], '#');
+        $level = \strspn($Line->text(), '#');
 
         if ($level > 6) {
             return;
         }
 
-        $text = \trim($Line['text'], '#');
+        $text = \trim($Line->text(), '#');
 
         if ($this->strictMode and isset($text[0]) and $text[0] !== ' ') {
             return;
@@ -517,11 +499,11 @@ class Parsedown
     #
     # List
 
-    protected function blockList($Line, array $CurrentBlock = null)
+    protected function blockList(Line $Line, array $CurrentBlock = null)
     {
-        list($name, $pattern) = $Line['text'][0] <= '-' ? ['ul', '[*+-]'] : ['ol', '[0-9]{1,9}+[.\)]'];
+        list($name, $pattern) = $Line->text()[0] <= '-' ? ['ul', '[*+-]'] : ['ol', '[0-9]{1,9}+[.\)]'];
 
-        if (\preg_match('/^('.$pattern.'([ ]++|$))(.*+)/', $Line['text'], $matches)) {
+        if (\preg_match('/^('.$pattern.'([ ]++|$))(.*+)/', $Line->text(), $matches)) {
             $contentIndent = \strlen($matches[2]);
 
             if ($contentIndent >= 5) {
@@ -535,7 +517,7 @@ class Parsedown
             $markerWithoutWhitespace = \strstr($matches[1], ' ', true);
 
             $Block = [
-                'indent' => $Line['indent'],
+                'indent' => $Line->indent(),
                 'pattern' => $pattern,
                 'data' => [
                     'type' => $name,
@@ -580,7 +562,7 @@ class Parsedown
         }
     }
 
-    protected function blockListContinue($Line, array $Block)
+    protected function blockListContinue(Line $Line, array $Block)
     {
         if (isset($Block['interrupted']) and empty($Block['li']['handler']['argument'])) {
             return null;
@@ -588,14 +570,14 @@ class Parsedown
 
         $requiredIndent = ($Block['indent'] + \strlen($Block['data']['marker']));
 
-        if ($Line['indent'] < $requiredIndent
+        if ($Line->indent() < $requiredIndent
             and (
                 (
                     $Block['data']['type'] === 'ol'
-                    and \preg_match('/^[0-9]++'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line['text'], $matches)
+                    and \preg_match('/^[0-9]++'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line->text(), $matches)
                 ) or (
                     $Block['data']['type'] === 'ul'
-                    and \preg_match('/^'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line['text'], $matches)
+                    and \preg_match('/^'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line->text(), $matches)
                 )
             )
         ) {
@@ -611,7 +593,7 @@ class Parsedown
 
             $text = isset($matches[1]) ? $matches[1] : '';
 
-            $Block['indent'] = $Line['indent'];
+            $Block['indent'] = $Line->indent();
 
             $Block['li'] = [
                 'name' => 'li',
@@ -625,15 +607,15 @@ class Parsedown
             $Block['element']['elements'] []= & $Block['li'];
 
             return $Block;
-        } elseif ($Line['indent'] < $requiredIndent and $this->blockList($Line)) {
+        } elseif ($Line->indent() < $requiredIndent and $this->blockList($Line)) {
             return null;
         }
 
-        if ($Line['text'][0] === '[' and $this->blockReference($Line)) {
+        if ($Line->text()[0] === '[' and $this->blockReference($Line)) {
             return $Block;
         }
 
-        if ($Line['indent'] >= $requiredIndent) {
+        if ($Line->indent() >= $requiredIndent) {
             if (isset($Block['interrupted'])) {
                 $Block['li']['handler']['argument'] []= '';
 
@@ -642,7 +624,7 @@ class Parsedown
                 unset($Block['interrupted']);
             }
 
-            $text = \substr($Line['body'], $requiredIndent);
+            $text = $Line->ltrimBodyUpto($requiredIndent);
 
             $Block['li']['handler']['argument'] []= $text;
 
@@ -650,7 +632,7 @@ class Parsedown
         }
 
         if (! isset($Block['interrupted'])) {
-            $text = \preg_replace('/^[ ]{0,'.$requiredIndent.'}+/', '', $Line['body']);
+            $text = $Line->ltrimBodyUpto($requiredIndent);
 
             $Block['li']['handler']['argument'] []= $text;
 
@@ -674,9 +656,9 @@ class Parsedown
     #
     # Quote
 
-    protected function blockQuote($Line)
+    protected function blockQuote(Line $Line)
     {
-        if (\preg_match('/^>[ ]?+(.*+)/', $Line['text'], $matches)) {
+        if (\preg_match('/^>[ ]?+(.*+)/', $Line->text(), $matches)) {
             $Block = [
                 'element' => [
                     'name' => 'blockquote',
@@ -692,20 +674,20 @@ class Parsedown
         }
     }
 
-    protected function blockQuoteContinue($Line, array $Block)
+    protected function blockQuoteContinue(Line $Line, array $Block)
     {
         if (isset($Block['interrupted'])) {
             return;
         }
 
-        if ($Line['text'][0] === '>' and \preg_match('/^>[ ]?+(.*+)/', $Line['text'], $matches)) {
+        if ($Line->text()[0] === '>' and \preg_match('/^>[ ]?+(.*+)/', $Line->text(), $matches)) {
             $Block['element']['handler']['argument'] []= $matches[1];
 
             return $Block;
         }
 
         if (! isset($Block['interrupted'])) {
-            $Block['element']['handler']['argument'] []= $Line['text'];
+            $Block['element']['handler']['argument'] []= $Line->text();
 
             return $Block;
         }
@@ -716,9 +698,9 @@ class Parsedown
 
     protected function blockRule($Line)
     {
-        $marker = $Line['text'][0];
+        $marker = $Line->text()[0];
 
-        if (\substr_count($Line['text'], $marker) >= 3 and \chop($Line['text'], " $marker") === '') {
+        if (\substr_count($Line->text(), $marker) >= 3 and \chop($Line->text(), " $marker") === '') {
             $Block = [
                 'element' => [
                     'name' => 'hr',
@@ -732,14 +714,14 @@ class Parsedown
     #
     # Setext
 
-    protected function blockSetextHeader($Line, array $Block = null)
+    protected function blockSetextHeader(Line $Line, array $Block = null)
     {
         if (! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted'])) {
             return;
         }
 
-        if ($Line['indent'] < 4 and \chop(\chop($Line['text'], ' '), $Line['text'][0]) === '') {
-            $Block['element']['name'] = $Line['text'][0] === '=' ? 'h1' : 'h2';
+        if ($Line->indent() < 4 and \chop(\chop($Line->text(), ' '), $Line->text()[0]) === '') {
+            $Block['element']['name'] = $Line->text()[0] === '=' ? 'h1' : 'h2';
 
             return $Block;
         }
@@ -748,13 +730,13 @@ class Parsedown
     #
     # Markup
 
-    protected function blockMarkup($Line)
+    protected function blockMarkup(Line $Line)
     {
         if ($this->markupEscaped or $this->safeMode) {
             return;
         }
 
-        if (\preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+(\/)?>/', $Line['text'], $matches)) {
+        if (\preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+(\/)?>/', $Line->text(), $matches)) {
             $element = \strtolower($matches[1]);
 
             if (\in_array($element, $this->textLevelElements, true)) {
@@ -764,7 +746,7 @@ class Parsedown
             $Block = [
                 'name' => $matches[1],
                 'element' => [
-                    'rawHtml' => $Line['text'],
+                    'rawHtml' => $Line->text(),
                     'autobreak' => true,
                 ],
             ];
@@ -773,13 +755,13 @@ class Parsedown
         }
     }
 
-    protected function blockMarkupContinue($Line, array $Block)
+    protected function blockMarkupContinue(Line $Line, array $Block)
     {
         if (isset($Block['closed']) or isset($Block['interrupted'])) {
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n" . $Line['body'];
+        $Block['element']['rawHtml'] .= "\n" . $Line->rawLine();
 
         return $Block;
     }
@@ -787,10 +769,10 @@ class Parsedown
     #
     # Reference
 
-    protected function blockReference($Line)
+    protected function blockReference(Line $Line)
     {
-        if (\strpos($Line['text'], ']') !== false
-            and \preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Line['text'], $matches)
+        if (\strpos($Line->text(), ']') !== false
+            and \preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Line->text(), $matches)
         ) {
             $id = \strtolower($matches[1]);
 
@@ -812,7 +794,7 @@ class Parsedown
     #
     # Table
 
-    protected function blockTable($Line, array $Block = null)
+    protected function blockTable(Line $Line, array $Block = null)
     {
         if (! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted'])) {
             return;
@@ -820,20 +802,20 @@ class Parsedown
 
         if (
             \strpos($Block['element']['handler']['argument'], '|') === false
-            and \strpos($Line['text'], '|') === false
-            and \strpos($Line['text'], ':') === false
+            and \strpos($Line->text(), '|') === false
+            and \strpos($Line->text(), ':') === false
             or \strpos($Block['element']['handler']['argument'], "\n") !== false
         ) {
             return;
         }
 
-        if (\chop($Line['text'], ' -:|') !== '') {
+        if (\chop($Line->text(), ' -:|') !== '') {
             return;
         }
 
         $alignments = [];
 
-        $divider = $Line['text'];
+        $divider = $Line->text();
 
         $divider = \trim($divider);
         $divider = \trim($divider, '|');
@@ -926,16 +908,16 @@ class Parsedown
         return $Block;
     }
 
-    protected function blockTableContinue($Line, array $Block)
+    protected function blockTableContinue(Line $Line, array $Block)
     {
         if (isset($Block['interrupted'])) {
             return;
         }
 
-        if (\count($Block['alignments']) === 1 or $Line['text'][0] === '|' or \strpos($Line['text'], '|')) {
+        if (\count($Block['alignments']) === 1 or $Line->text()[0] === '|' or \strpos($Line->text(), '|')) {
             $Elements = [];
 
-            $row = $Line['text'];
+            $row = $Line->text();
 
             $row = \trim($row);
             $row = \trim($row, '|');
@@ -980,7 +962,7 @@ class Parsedown
     # ~
     #
 
-    protected function paragraph($Line)
+    protected function paragraph(Line $Line)
     {
         return [
             'type' => 'Paragraph',
@@ -988,20 +970,20 @@ class Parsedown
                 'name' => 'p',
                 'handler' => [
                     'function' => 'lineElements',
-                    'argument' => $Line['text'],
+                    'argument' => $Line->text(),
                     'destination' => 'elements',
                 ],
             ],
         ];
     }
 
-    protected function paragraphContinue($Line, array $Block)
+    protected function paragraphContinue(Line $Line, array $Block)
     {
         if (isset($Block['interrupted'])) {
             return;
         }
 
-        $Block['element']['handler']['argument'] .= "\n".$Line['text'];
+        $Block['element']['handler']['argument'] .= "\n".$Line->text();
 
         return $Block;
     }
