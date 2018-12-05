@@ -4,7 +4,7 @@ dist: trusty
 sudo: false
 
 stages:
-  - Code Style and Static Analysis
+  - Code Format and Static Analysis
   - test
   - Test CommonMark (weak)
 
@@ -24,7 +24,7 @@ matrix:
     - php: 7.3
 
 install:
-  # remove everything to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
+  # remove packages with PHP requirements higher than 7.0 to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
   - composer remove friendsofphp/php-cs-fixer --dev --no-update --no-interaction
   - composer install --prefer-dist --no-interaction --no-progress
 
@@ -36,7 +36,7 @@ cache:
 
 jobs:
   include:
-    - stage: Code Style and Static Analysis
+    - stage: Code Format and Static Analysis
       php: 7.2
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
