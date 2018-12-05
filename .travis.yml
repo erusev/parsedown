@@ -16,13 +16,12 @@ php:
   - 7.2
   - 7.3
   - nightly
-  - hhvm
-  - hhvm-nightly
 
 matrix:    
   fast_finish: true
   allow_failures:
     - php: nightly
+    - php: 7.3
 
 install:
   # remove everything to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
