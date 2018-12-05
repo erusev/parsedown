@@ -10,12 +10,16 @@ final class Text implements Renderable
     /** @var string */
     private $text;
 
-    public function __construct(string $text = '')
+    /**
+     * @param string $text
+     */
+    public function __construct($text = '')
     {
         $this->text = $text;
     }
 
-    public function getHtml(): string
+    /** @return string */
+    public function getHtml()
     {
         return Escaper::htmlElementValue($this->text);
     }
