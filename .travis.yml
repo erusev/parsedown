@@ -16,14 +16,11 @@ php:
   - 7.2
   - 7.3
   - nightly
-  - hhvm
-  - hhvm-nightly
 
 matrix:    
   fast_finish: true
   allow_failures:
     - php: nightly
-    - php: hhvm-nightly
     - php: 7.3
 
 install:
