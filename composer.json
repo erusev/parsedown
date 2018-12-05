@@ -32,6 +32,7 @@
             "@test-formatting"
         ],
         "test-units": "vendor/bin/phpunit",
+        "test-commonmark-weak": "vendor/bin/phpunit tests/CommonMarkTestWeak.php",
         "test-formatting": "@composer fix -- --dry-run",
 
         "fix": "vendor/bin/php-cs-fixer fix --verbose --show-progress=dots --diff"
