@@ -26,7 +26,7 @@ matrix:
 
 install:
   # remove packages with PHP requirements higher than 7.0 to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
-  - composer remove friendsofphp/php-cs-fixer --dev --no-update --no-interaction
+  - composer remove vimeo/psalm friendsofphp/php-cs-fixer --dev --no-update --no-interaction
   - composer install --prefer-dist --no-interaction --no-progress
 
 script: composer test-units
@@ -42,6 +42,7 @@ jobs:
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
+        - composer test-static
         - composer test-formatting
 
     - stage: Test CommonMark (weak)

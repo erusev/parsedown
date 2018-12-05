@@ -18,6 +18,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^7.4|^6.5.13|^5.7.27|^4.8.36",
+        "vimeo/psalm": "^3.0",
         "friendsofphp/php-cs-fixer": "^2.13"
     },
     "autoload": {
@@ -28,9 +29,12 @@
     },
     "scripts": {
         "test": [
+            "@test-static",
             "@test-units",
             "@test-formatting"
         ],
+        "test-static": "vendor/bin/psalm",
+        "test-dead-code": "vendor/bin/psalm --find-dead-code",
         "test-units": "vendor/bin/phpunit",
         "test-commonmark-weak": "vendor/bin/phpunit tests/CommonMarkTestWeak.php",
         "test-formatting": "@composer fix -- --dry-run",
