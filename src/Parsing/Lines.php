@@ -40,7 +40,7 @@ final class Lines
     }
 
     /** @return self */
-    public static function empty()
+    public static function none()
     {
         return new self([], 0);
     }
@@ -94,7 +94,7 @@ final class Lines
     }
 
     /** @return bool */
-    public function containsBlankLines(): bool
+    public function containsBlankLines()
     {
         return $this->containsBlankLines;
     }
@@ -122,8 +122,12 @@ final class Lines
         return $Lines;
     }
 
-    /** @return Lines */
-    public function appendingTextLines(string $text, int $indentOffset)
+    /**
+     * @param string $text
+     * @param int $indentOffset
+     * @return Lines
+     */
+    public function appendingTextLines($text, $indentOffset)
     {
         $Lines = clone($this);
 
