@@ -3,18 +3,23 @@ language: php
 dist: trusty
 sudo: false
 
-matrix:
-  include:
-    - php: 5.3
-      dist: precise
-    - php: 5.4
-    - php: 5.5
-    - php: 5.6
-    - php: 7.0
-    - php: 7.1
-    - php: 7.2
-    - php: 7.3
-    - php: nightly
+stages:
+  - Code Style and Static Analysis
+  - test
+  - Test CommonMark (weak)
+
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+  - 7.3
+  - nightly
+  - hhvm
+  - hhvm-nightly
+
+matrix:    
   fast_finish: true
   allow_failures:
     - php: nightly
@@ -23,6 +28,19 @@ install:
   - composer install --prefer-dist --no-interaction --no-progress
 
 script:
-  - vendor/bin/phpunit
-  - vendor/bin/phpunit test/CommonMarkTestWeak.php || true
-  - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
+  - composer test-units
+
+jobs:
+  include:
+    - stage: Code Style and Static Analysis
+      php: 7.2
+      script:
+        - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
+        - composer test-formatting
+
+    - stage: Test CommonMark (weak)
+      php: 7.2
+      script:
+        - composer test-commonmark-weak || true
+      allow_failures:
+        - php: 7.2
