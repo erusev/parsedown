@@ -25,10 +25,11 @@ matrix:
     - php: nightly
 
 install:
+  # remove everything to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
+  - composer remove friendsofphp/php-cs-fixer --dev --no-update --no-interaction
   - composer install --prefer-dist --no-interaction --no-progress
 
-script:
-  - composer test-units
+script: composer test-units
 
 cache:
   directories:
@@ -38,12 +39,14 @@ jobs:
   include:
     - stage: Code Style and Static Analysis
       php: 7.2
+      install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
         - composer test-formatting
 
     - stage: Test CommonMark (weak)
       php: 7.2
+      install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - composer test-commonmark-weak || true
       allow_failures:
