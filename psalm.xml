@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<psalm
+    totallyTyped="true"
+    strictBinaryOperands="true"
+    checkForThrowsDocblock="true"
+>
+    <projectFiles>
+        <directory name="src" />
+        <ignoreFiles>
+          <file name="src/Parsedown.php" />
+      </ignoreFiles>
+    </projectFiles>
+</psalm>
