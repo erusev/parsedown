@@ -22,6 +22,7 @@ matrix:
   allow_failures:
     - php: nightly
     - php: 7.3
+    - env: ALLOW_FAILURE
 
 install:
   # remove packages with PHP requirements higher than 7.0 to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
@@ -45,8 +46,7 @@ jobs:
 
     - stage: Test CommonMark (weak)
       php: 7.2
+      env: ALLOW_FAILURE
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
-        - composer test-commonmark-weak || true
-      allow_failures:
-        - php: 7.2
+        - composer test-commonmark-weak
