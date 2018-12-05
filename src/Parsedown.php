@@ -2,7 +2,9 @@
 
 namespace Erusev\Parsedown;
 
+use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\Parsing\Line;
+use Erusev\Parsedown\Parsing\Lines;
 
 #
 #
@@ -43,17 +45,8 @@ class Parsedown
         # make sure no definitions are set
         $this->DefinitionData = [];
 
-        # standardize line breaks
-        $text = \str_replace(["\r\n", "\r"], "\n", $text);
-
-        # remove surrounding line breaks
-        $text = \trim($text, "\n");
-
-        # split text into lines
-        $lines = \explode("\n", $text);
-
         # iterate through lines to identify blocks
-        return $this->linesElements($lines);
+        return $this->linesElements(Lines::fromTextLines($text, 0));
     }
 
     #
@@ -163,34 +156,27 @@ class Parsedown
     # Blocks
     #
 
-    protected function lines(array $lines)
+    protected function lines(Lines $Lines)
     {
-        return $this->elements($this->linesElements($lines));
+        return $this->elements($this->linesElements($Lines));
     }
 
     /** @param int $indentOffset */
-    protected function linesElements(array $lines, array $nonNestables = [], $indentOffset = 0)
+    protected function linesElements(Lines $Lines, array $nonNestables = [], $indentOffset = 0)
     {
         $Elements = [];
         $CurrentBlock = null;
 
-        foreach ($lines as $line) {
-            if (\chop($line) === '') {
-                if (isset($CurrentBlock)) {
-                    $CurrentBlock['interrupted'] = (
-                        isset($CurrentBlock['interrupted'])
-                        ? $CurrentBlock['interrupted'] + 1 : 1
-                    );
-                }
-
-                continue;
+        foreach ($Lines->contexts() as $Context) {
+            if (isset($CurrentBlock) && $Context->previousEmptyLines() > 0) {
+                $CurrentBlock['interrupted'] = $Context->previousEmptyLines();
             }
 
-            $Line = new Line($line, $indentOffset);
+            $Line = $Context->line();
 
             if (isset($CurrentBlock['continuable'])) {
                 $methodName = 'block' . $CurrentBlock['type'] . 'Continue';
-                $Block = $this->$methodName($Line, $CurrentBlock);
+                $Block = $this->$methodName($Context, $CurrentBlock);
 
                 if (isset($Block)) {
                     $CurrentBlock = $Block;
@@ -222,7 +208,7 @@ class Parsedown
             # ~
 
             foreach ($blockTypes as $blockType) {
-                $Block = $this->{"block$blockType"}($Line, $CurrentBlock);
+                $Block = $this->{"block$blockType"}($Context, $CurrentBlock);
 
                 if (isset($Block)) {
                     $Block['type'] = $blockType;
@@ -248,7 +234,7 @@ class Parsedown
             # ~
 
             if (isset($CurrentBlock) and $CurrentBlock['type'] === 'Paragraph') {
-                $Block = $this->paragraphContinue($Line, $CurrentBlock);
+                $Block = $this->paragraphContinue($Context, $CurrentBlock);
             }
 
             if (isset($Block)) {
@@ -258,7 +244,7 @@ class Parsedown
                     $Elements[] = $this->extractElement($CurrentBlock);
                 }
 
-                $CurrentBlock = $this->paragraph($Line);
+                $CurrentBlock = $this->paragraph($Context);
 
                 $CurrentBlock['identified'] = true;
             }
@@ -308,19 +294,19 @@ class Parsedown
     #
     # Code
 
-    protected function blockCode(Line $Line, $Block = null)
+    protected function blockCode(Context $Context, $Block = null)
     {
-        if (isset($Block) and $Block['type'] === 'Paragraph' and ! isset($Block['interrupted'])) {
+        if (isset($Block) and $Block['type'] === 'Paragraph' and ! $Context->previousEmptyLines() > 0) {
             return;
         }
 
-        if ($Line->indent() >= 4) {
+        if ($Context->line()->indent() >= 4) {
             $Block = [
                 'element' => [
                     'name' => 'pre',
                     'element' => [
                         'name' => 'code',
-                        'text' => $Line->ltrimBodyUpto(4),
+                        'text' => $Context->line()->ltrimBodyUpto(4),
                     ],
                 ],
             ];
@@ -329,18 +315,18 @@ class Parsedown
         }
     }
 
-    protected function blockCodeContinue(Line $Line, $Block)
+    protected function blockCodeContinue(Context $Context, $Block)
     {
-        if ($Line->indent() >= 4) {
-            if (isset($Block['interrupted'])) {
-                $Block['element']['element']['text'] .= \str_repeat("\n", $Block['interrupted']);
+        if ($Context->line()->indent() >= 4) {
+            if ($Context->previousEmptyLines() > 0) {
+                $Block['element']['element']['text'] .= \str_repeat("\n", $Context->previousEmptyLines());
 
                 unset($Block['interrupted']);
             }
 
             $Block['element']['element']['text'] .= "\n";
 
-            $Block['element']['element']['text'] .= $Line->ltrimBodyUpto(4);
+            $Block['element']['element']['text'] .= $Context->line()->ltrimBodyUpto(4);
 
             return $Block;
         }
@@ -354,21 +340,21 @@ class Parsedown
     #
     # Comment
 
-    protected function blockComment(Line $Line)
+    protected function blockComment(Context $Context)
     {
         if ($this->markupEscaped or $this->safeMode) {
             return;
         }
 
-        if (\strpos($Line->text(), '<!--') === 0) {
+        if (\strpos($Context->line()->text(), '<!--') === 0) {
             $Block = [
                 'element' => [
-                    'rawHtml' => $Line->rawLine(),
+                    'rawHtml' => $Context->line()->rawLine(),
                     'autobreak' => true,
                 ],
             ];
 
-            if (\strpos($Line->text(), '-->') !== false) {
+            if (\strpos($Context->line()->text(), '-->') !== false) {
                 $Block['closed'] = true;
             }
 
@@ -376,15 +362,15 @@ class Parsedown
         }
     }
 
-    protected function blockCommentContinue(Line $Line, array $Block)
+    protected function blockCommentContinue(Context $Context, array $Block)
     {
         if (isset($Block['closed'])) {
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n" . $Line->rawLine();
+        $Block['element']['rawHtml'] .= "\n" . $Context->line()->rawLine();
 
-        if (\strpos($Line->text(), '-->') !== false) {
+        if (\strpos($Context->line()->text(), '-->') !== false) {
             $Block['closed'] = true;
         }
 
@@ -394,17 +380,17 @@ class Parsedown
     #
     # Fenced Code
 
-    protected function blockFencedCode(Line $Line)
+    protected function blockFencedCode(Context $Context)
     {
-        $marker = $Line->text()[0];
+        $marker = $Context->line()->text()[0];
 
-        $openerLength = \strspn($Line->text(), $marker);
+        $openerLength = \strspn($Context->line()->text(), $marker);
 
         if ($openerLength < 3) {
             return;
         }
 
-        $infostring = \trim(\substr($Line->text(), $openerLength), "\t ");
+        $infostring = \trim(\substr($Context->line()->text(), $openerLength), "\t ");
 
         if (\strpos($infostring, '`') !== false) {
             return;
@@ -431,20 +417,20 @@ class Parsedown
         return $Block;
     }
 
-    protected function blockFencedCodeContinue(Line $Line, $Block)
+    protected function blockFencedCodeContinue(Context $Context, $Block)
     {
         if (isset($Block['complete'])) {
             return;
         }
 
-        if (isset($Block['interrupted'])) {
-            $Block['element']['element']['text'] .= \str_repeat("\n", $Block['interrupted']);
+        if ($Context->previousEmptyLines() > 0) {
+            $Block['element']['element']['text'] .= \str_repeat("\n", $Context->previousEmptyLines());
 
             unset($Block['interrupted']);
         }
 
-        if (($len = \strspn($Line->text(), $Block['char'])) >= $Block['openerLength']
-            and \chop(\substr($Line->text(), $len), ' ') === ''
+        if (($len = \strspn($Context->line()->text(), $Block['char'])) >= $Block['openerLength']
+            and \chop(\substr($Context->line()->text(), $len), ' ') === ''
         ) {
             $Block['element']['element']['text'] = \substr($Block['element']['element']['text'], 1);
 
@@ -453,7 +439,7 @@ class Parsedown
             return $Block;
         }
 
-        $Block['element']['element']['text'] .= "\n" . $Line->rawLine();
+        $Block['element']['element']['text'] .= "\n" . $Context->line()->rawLine();
 
         return $Block;
     }
@@ -466,15 +452,15 @@ class Parsedown
     #
     # Header
 
-    protected function blockHeader(Line $Line)
+    protected function blockHeader(Context $Context)
     {
-        $level = \strspn($Line->text(), '#');
+        $level = \strspn($Context->line()->text(), '#');
 
         if ($level > 6) {
             return;
         }
 
-        $text = \trim($Line->text(), '#');
+        $text = \trim($Context->line()->text(), '#');
 
         if ($this->strictMode and isset($text[0]) and $text[0] !== ' ') {
             return;
@@ -499,11 +485,11 @@ class Parsedown
     #
     # List
 
-    protected function blockList(Line $Line, array $CurrentBlock = null)
+    protected function blockList(Context $Context, array $CurrentBlock = null)
     {
-        list($name, $pattern) = $Line->text()[0] <= '-' ? ['ul', '[*+-]'] : ['ol', '[0-9]{1,9}+[.\)]'];
+        list($name, $pattern) = $Context->line()->text()[0] <= '-' ? ['ul', '[*+-]'] : ['ol', '[0-9]{1,9}+[.\)]'];
 
-        if (\preg_match('/^('.$pattern.'([ ]++|$))(.*+)/', $Line->text(), $matches)) {
+        if (\preg_match('/^('.$pattern.'([ ]++|$))(.*+)/', $Context->line()->text(), $matches)) {
             $contentIndent = \strlen($matches[2]);
 
             if ($contentIndent >= 5) {
@@ -517,7 +503,7 @@ class Parsedown
             $markerWithoutWhitespace = \strstr($matches[1], ' ', true);
 
             $Block = [
-                'indent' => $Line->indent(),
+                'indent' => $Context->line()->indent(),
                 'pattern' => $pattern,
                 'data' => [
                     'type' => $name,
@@ -538,7 +524,7 @@ class Parsedown
                     if (
                         isset($CurrentBlock)
                         and $CurrentBlock['type'] === 'Paragraph'
-                        and ! isset($CurrentBlock['interrupted'])
+                        and ! $Context->previousEmptyLines() > 0
                     ) {
                         return;
                     }
@@ -551,7 +537,7 @@ class Parsedown
                 'name' => 'li',
                 'handler' => [
                     'function' => 'li',
-                    'argument' => !empty($matches[3]) ? [$matches[3]] : [],
+                    'argument' => !empty($matches[3]) ? Lines::fromTextLines($matches[3], 0) : Lines::empty(),
                     'destination' => 'elements'
                 ]
             ];
@@ -562,27 +548,27 @@ class Parsedown
         }
     }
 
-    protected function blockListContinue(Line $Line, array $Block)
+    protected function blockListContinue(Context $Context, array $Block)
     {
-        if (isset($Block['interrupted']) and empty($Block['li']['handler']['argument'])) {
+        if ($Context->previousEmptyLines() > 0 and $Block['li']['handler']['argument']->isEmpty()) {
             return null;
         }
 
         $requiredIndent = ($Block['indent'] + \strlen($Block['data']['marker']));
 
-        if ($Line->indent() < $requiredIndent
+        if ($Context->line()->indent() < $requiredIndent
             and (
                 (
                     $Block['data']['type'] === 'ol'
-                    and \preg_match('/^[0-9]++'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line->text(), $matches)
+                    and \preg_match('/^[0-9]++'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Context->line()->text(), $matches)
                 ) or (
                     $Block['data']['type'] === 'ul'
-                    and \preg_match('/^'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Line->text(), $matches)
+                    and \preg_match('/^'.$Block['data']['markerTypeRegex'].'(?:[ ]++(.*)|$)/', $Context->line()->text(), $matches)
                 )
             )
         ) {
-            if (isset($Block['interrupted'])) {
-                $Block['li']['handler']['argument'] []= '';
+            if ($Context->previousEmptyLines() > 0) {
+                $Block['li']['handler']['argument'] = $Block['li']['handler']['argument']->appendingBlankLines(1);
 
                 $Block['loose'] = true;
 
@@ -593,13 +579,13 @@ class Parsedown
 
             $text = isset($matches[1]) ? $matches[1] : '';
 
-            $Block['indent'] = $Line->indent();
+            $Block['indent'] = $Context->line()->indent();
 
             $Block['li'] = [
                 'name' => 'li',
                 'handler' => [
                     'function' => 'li',
-                    'argument' => [$text],
+                    'argument' => Lines::fromTextLines($text, 0),
                     'destination' => 'elements'
                 ]
             ];
@@ -607,34 +593,34 @@ class Parsedown
             $Block['element']['elements'] []= & $Block['li'];
 
             return $Block;
-        } elseif ($Line->indent() < $requiredIndent and $this->blockList($Line)) {
+        } elseif ($Context->line()->indent() < $requiredIndent and $this->blockList($Context)) {
             return null;
         }
 
-        if ($Line->text()[0] === '[' and $this->blockReference($Line)) {
+        if ($Context->line()->text()[0] === '[' and $this->blockReference($Context)) {
             return $Block;
         }
 
-        if ($Line->indent() >= $requiredIndent) {
-            if (isset($Block['interrupted'])) {
-                $Block['li']['handler']['argument'] []= '';
+        if ($Context->line()->indent() >= $requiredIndent) {
+            if ($Context->previousEmptyLines() > 0) {
+                $Block['li']['handler']['argument'] = $Block['li']['handler']['argument']->appendingBlankLines(1);
 
                 $Block['loose'] = true;
 
                 unset($Block['interrupted']);
             }
 
-            $text = $Line->ltrimBodyUpto($requiredIndent);
+            $text = $Context->line()->ltrimBodyUpto($requiredIndent);
 
-            $Block['li']['handler']['argument'] []= $text;
+            $Block['li']['handler']['argument'] = $Block['li']['handler']['argument']->appendingTextLines($text, 0);
 
             return $Block;
         }
 
-        if (! isset($Block['interrupted'])) {
-            $text = $Line->ltrimBodyUpto($requiredIndent);
+        if (! $Context->previousEmptyLines() > 0) {
+            $text = $Context->line()->ltrimBodyUpto($requiredIndent);
 
-            $Block['li']['handler']['argument'] []= $text;
+            $Block['li']['handler']['argument'] = $Block['li']['handler']['argument']->appendingTextLines($text, 0);
 
             return $Block;
         }
@@ -644,8 +630,8 @@ class Parsedown
     {
         if (isset($Block['loose'])) {
             foreach ($Block['element']['elements'] as &$li) {
-                if (\end($li['handler']['argument']) !== '') {
-                    $li['handler']['argument'] []= '';
+                if ($li['handler']['argument']->trailingBlankLines() === 0) {
+                    $li['handler']['argument'] = $li['handler']['argument']->appendingBlankLines(1);
                 }
             }
         }
@@ -656,15 +642,15 @@ class Parsedown
     #
     # Quote
 
-    protected function blockQuote(Line $Line)
+    protected function blockQuote(Context $Context)
     {
-        if (\preg_match('/^>[ ]?+(.*+)/', $Line->text(), $matches)) {
+        if (\preg_match('/^>[ ]?+(.*+)/', $Context->line()->text(), $matches)) {
             $Block = [
                 'element' => [
                     'name' => 'blockquote',
                     'handler' => [
                         'function' => 'linesElements',
-                        'argument' => (array) $matches[1],
+                        'argument' => Lines::fromTextLines($matches[1], 0),
                         'destination' => 'elements',
                     ]
                 ],
@@ -674,20 +660,20 @@ class Parsedown
         }
     }
 
-    protected function blockQuoteContinue(Line $Line, array $Block)
+    protected function blockQuoteContinue(Context $Context, array $Block)
     {
-        if (isset($Block['interrupted'])) {
+        if ($Context->previousEmptyLines() > 0) {
             return;
         }
 
-        if ($Line->text()[0] === '>' and \preg_match('/^>[ ]?+(.*+)/', $Line->text(), $matches)) {
-            $Block['element']['handler']['argument'] []= $matches[1];
+        if ($Context->line()->text()[0] === '>' and \preg_match('/^>[ ]?+(.*+)/', $Context->line()->text(), $matches)) {
+            $Block['element']['handler']['argument'] = $Block['element']['handler']['argument']->appendingTextLines($matches[1], 0);
 
             return $Block;
         }
 
-        if (! isset($Block['interrupted'])) {
-            $Block['element']['handler']['argument'] []= $Line->text();
+        if (! $Context->previousEmptyLines() > 0) {
+            $Block['element']['handler']['argument'] = $Block['element']['handler']['argument']->appendingTextLines($Context->line()->text(), 0);
 
             return $Block;
         }
@@ -696,11 +682,11 @@ class Parsedown
     #
     # Rule
 
-    protected function blockRule($Line)
+    protected function blockRule(Context $Context)
     {
-        $marker = $Line->text()[0];
+        $marker = $Context->line()->text()[0];
 
-        if (\substr_count($Line->text(), $marker) >= 3 and \chop($Line->text(), " $marker") === '') {
+        if (\substr_count($Context->line()->text(), $marker) >= 3 and \chop($Context->line()->text(), " $marker") === '') {
             $Block = [
                 'element' => [
                     'name' => 'hr',
@@ -714,14 +700,14 @@ class Parsedown
     #
     # Setext
 
-    protected function blockSetextHeader(Line $Line, array $Block = null)
+    protected function blockSetextHeader(Context $Context, array $Block = null)
     {
-        if (! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted'])) {
+        if (! isset($Block) or $Block['type'] !== 'Paragraph' or $Context->previousEmptyLines() > 0) {
             return;
         }
 
-        if ($Line->indent() < 4 and \chop(\chop($Line->text(), ' '), $Line->text()[0]) === '') {
-            $Block['element']['name'] = $Line->text()[0] === '=' ? 'h1' : 'h2';
+        if ($Context->line()->indent() < 4 and \chop(\chop($Context->line()->text(), " \t"), $Context->line()->text()[0]) === '') {
+            $Block['element']['name'] = $Context->line()->text()[0] === '=' ? 'h1' : 'h2';
 
             return $Block;
         }
@@ -730,13 +716,13 @@ class Parsedown
     #
     # Markup
 
-    protected function blockMarkup(Line $Line)
+    protected function blockMarkup(Context $Context)
     {
         if ($this->markupEscaped or $this->safeMode) {
             return;
         }
 
-        if (\preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+(\/)?>/', $Line->text(), $matches)) {
+        if (\preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+(\/)?>/', $Context->line()->text(), $matches)) {
             $element = \strtolower($matches[1]);
 
             if (\in_array($element, $this->textLevelElements, true)) {
@@ -746,7 +732,7 @@ class Parsedown
             $Block = [
                 'name' => $matches[1],
                 'element' => [
-                    'rawHtml' => $Line->text(),
+                    'rawHtml' => $Context->line()->text(),
                     'autobreak' => true,
                 ],
             ];
@@ -755,13 +741,13 @@ class Parsedown
         }
     }
 
-    protected function blockMarkupContinue(Line $Line, array $Block)
+    protected function blockMarkupContinue(Context $Context, array $Block)
     {
-        if (isset($Block['closed']) or isset($Block['interrupted'])) {
+        if (isset($Block['closed']) or $Context->previousEmptyLines() > 0) {
             return;
         }
 
-        $Block['element']['rawHtml'] .= "\n" . $Line->rawLine();
+        $Block['element']['rawHtml'] .= "\n" . $Context->line()->rawLine();
 
         return $Block;
     }
@@ -769,10 +755,10 @@ class Parsedown
     #
     # Reference
 
-    protected function blockReference(Line $Line)
+    protected function blockReference(Context $Context)
     {
-        if (\strpos($Line->text(), ']') !== false
-            and \preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Line->text(), $matches)
+        if (\strpos($Context->line()->text(), ']') !== false
+            and \preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Context->line()->text(), $matches)
         ) {
             $id = \strtolower($matches[1]);
 
@@ -794,28 +780,28 @@ class Parsedown
     #
     # Table
 
-    protected function blockTable(Line $Line, array $Block = null)
+    protected function blockTable(Context $Context, array $Block = null)
     {
-        if (! isset($Block) or $Block['type'] !== 'Paragraph' or isset($Block['interrupted'])) {
+        if (! isset($Block) or $Block['type'] !== 'Paragraph' or $Context->previousEmptyLines() > 0) {
             return;
         }
 
         if (
             \strpos($Block['element']['handler']['argument'], '|') === false
-            and \strpos($Line->text(), '|') === false
-            and \strpos($Line->text(), ':') === false
+            and \strpos($Context->line()->text(), '|') === false
+            and \strpos($Context->line()->text(), ':') === false
             or \strpos($Block['element']['handler']['argument'], "\n") !== false
         ) {
             return;
         }
 
-        if (\chop($Line->text(), ' -:|') !== '') {
+        if (\chop($Context->line()->text(), ' -:|') !== '') {
             return;
         }
 
         $alignments = [];
 
-        $divider = $Line->text();
+        $divider = $Context->line()->text();
 
         $divider = \trim($divider);
         $divider = \trim($divider, '|');
@@ -908,16 +894,16 @@ class Parsedown
         return $Block;
     }
 
-    protected function blockTableContinue(Line $Line, array $Block)
+    protected function blockTableContinue(Context $Context, array $Block)
     {
-        if (isset($Block['interrupted'])) {
+        if ($Context->previousEmptyLines() > 0) {
             return;
         }
 
-        if (\count($Block['alignments']) === 1 or $Line->text()[0] === '|' or \strpos($Line->text(), '|')) {
+        if (\count($Block['alignments']) === 1 or $Context->line()->text()[0] === '|' or \strpos($Context->line()->text(), '|')) {
             $Elements = [];
 
-            $row = $Line->text();
+            $row = $Context->line()->text();
 
             $row = \trim($row);
             $row = \trim($row, '|');
@@ -962,7 +948,7 @@ class Parsedown
     # ~
     #
 
-    protected function paragraph(Line $Line)
+    protected function paragraph(Context $Context)
     {
         return [
             'type' => 'Paragraph',
@@ -970,20 +956,20 @@ class Parsedown
                 'name' => 'p',
                 'handler' => [
                     'function' => 'lineElements',
-                    'argument' => $Line->text(),
+                    'argument' => $Context->line()->text(),
                     'destination' => 'elements',
                 ],
             ],
         ];
     }
 
-    protected function paragraphContinue(Line $Line, array $Block)
+    protected function paragraphContinue(Context $Context, array $Block)
     {
         if (isset($Block['interrupted'])) {
             return;
         }
 
-        $Block['element']['handler']['argument'] .= "\n".$Line->text();
+        $Block['element']['handler']['argument'] .= "\n".$Context->line()->text();
 
         return $Block;
     }
@@ -1616,11 +1602,11 @@ class Parsedown
 
     # ~
 
-    protected function li($lines)
+    protected function li(Lines $Lines)
     {
-        $Elements = $this->linesElements($lines);
+        $Elements = $this->linesElements($Lines);
 
-        if (! \in_array('', $lines, true)
+        if (! $Lines->containsBlankLines()
             and isset($Elements[0]) and isset($Elements[0]['name'])
             and $Elements[0]['name'] === 'p'
         ) {
