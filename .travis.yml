@@ -32,6 +32,10 @@ install:
 script:
   - composer test-units
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 jobs:
   include:
     - stage: Code Style and Static Analysis
