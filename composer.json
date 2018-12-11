@@ -30,8 +30,8 @@
     "scripts": {
         "test": [
             "@test-static",
-            "@test-units",
-            "@test-formatting"
+            "@test-formatting",
+            "@test-units"
         ],
         "test-static": "vendor/bin/psalm",
         "test-dead-code": "vendor/bin/psalm --find-dead-code",
