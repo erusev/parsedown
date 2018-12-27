@@ -46,11 +46,15 @@ Install the [composer package] by running the following command:
 
 ## Example
 
-``` php
+```php
 $Parsedown = new Parsedown();
 
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
-// you can also parse inline markdown only
+```
+
+You can also parse inline markdown only:
+
+```php
 echo $Parsedown->line('Hello _Parsedown_!'); # prints: Hello <em>Parsedown</em>!
 ```
 
