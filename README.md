@@ -12,7 +12,7 @@ Better Markdown Parser in PHP
 [Tests](http://parsedown.org/tests/) |
 [Documentation](https://github.com/erusev/parsedown/wiki/)
 
-### Features
+## Features
 
 * One File
 * No Dependencies
@@ -22,7 +22,8 @@ Better Markdown Parser in PHP
 * Tested in 5.3 to 7.2 and in HHVM
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
-### Installation
+## Installation
+
 #### Composer
 Install the [composer package] by running the following command:
 
@@ -35,7 +36,7 @@ Install the [composer package] by running the following command:
 [composer package]: https://packagist.org/packages/erusev/parsedown "The Parsedown package on packagist.org"
 [latest release]: https://github.com/erusev/parsedown/releases/latest "The latest release of Parsedown"
 
-### Example
+## Example
 
 ``` php
 $Parsedown = new Parsedown();
@@ -47,7 +48,7 @@ echo $Parsedown->line('Hello _Parsedown_!'); # prints: Hello <em>Parsedown</em>!
 
 More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
-### Security
+## Security
 
 Parsedown is capable of escaping user-input within the HTML that it generates. Additionally Parsedown will apply sanitisation to additional scripting vectors (such as scripting link destinations) that are introduced by the markdown syntax itself.
 
@@ -65,7 +66,7 @@ In both cases you should strongly consider employing defence-in-depth measures, 
 
 Safe mode does not necessarily yield safe results when using extensions to Parsedown. Extensions should be evaluated on their own to determine their specific safety against XSS.
 
-### Escaping HTML
+## Escaping HTML
 > ⚠️  **WARNING:** This method isn't safe from XSS!
 
 If you wish to escape HTML **in trusted input**, you can use the following:
@@ -76,7 +77,7 @@ $parsedown->setMarkupEscaped(true);
 
 Beware that this still allows users to insert unsafe scripting vectors, such as links like `[xss](javascript:alert%281%29)`.
 
-### Questions
+## Questions
 
 **How does Parsedown work?**
 
