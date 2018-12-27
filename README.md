@@ -1,14 +1,24 @@
 ![Parsedown Logo](https://i.imgur.com/yE8afYV.png)
 
-[![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
-[![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)
+<h3 align="center">Parsedown</h3>
 
-Better Markdown Parser in PHP
+<p align="center">Better Markdown Editor in PHP<p>
 
-[Demo](http://parsedown.org/demo) |
-[Benchmarks](http://parsedown.org/speed) |
-[Tests](http://parsedown.org/tests/) |
-[Documentation](https://github.com/erusev/parsedown/wiki/)
+<p align="center">
+<a href="http://parsedown.org/demo">Demo</a> | 
+<a href="http://parsedown.org/speed">Benchmarks</a> | 
+<a href="http://parsedown.org/tests/">Tests</a> | 
+<a href="https://github.com/erusev/parsedown/wiki/">Wiki</a>
+</p>
+
+<p align="center">
+<a href="https://travis-ci.org/erusev/parsedown">
+<img src="https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square">
+</a>
+<a href="https://packagist.org/packages/erusev/parsedown">
+<img src="http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square">
+</a>
+</p>
 
 ## Features
 
