@@ -2,8 +2,10 @@
 
 <h1 align="center"><img alt="Parsedown" src="https://i.imgur.com/uWhmrmO.png" width="240" /></h1>
 
-[![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
-[![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)
+[![Build Status](https://travis-ci.org/erusev/parsedown.svg)](https://travis-ci.org/erusev/parsedown)
+[![Total Downloads](https://poser.pugx.org/erusev/parsedown/d/total.svg)](https://packagist.org/packages/erusev/parsedown)
+[![Version](https://poser.pugx.org/erusev/parsedown/v/stable.svg)](https://packagist.org/packages/erusev/parsedown)
+[![License](https://poser.pugx.org/erusev/parsedown/license.svg)](https://packagist.org/packages/erusev/parsedown)
 
 Better Markdown Parser in PHP - <a href="http://parsedown.org/demo">Demo</a>.
 
