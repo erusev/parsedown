@@ -1,33 +1,20 @@
-![Parsedown Logo](https://i.imgur.com/yE8afYV.png)
+<!-- ![Parsedown](https://i.imgur.com/yE8afYV.png) -->
 
-<h3 align="center">Parsedown</h3>
+<h1><img src="https://i.imgur.com/yE8afYV.png" /></h1>
 
-<p align="center">Better Markdown Editor in PHP<p>
+[![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
+[![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)
 
-<p align="center">
-<a href="http://parsedown.org/demo">Demo</a> | 
-<a href="http://parsedown.org/speed">Benchmarks</a> | 
-<a href="http://parsedown.org/tests/">Tests</a> | 
-<a href="https://github.com/erusev/parsedown/wiki/">Wiki</a>
-</p>
-
-<p align="center">
-<a href="https://travis-ci.org/erusev/parsedown">
-<img src="https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square">
-</a>
-<a href="https://packagist.org/packages/erusev/parsedown">
-<img src="http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square">
-</a>
-</p>
+**Parsedown** is a better Markdown parser in PHP - <a href="http://parsedown.org/demo">demo</a>.
 
 ## Features
 
 * One File
 * No Dependencies
-* Super Fast
+* Super [Fast](http://parsedown.org/speed)
 * Extensible
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
-* Tested in 5.3 to 7.2 and in HHVM
+* [Tested](http://parsedown.org/tests/) in 5.3 to 7.2 and in HHVM
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ## Installation
