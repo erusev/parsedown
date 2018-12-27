@@ -1,6 +1,6 @@
 <!-- ![Parsedown](https://i.imgur.com/yE8afYV.png) -->
 
-<h1 align="center"><img alt="Parsedown" src="https://i.imgur.com/WZMowQu.png" width="336" /></h1>
+<h1 align="center"><img alt="Parsedown" src="https://i.imgur.com/Z8gyn2P.png" width="240" /></h1>
 
 [![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
 [![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)
