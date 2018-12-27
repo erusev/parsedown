@@ -1,17 +1,17 @@
 <!-- ![Parsedown](https://i.imgur.com/yE8afYV.png) -->
 
-<h1><img src="https://i.imgur.com/yE8afYV.png" /></h1>
+<h1><img alt="Parsedown" src="https://i.imgur.com/yE8afYV.png" /></h1>
 
 [![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
 [![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)
 
-**Parsedown** is a better Markdown parser in PHP - <a href="http://parsedown.org/demo">demo</a>.
+Better Markdown parser in PHP - <a href="http://parsedown.org/demo">demo</a>.
 
 ## Features
 
 * One File
 * No Dependencies
-* Super [Fast](http://parsedown.org/speed)
+* [Super Fast](http://parsedown.org/speed)
 * Extensible
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
 * [Tested](http://parsedown.org/tests/) in 5.3 to 7.2 and in HHVM
@@ -20,11 +20,13 @@
 ## Installation
 
 #### Composer
+
 Install the [composer package] by running the following command:
 
     composer require erusev/parsedown
 
 #### Manual
+
 1. Download the "Source code" from the [latest release]
 2. Include `Parsedown.php`
 
@@ -52,8 +54,10 @@ More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [t
 Parsedown is capable of escaping user-input within the HTML that it generates. Additionally Parsedown will apply sanitisation to additional scripting vectors (such as scripting link destinations) that are introduced by the markdown syntax itself.
 
 To tell Parsedown that it is processing untrusted user-input, use the following:
+
 ```php
 $parsedown = new Parsedown;
+
 $parsedown->setSafeMode(true);
 ```
 
@@ -66,11 +70,14 @@ In both cases you should strongly consider employing defence-in-depth measures, 
 Safe mode does not necessarily yield safe results when using extensions to Parsedown. Extensions should be evaluated on their own to determine their specific safety against XSS.
 
 ## Escaping HTML
+
 > ⚠️  **WARNING:** This method isn't safe from XSS!
 
 If you wish to escape HTML **in trusted input**, you can use the following:
+
 ```php
 $parsedown = new Parsedown;
+
 $parsedown->setMarkupEscaped(true);
 ```
 
