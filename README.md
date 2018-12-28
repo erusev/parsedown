@@ -23,16 +23,11 @@ Better Markdown Parser in PHP - <a href="http://parsedown.org/demo">Demo</a>.
 
 ## Installation
 
-#### Composer
-
-Install the [composer package] by running the following command:
+Install the [composer package]:
 
     composer require erusev/parsedown
 
-#### Manual
-
-1. Download the "Source code" from the [latest release]
-2. Include `Parsedown.php`
+Or download the [latest release] and include `Parsedown.php`
 
 [composer package]: https://packagist.org/packages/erusev/parsedown "The Parsedown package on packagist.org"
 [latest release]: https://github.com/erusev/parsedown/releases/latest "The latest release of Parsedown"
