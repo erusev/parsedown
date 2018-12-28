@@ -1,6 +1,6 @@
 <!-- ![Parsedown](https://i.imgur.com/yE8afYV.png) -->
 
-<h1 align="center"><img alt="Parsedown" src="https://i.imgur.com/F80w0Ej.png" width="240" /></h1>
+<p align="center"><img alt="Parsedown" src="https://i.imgur.com/fKVY6Kz.png" width="240" /></p>
 
 <h1>Parsedown</h1>
 
