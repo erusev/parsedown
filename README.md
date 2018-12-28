@@ -60,9 +60,7 @@ Parsedown is capable of escaping user-input within the HTML that it generates. A
 To tell Parsedown that it is processing untrusted user-input, use the following:
 
 ```php
-$parsedown = new Parsedown;
-
-$parsedown->setSafeMode(true);
+$Parsedown->setSafeMode(true);
 ```
 
 If instead, you wish to allow HTML within untrusted user-input, but still want output to be free from XSS it is recommended that you make use of a HTML sanitiser that allows HTML tags to be whitelisted, like [HTML Purifier](http://htmlpurifier.org/).
@@ -80,9 +78,7 @@ Safe mode does not necessarily yield safe results when using extensions to Parse
 If you wish to escape HTML **in trusted input**, you can use the following:
 
 ```php
-$parsedown = new Parsedown;
-
-$parsedown->setMarkupEscaped(true);
+$Parsedown->setMarkupEscaped(true);
 ```
 
 Beware that this still allows users to insert unsafe scripting vectors, such as links like `[xss](javascript:alert%281%29)`.
