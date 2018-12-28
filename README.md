@@ -1,6 +1,6 @@
 <!-- ![Parsedown](https://i.imgur.com/yE8afYV.png) -->
 
-<img alt="Parsedown" src="https://i.imgur.com/F80w0Ej.png" width="240" />
+<h1 align="center"><img alt="Parsedown" src="https://i.imgur.com/F80w0Ej.png" width="240" /></h1>
 
 [![Build Status](https://travis-ci.org/erusev/parsedown.svg)](https://travis-ci.org/erusev/parsedown)
 [![Total Downloads](https://poser.pugx.org/erusev/parsedown/d/total.svg)](https://packagist.org/packages/erusev/parsedown)
