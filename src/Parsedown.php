@@ -411,20 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineSpecialCharacter($Excerpt)
-    {
-        if (\substr($Excerpt['text'], 1, 1) !== ' ' and \strpos($Excerpt['text'], ';') !== false
-            and \preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt['text'], $matches)
-        ) {
-            return [
-                'element' => ['rawHtml' => '&' . $matches[1] . ';'],
-                'extent' => \strlen($matches[0]),
-            ];
-        }
-
-        return;
-    }
-
     protected function inlineStrikethrough($Excerpt)
     {
         if (! isset($Excerpt['text'][1])) {
