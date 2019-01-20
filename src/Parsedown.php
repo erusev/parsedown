@@ -335,45 +335,6 @@ class Parsedown
     }
 
     #
-    # Markup
-
-    protected function blockMarkup(Context $Context)
-    {
-        if ($this->markupEscaped or $this->safeMode) {
-            return;
-        }
-
-        if (\preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+(\/)?>/', $Context->line()->text(), $matches)) {
-            $element = \strtolower($matches[1]);
-
-            if (\in_array($element, $this->textLevelElements, true)) {
-                return;
-            }
-
-            $Block = [
-                'name' => $matches[1],
-                'element' => [
-                    'rawHtml' => $Context->line()->text(),
-                    'autobreak' => true,
-                ],
-            ];
-
-            return $Block;
-        }
-    }
-
-    protected function blockMarkupContinue(Context $Context, array $Block)
-    {
-        if (isset($Block['closed']) or $Context->previousEmptyLines() > 0) {
-            return;
-        }
-
-        $Block['element']['rawHtml'] .= "\n" . $Context->line()->rawLine();
-
-        return $Block;
-    }
-
-    #
     # Reference
 
     protected function blockReference(Context $Context)
