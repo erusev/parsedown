@@ -335,24 +335,6 @@ class Parsedown
     }
 
     #
-    # Rule
-
-    protected function blockRule(Context $Context)
-    {
-        $marker = $Context->line()->text()[0];
-
-        if (\substr_count($Context->line()->text(), $marker) >= 3 and \chop($Context->line()->text(), " $marker") === '') {
-            $Block = [
-                'element' => [
-                    'name' => 'hr',
-                ],
-            ];
-
-            return $Block;
-        }
-    }
-
-    #
     # Setext
 
     protected function blockSetextHeader(Context $Context, array $Block = null)
