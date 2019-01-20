@@ -289,52 +289,6 @@ class Parsedown
     }
 
     #
-    # Code
-
-    protected function blockCode(Context $Context, $Block = null)
-    {
-        if (isset($Block) and $Block['type'] === 'Paragraph' and ! $Context->previousEmptyLines() > 0) {
-            return;
-        }
-
-        if ($Context->line()->indent() >= 4) {
-            $Block = [
-                'element' => [
-                    'name' => 'pre',
-                    'element' => [
-                        'name' => 'code',
-                        'text' => $Context->line()->ltrimBodyUpto(4),
-                    ],
-                ],
-            ];
-
-            return $Block;
-        }
-    }
-
-    protected function blockCodeContinue(Context $Context, $Block)
-    {
-        if ($Context->line()->indent() >= 4) {
-            if ($Context->previousEmptyLines() > 0) {
-                $Block['element']['element']['text'] .= \str_repeat("\n", $Context->previousEmptyLines());
-
-                unset($Block['interrupted']);
-            }
-
-            $Block['element']['element']['text'] .= "\n";
-
-            $Block['element']['element']['text'] .= $Context->line()->ltrimBodyUpto(4);
-
-            return $Block;
-        }
-    }
-
-    protected function blockCodeComplete($Block)
-    {
-        return $Block;
-    }
-
-    #
     # Reference
 
     protected function blockReference(Context $Context)
