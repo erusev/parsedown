@@ -22,7 +22,7 @@ final class SafeMode implements Configurable
         return $this->enabled;
     }
 
-    public static function default(): self
+    public static function initial(): self
     {
         return new self(false);
     }

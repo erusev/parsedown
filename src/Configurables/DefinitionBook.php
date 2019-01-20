@@ -21,7 +21,7 @@ final class DefinitionBook implements Configurable
     }
 
     /** @return self */
-    public static function default()
+    public static function initial()
     {
         return new self;
     }
