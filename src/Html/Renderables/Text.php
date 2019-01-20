@@ -7,6 +7,8 @@ use Erusev\Parsedown\Html\Sanitisation\Escaper;
 
 final class Text implements Renderable
 {
+    use CanonicalStateRenderable;
+
     /** @var string */
     private $text;
 
