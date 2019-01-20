@@ -411,16 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineEscapeSequence($Excerpt)
-    {
-        if (isset($Excerpt['text'][1]) and \in_array($Excerpt['text'][1], $this->specialCharacters, true)) {
-            return [
-                'element' => ['rawHtml' => $Excerpt['text'][1]],
-                'extent' => 2,
-            ];
-        }
-    }
-
     protected function inlineImage($Excerpt)
     {
         if (! isset($Excerpt['text'][1]) or $Excerpt['text'][1] !== '[') {
