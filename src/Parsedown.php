@@ -411,24 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineUrlTag($Excerpt)
-    {
-        if (\strpos($Excerpt['text'], '>') !== false and \preg_match('/^<(\w++:\/{2}[^ >]++)>/i', $Excerpt['text'], $matches)) {
-            $url = $matches[1];
-
-            return [
-                'extent' => \strlen($matches[0]),
-                'element' => [
-                    'name' => 'a',
-                    'text' => $url,
-                    'attributes' => [
-                        'href' => $url,
-                    ],
-                ],
-            ];
-        }
-    }
-
     # ~
 
     protected function unmarkedText($text)
