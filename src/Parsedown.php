@@ -46,12 +46,24 @@ final class Parsedown
 
     # ~
 
+    /** @var State */
+    private $State;
+
+    public function __construct(State $State = null)
+    {
+        $this->State = $State ?: new State;
+    }
+
+    /**
+     * @param string $text
+     * @return string
+     */
     public function text($text)
     {
-        $Elements = $this->textElements($text);
+        $StateRenderables = $this->textElements($text);
 
         # convert to markup
-        $markup = $this->elements($Elements);
+        $markup = $this->elements($this->State, $StateRenderables);
 
         # trim line breaks
         $markup = \trim($markup, "\n");
@@ -59,83 +71,93 @@ final class Parsedown
         return $markup;
     }
 
+    /**
+     * @param string $text
+     * @return StateRenderable[]
+     */
     protected function textElements($text)
     {
         # iterate through lines to identify blocks
-        return $this->linesElements(Lines::fromTextLines($text, 0));
+        return $this->lines(Lines::fromTextLines($text, 0));
     }
 
     #
     # Lines
     #
 
+    /** @var array<array-key, class-string<Block>[]> */
     protected $BlockTypes = [
-        '#' => ['Header'],
-        '*' => ['Rule', 'List'],
-        '+' => ['List'],
-        '-' => ['SetextHeader', 'Table', 'Rule', 'List'],
-        '0' => ['List'],
-        '1' => ['List'],
-        '2' => ['List'],
-        '3' => ['List'],
-        '4' => ['List'],
-        '5' => ['List'],
-        '6' => ['List'],
-        '7' => ['List'],
-        '8' => ['List'],
-        '9' => ['List'],
-        ':' => ['Table'],
-        '<' => ['Comment', 'Markup'],
-        '=' => ['SetextHeader'],
-        '>' => ['Quote'],
-        '[' => ['Reference'],
-        '_' => ['Rule'],
-        '`' => ['FencedCode'],
-        '|' => ['Table'],
-        '~' => ['FencedCode'],
+        '#' => [Header::class],
+        '*' => [Rule::class, TList::class],
+        '+' => [TList::class],
+        '-' => [SetextHeader::class, Table::class, Rule::class, TList::class],
+        '0' => [TList::class],
+        '1' => [TList::class],
+        '2' => [TList::class],
+        '3' => [TList::class],
+        '4' => [TList::class],
+        '5' => [TList::class],
+        '6' => [TList::class],
+        '7' => [TList::class],
+        '8' => [TList::class],
+        '9' => [TList::class],
+        ':' => [Table::class],
+        '<' => [Comment::class, BlockMarkup::class],
+        '=' => [SetextHeader::class],
+        '>' => [BlockQuote::class],
+        '[' => [Reference::class],
+        '_' => [Rule::class],
+        '`' => [FencedCode::class],
+        '|' => [Table::class],
+        '~' => [FencedCode::class],
     ];
 
     # ~
 
+    /** @var class-string<Block>[] */
     protected $unmarkedBlockTypes = [
-        'Code',
+        IndentedCode::class,
     ];
 
     #
     # Blocks
     #
 
-    protected function lines(Lines $Lines)
+    /**
+     * @param int $indentOffset
+     * @return StateRenderable[]
+     */
+    public function lines(Lines $Lines, $indentOffset = 0)
     {
-        return $this->elements($this->linesElements($Lines));
-    }
-
-    /** @param int $indentOffset */
-    protected function linesElements(Lines $Lines, array $nonNestables = [], $indentOffset = 0)
-    {
-        $Elements = [];
+        /** @var StateRenderable[] */
+        $StateRenderables = [];
+        /** @var Block|null */
+        $Block = null;
+        /** @var Block|null */
         $CurrentBlock = null;
 
         foreach ($Lines->contexts() as $Context) {
-            if (isset($CurrentBlock) && $Context->previousEmptyLines() > 0) {
-                $CurrentBlock['interrupted'] = $Context->previousEmptyLines();
+            if (
+                isset($CurrentBlock)
+                && $CurrentBlock instanceof ContinuableBlock
+                && $Context->previousEmptyLines() > 0
+            ) {
+                $CurrentBlock = $CurrentBlock->interrupted(true);
             }
 
             $Line = $Context->line();
 
-            if (isset($CurrentBlock['continuable'])) {
-                $methodName = 'block' . $CurrentBlock['type'] . 'Continue';
-                $Block = $this->$methodName($Context, $CurrentBlock);
+            if (
+                isset($CurrentBlock)
+                && $CurrentBlock instanceof ContinuableBlock
+                && ! $CurrentBlock instanceof Paragraph
+            ) {
+                $Block = $CurrentBlock->continue($Context);
 
                 if (isset($Block)) {
                     $CurrentBlock = $Block;
 
                     continue;
-                } else {
-                    if ($this->isBlockCompletable($CurrentBlock['type'])) {
-                        $methodName = 'block' . $CurrentBlock['type'] . 'Complete';
-                        $CurrentBlock = $this->$methodName($CurrentBlock);
-                    }
                 }
             }
 
@@ -157,21 +179,17 @@ final class Parsedown
             # ~
 
             foreach ($blockTypes as $blockType) {
-                $Block = $this->{"block$blockType"}($Context, $CurrentBlock);
+                $Block = $blockType::build($Context, $CurrentBlock, $this->State);
 
                 if (isset($Block)) {
-                    $Block['type'] = $blockType;
-
-                    if (! isset($Block['identified'])) {
-                        if (isset($CurrentBlock)) {
-                            $Elements[] = $this->extractElement($CurrentBlock);
-                        }
-
-                        $Block['identified'] = true;
+                    if ($Block instanceof StateUpdatingBlock) {
+                        $this->State = $this->State->mergingWith(
+                            $Block->latestState()
+                        );
                     }
 
-                    if ($this->isBlockContinuable($blockType)) {
-                        $Block['continuable'] = true;
+                    if (isset($CurrentBlock) && ! $Block->acquiredPrevious()) {
+                        $StateRenderables[] = $CurrentBlock->stateRenderable($this);
                     }
 
                     $CurrentBlock = $Block;
@@ -182,331 +200,171 @@ final class Parsedown
 
             # ~
 
-            if (isset($CurrentBlock) and $CurrentBlock['type'] === 'Paragraph') {
-                $Block = $this->paragraphContinue($Context, $CurrentBlock);
+            if (isset($CurrentBlock) and $CurrentBlock instanceof Paragraph) {
+                $Block = $CurrentBlock->continue($Context);
             }
 
             if (isset($Block)) {
                 $CurrentBlock = $Block;
             } else {
                 if (isset($CurrentBlock)) {
-                    $Elements[] = $this->extractElement($CurrentBlock);
+                    $StateRenderables[] = $CurrentBlock->stateRenderable($this);
                 }
 
-                $CurrentBlock = $this->paragraph($Context);
-
-                $CurrentBlock['identified'] = true;
+                $CurrentBlock = Paragraph::build($Context);
             }
-        }
-
-        # ~
-
-        if (isset($CurrentBlock['continuable']) and $this->isBlockCompletable($CurrentBlock['type'])) {
-            $methodName = 'block' . $CurrentBlock['type'] . 'Complete';
-            $CurrentBlock = $this->$methodName($CurrentBlock);
         }
 
         # ~
 
         if (isset($CurrentBlock)) {
-            $Elements[] = $this->extractElement($CurrentBlock);
+            $StateRenderables[] = $CurrentBlock->stateRenderable($this);
         }
 
         # ~
 
-        return $Elements;
-    }
-
-    protected function extractElement(array $Component)
-    {
-        if (! isset($Component['element'])) {
-            if (isset($Component['markup'])) {
-                $Component['element'] = ['rawHtml' => $Component['markup']];
-            } elseif (isset($Component['hidden'])) {
-                $Component['element'] = [];
-            }
-        }
-
-        return $Component['element'];
-    }
-
-    protected function isBlockContinuable($Type)
-    {
-        return \method_exists($this, 'block' . $Type . 'Continue');
-    }
-
-    protected function isBlockCompletable($Type)
-    {
-        return \method_exists($this, 'block' . $Type . 'Complete');
+        return $StateRenderables;
     }
 
     #
     # Inline Elements
     #
 
+    /** @var array<array-key, class-string<Inline>[]> */
     protected $InlineTypes = [
-        '!' => ['Image'],
-        '&' => ['SpecialCharacter'],
-        '*' => ['Emphasis'],
-        ':' => ['Url'],
-        '<' => ['UrlTag', 'EmailTag', 'Markup'],
-        '[' => ['Link'],
-        '_' => ['Emphasis'],
-        '`' => ['Code'],
-        '~' => ['Strikethrough'],
-        '\\' => ['EscapeSequence'],
+        '!' => [Image::class],
+        '&' => [SpecialCharacter::class],
+        '*' => [Emphasis::class],
+        ':' => [Url::class],
+        '<' => [UrlTag::class, Email::class, InlineMarkup::class],
+        '[' => [Link::class],
+        '_' => [Emphasis::class],
+        '`' => [Code::class],
+        '~' => [Strikethrough::class],
+        '\\' => [EscapeSequence::class],
     ];
 
     # ~
 
+    /** @var string */
     protected $inlineMarkerList = '!*_&[:<`~\\';
 
     #
     # ~
     #
 
-    public function line($text, $nonNestables = [])
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function line($text)
     {
-        return $this->elements($this->lineElements($text, $nonNestables));
+        return $this->elements($this->State, $this->lineElements($text));
     }
 
-    protected function lineElements($text, $nonNestables = [])
+    /**
+     * @param string $text
+     * @return StateRenderable[]
+     */
+    public function lineElements($text)
     {
         # standardize line breaks
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
 
-        $Elements = [];
-
-        $nonNestables = (
-            empty($nonNestables)
-            ? []
-            : \array_combine($nonNestables, $nonNestables)
-        );
+        /** @var StateRenderable[] */
+        $StateRenderables = [];
 
         # $excerpt is based on the first occurrence of a marker
 
-        while ($excerpt = \strpbrk($text, $this->inlineMarkerList)) {
-            $marker = $excerpt[0];
-
-            $markerPosition = \strlen($text) - \strlen($excerpt);
-
-            $Excerpt = ['text' => $excerpt, 'context' => $text];
+        for (
+            $Excerpt = (new Excerpt($text, 0))->pushingOffsetTo($this->inlineMarkerList);
+            $Excerpt->text() !== '';
+            $Excerpt = $Excerpt->pushingOffsetTo($this->inlineMarkerList)
+        ) {
+            $text = $Excerpt->text();
+            $marker = $text[0];
 
             foreach ($this->InlineTypes[$marker] as $inlineType) {
                 # check to see if the current inline type is nestable in the current context
 
-                if (isset($nonNestables[$inlineType])) {
-                    continue;
-                }
-
-                $Inline = $this->{"inline$inlineType"}($Excerpt);
+                $Inline = $inlineType::build($Excerpt, $this->State);
 
                 if (! isset($Inline)) {
                     continue;
                 }
 
+                $startPosition = $Inline->modifyStartPositionTo();
+
+                if (! isset($startPosition)) {
+                    $startPosition = $Excerpt->offset();
+                }
+
                 # makes sure that the inline belongs to "our" marker
 
-                if (isset($Inline['position']) and $Inline['position'] > $markerPosition) {
+                if ($startPosition > $Excerpt->offset()) {
                     continue;
                 }
 
-                # sets a default inline position
-
-                if (! isset($Inline['position'])) {
-                    $Inline['position'] = $markerPosition;
-                }
-
-                # cause the new element to 'inherit' our non nestables
-
-
-                $Inline['element']['nonNestables'] = isset($Inline['element']['nonNestables'])
-                    ? \array_merge($Inline['element']['nonNestables'], $nonNestables)
-                    : $nonNestables
+                # the text that comes before the inline
+                # compile the unmarked text
+                $StateRenderables[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition))
+                    ->stateRenderable($this)
                 ;
 
-                # the text that comes before the inline
-                $unmarkedText = \substr($text, 0, $Inline['position']);
-
-                # compile the unmarked text
-                $InlineText = $this->inlineText($unmarkedText);
-                $Elements[] = $InlineText['element'];
-
                 # compile the inline
-                $Elements[] = $this->extractElement($Inline);
+                $StateRenderables[] = $Inline->stateRenderable($this);
 
                 # remove the examined text
-                $text = \substr($text, $Inline['position'] + $Inline['extent']);
+                /** @psalm-suppress LoopInvalidation */
+                $Excerpt = $Excerpt->choppingFromOffset($startPosition + $Inline->width());
 
                 continue 2;
             }
 
-            # the marker does not belong to an inline
-
-            $unmarkedText = \substr($text, 0, $markerPosition + 1);
-
-            $InlineText = $this->inlineText($unmarkedText);
-            $Elements[] = $InlineText['element'];
-
-            $text = \substr($text, $markerPosition + 1);
-        }
-
-        $InlineText = $this->inlineText($text);
-        $Elements[] = $InlineText['element'];
-
-        foreach ($Elements as &$Element) {
-            if (! isset($Element['autobreak'])) {
-                $Element['autobreak'] = false;
+            if (! isset($startPosition)) {
+                $startPosition = $Excerpt->offset();
             }
 
             # the marker does not belong to an inline
 
-            $autoBreakNext = (
-                isset($Element['autobreak'])
-                ? $Element['autobreak'] : isset($Element['name'])
-            );
-            // (autobreak === false) covers both sides of an element
-            $autoBreak = !$autoBreak ? $autoBreak : $autoBreakNext;
+            $StateRenderables[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition + 1))
+                ->stateRenderable($this)
+            ;
 
-            $markup .= ($autoBreak ? "\n" : '') . $this->element($Element);
-            $autoBreak = $autoBreakNext;
+            $text = \substr($Excerpt->text(), $startPosition + 1);
+            /** @psalm-suppress LoopInvalidation */
+            $Excerpt = $Excerpt->choppingFromOffset($startPosition + 1);
         }
 
-        $markup .= $autoBreak ? "\n" : '';
+        $StateRenderables[] = Plaintext::build($Excerpt->choppingFromOffset(0))
+            ->stateRenderable($this)
+        ;
 
-        return $markup;
-    }
-
-    # ~
-
-    protected function li(Lines $Lines)
-    {
-        $Elements = $this->linesElements($Lines);
-
-        if (! $Lines->containsBlankLines()
-            and isset($Elements[0]) and isset($Elements[0]['name'])
-            and $Elements[0]['name'] === 'p'
-        ) {
-            unset($Elements[0]['name']);
-        }
-
-        return $Elements;
+        return $StateRenderables;
     }
 
     /**
-     * Replace occurrences $regexp with $Elements in $text. Return an array of
-     * elements representing the replacement.
+     * @param State $State
+     * @param StateRenderable[] $StateRenderables
+     * @return string
      */
-    protected static function pregReplaceElements($regexp, $Elements, $text)
+    protected function elements(State $State, array $StateRenderables)
     {
-        $newElements = [];
-
-        while (\preg_match($regexp, $text, $matches, \PREG_OFFSET_CAPTURE)) {
-            $offset = $matches[0][1];
-            $before = \substr($text, 0, $offset);
-            $after = \substr($text, $offset + \strlen($matches[0][0]));
-
-            $newElements[] = ['text' => $before];
-
-            foreach ($Elements as $Element) {
-                $newElements[] = $Element;
-            }
-
-            $text = $after;
-        }
-
-        $newElements[] = ['text' => $text];
-
-        return $newElements;
-    }
-
-    #
-    # Deprecated Methods
-    #
-
-    public function parse($text)
-    {
-        $markup = $this->text($text);
-
-        return $markup;
-    }
-
-    protected function sanitiseElement(array $Element)
-    {
-        static $goodAttribute = '/^[a-zA-Z0-9][a-zA-Z0-9-_]*+$/';
-        static $safeUrlNameToAtt  = [
-            'a'   => 'href',
-            'img' => 'src',
-        ];
-
-        if (! isset($Element['name'])) {
-            unset($Element['attributes']);
-            return $Element;
-        }
-
-        if (isset($safeUrlNameToAtt[$Element['name']])) {
-            $Element = $this->filterUnsafeUrlInAttribute($Element, $safeUrlNameToAtt[$Element['name']]);
-        }
-
-        if (! empty($Element['attributes'])) {
-            foreach ($Element['attributes'] as $att => $val) {
-                # filter out badly parsed attribute
-                if (! \preg_match($goodAttribute, $att)) {
-                    unset($Element['attributes'][$att]);
-                }
-                # dump onevent attribute
-                elseif (self::striAtStart($att, 'on')) {
-                    unset($Element['attributes'][$att]);
-                }
-            }
-        }
-
-        return $Element;
-    }
-
-    protected function filterUnsafeUrlInAttribute(array $Element, $attribute)
-    {
-        foreach ($this->safeLinksWhitelist as $scheme) {
-            if (self::striAtStart($Element['attributes'][$attribute], $scheme)) {
-                return $Element;
-            }
-        }
-
-        $Element['attributes'][$attribute] = \str_replace(':', '%3A', $Element['attributes'][$attribute]);
-
-        return $Element;
-    }
-
-    #
-    # Static Methods
-    #
-
-    protected static function escape($text, $allowQuotes = false)
-    {
-        return \htmlspecialchars($text, $allowQuotes ? \ENT_NOQUOTES : \ENT_QUOTES, 'UTF-8');
-    }
-
-    protected static function striAtStart($string, $needle)
-    {
-        $len = \strlen($needle);
-
-        if ($len > \strlen($string)) {
-            return false;
-        } else {
-            return \strtolower(\substr($string, 0, $len)) === \strtolower($needle);
-        }
-    }
-
-    public static function instance($name = 'default')
-    {
-        if (isset(self::$instances[$name])) {
-            return self::$instances[$name];
-        }
-
-        $instance = new static();
-
-        self::$instances[$name] = $instance;
-
-        return $instance;
+        return \array_reduce(
+            $StateRenderables,
+            /**
+             * @param string $html
+             * @return string
+             */
+            function ($html, StateRenderable $StateRenderable) use ($State) {
+                $Renderable = $StateRenderable->renderable($State);
+                return (
+                    $html
+                    . ($Renderable instanceof Invisible ? '' : "\n")
+                    . $Renderable->getHtml()
+                );
+            },
+            ''
+        );
     }
 }
