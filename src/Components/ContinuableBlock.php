@@ -10,7 +10,7 @@ interface ContinuableBlock extends Block
      * @param Context $Context
      * @return static|null
      */
-    public function continue(Context $Context);
+    public function advance(Context $Context);
 
     /**
      * @param bool $isInterrupted
