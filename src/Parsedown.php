@@ -335,46 +335,6 @@ class Parsedown
     }
 
     #
-    # Comment
-
-    protected function blockComment(Context $Context)
-    {
-        if ($this->markupEscaped or $this->safeMode) {
-            return;
-        }
-
-        if (\strpos($Context->line()->text(), '<!--') === 0) {
-            $Block = [
-                'element' => [
-                    'rawHtml' => $Context->line()->rawLine(),
-                    'autobreak' => true,
-                ],
-            ];
-
-            if (\strpos($Context->line()->text(), '-->') !== false) {
-                $Block['closed'] = true;
-            }
-
-            return $Block;
-        }
-    }
-
-    protected function blockCommentContinue(Context $Context, array $Block)
-    {
-        if (isset($Block['closed'])) {
-            return;
-        }
-
-        $Block['element']['rawHtml'] .= "\n" . $Context->line()->rawLine();
-
-        if (\strpos($Context->line()->text(), '-->') !== false) {
-            $Block['closed'] = true;
-        }
-
-        return $Block;
-    }
-
-    #
     # Fenced Code
 
     protected function blockFencedCode(Context $Context)
