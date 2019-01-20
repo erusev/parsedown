@@ -8,6 +8,77 @@ use Erusev\Parsedown\Html\Sanitisation\Escaper;
 
 final class Element implements Renderable
 {
+    use CanonicalStateRenderable;
+
+    const TEXT_LEVEL_ELEMENTS = [
+        'a' => true,
+        'b' => true,
+        'i' => true,
+        'q' => true,
+        's' => true,
+        'u' => true,
+
+        'br' => true,
+        'em' => true,
+        'rp' => true,
+        'rt' => true,
+        'tt' => true,
+        'xm' => true,
+
+        'bdo' => true,
+        'big' => true,
+        'del' => true,
+        'img' => true,
+        'ins' => true,
+        'kbd' => true,
+        'sub' => true,
+        'sup' => true,
+        'var' => true,
+        'wbr' => true,
+
+        'abbr' => true,
+        'cite' => true,
+        'code' => true,
+        'font' => true,
+        'mark' => true,
+        'nobr' => true,
+        'ruby' => true,
+        'span' => true,
+        'time' => true,
+
+        'blink' => true,
+        'small' => true,
+
+        'nextid' => true,
+        'spacer' => true,
+        'strike' => true,
+        'strong' => true,
+
+        'acronym' => true,
+        'listing' => true,
+        'marquee' => true,
+
+        'basefont' => true,
+    ];
+
+    const COMMON_SCHEMES = [
+        'http://',
+        'https://',
+        'ftp://',
+        'ftps://',
+        'mailto:',
+        'tel:',
+        'data:image/png;base64,',
+        'data:image/gif;base64,',
+        'data:image/jpeg;base64,',
+        'irc:',
+        'ircs:',
+        'git:',
+        'ssh:',
+        'news:',
+        'steam:',
+    ];
+
     /** @var string */
     private $name;
 
@@ -136,5 +207,37 @@ final class Element implements Renderable
         }
 
         return $html;
+    }
+
+    /**
+     * @param string $url
+     * @param string[] $permittedSchemes
+     * @return string
+     */
+    public static function filterUnsafeUrl($url, $permittedSchemes = self::COMMON_SCHEMES)
+    {
+        foreach ($permittedSchemes as $scheme) {
+            if (self::striAtStart($url, $scheme)) {
+                return $url;
+            }
+        }
+
+        return \str_replace(':', '%3A', $url);
+    }
+
+    /**
+     * @param string $string
+     * @param string $needle
+     * @return bool
+     */
+    private static function striAtStart($string, $needle)
+    {
+        $len = \strlen($needle);
+
+        if ($len > \strlen($string)) {
+            return false;
+        } else {
+            return \strtolower(\substr($string, 0, $len)) === \strtolower($needle);
+        }
     }
 }
