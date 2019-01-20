@@ -411,39 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineImage($Excerpt)
-    {
-        if (! isset($Excerpt['text'][1]) or $Excerpt['text'][1] !== '[') {
-            return;
-        }
-
-        $Excerpt['text']= \substr($Excerpt['text'], 1);
-
-        $Link = $this->inlineLink($Excerpt);
-
-        if ($Link === null) {
-            return;
-        }
-
-        $Inline = [
-            'extent' => $Link['extent'] + 1,
-            'element' => [
-                'name' => 'img',
-                'attributes' => [
-                    'src' => $Link['element']['attributes']['href'],
-                    'alt' => $Link['element']['handler']['argument'],
-                ],
-                'autobreak' => true,
-            ],
-        ];
-
-        $Inline['element']['attributes'] += $Link['element']['attributes'];
-
-        unset($Inline['element']['attributes']['href']);
-
-        return $Inline;
-    }
-
     protected function inlineMarkup($Excerpt)
     {
         if ($this->markupEscaped or $this->safeMode or \strpos($Excerpt['text'], '>') === false) {
