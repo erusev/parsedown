@@ -2,6 +2,8 @@
 
 namespace Erusev\Parsedown\Tests;
 
+use Erusev\Parsedown\Html\Renderables\Element;
+
 /**
  * Test Parsedown against the CommonMark spec, but less aggressive
  *
@@ -22,7 +24,8 @@ class CommonMarkTestWeak extends CommonMarkTestStrict
     {
         parent::setUp();
 
-        $textLevelElements = $this->parsedown->getTextLevelElements();
+        $textLevelElements = \array_keys(Element::TEXT_LEVEL_ELEMENTS);
+
         \array_walk($textLevelElements, function (&$element) {
             $element = \preg_quote($element, '/');
         });
