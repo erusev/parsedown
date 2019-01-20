@@ -10,7 +10,8 @@ final class Element implements Renderable
 {
     use CanonicalStateRenderable;
 
-    const TEXT_LEVEL_ELEMENTS = [
+    /** @var array<string, true> */
+    public static $TEXT_LEVEL_ELEMENTS = [
         'a' => true,
         'b' => true,
         'i' => true,
@@ -61,7 +62,8 @@ final class Element implements Renderable
         'basefont' => true,
     ];
 
-    const COMMON_SCHEMES = [
+    /** @var string[] */
+    public static $COMMON_SCHEMES = [
         'http://',
         'https://',
         'ftp://',
@@ -197,7 +199,7 @@ final class Element implements Renderable
 
             if (
                 $First instanceof Element
-                && ! \array_key_exists(\strtolower($First->name()), self::TEXT_LEVEL_ELEMENTS)
+                && ! \array_key_exists(\strtolower($First->name()), self::$TEXT_LEVEL_ELEMENTS)
             ) {
                 $html .= "\n";
             }
@@ -208,7 +210,7 @@ final class Element implements Renderable
 
                     if (
                         $C instanceof Element
-                        && ! \array_key_exists(\strtolower($C->name()), self::TEXT_LEVEL_ELEMENTS)
+                        && ! \array_key_exists(\strtolower($C->name()), self::$TEXT_LEVEL_ELEMENTS)
                     ) {
                         $html .= "\n";
                     }
@@ -225,11 +227,15 @@ final class Element implements Renderable
 
     /**
      * @param string $url
-     * @param string[] $permittedSchemes
+     * @param string[]|null $permittedSchemes
      * @return string
      */
-    public static function filterUnsafeUrl($url, $permittedSchemes = self::COMMON_SCHEMES)
+    public static function filterUnsafeUrl($url, $permittedSchemes = null)
     {
+        if (! isset($permittedSchemes)) {
+            $permittedSchemes = self::$COMMON_SCHEMES;
+        }
+
         foreach ($permittedSchemes as $scheme) {
             if (self::striAtStart($url, $scheme)) {
                 return $url;

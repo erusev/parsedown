@@ -24,7 +24,7 @@ class CommonMarkTestWeak extends CommonMarkTestStrict
     {
         parent::setUp();
 
-        $textLevelElements = \array_keys(Element::TEXT_LEVEL_ELEMENTS);
+        $textLevelElements = \array_keys(Element::$TEXT_LEVEL_ELEMENTS);
 
         \array_walk($textLevelElements, function (&$element) {
             $element = \preg_quote($element, '/');

@@ -45,7 +45,7 @@ final class Markup implements ContinuableBlock
         if (\preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*+[ ]*+(\/)?>/', $Context->line()->text(), $matches)) {
             $element = \strtolower($matches[1]);
 
-            if (\array_key_exists($element, Element::TEXT_LEVEL_ELEMENTS)) {
+            if (\array_key_exists($element, Element::$TEXT_LEVEL_ELEMENTS)) {
                 return null;
             }
 
