@@ -411,34 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineMarkup($Excerpt)
-    {
-        if ($this->markupEscaped or $this->safeMode or \strpos($Excerpt['text'], '>') === false) {
-            return;
-        }
-
-        if ($Excerpt['text'][1] === '/' and \preg_match('/^<\/\w[\w-]*+[ ]*+>/s', $Excerpt['text'], $matches)) {
-            return [
-                'element' => ['rawHtml' => $matches[0]],
-                'extent' => \strlen($matches[0]),
-            ];
-        }
-
-        if ($Excerpt['text'][1] === '!' and \preg_match('/^<!---?[^>-](?:-?+[^-])*-->/s', $Excerpt['text'], $matches)) {
-            return [
-                'element' => ['rawHtml' => $matches[0]],
-                'extent' => \strlen($matches[0]),
-            ];
-        }
-
-        if ($Excerpt['text'][1] !== ' ' and \preg_match('/^<\w[\w-]*+(?:[ ]*+'.$this->regexHtmlAttribute.')*+[ ]*+\/?>/s', $Excerpt['text'], $matches)) {
-            return [
-                'element' => ['rawHtml' => $matches[0]],
-                'extent' => \strlen($matches[0]),
-            ];
-        }
-    }
-
     protected function inlineSpecialCharacter($Excerpt)
     {
         if (\substr($Excerpt['text'], 1, 1) !== ' ' and \strpos($Excerpt['text'], ';') !== false
