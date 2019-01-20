@@ -411,29 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    #
-    # ~
-    #
-
-    protected function inlineText($text)
-    {
-        $Inline = [
-            'extent' => \strlen($text),
-            'element' => [],
-        ];
-
-        $Inline['element']['elements'] = self::pregReplaceElements(
-            $this->breaksEnabled ? '/[ ]*+\n/' : '/(?:[ ]*+\\\\|[ ]{2,}+)\n/',
-            [
-                ['name' => 'br'],
-                ['text' => "\n"],
-            ],
-            $text
-        );
-
-        return $Inline;
-    }
-
     protected function inlineCode($Excerpt)
     {
         $marker = $Excerpt['text'][0];
