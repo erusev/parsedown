@@ -27,6 +27,8 @@ final class Handler implements StateRenderable
      */
     public function renderable(State $State)
     {
-        return ($this->closure)($State);
+        $closure = $this->closure;
+
+        return $closure($State);
     }
 }
