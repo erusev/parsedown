@@ -19,7 +19,6 @@ matrix:
   fast_finish: true
   allow_failures:
     - php: nightly
-    - php: 7.3
     - env: ALLOW_FAILURE
 
 install:
