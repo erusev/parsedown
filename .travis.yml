@@ -35,7 +35,7 @@ cache:
 jobs:
   include:
     - stage: Code Format and Static Analysis
-      php: 7.2
+      php: 7.3
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
@@ -43,7 +43,7 @@ jobs:
         - composer test-formatting
 
     - stage: Test CommonMark (weak)
-      php: 7.2
+      php: 7.3
       env: ALLOW_FAILURE
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
