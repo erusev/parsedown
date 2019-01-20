@@ -150,7 +150,7 @@ final class TList implements ContinuableBlock
      * @param Context $Context
      * @return self|null
      */
-    public function continue(Context $Context)
+    public function advance(Context $Context)
     {
         if ($this->interrupted and \end($this->Lis)->isEmpty()) {
             return null;

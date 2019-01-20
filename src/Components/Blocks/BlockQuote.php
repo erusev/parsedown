@@ -62,7 +62,7 @@ final class BlockQuote implements ContinuableBlock
      * @param Context $Context
      * @return self|null
      */
-    public function continue(Context $Context)
+    public function advance(Context $Context)
     {
         if ($this->interrupted) {
             return null;

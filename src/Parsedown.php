@@ -152,7 +152,7 @@ final class Parsedown
                 && $CurrentBlock instanceof ContinuableBlock
                 && ! $CurrentBlock instanceof Paragraph
             ) {
-                $Block = $CurrentBlock->continue($Context);
+                $Block = $CurrentBlock->advance($Context);
 
                 if (isset($Block)) {
                     $CurrentBlock = $Block;
@@ -201,7 +201,7 @@ final class Parsedown
             # ~
 
             if (isset($CurrentBlock) and $CurrentBlock instanceof Paragraph) {
-                $Block = $CurrentBlock->continue($Context);
+                $Block = $CurrentBlock->advance($Context);
             }
 
             if (isset($Block)) {

@@ -95,7 +95,7 @@ final class Table implements ContinuableBlock
      * @param Context $Context
      * @return self|null
      */
-    public function continue(Context $Context)
+    public function advance(Context $Context)
     {
         if ($Context->previousEmptyLines() > 0) {
             return null;
