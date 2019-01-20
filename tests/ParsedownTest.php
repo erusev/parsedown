@@ -2,7 +2,10 @@
 
 namespace Erusev\Parsedown\Tests;
 
+use Erusev\Parsedown\Configurables\SafeMode;
+use Erusev\Parsedown\Configurables\StrictMode;
 use Erusev\Parsedown\Parsedown;
+use Erusev\Parsedown\State;
 use PHPUnit\Framework\TestCase;
 
 class ParsedownTest extends TestCase
@@ -10,7 +13,6 @@ class ParsedownTest extends TestCase
     final public function __construct($name = null, array $data = [], $dataName = '')
     {
         $this->dirs = $this->initDirs();
-        $this->Parsedown = $this->initParsedown();
 
         parent::__construct($name, $data, $dataName);
     }
@@ -29,16 +31,6 @@ class ParsedownTest extends TestCase
     }
 
     /**
-     * @return Parsedown
-     */
-    protected function initParsedown()
-    {
-        $Parsedown = new TestParsedown();
-
-        return $Parsedown;
-    }
-
-    /**
      * @dataProvider data
      * @param $test
      * @param $dir
@@ -52,46 +44,14 @@ class ParsedownTest extends TestCase
         $expectedMarkup = \str_replace("\r\n", "\n", $expectedMarkup);
         $expectedMarkup = \str_replace("\r", "\n", $expectedMarkup);
 
-        $this->Parsedown->setSafeMode(\substr($test, 0, 3) === 'xss');
-        $this->Parsedown->setStrictMode(\substr($test, 0, 6) === 'strict');
+        $Parsedown = new Parsedown(new State([
+            new SafeMode(\substr($test, 0, 3) === 'xss'),
+            new StrictMode(\substr($test, 0, 6) === 'strict'),
+        ]));
 
-        $actualMarkup = $this->Parsedown->text($markdown);
-
-        $this->assertEquals($expectedMarkup, $actualMarkup);
-    }
-
-    public function testRawHtml()
-    {
-        $markdown = "```php\nfoobar\n```";
-        $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
-        $expectedSafeMarkup = '<pre><code class="language-php">&lt;p&gt;foobar&lt;/p&gt;</code></pre>';
-
-        $unsafeExtension = new SampleExtensions\UnsafeExtension;
-        $actualMarkup = $unsafeExtension->text($markdown);
+        $actualMarkup = $Parsedown->text($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
-
-        $unsafeExtension->setSafeMode(true);
-        $actualSafeMarkup = $unsafeExtension->text($markdown);
-
-        $this->assertEquals($expectedSafeMarkup, $actualSafeMarkup);
-    }
-
-    public function testTrustDelegatedRawHtml()
-    {
-        $markdown = "```php\nfoobar\n```";
-        $expectedMarkup = '<pre><code class="language-php"><p>foobar</p></code></pre>';
-        $expectedSafeMarkup = $expectedMarkup;
-
-        $unsafeExtension = new SampleExtensions\TrustDelegatedExtension;
-        $actualMarkup = $unsafeExtension->text($markdown);
-
-        $this->assertEquals($expectedMarkup, $actualMarkup);
-
-        $unsafeExtension->setSafeMode(true);
-        $actualSafeMarkup = $unsafeExtension->text($markdown);
-
-        $this->assertEquals($expectedSafeMarkup, $actualSafeMarkup);
     }
 
     public function data()
@@ -127,70 +87,52 @@ class ParsedownTest extends TestCase
         return $data;
     }
 
-    public function test_no_markup()
-    {
-        $markdownWithHtml = <<<MARKDOWN_WITH_MARKUP
-<div>_content_</div>
+//     public function test_no_markup()
+//     {
+//         $markdownWithHtml = <<<MARKDOWN_WITH_MARKUP
+// <div>_content_</div>
 
-sparse:
+// sparse:
 
-<div>
-<div class="inner">
-_content_
-</div>
-</div>
+// <div>
+// <div class="inner">
+// _content_
+// </div>
+// </div>
 
-paragraph
+// paragraph
 
-<style type="text/css">
-    p {
-        color: red;
-    }
-</style>
+// <style type="text/css">
+//     p {
+//         color: red;
+//     }
+// </style>
 
-comment
+// comment
 
-<!-- html comment -->
-MARKDOWN_WITH_MARKUP;
+// <!-- html comment -->
+// MARKDOWN_WITH_MARKUP;
 
-        $expectedHtml = <<<EXPECTED_HTML
-<p>&lt;div&gt;<em>content</em>&lt;/div&gt;</p>
-<p>sparse:</p>
-<p>&lt;div&gt;
-&lt;div class="inner"&gt;
-<em>content</em>
-&lt;/div&gt;
-&lt;/div&gt;</p>
-<p>paragraph</p>
-<p>&lt;style type="text/css"&gt;
-p {
-color: red;
-}
-&lt;/style&gt;</p>
-<p>comment</p>
-<p>&lt;!-- html comment --&gt;</p>
-EXPECTED_HTML;
+//         $expectedHtml = <<<EXPECTED_HTML
+// <p>&lt;div&gt;<em>content</em>&lt;/div&gt;</p>
+// <p>sparse:</p>
+// <p>&lt;div&gt;
+// &lt;div class="inner"&gt;
+// <em>content</em>
+// &lt;/div&gt;
+// &lt;/div&gt;</p>
+// <p>paragraph</p>
+// <p>&lt;style type="text/css"&gt;
+// p {
+// color: red;
+// }
+// &lt;/style&gt;</p>
+// <p>comment</p>
+// <p>&lt;!-- html comment --&gt;</p>
+// EXPECTED_HTML;
 
-        $parsedownWithNoMarkup = new TestParsedown();
-        $parsedownWithNoMarkup->setMarkupEscaped(true);
-        $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
-    }
-
-    public function testLateStaticBinding()
-    {
-        $parsedown = Parsedown::instance();
-        $this->assertInstanceOf('Erusev\Parsedown\Parsedown', $parsedown);
-
-        // After instance is already called on Parsedown
-        // subsequent calls with the same arguments return the same instance
-        $sameParsedown = TestParsedown::instance();
-        $this->assertInstanceOf('Erusev\Parsedown\Parsedown', $sameParsedown);
-        $this->assertSame($parsedown, $sameParsedown);
-
-        $testParsedown = TestParsedown::instance('test late static binding');
-        $this->assertInstanceOf('Erusev\Parsedown\Parsedown', $testParsedown);
-
-        $sameInstanceAgain = TestParsedown::instance('test late static binding');
-        $this->assertSame($testParsedown, $sameInstanceAgain);
-    }
+//         $parsedownWithNoMarkup = new TestParsedown();
+//         $parsedownWithNoMarkup->setMarkupEscaped(true);
+//         $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
+//     }
 }
