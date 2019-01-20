@@ -193,15 +193,29 @@ final class Element implements Renderable
         if ($this->Contents !== null) {
             $html .= '>';
 
-            if (! empty($this->Contents)) {
-                $html .= "\n";
+            $First = \reset($this->Contents);
 
+            if (
+                $First instanceof Element
+                && ! \array_key_exists(\strtolower($First->name()), self::TEXT_LEVEL_ELEMENTS)
+            ) {
+                $html .= "\n";
+            }
+
+            if (! empty($this->Contents)) {
                 foreach ($this->Contents as $C) {
                     $html .= $C->getHtml();
+
+                    if (
+                        $C instanceof Element
+                        && ! \array_key_exists(\strtolower($C->name()), self::TEXT_LEVEL_ELEMENTS)
+                    ) {
+                        $html .= "\n";
+                    }
                 }
             }
 
-            $html .= "</" . $elementName . ">\n";
+            $html .= "</" . $elementName . ">";
         } else {
             $html .= ' />';
         }
