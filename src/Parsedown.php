@@ -411,33 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineUrl($Excerpt)
-    {
-        if ($this->urlsLinked !== true or ! isset($Excerpt['text'][2]) or $Excerpt['text'][2] !== '/') {
-            return;
-        }
-
-        if (\strpos($Excerpt['context'], 'http') !== false
-            and \preg_match('/\bhttps?+:[\/]{2}[^\s<]+\b\/*+/ui', $Excerpt['context'], $matches, \PREG_OFFSET_CAPTURE)
-        ) {
-            $url = $matches[0][0];
-
-            $Inline = [
-                'extent' => \strlen($matches[0][0]),
-                'position' => $matches[0][1],
-                'element' => [
-                    'name' => 'a',
-                    'text' => $url,
-                    'attributes' => [
-                        'href' => $url,
-                    ],
-                ],
-            ];
-
-            return $Inline;
-        }
-    }
-
     protected function inlineUrlTag($Excerpt)
     {
         if (\strpos($Excerpt['text'], '>') !== false and \preg_match('/^<(\w++:\/{2}[^ >]++)>/i', $Excerpt['text'], $matches)) {
