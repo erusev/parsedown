@@ -411,24 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineCode($Excerpt)
-    {
-        $marker = $Excerpt['text'][0];
-
-        if (\preg_match('/^(['.$marker.']++)[ ]*+(.+?)[ ]*+(?<!['.$marker.'])\1(?!'.$marker.')/s', $Excerpt['text'], $matches)) {
-            $text = $matches[2];
-            $text = \preg_replace('/[ ]*+\n/', ' ', $text);
-
-            return [
-                'extent' => \strlen($matches[0]),
-                'element' => [
-                    'name' => 'code',
-                    'text' => $text,
-                ],
-            ];
-        }
-    }
-
     protected function inlineEmailTag($Excerpt)
     {
         $hostnameLabel = '[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?';
