@@ -289,36 +289,6 @@ class Parsedown
     }
 
     #
-    # ~
-    #
-
-    protected function paragraph(Context $Context)
-    {
-        return [
-            'type' => 'Paragraph',
-            'element' => [
-                'name' => 'p',
-                'handler' => [
-                    'function' => 'lineElements',
-                    'argument' => $Context->line()->text(),
-                    'destination' => 'elements',
-                ],
-            ],
-        ];
-    }
-
-    protected function paragraphContinue(Context $Context, array $Block)
-    {
-        if (isset($Block['interrupted'])) {
-            return;
-        }
-
-        $Block['element']['handler']['argument'] .= "\n".$Context->line()->text();
-
-        return $Block;
-    }
-
-    #
     # Inline Elements
     #
 
