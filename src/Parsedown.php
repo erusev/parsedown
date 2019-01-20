@@ -289,31 +289,6 @@ class Parsedown
     }
 
     #
-    # Reference
-
-    protected function blockReference(Context $Context)
-    {
-        if (\strpos($Context->line()->text(), ']') !== false
-            and \preg_match('/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/', $Context->line()->text(), $matches)
-        ) {
-            $id = \strtolower($matches[1]);
-
-            $Data = [
-                'url' => $matches[2],
-                'title' => isset($matches[3]) ? $matches[3] : null,
-            ];
-
-            $this->DefinitionData['Reference'][$id] = $Data;
-
-            $Block = [
-                'element' => [],
-            ];
-
-            return $Block;
-        }
-    }
-
-    #
     # Table
 
     protected function blockTable(Context $Context, array $Block = null)
