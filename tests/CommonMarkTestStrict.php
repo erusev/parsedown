@@ -2,6 +2,7 @@
 
 namespace Erusev\Parsedown\Tests;
 
+use Erusev\Parsedown\Parsedown;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,8 +18,8 @@ class CommonMarkTestStrict extends TestCase
 
     protected function setUp()
     {
-        $this->parsedown = new TestParsedown();
-        $this->parsedown->setUrlsLinked(false);
+        $this->parsedown = new Parsedown;
+        // $this->parsedown->setUrlsLinked(false);
     }
 
     /**
