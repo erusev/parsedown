@@ -335,22 +335,6 @@ class Parsedown
     }
 
     #
-    # Setext
-
-    protected function blockSetextHeader(Context $Context, array $Block = null)
-    {
-        if (! isset($Block) or $Block['type'] !== 'Paragraph' or $Context->previousEmptyLines() > 0) {
-            return;
-        }
-
-        if ($Context->line()->indent() < 4 and \chop(\chop($Context->line()->text(), " \t"), $Context->line()->text()[0]) === '') {
-            $Block['element']['name'] = $Context->line()->text()[0] === '=' ? 'h1' : 'h2';
-
-            return $Block;
-        }
-    }
-
-    #
     # Markup
 
     protected function blockMarkup(Context $Context)
