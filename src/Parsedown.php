@@ -2,7 +2,39 @@
 
 namespace Erusev\Parsedown;
 
+use Erusev\Parsedown\AST\StateRenderable;
+use Erusev\Parsedown\Components\Block;
+use Erusev\Parsedown\Components\Blocks\BlockQuote;
+use Erusev\Parsedown\Components\Blocks\Comment;
+use Erusev\Parsedown\Components\Blocks\FencedCode;
+use Erusev\Parsedown\Components\Blocks\Header;
+use Erusev\Parsedown\Components\Blocks\IndentedCode;
+use Erusev\Parsedown\Components\Blocks\Markup as BlockMarkup;
+use Erusev\Parsedown\Components\Blocks\Paragraph;
+use Erusev\Parsedown\Components\Blocks\Reference;
+use Erusev\Parsedown\Components\Blocks\Rule;
+use Erusev\Parsedown\Components\Blocks\SetextHeader;
+use Erusev\Parsedown\Components\Blocks\Table;
+use Erusev\Parsedown\Components\Blocks\TList;
+use Erusev\Parsedown\Components\ContinuableBlock;
+use Erusev\Parsedown\Components\Inline;
+use Erusev\Parsedown\Components\Inlines\Code;
+use Erusev\Parsedown\Components\Inlines\Email;
+use Erusev\Parsedown\Components\Inlines\Emphasis;
+use Erusev\Parsedown\Components\Inlines\EscapeSequence;
+use Erusev\Parsedown\Components\Inlines\Image;
+use Erusev\Parsedown\Components\Inlines\Link;
+use Erusev\Parsedown\Components\Inlines\Markup as InlineMarkup;
+use Erusev\Parsedown\Components\Inlines\PlainText;
+use Erusev\Parsedown\Components\Inlines\SpecialCharacter;
+use Erusev\Parsedown\Components\Inlines\Strikethrough;
+use Erusev\Parsedown\Components\Inlines\Url;
+use Erusev\Parsedown\Components\Inlines\UrlTag;
+use Erusev\Parsedown\Components\StateUpdatingBlock;
+use Erusev\Parsedown\Html\Renderables\Invisible;
+use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Context;
+use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\Parsing\Line;
 use Erusev\Parsedown\Parsing\Lines;
 
