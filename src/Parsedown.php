@@ -411,35 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineEmphasis($Excerpt)
-    {
-        if (! isset($Excerpt['text'][1])) {
-            return;
-        }
-
-        $marker = $Excerpt['text'][0];
-
-        if ($Excerpt['text'][1] === $marker and \preg_match($this->StrongRegex[$marker], $Excerpt['text'], $matches)) {
-            $emphasis = 'strong';
-        } elseif (\preg_match($this->EmRegex[$marker], $Excerpt['text'], $matches)) {
-            $emphasis = 'em';
-        } else {
-            return;
-        }
-
-        return [
-            'extent' => \strlen($matches[0]),
-            'element' => [
-                'name' => $emphasis,
-                'handler' => [
-                    'function' => 'lineElements',
-                    'argument' => $matches[1],
-                    'destination' => 'elements',
-                ]
-            ],
-        ];
-    }
-
     protected function inlineEscapeSequence($Excerpt)
     {
         if (isset($Excerpt['text'][1]) and \in_array($Excerpt['text'][1], $this->specialCharacters, true)) {
