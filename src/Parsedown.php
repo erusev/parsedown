@@ -335,39 +335,6 @@ class Parsedown
     }
 
     #
-    # Header
-
-    protected function blockHeader(Context $Context)
-    {
-        $level = \strspn($Context->line()->text(), '#');
-
-        if ($level > 6) {
-            return;
-        }
-
-        $text = \trim($Context->line()->text(), '#');
-
-        if ($this->strictMode and isset($text[0]) and $text[0] !== ' ') {
-            return;
-        }
-
-        $text = \trim($text, ' ');
-
-        $Block = [
-            'element' => [
-                'name' => 'h' . $level,
-                'handler' => [
-                    'function' => 'lineElements',
-                    'argument' => $text,
-                    'destination' => 'elements',
-                ]
-            ],
-        ];
-
-        return $Block;
-    }
-
-    #
     # List
 
     protected function blockList(Context $Context, array $CurrentBlock = null)
