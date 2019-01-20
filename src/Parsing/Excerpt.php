@@ -22,6 +22,11 @@ final class Excerpt
         $this->context = $context;
         $this->offset = $offset;
         $this->text = \substr($context, $offset);
+
+        // only necessary pre-php7
+        if ($this->text === false) {
+            $this->text = '';
+        }
     }
 
     /**
