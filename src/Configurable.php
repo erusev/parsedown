@@ -5,5 +5,5 @@ namespace Erusev\Parsedown;
 interface Configurable
 {
     /** @return static */
-    public static function default();
+    public static function initial();
 }

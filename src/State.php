@@ -67,7 +67,7 @@ final class State
     {
         return (isset($this->state[$configurableClass])
             ? $this->state[$configurableClass]
-            : $configurableClass::default()
+            : $configurableClass::initial()
         );
     }
 
