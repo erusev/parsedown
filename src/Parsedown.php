@@ -637,46 +637,6 @@ class Parsedown
     }
 
     #
-    # Quote
-
-    protected function blockQuote(Context $Context)
-    {
-        if (\preg_match('/^>[ ]?+(.*+)/', $Context->line()->text(), $matches)) {
-            $Block = [
-                'element' => [
-                    'name' => 'blockquote',
-                    'handler' => [
-                        'function' => 'linesElements',
-                        'argument' => Lines::fromTextLines($matches[1], 0),
-                        'destination' => 'elements',
-                    ]
-                ],
-            ];
-
-            return $Block;
-        }
-    }
-
-    protected function blockQuoteContinue(Context $Context, array $Block)
-    {
-        if ($Context->previousEmptyLines() > 0) {
-            return;
-        }
-
-        if ($Context->line()->text()[0] === '>' and \preg_match('/^>[ ]?+(.*+)/', $Context->line()->text(), $matches)) {
-            $Block['element']['handler']['argument'] = $Block['element']['handler']['argument']->appendingTextLines($matches[1], 0);
-
-            return $Block;
-        }
-
-        if (! $Context->previousEmptyLines() > 0) {
-            $Block['element']['handler']['argument'] = $Block['element']['handler']['argument']->appendingTextLines($Context->line()->text(), 0);
-
-            return $Block;
-        }
-    }
-
-    #
     # Rule
 
     protected function blockRule(Context $Context)
