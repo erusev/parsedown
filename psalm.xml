@@ -6,8 +6,5 @@
 >
     <projectFiles>
         <directory name="src" />
-        <ignoreFiles>
-          <file name="src/Parsedown.php" />
-      </ignoreFiles>
     </projectFiles>
 </psalm>
