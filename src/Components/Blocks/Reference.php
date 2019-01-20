@@ -54,10 +54,6 @@ final class Reference implements StateUpdatingBlock
                 $State->getOrDefault(DefinitionBook::class)->setting($id, $Data)
             );
 
-            // if ($id === 'single quotes') {
-            //     var_dump($State);
-            // }
-
             return new self($State);
         }
 
