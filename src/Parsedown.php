@@ -42,9 +42,6 @@ class Parsedown
 
     protected function textElements($text)
     {
-        # make sure no definitions are set
-        $this->DefinitionData = [];
-
         # iterate through lines to identify blocks
         return $this->linesElements(Lines::fromTextLines($text, 0));
     }
@@ -1738,12 +1735,6 @@ class Parsedown
     }
 
     private static $instances = [];
-
-    #
-    # Fields
-    #
-
-    protected $DefinitionData;
 
     #
     # Read-Only
