@@ -411,35 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineEmailTag($Excerpt)
-    {
-        $hostnameLabel = '[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?';
-
-        $commonMarkEmail = '[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]++@'
-            . $hostnameLabel . '(?:\.' . $hostnameLabel . ')*';
-
-        if (\strpos($Excerpt['text'], '>') !== false
-            and \preg_match("/^<((mailto:)?$commonMarkEmail)>/i", $Excerpt['text'], $matches)
-        ) {
-            $url = $matches[1];
-
-            if (! isset($matches[2])) {
-                $url = "mailto:$url";
-            }
-
-            return [
-                'extent' => \strlen($matches[0]),
-                'element' => [
-                    'name' => 'a',
-                    'text' => $matches[1],
-                    'attributes' => [
-                        'href' => $url,
-                    ],
-                ],
-            ];
-        }
-    }
-
     protected function inlineEmphasis($Excerpt)
     {
         if (! isset($Excerpt['text'][1])) {
