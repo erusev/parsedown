@@ -17,12 +17,14 @@ final class StrictMode implements Configurable
         $this->enabled = $enabled;
     }
 
-    public function enabled(): bool
+    /** @return bool */
+    public function enabled()
     {
         return $this->enabled;
     }
 
-    public static function initial(): self
+    /** @return self */
+    public static function initial()
     {
         return new self(false);
     }
