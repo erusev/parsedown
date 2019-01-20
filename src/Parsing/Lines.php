@@ -5,7 +5,7 @@ namespace Erusev\Parsedown\Parsing;
 final class Lines
 {
     /** @var Context[] */
-    private $contexts;
+    private $Contexts;
 
     /** @var bool */
     private $containsBlankLines;
@@ -14,18 +14,18 @@ final class Lines
     private $trailingBlankLines;
 
     /**
-     * @param Context[] $contexts
+     * @param Context[] $Contexts
      * @param int $trailingBlankLines
      */
-    private function __construct($contexts, $trailingBlankLines)
+    private function __construct($Contexts, $trailingBlankLines)
     {
-        $this->contexts = $contexts;
+        $this->Contexts = $Contexts;
         $this->trailingBlankLines = $trailingBlankLines;
 
         $this->containsBlankLines = (
             ($trailingBlankLines > 0)
             || \array_reduce(
-                $contexts,
+                $Contexts,
                 /**
                  * @param bool $blankFound
                  * @param Context $Context
@@ -55,7 +55,7 @@ final class Lines
         # standardize line breaks
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
 
-        $contexts = [];
+        $Contexts = [];
         $sequentialBreaks = 0;
 
         foreach (\explode("\n", $text) as $line) {
@@ -64,7 +64,7 @@ final class Lines
                 continue;
             }
 
-            $contexts[] = new Context(
+            $Contexts[] = new Context(
                 new Line($line, $indentOffset),
                 $sequentialBreaks
             );
@@ -72,25 +72,25 @@ final class Lines
             $sequentialBreaks = 0;
         }
 
-        return new self($contexts, $sequentialBreaks);
+        return new self($Contexts, $sequentialBreaks);
     }
 
     /** @return bool */
     public function isEmpty()
     {
-        return \count($this->contexts) === 0 && $this->trailingBlankLines === 0;
+        return \count($this->Contexts) === 0 && $this->trailingBlankLines === 0;
     }
 
-    /** @return array */
-    public function contexts()
+    /** @return Context[] */
+    public function Contexts()
     {
-        return $this->contexts;
+        return $this->Contexts;
     }
 
     /** @return Context */
     public function last()
     {
-        return $this->contexts[\count($this->contexts) -1];
+        return $this->Contexts[\count($this->Contexts) -1];
     }
 
     /** @return bool */
@@ -133,7 +133,7 @@ final class Lines
 
         $NextLines = self::fromTextLines($text, $indentOffset);
 
-        if (\count($NextLines->contexts) === 0) {
+        if (\count($NextLines->Contexts) === 0) {
             $Lines->trailingBlankLines += $NextLines->trailingBlankLines;
 
             $Lines->containsBlankLines = $Lines->containsBlankLines
@@ -143,12 +143,12 @@ final class Lines
             return $Lines;
         }
 
-        $NextLines->contexts[0] = new Context(
-            $NextLines->contexts[0]->line(),
-            $NextLines->contexts[0]->previousEmptyLines() + $Lines->trailingBlankLines
+        $NextLines->Contexts[0] = new Context(
+            $NextLines->Contexts[0]->line(),
+            $NextLines->Contexts[0]->previousEmptyLines() + $Lines->trailingBlankLines
         );
 
-        $Lines->contexts = \array_merge($Lines->contexts, $NextLines->contexts);
+        $Lines->Contexts = \array_merge($Lines->Contexts, $NextLines->Contexts);
 
         $Lines->trailingBlankLines = $NextLines->trailingBlankLines;
 
@@ -175,7 +175,7 @@ final class Lines
 
         $Lines->trailingBlankLines = 0;
 
-        $Lines->contexts[] = $Context;
+        $Lines->Contexts[] = $Context;
 
         return $Lines;
     }
