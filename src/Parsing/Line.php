@@ -54,7 +54,7 @@ final class Line
      * @param int $indentOffset
      * @return int
      */
-    private static function tabShortage($fromPosition, $indentOffset)
+    public static function tabShortage($fromPosition, $indentOffset)
     {
         return self::INDENT_STEP - ($fromPosition + $indentOffset) % self::INDENT_STEP;
     }
