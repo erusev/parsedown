@@ -411,27 +411,6 @@ class Parsedown
         return $Elements;
     }
 
-    protected function inlineStrikethrough($Excerpt)
-    {
-        if (! isset($Excerpt['text'][1])) {
-            return;
-        }
-
-        if ($Excerpt['text'][1] === '~' and \preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $Excerpt['text'], $matches)) {
-            return [
-                'extent' => \strlen($matches[0]),
-                'element' => [
-                    'name' => 'del',
-                    'handler' => [
-                        'function' => 'lineElements',
-                        'argument' => $matches[1],
-                        'destination' => 'elements',
-                    ]
-                ],
-            ];
-        }
-    }
-
     protected function inlineUrl($Excerpt)
     {
         if ($this->urlsLinked !== true or ! isset($Excerpt['text'][2]) or $Excerpt['text'][2] !== '/') {
