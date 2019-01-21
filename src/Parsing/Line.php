@@ -9,9 +9,6 @@ final class Line
     /** @var int */
     private $indent;
 
-    /** @var string */
-    private $indentString;
-
     /** @var int */
     private $indentOffset;
 
@@ -34,7 +31,6 @@ final class Line
 
         $this->indent = \strspn($lineWithoutTabs, ' ');
         $this->text = \substr($lineWithoutTabs, $this->indent);
-        $this->indentString = \substr($lineWithoutTabs, 0, $this->indent);
     }
 
     /** @return int */
