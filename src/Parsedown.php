@@ -137,14 +137,6 @@ final class Parsedown
         $CurrentBlock = null;
 
         foreach ($Lines->contexts() as $Context) {
-            if (
-                isset($CurrentBlock)
-                && $CurrentBlock instanceof ContinuableBlock
-                && $Context->previousEmptyLines() > 0
-            ) {
-                $CurrentBlock = $CurrentBlock->interrupted(true);
-            }
-
             $Line = $Context->line();
 
             if (

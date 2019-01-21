@@ -16,7 +16,7 @@ use Erusev\Parsedown\State;
  */
 final class Table implements ContinuableBlock
 {
-    use ContinuableBlockDefaultInterrupt, BlockAcquisition;
+    use BlockAcquisition;
 
     /** @var array<int, _Alignment|null> */
     private $alignments;
