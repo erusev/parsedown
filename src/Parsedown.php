@@ -31,6 +31,7 @@ use Erusev\Parsedown\Components\Inlines\Strikethrough;
 use Erusev\Parsedown\Components\Inlines\Url;
 use Erusev\Parsedown\Components\Inlines\UrlTag;
 use Erusev\Parsedown\Components\StateUpdatingBlock;
+use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Renderables\Invisible;
 use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Context;
@@ -60,25 +61,20 @@ final class Parsedown
      */
     public function text($text)
     {
-        $StateRenderables = $this->textElements($text);
+        $InitialState = $this->State;
 
-        # convert to markup
-        $markup = $this->elements($this->State, $StateRenderables);
+        $StateRenderables = $this->lines(Lines::fromTextLines($text, 0));
+
+        $Renderables = $this->State->applyTo($StateRenderables);
+
+        $this->State = $InitialState;
+
+        $html = self::render($Renderables);
 
         # trim line breaks
-        $markup = \trim($markup, "\n");
+        $html = \trim($html, "\n");
 
-        return $markup;
-    }
-
-    /**
-     * @param string $text
-     * @return StateRenderable[]
-     */
-    protected function textElements($text)
-    {
-        # iterate through lines to identify blocks
-        return $this->lines(Lines::fromTextLines($text, 0));
+        return $html;
     }
 
     #
@@ -326,20 +322,18 @@ final class Parsedown
     }
 
     /**
-     * @param State $State
-     * @param StateRenderable[] $StateRenderables
+     * @param Renderable[] $Renderables
      * @return string
      */
-    protected function elements(State $State, array $StateRenderables)
+    public static function render(array $Renderables)
     {
         return \array_reduce(
-            $StateRenderables,
+            $Renderables,
             /**
              * @param string $html
              * @return string
              */
-            function ($html, StateRenderable $StateRenderable) use ($State) {
-                $Renderable = $StateRenderable->renderable($State);
+            function ($html, Renderable $Renderable) {
                 return (
                     $html
                     . ($Renderable instanceof Invisible ? '' : "\n")
