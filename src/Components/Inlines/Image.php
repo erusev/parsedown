@@ -59,15 +59,15 @@ final class Image implements Inline
         return new Handler(
             /** @return Element|Text */
             function (State $State) use ($Parsedown) {
-                $linkAttributes = $this->Link->attributes();
-
                 $attributes = [
-                    'src' => $linkAttributes['href'],
+                    'src' => $this->Link->url(),
                     'alt' => $this->Link->label(),
                 ];
 
-                if (isset($linkAttributes['title'])) {
-                    $attributes['title'] = $linkAttributes['title'];
+                $title = $this->Link->title();
+
+                if (isset($title)) {
+                    $attributes['title'] = $title;
                 }
 
                 if ($State->getOrDefault(SafeMode::class)->enabled()) {

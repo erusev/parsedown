@@ -21,18 +21,23 @@ final class Link implements Inline
     /** @var string */
     private $label;
 
-    /** @var _Metadata */
-    private $attributes;
+    /** @var string */
+    private $url;
+
+    /** @var string|null */
+    private $title;
 
     /**
      * @param string $label
-     * @param _Metadata $attributes
+     * @param string $url
+     * @param string|null $title
      * @param int $width
      */
-    public function __construct($label, $attributes, $width)
+    public function __construct($label, $url, $title, $width)
     {
         $this->label = $label;
-        $this->attributes = $attributes;
+        $this->url = $url;
+        $this->title = $title;
         $this->width = $width;
     }
 
@@ -50,27 +55,24 @@ final class Link implements Inline
         }
         $rawLabelPart = $matches[0];
         $label = $matches[1];
-        /** @var _Metadata|null */
-        $attributes = null;
 
-        $extent = \strlen($matches[0]);
+        $width = \strlen($matches[0]);
 
-        $remainder = \substr($remainder, $extent);
+        $remainder = \substr($remainder, $width);
 
         if (\preg_match('/^[(]\s*+((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*+"|\'[^\']*+\'))?\s*+[)]/', $remainder, $matches)) {
-            $attributes = ['href' => $matches[1]];
+            $url = $matches[1];
+            $title = isset($matches[2]) ? \substr($matches[2], 1, - 1) : null;
 
-            if (isset($matches[2])) {
-                $attributes['title'] = \substr($matches[2], 1, - 1);
-            }
+            $width += \strlen($matches[0]);
 
-            $extent += \strlen($matches[0]);
+            return new self($label, $url, $title, $width);
         } else {
             if (\preg_match('/^\s*\[(.*?)\]/', $remainder, $matches)) {
                 $definition = \strlen($matches[1]) ? $matches[1] : $label;
                 $definition = \strtolower($definition);
 
-                $extent += \strlen($matches[0]);
+                $width += \strlen($matches[0]);
             } else {
                 $definition = \strtolower($label);
             }
@@ -81,14 +83,11 @@ final class Link implements Inline
                 return null;
             }
 
-            $attributes = ['href' => $data['url']];
+            $url = $data['url'];
+            $title = isset($data['title']) ? $data['title'] : null;
 
-            if (isset($data['title'])) {
-                $attributes['title'] = $data['title'];
-            }
+            return new self($label, $url, $title, $width);
         }
-
-        return new self($label, $attributes, $extent);
     }
 
     /** @return string */
@@ -97,10 +96,16 @@ final class Link implements Inline
         return $this->label;
     }
 
-    /** @return _Metadata */
-    public function attributes()
+    /** @return string */
+    public function url()
     {
-        return $this->attributes;
+        return $this->url;
+    }
+
+    /** @return string|null */
+    public function title()
+    {
+        return $this->title;
     }
 
     /**
@@ -111,7 +116,11 @@ final class Link implements Inline
         return new Handler(
             /** @return Element|Text */
             function (State $State) use ($Parsedown) {
-                $attributes = $this->attributes;
+                $attributes = ['href' => $this->url];
+
+                if (isset($this->title)) {
+                    $attributes['title'] = $this->title;
+                }
 
                 if ($State->getOrDefault(SafeMode::class)->enabled()) {
                     $attributes['href'] = Element::filterUnsafeUrl($attributes['href']);
