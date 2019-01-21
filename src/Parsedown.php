@@ -248,7 +248,7 @@ final class Parsedown
      * @param string $text
      * @return StateRenderable[]
      */
-    public function lineElements($text)
+    public function line($text)
     {
         # standardize line breaks
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
