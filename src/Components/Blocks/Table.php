@@ -181,7 +181,7 @@ final class Table implements ContinuableBlock
                             return new Element(
                                 'th',
                                 isset($alignment) ? ['style' => "text-align: $alignment;"] : [],
-                                $State->applyTo($Parsedown->lineElements($cell))
+                                $State->applyTo($Parsedown->line($cell))
                             );
                         },
                         $this->headerCells,
@@ -203,7 +203,7 @@ final class Table implements ContinuableBlock
                                     return new Element(
                                         'td',
                                         isset($alignment) ? ['style' => "text-align: $alignment;"] : [],
-                                        $State->applyTo($Parsedown->lineElements($cell))
+                                        $State->applyTo($Parsedown->line($cell))
                                     );
                                 },
                                 $cells,

@@ -70,7 +70,7 @@ final class Paragraph implements ContinuableBlock
                 return new Element(
                     'p',
                     [],
-                    $State->applyTo($Parsedown->lineElements($this->text))
+                    $State->applyTo($Parsedown->line($this->text))
                 );
             }
         );

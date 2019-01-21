@@ -66,7 +66,7 @@ final class SetextHeader implements Block
                 return new Element(
                     'h' . \strval($this->level),
                     [],
-                    $State->applyTo($Parsedown->lineElements($this->text))
+                    $State->applyTo($Parsedown->line($this->text))
                 );
             }
         );
