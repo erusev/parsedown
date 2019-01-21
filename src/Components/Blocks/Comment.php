@@ -15,7 +15,7 @@ use Erusev\Parsedown\State;
 
 final class Comment implements ContinuableBlock
 {
-    use ContinuableBlockDefaultInterrupt, BlockAcquisition;
+    use BlockAcquisition;
 
     /** @var string */
     private $html;

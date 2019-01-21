@@ -13,7 +13,7 @@ use Erusev\Parsedown\State;
 
 final class Paragraph implements ContinuableBlock
 {
-    use ContinuableBlockDefaultInterrupt, BlockAcquisition;
+    use BlockAcquisition;
 
     /** @var string */
     private $text;
@@ -46,7 +46,7 @@ final class Paragraph implements ContinuableBlock
      */
     public function advance(Context $Context)
     {
-        if ($this->interrupted) {
+        if ($Context->previousEmptyLines() > 0) {
             return null;
         }
 

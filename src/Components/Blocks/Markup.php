@@ -16,7 +16,7 @@ use Erusev\Parsedown\State;
 
 final class Markup implements ContinuableBlock
 {
-    use ContinuableBlockDefaultInterrupt, BlockAcquisition;
+    use BlockAcquisition;
 
     const REGEX_HTML_ATTRIBUTE = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
 
@@ -59,7 +59,7 @@ final class Markup implements ContinuableBlock
      */
     public function advance(Context $Context)
     {
-        if ($this->interrupted) {
+        if ($Context->previousEmptyLines() > 0) {
             return null;
         }
 

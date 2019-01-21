@@ -11,15 +11,4 @@ interface ContinuableBlock extends Block
      * @return static|null
      */
     public function advance(Context $Context);
-
-    /**
-     * @param bool $isInterrupted
-     * @return static
-     */
-    public function interrupted($isInterrupted);
-
-    /**
-     * @return bool
-     */
-    public function isInterrupted();
 }

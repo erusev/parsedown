@@ -14,7 +14,7 @@ use Erusev\Parsedown\State;
 
 final class TList implements ContinuableBlock
 {
-    use ContinuableBlockDefaultInterrupt, BlockAcquisition;
+    use BlockAcquisition;
 
     /** @var Lines[] */
     private $Lis;
@@ -152,7 +152,7 @@ final class TList implements ContinuableBlock
      */
     public function advance(Context $Context)
     {
-        if ($this->interrupted and \end($this->Lis)->isEmpty()) {
+        if ($Context->previousEmptyLines() > 0 and \end($this->Lis)->isEmpty()) {
             return null;
         }
 

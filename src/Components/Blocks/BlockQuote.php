@@ -15,7 +15,7 @@ use Erusev\Parsedown\State;
 
 final class BlockQuote implements ContinuableBlock
 {
-    use ContinuableBlockDefaultInterrupt, BlockAcquisition;
+    use BlockAcquisition;
 
     /** @var Lines */
     private $Lines;
@@ -64,7 +64,7 @@ final class BlockQuote implements ContinuableBlock
      */
     public function advance(Context $Context)
     {
-        if ($this->interrupted) {
+        if ($Context->previousEmptyLines() > 0) {
             return null;
         }
 
