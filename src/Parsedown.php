@@ -124,10 +124,9 @@ final class Parsedown
     #
 
     /**
-     * @param int $indentOffset
      * @return StateRenderable[]
      */
-    public function lines(Lines $Lines, $indentOffset = 0)
+    public function lines(Lines $Lines)
     {
         /** @var StateRenderable[] */
         $StateRenderables = [];
