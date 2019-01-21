@@ -246,15 +246,6 @@ final class Parsedown
 
     /**
      * @param string $text
-     * @return string
-     */
-    public function line($text)
-    {
-        return $this->elements($this->State, $this->lineElements($text));
-    }
-
-    /**
-     * @param string $text
      * @return StateRenderable[]
      */
     public function lineElements($text)
