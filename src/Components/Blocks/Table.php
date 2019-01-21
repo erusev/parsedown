@@ -105,8 +105,6 @@ final class Table implements ContinuableBlock
             return null;
         }
 
-        $Elements = [];
-
         $row = \trim(\trim($Context->line()->text()), '|');
 
         if (

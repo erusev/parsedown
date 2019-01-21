@@ -53,7 +53,7 @@ final class Link implements Inline
         if (! \preg_match('/\[((?:[^][]++|(?R))*+)\]/', $remainder, $matches)) {
             return null;
         }
-        $rawLabelPart = $matches[0];
+
         $label = $matches[1];
 
         $width = \strlen($matches[0]);
