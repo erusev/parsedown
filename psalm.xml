@@ -7,4 +7,25 @@
     <projectFiles>
         <directory name="src" />
     </projectFiles>
+
+    <issueHandlers>
+        <PossiblyUnusedMethod>
+            <errorLevel type="suppress">
+                 <referencedMethod name="Erusev\Parsedown\Components\Inlines\PlainText::text" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Renderables\Container::contents" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::create" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::attributes" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::settingName" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::settingAttributes" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::settingContents" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Renderables\Text::getStringBacking" />
+                 <referencedMethod name="Erusev\Parsedown\Parsedown::__construct" />
+                 <referencedMethod name="Erusev\Parsedown\Parsedown::text" />
+                 <referencedMethod name="Erusev\Parsedown\Parsing\Lines::appendingContext" />
+                 <referencedMethod name="Erusev\Parsedown\State::get" />
+                 <referencedMethod name="Erusev\Parsedown\Parsedown::line" />
+                 <referencedMethod name="Erusev\Parsedown\Parsing\Lines::last" />
+            </errorLevel>
+        </PossiblyUnusedMethod>
+    </issueHandlers>
 </psalm>

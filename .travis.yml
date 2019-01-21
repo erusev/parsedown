@@ -43,6 +43,7 @@ jobs:
         - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
         - composer test-static
         - composer test-formatting
+        - composer test-dead-code
 
     - stage: Test CommonMark (weak)
       php: 7.3
