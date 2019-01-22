@@ -64,4 +64,12 @@ final class Email implements Inline
     {
         return new Element('a', ['href' => $this->url], [new Text($this->text)]);
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->text);
+    }
 }

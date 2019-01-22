@@ -134,4 +134,12 @@ final class Link implements Inline
             }
         );
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->label);
+    }
 }

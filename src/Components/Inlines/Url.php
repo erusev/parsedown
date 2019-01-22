@@ -71,4 +71,12 @@ final class Url implements Inline
     {
         return new Element('a', ['href' => $this->url], [new Text($this->url)]);
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->url);
+    }
 }
