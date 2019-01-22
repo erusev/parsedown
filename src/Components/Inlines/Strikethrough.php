@@ -64,4 +64,12 @@ final class Strikethrough implements Inline
             }
         );
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->text);
+    }
 }

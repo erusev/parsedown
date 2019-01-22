@@ -74,4 +74,12 @@ final class Markup implements Inline
             }
         );
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->html);
+    }
 }

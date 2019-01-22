@@ -72,4 +72,12 @@ final class PlainText implements Inline
             }
         );
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->text);
+    }
 }

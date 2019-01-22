@@ -58,4 +58,12 @@ final class Code implements Inline
     {
         return new Element('code', [], [new Text($this->text)]);
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->text);
+    }
 }

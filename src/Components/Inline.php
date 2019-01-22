@@ -3,6 +3,7 @@
 namespace Erusev\Parsedown\Components;
 
 use Erusev\Parsedown\Component;
+use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
 
@@ -28,4 +29,9 @@ interface Inline extends Component
      * @return int|null
      * */
     public function modifyStartPositionTo();
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext();
 }

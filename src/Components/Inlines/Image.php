@@ -61,7 +61,20 @@ final class Image implements Inline
             function (State $State) use ($Parsedown) {
                 $attributes = [
                     'src' => $this->Link->url(),
-                    'alt' => $this->Link->label(),
+                    'alt' => \array_reduce(
+                        $Parsedown->inlines($this->Link->label()),
+                        /**
+                         * @param string $text
+                         * @return string
+                         */
+                        function ($text, Inline $Inline) {
+                            return (
+                                $text
+                                . $Inline->bestPlaintext()->getStringBacking()
+                            );
+                        },
+                        ''
+                    ),
                 ];
 
                 $title = $this->Link->title();
@@ -77,5 +90,13 @@ final class Image implements Inline
                 return Element::selfClosing('img', $attributes);
             }
         );
+    }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text($this->Link->label());
     }
 }

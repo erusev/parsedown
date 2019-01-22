@@ -51,4 +51,12 @@ final class SpecialCharacter implements Inline
             '&' . (new Text($this->charCodeHtml))->getHtml() . ';'
         );
     }
+
+    /**
+     * @return Text
+     */
+    public function bestPlaintext()
+    {
+        return new Text('&'.$this->charCodeHtml.';');
+    }
 }
