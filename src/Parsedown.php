@@ -246,11 +246,24 @@ final class Parsedown
      */
     public function line($text)
     {
+        return \array_map(
+            /** @return StateRenderable */
+            function (Inline $Inline) { return $Inline->stateRenderable($this); },
+            $this->inlines($text)
+        );
+    }
+
+    /**
+     * @param string $text
+     * @return Inline[]
+     */
+    public function inlines($text)
+    {
         # standardize line breaks
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
 
-        /** @var StateRenderable[] */
-        $StateRenderables = [];
+        /** @var Inline[] */
+        $Inlines = [];
 
         # $excerpt is based on the first occurrence of a marker
 
@@ -285,12 +298,10 @@ final class Parsedown
 
                 # the text that comes before the inline
                 # compile the unmarked text
-                $StateRenderables[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition))
-                    ->stateRenderable($this)
-                ;
+                $Inlines[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition));
 
                 # compile the inline
-                $StateRenderables[] = $Inline->stateRenderable($this);
+                $Inlines[] = $Inline;
 
                 # remove the examined text
                 /** @psalm-suppress LoopInvalidation */
@@ -305,20 +316,16 @@ final class Parsedown
 
             # the marker does not belong to an inline
 
-            $StateRenderables[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition + 1))
-                ->stateRenderable($this)
-            ;
+            $Inlines[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition + 1));
 
             $text = \substr($Excerpt->text(), $startPosition + 1);
             /** @psalm-suppress LoopInvalidation */
             $Excerpt = $Excerpt->choppingFromOffset($startPosition + 1);
         }
 
-        $StateRenderables[] = Plaintext::build($Excerpt->choppingFromOffset(0))
-            ->stateRenderable($this)
-        ;
+        $Inlines[] = Plaintext::build($Excerpt->choppingFromOffset(0));
 
-        return $StateRenderables;
+        return $Inlines;
     }
 
     /**
