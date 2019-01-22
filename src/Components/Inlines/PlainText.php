@@ -57,7 +57,7 @@ final class PlainText implements Inline
 
                 $text = \preg_replace('/(?<![ \t])[ ]\n/', "$1\n", $text);
 
-                while (\preg_match('/(?:[ ]*+\\\\|[ ]{2,}+)\n/', $text, $matches, \PREG_OFFSET_CAPTURE)) {
+                while (\preg_match('/(?:[ ]*+[\\\]|[ ]{2,}+)\n/', $text, $matches, \PREG_OFFSET_CAPTURE)) {
                     $offset = \intval($matches[0][1]);
                     $before = \substr($text, 0, $offset);
                     $after = \substr($text, $offset + \strlen($matches[0][0]));
