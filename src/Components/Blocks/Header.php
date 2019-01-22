@@ -60,11 +60,14 @@ final class Header implements Block
 
         $StrictMode = $State->getOrDefault(StrictMode::class);
 
-        if ($StrictMode->isEnabled() && isset($text[0]) and $text[0] !== ' ') {
+        if (
+            $StrictMode->isEnabled() && isset($text[0])
+            and $text[0] !== ' ' and $text[0] !== "\t"
+        ) {
             return null;
         }
 
-        $text = \trim($text, ' ');
+        $text = \trim($text, " \t");
 
         return new self($text, $level);
     }
