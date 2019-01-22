@@ -30,7 +30,10 @@ final class Rule implements Block
 
         $marker = $Context->line()->text()[0];
 
-        if (\substr_count($Context->line()->text(), $marker) >= 3 and \chop($Context->line()->text(), " $marker") === '') {
+        if (
+            \substr_count($Context->line()->text(), $marker) >= 3
+            and \chop($Context->line()->text(), " \t$marker") === ''
+        ) {
             return new self;
         }
 
