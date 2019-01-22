@@ -24,6 +24,10 @@ final class Rule implements Block
         Block $Block = null,
         State $State = null
     ) {
+        if ($Context->line()->indent() > 3) {
+            return null;
+        }
+
         $marker = $Context->line()->text()[0];
 
         if (\substr_count($Context->line()->text(), $marker) >= 3 and \chop($Context->line()->text(), " $marker") === '') {
