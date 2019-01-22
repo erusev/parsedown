@@ -42,6 +42,10 @@ final class Header implements Block
         Block $Block = null,
         State $State = null
     ) {
+        if ($Context->line()->indent() > 3) {
+            return null;
+        }
+
         $State = $State ?: new State;
 
         $level = \strspn($Context->line()->text(), '#');
