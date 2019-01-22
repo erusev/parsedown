@@ -69,6 +69,9 @@ final class Header implements Block
 
         $text = \trim($text, " \t");
 
+        # remove closing sequence
+        $text = \rtrim(\rtrim($text, '#'), " \t");
+
         return new self($text, $level);
     }
 
