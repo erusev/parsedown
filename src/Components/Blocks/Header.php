@@ -56,7 +56,7 @@ final class Header implements Block
 
         /** @var 1|2|3|4|5|6 $level */
 
-        $text = \trim($Context->line()->text(), '#');
+        $text = \ltrim($Context->line()->text(), '#');
 
         $StrictMode = $State->getOrDefault(StrictMode::class);
 
