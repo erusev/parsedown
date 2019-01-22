@@ -9,6 +9,7 @@ use Erusev\Parsedown\Components\ContinuableBlock;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
+use Erusev\Parsedown\Parsing\Line;
 use Erusev\Parsedown\Parsing\Lines;
 use Erusev\Parsedown\State;
 
@@ -34,6 +35,9 @@ final class TList implements ContinuableBlock
     /** @var string */
     private $marker;
 
+    /** @var int */
+    private $afterMarkerSpaces;
+
     /** @var string */
     private $markerType;
 
@@ -47,6 +51,7 @@ final class TList implements ContinuableBlock
      * @param int $indent
      * @param 'ul'|'ol' $type
      * @param string $marker
+     * @param int $afterMarkerSpaces
      * @param string $markerType
      * @param string $markerTypeRegex
      */
@@ -57,6 +62,7 @@ final class TList implements ContinuableBlock
         $indent,
         $type,
         $marker,
+        $afterMarkerSpaces,
         $markerType,
         $markerTypeRegex
     ) {
@@ -66,6 +72,7 @@ final class TList implements ContinuableBlock
         $this->indent = $indent;
         $this->type = $type;
         $this->marker = $marker;
+        $this->afterMarkerSpaces = $afterMarkerSpaces;
         $this->markerType = $markerType;
         $this->markerTypeRegex = $markerTypeRegex;
     }
@@ -88,30 +95,32 @@ final class TList implements ContinuableBlock
         );
 
         if (\preg_match(
-            '/^('.$pattern.'([ ]++|$))(.*+)/',
+            '/^('.$pattern.')([\t ]++.*|$)/',
             $Context->line()->text(),
             $matches
         )) {
-            $contentIndent = \strlen($matches[2]);
+            $marker = $matches[1];
 
-            if ($contentIndent >= 5) {
-                $contentIndent -= 1;
-                $matches[1] = \substr($matches[1], 0, -$contentIndent);
-                $matches[3] = \str_repeat(' ', $contentIndent) . $matches[3];
-            } elseif ($contentIndent === 0) {
-                $matches[1] .= ' ';
+            $preAfterMarkerSpacesIndentOffset = $Context->line()->indentOffset() + $Context->line()->indent() + \strlen($marker);
+
+            $LineWithMarkerIndent = new Line(isset($matches[2]) ? $matches[2] : '', $preAfterMarkerSpacesIndentOffset);
+            $indentAfterMarker = $LineWithMarkerIndent->indent();
+
+            if ($indentAfterMarker > 4) {
+                $perceivedIndent = $indentAfterMarker -1;
+                $afterMarkerSpaces = 1;
+            } else {
+                $perceivedIndent = 0;
+                $afterMarkerSpaces = $indentAfterMarker;
             }
 
-            $text = $matches[3];
+            $indentOffset = $preAfterMarkerSpacesIndentOffset + $afterMarkerSpaces;
+            $text = \str_repeat(' ', $perceivedIndent) . $LineWithMarkerIndent->text();
 
-            $markerWithoutWhitespace = \rtrim($matches[1], " \t");
-            $marker = $matches[1];
-            $indent = $Context->line()->indent();
-            $indentOffset = $Context->line()->indentOffset() + $Context->line()->indent() + \strlen($marker);
             $markerType = (
                 $type === 'ul'
-                ? $markerWithoutWhitespace
-                : \substr($markerWithoutWhitespace, -1)
+                ? $marker
+                : \substr($marker, -1)
             );
 
             $markerTypeRegex = \preg_quote($markerType, '/');
@@ -137,9 +146,10 @@ final class TList implements ContinuableBlock
                 [!empty($text) ? Lines::fromTextLines($text, $indentOffset) : Lines::none()],
                 $listStart,
                 false,
-                $indent,
+                $Context->line()->indent(),
                 $type,
                 $marker,
+                $afterMarkerSpaces,
                 $markerType,
                 $markerTypeRegex
             );
@@ -156,7 +166,9 @@ final class TList implements ContinuableBlock
             return null;
         }
 
-        $requiredIndent = $this->indent + \strlen($this->marker);
+        $newlines = \str_repeat("\n", $Context->previousEmptyLines());
+
+        $requiredIndent = $this->indent + \strlen($this->marker) + $this->afterMarkerSpaces;
         $isLoose = $this->isLoose;
         $indent = $Context->line()->indent();
 
@@ -165,10 +177,10 @@ final class TList implements ContinuableBlock
         if ($Context->line()->indent() < $requiredIndent
             && ((
                 $this->type === 'ol'
-                && \preg_match('/^([0-9]++'.$this->markerTypeRegex.')(?:[ ]++(.*)|$)/', $Context->line()->text(), $matches)
+                && \preg_match('/^([0-9]++'.$this->markerTypeRegex.')([\t ]++.*|$)/', $Context->line()->text(), $matches)
             ) || (
                 $this->type === 'ul'
-                && \preg_match('/^('.$this->markerTypeRegex.')(?:[ ]++(.*)|$)/', $Context->line()->text(), $matches)
+                && \preg_match('/^('.$this->markerTypeRegex.')([\t ]++.*|$)/', $Context->line()->text(), $matches)
             ))
         ) {
             if ($Context->previousEmptyLines() > 0) {
@@ -177,10 +189,25 @@ final class TList implements ContinuableBlock
                 $isLoose = true;
             }
 
-            $text = isset($matches[2]) ? $matches[2] : '';
-            $indentOffset = $Context->line()->indentOffset() + $Context->line()->indent() + \strlen($matches[1]);
+            $marker = $matches[1];
 
-            $Lis[] = Lines::fromTextLines($text, $indentOffset);
+            $preAfterMarkerSpacesIndentOffset = $Context->line()->indentOffset() + $Context->line()->indent() + \strlen($marker);
+
+            $LineWithMarkerIndent = new Line(isset($matches[2]) ? $matches[2] : '', $preAfterMarkerSpacesIndentOffset);
+            $indentAfterMarker = $LineWithMarkerIndent->indent();
+
+            if ($indentAfterMarker > 4) {
+                $perceivedIndent = $indentAfterMarker -1;
+                $afterMarkerSpaces = 1;
+            } else {
+                $perceivedIndent = 0;
+                $afterMarkerSpaces = $indentAfterMarker;
+            }
+
+            $indentOffset = $preAfterMarkerSpacesIndentOffset + $afterMarkerSpaces;
+            $text = \str_repeat(' ', $perceivedIndent) . $LineWithMarkerIndent->text();
+
+            $Lis[] = Lines::fromTextLines($newlines . $text, $indentOffset);
 
             return new self(
                 $Lis,
@@ -188,7 +215,8 @@ final class TList implements ContinuableBlock
                 $isLoose,
                 $indent,
                 $this->type,
-                $this->marker,
+                $marker,
+                $afterMarkerSpaces,
                 $this->markerType,
                 $this->markerTypeRegex
             );
@@ -198,13 +226,13 @@ final class TList implements ContinuableBlock
 
         if ($Context->line()->indent() >= $requiredIndent) {
             if ($Context->previousEmptyLines() > 0) {
-                $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingBlankLines(1);
+                $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingBlankLines($Context->previousEmptyLines());
 
                 $isLoose = true;
             }
 
             $text = $Context->line()->ltrimBodyUpto($requiredIndent);
-            $indentOffset = $Context->line()->indentOffset() + $Context->line()->indent();
+            $indentOffset = $Context->line()->indentOffset() + \min($requiredIndent, $Context->line()->indent());
 
             $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingTextLines($text, $indentOffset);
 
@@ -215,6 +243,7 @@ final class TList implements ContinuableBlock
                 $this->indent,
                 $this->type,
                 $this->marker,
+                $this->afterMarkerSpaces,
                 $this->markerType,
                 $this->markerTypeRegex
             );
@@ -222,9 +251,11 @@ final class TList implements ContinuableBlock
 
         if (! $Context->previousEmptyLines() > 0) {
             $text = $Context->line()->ltrimBodyUpto($requiredIndent);
-            $indentOffset = $Context->line()->indentOffset() + $Context->line()->indent();
 
-            $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingTextLines($text, $indentOffset);
+            $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingTextLines(
+                $newlines . \str_repeat(' ', $Context->line()->indent()) . $text,
+                $Context->line()->indentOffset() + \min($requiredIndent, $Context->line()->indent())
+            );
 
             return new self(
                 $Lis,
@@ -233,6 +264,7 @@ final class TList implements ContinuableBlock
                 $this->indent,
                 $this->type,
                 $this->marker,
+                $this->afterMarkerSpaces,
                 $this->markerType,
                 $this->markerTypeRegex
             );
