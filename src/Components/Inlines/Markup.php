@@ -66,7 +66,7 @@ final class Markup implements Inline
             function (State $State) {
                 $SafeMode = $State->getOrDefault(SafeMode::class);
 
-                if ($SafeMode->enabled()) {
+                if ($SafeMode->isEnabled()) {
                     return new Text($this->html);
                 } else {
                     return new RawHtml($this->html);

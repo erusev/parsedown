@@ -56,7 +56,7 @@ final class Header implements Block
 
         $StrictMode = $State->getOrDefault(StrictMode::class);
 
-        if ($StrictMode->enabled() && isset($text[0]) and $text[0] !== ' ') {
+        if ($StrictMode->isEnabled() && isset($text[0]) and $text[0] !== ' ') {
             return null;
         }
 

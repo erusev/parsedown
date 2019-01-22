@@ -122,7 +122,7 @@ final class Link implements Inline
                     $attributes['title'] = $this->title;
                 }
 
-                if ($State->getOrDefault(SafeMode::class)->enabled()) {
+                if ($State->getOrDefault(SafeMode::class)->isEnabled()) {
                     $attributes['href'] = Element::filterUnsafeUrl($attributes['href']);
                 }
 

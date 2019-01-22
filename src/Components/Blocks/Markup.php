@@ -78,7 +78,7 @@ final class Markup implements ContinuableBlock
             function (State $State) {
                 $SafeMode = $State->getOrDefault(SafeMode::class);
 
-                if ($SafeMode->enabled()) {
+                if ($SafeMode->isEnabled()) {
                     return new Element('p', [], [new Text($this->html)]);
                 } else {
                     return new RawHtml($this->html);

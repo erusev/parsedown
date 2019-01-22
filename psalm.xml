@@ -25,6 +25,8 @@
                  <referencedMethod name="Erusev\Parsedown\State::get" />
                  <referencedMethod name="Erusev\Parsedown\Parsedown::line" />
                  <referencedMethod name="Erusev\Parsedown\Parsing\Lines::last" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\StrictMode::enabled" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\SafeMode::enabled" />
             </errorLevel>
         </PossiblyUnusedMethod>
     </issueHandlers>
