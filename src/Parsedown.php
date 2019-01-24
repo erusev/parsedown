@@ -284,8 +284,7 @@ final class Parsedown
             $Excerpt->text() !== '';
             $Excerpt = $Excerpt->pushingOffsetTo($this->inlineMarkerList)
         ) {
-            $text = $Excerpt->text();
-            $marker = $text[0];
+            $marker = \substr($Excerpt->text(), 0, 1);
 
             foreach ($this->InlineTypes[$marker] as $inlineType) {
                 # check to see if the current inline type is nestable in the current context
@@ -330,7 +329,6 @@ final class Parsedown
 
             $Inlines[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition + 1));
 
-            $text = \substr($Excerpt->text(), $startPosition + 1);
             /** @psalm-suppress LoopInvalidation */
             $Excerpt = $Excerpt->choppingFromOffset($startPosition + 1);
         }
