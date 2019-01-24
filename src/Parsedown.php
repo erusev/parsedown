@@ -124,8 +124,20 @@ final class Parsedown
      */
     public function lines(Lines $Lines)
     {
-        /** @var StateRenderable[] */
-        $StateRenderables = [];
+        return \array_map(
+            /** @return StateRenderable */
+            function (Block $Block) { return $Block->stateRenderable($this); },
+            $this->blocks($Lines)
+        );
+    }
+
+    /**
+     * @return Block[]
+     */
+    public function blocks(Lines $Lines)
+    {
+        /** @var Block[] */
+        $Blocks = [];
         /** @var Block|null */
         $Block = null;
         /** @var Block|null */
@@ -176,7 +188,7 @@ final class Parsedown
                     }
 
                     if (isset($CurrentBlock) && ! $Block->acquiredPrevious()) {
-                        $StateRenderables[] = $CurrentBlock->stateRenderable($this);
+                        $Blocks[] = $CurrentBlock;
                     }
 
                     $CurrentBlock = $Block;
@@ -195,7 +207,7 @@ final class Parsedown
                 $CurrentBlock = $Block;
             } else {
                 if (isset($CurrentBlock)) {
-                    $StateRenderables[] = $CurrentBlock->stateRenderable($this);
+                    $Blocks[] = $CurrentBlock;
                 }
 
                 $CurrentBlock = Paragraph::build($Context);
@@ -205,12 +217,12 @@ final class Parsedown
         # ~
 
         if (isset($CurrentBlock)) {
-            $StateRenderables[] = $CurrentBlock->stateRenderable($this);
+            $Blocks[] = $CurrentBlock;
         }
 
         # ~
 
-        return $StateRenderables;
+        return $Blocks;
     }
 
     #
