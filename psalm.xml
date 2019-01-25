@@ -31,6 +31,7 @@
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::settingMarked" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::settingUnmarked" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::removing" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\Breaks::enabled" />
             </errorLevel>
         </PossiblyUnusedMethod>
     </issueHandlers>
