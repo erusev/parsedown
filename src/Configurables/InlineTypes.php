@@ -63,7 +63,7 @@ final class InlineTypes implements Configurable
      * @param string $marker
      * @return class-string<Inline>[]
      */
-    public function for($marker)
+    public function get($marker)
     {
         if (isset($this->inlineTypes[$marker])) {
             return $this->inlineTypes[$marker];

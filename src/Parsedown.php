@@ -104,7 +104,7 @@ final class Parsedown
 
             $potentialBlockTypes = \array_merge(
                 $this->State->get(BlockTypes::class)->unmarked(),
-                $this->State->get(BlockTypes::class)->for($marker)
+                $this->State->get(BlockTypes::class)->get($marker)
             );
 
             foreach ($potentialBlockTypes as $blockType) {
@@ -186,7 +186,7 @@ final class Parsedown
         ) {
             $marker = \substr($Excerpt->text(), 0, 1);
 
-            foreach ($InlineTypes->for($marker) as $inlineType) {
+            foreach ($InlineTypes->get($marker) as $inlineType) {
                 # check to see if the current inline type is nestable in the current context
 
                 $Inline = $inlineType::build($Excerpt, $this->State);
