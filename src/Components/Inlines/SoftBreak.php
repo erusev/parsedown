@@ -2,8 +2,12 @@
 
 namespace Erusev\Parsedown\Components\Inlines;
 
+use Erusev\Parsedown\AST\Handler;
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Inline;
+use Erusev\Parsedown\Configurables\Breaks;
+use Erusev\Parsedown\Html\Renderables\Container;
+use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Excerpt;
@@ -59,11 +63,23 @@ final class SoftBreak implements Inline
     }
 
     /**
-     * @return Text
+     * @return Handler<Text|Container>
      */
     public function stateRenderable(Parsedown $_)
     {
-        return new Text("\n");
+        return new Handler(
+            /** @return Text|Container */
+            function (State $State) {
+                if ($State->get(Breaks::class)->isEnabled()) {
+                    return new Container([
+                        Element::selfClosing('br', []),
+                        new Text("\n")
+                    ]);
+                }
+
+                return new Text("\n");
+            }
+        );
     }
 
     /**

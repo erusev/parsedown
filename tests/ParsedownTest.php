@@ -2,6 +2,7 @@
 
 namespace Erusev\Parsedown\Tests;
 
+use Erusev\Parsedown\Configurables\Breaks;
 use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Configurables\StrictMode;
 use Erusev\Parsedown\Parsedown;
@@ -47,6 +48,7 @@ class ParsedownTest extends TestCase
         $Parsedown = new Parsedown(new State([
             new SafeMode(\substr($test, 0, 3) === 'xss'),
             new StrictMode(\substr($test, 0, 6) === 'strict'),
+            new Breaks(\substr($test, 0, 14) === 'breaks_enabled'),
         ]));
 
         $actualMarkup = $Parsedown->text($markdown);
