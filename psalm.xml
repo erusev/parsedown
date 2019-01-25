@@ -28,6 +28,8 @@
                  <referencedMethod name="Erusev\Parsedown\Configurables\StrictMode::enabled" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\SafeMode::enabled" />
                  <referencedMethod name="Erusev\Parsedown\Html\Renderables\Container::__construct" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::settingMarked" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::settingUnmarked" />
             </errorLevel>
         </PossiblyUnusedMethod>
     </issueHandlers>
