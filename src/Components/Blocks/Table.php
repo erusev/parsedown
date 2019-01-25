@@ -165,11 +165,11 @@ final class Table implements ContinuableBlock
     /**
      * @return Handler<Element>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element */
-            function (State $State) use ($Parsedown) {
+            function (State $State) {
                 return new Element('table', [], [
                     new Element('thead', [], [new Element('tr', [], \array_map(
                         /**
@@ -177,11 +177,11 @@ final class Table implements ContinuableBlock
                          * @param _Alignment|null $alignment
                          * @return Element
                          */
-                        function ($cell, $alignment) use ($Parsedown, $State) {
+                        function ($cell, $alignment) use ($State) {
                             return new Element(
                                 'th',
                                 isset($alignment) ? ['style' => "text-align: $alignment;"] : [],
-                                $State->applyTo($Parsedown->line($cell))
+                                $State->applyTo((new Parsedown($State))->line($cell))
                             );
                         },
                         $this->headerCells,
@@ -192,18 +192,18 @@ final class Table implements ContinuableBlock
                          * @param array<int, string> $cells
                          * @return Element
                          */
-                        function ($cells) use ($Parsedown, $State) {
+                        function ($cells) use ($State) {
                             return new Element('tr', [], \array_map(
                                 /**
                                  * @param string $cell
                                  * @param _Alignment|null $alignment
                                  * @return Element
                                  */
-                                function ($cell, $alignment) use ($Parsedown, $State) {
+                                function ($cell, $alignment) use ($State) {
                                     return new Element(
                                         'td',
                                         isset($alignment) ? ['style' => "text-align: $alignment;"] : [],
-                                        $State->applyTo($Parsedown->line($cell))
+                                        $State->applyTo((new Parsedown($State))->line($cell))
                                     );
                                 },
                                 $cells,

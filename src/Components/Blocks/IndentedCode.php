@@ -7,7 +7,6 @@ use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\ContinuableBlock;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\State;
 
@@ -70,7 +69,7 @@ final class IndentedCode implements ContinuableBlock
     /**
      * @return Element
      */
-    public function stateRenderable(Parsedown $_)
+    public function stateRenderable()
     {
         return new Element(
             'pre',

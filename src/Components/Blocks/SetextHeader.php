@@ -58,15 +58,15 @@ final class SetextHeader implements Block
     /**
      * @return Handler<Element>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element */
-            function (State $State) use ($Parsedown) {
+            function (State $State) {
                 return new Element(
                     'h' . \strval($this->level),
                     [],
-                    $State->applyTo($Parsedown->line($this->text))
+                    $State->applyTo((new Parsedown($State))->line($this->text))
                 );
             }
         );

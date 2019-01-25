@@ -9,5 +9,5 @@ interface Component
     /**
      * @return StateRenderable
      */
-    public function stateRenderable(Parsedown $Parsedown);
+    public function stateRenderable();
 }

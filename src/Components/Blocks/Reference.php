@@ -7,7 +7,6 @@ use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\StateUpdatingBlock;
 use Erusev\Parsedown\Configurables\DefinitionBook;
 use Erusev\Parsedown\Html\Renderables\Invisible;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\State;
 
@@ -69,7 +68,7 @@ final class Reference implements StateUpdatingBlock
     /**
      * @return Invisible
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Invisible;
     }

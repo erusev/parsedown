@@ -112,11 +112,11 @@ final class Link implements Inline
     /**
      * @return Handler<Element|Text>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element|Text */
-            function (State $State) use ($Parsedown) {
+            function (State $State) {
                 $attributes = ['href' => $this->url];
 
                 if (isset($this->title)) {

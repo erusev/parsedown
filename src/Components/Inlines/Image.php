@@ -54,15 +54,15 @@ final class Image implements Inline
     /**
      * @return Handler<Element|Text>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element|Text */
-            function (State $State) use ($Parsedown) {
+            function (State $State) {
                 $attributes = [
                     'src' => $this->Link->url(),
                     'alt' => \array_reduce(
-                        $Parsedown->inlines($this->Link->label()),
+                        (new Parsedown($State))->inlines($this->Link->label()),
                         /**
                          * @param string $text
                          * @return string

@@ -6,7 +6,6 @@ use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Html\Renderables\RawHtml;
 use Erusev\Parsedown\Html\Renderables\Text;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
 
@@ -45,7 +44,7 @@ final class SpecialCharacter implements Inline
     /**
      * @return RawHtml
      */
-    public function stateRenderable(Parsedown $_)
+    public function stateRenderable()
     {
         return new RawHtml(
             '&' . (new Text($this->charCodeHtml))->getHtml() . ';'
