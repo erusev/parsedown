@@ -306,16 +306,8 @@ final class Parsedown
                 continue 2;
             }
 
-            if (! isset($startPosition)) {
-                $startPosition = $Excerpt->offset();
-            }
-
-            # the marker does not belong to an inline
-
-            $Inlines[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition + 1));
-
             /** @psalm-suppress LoopInvalidation */
-            $Excerpt = $Excerpt->choppingFromOffset($startPosition + 1);
+            $Excerpt = $Excerpt->addingToOffset(1);
         }
 
         $Inlines[] = Plaintext::build($Excerpt->choppingFromOffset(0));
