@@ -6,7 +6,6 @@ use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
 
@@ -67,7 +66,7 @@ final class Url implements Inline
     /**
      * @return Element
      */
-    public function stateRenderable(Parsedown $_)
+    public function stateRenderable()
     {
         return new Element('a', ['href' => $this->url], [new Text($this->url)]);
     }

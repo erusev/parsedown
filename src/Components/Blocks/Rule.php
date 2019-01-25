@@ -5,7 +5,6 @@ namespace Erusev\Parsedown\Components\Blocks;
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Html\Renderables\Element;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\State;
 
@@ -43,7 +42,7 @@ final class Rule implements Block
     /**
      * @return Element
      */
-    public function stateRenderable(Parsedown $_)
+    public function stateRenderable()
     {
         return Element::selfClosing('hr', []);
     }

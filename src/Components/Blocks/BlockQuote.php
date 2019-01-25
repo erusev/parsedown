@@ -97,15 +97,15 @@ final class BlockQuote implements ContinuableBlock
     /**
      * @return Handler<Element>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element */
-            function (State $State) use ($Parsedown) {
+            function (State $State) {
                 return new Element(
                     'blockquote',
                     [],
-                    $State->applyTo($Parsedown->lines($this->Lines))
+                    $State->applyTo((new Parsedown($State))->lines($this->Lines))
                 );
             }
         );

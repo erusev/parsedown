@@ -276,11 +276,11 @@ final class TList implements ContinuableBlock
     /**
      * @return Handler<Element>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element */
-            function (State $State) use ($Parsedown) {
+            function (State $State) {
                 return new Element(
                     $this->type,
                     (
@@ -290,12 +290,12 @@ final class TList implements ContinuableBlock
                     ),
                     \array_map(
                         /** @return Element */
-                        function (Lines $Lines) use ($State, $Parsedown) {
+                        function (Lines $Lines) use ($State) {
                             if ($this->isLoose && $Lines->trailingBlankLines() === 0) {
                                 $Lines = $Lines->appendingBlankLines(1);
                             }
 
-                            $Renderables = $State->applyTo($Parsedown->lines($Lines));
+                            $Renderables = $State->applyTo((new Parsedown($State))->lines($Lines));
 
                             if (! $Lines->containsBlankLines()
                                 and isset($Renderables[0])

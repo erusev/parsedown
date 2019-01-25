@@ -9,7 +9,6 @@ use Erusev\Parsedown\Configurables\Breaks;
 use Erusev\Parsedown\Html\Renderables\Container;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
 
@@ -65,7 +64,7 @@ final class SoftBreak implements Inline
     /**
      * @return Handler<Text|Container>
      */
-    public function stateRenderable(Parsedown $_)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Text|Container */

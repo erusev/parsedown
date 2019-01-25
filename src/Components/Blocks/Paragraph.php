@@ -62,15 +62,15 @@ final class Paragraph implements ContinuableBlock
     /**
      * @return Handler<Element>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element */
-            function (State $State) use ($Parsedown) {
+            function (State $State) {
                 return new Element(
                     'p',
                     [],
-                    $State->applyTo($Parsedown->line($this->text))
+                    $State->applyTo((new Parsedown($State))->line($this->text))
                 );
             }
         );

@@ -10,7 +10,6 @@ use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\RawHtml;
 use Erusev\Parsedown\Html\Renderables\Text;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\State;
 
@@ -71,7 +70,7 @@ final class Markup implements ContinuableBlock
     /**
      * @return Handler<Element|RawHtml>
      */
-    public function stateRenderable(Parsedown $Parsedown)
+    public function stateRenderable()
     {
         return new Handler(
             /** @return Element|RawHtml */

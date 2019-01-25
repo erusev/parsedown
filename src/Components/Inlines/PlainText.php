@@ -5,7 +5,6 @@ namespace Erusev\Parsedown\Components\Inlines;
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Html\Renderables\Text;
-use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
 
@@ -44,7 +43,7 @@ final class PlainText implements Inline
     /**
      * @return Text
      */
-    public function stateRenderable(Parsedown $_)
+    public function stateRenderable()
     {
         return new Text($this->text);
     }

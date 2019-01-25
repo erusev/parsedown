@@ -66,7 +66,7 @@ final class Parsedown
     {
         return \array_map(
             /** @return StateRenderable */
-            function (Block $Block) { return $Block->stateRenderable($this); },
+            function (Block $Block) { return $Block->stateRenderable(); },
             $this->blocks($Lines)
         );
     }
@@ -155,7 +155,7 @@ final class Parsedown
     {
         return \array_map(
             /** @return StateRenderable */
-            function (Inline $Inline) { return $Inline->stateRenderable($this); },
+            function (Inline $Inline) { return $Inline->stateRenderable(); },
             $this->inlines($text)
         );
     }
