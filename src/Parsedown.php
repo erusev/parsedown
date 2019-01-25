@@ -112,9 +112,7 @@ final class Parsedown
 
                 if (isset($Block)) {
                     if ($Block instanceof StateUpdatingBlock) {
-                        $this->State = $this->State->mergingWith(
-                            $Block->latestState()
-                        );
+                        $this->State = $Block->latestState();
                     }
 
                     if (isset($CurrentBlock) && ! $Block->acquiredPrevious()) {
