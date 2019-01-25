@@ -4,35 +4,13 @@ namespace Erusev\Parsedown;
 
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Block;
-use Erusev\Parsedown\Components\Blocks\BlockQuote;
-use Erusev\Parsedown\Components\Blocks\Comment;
-use Erusev\Parsedown\Components\Blocks\FencedCode;
-use Erusev\Parsedown\Components\Blocks\Header;
-use Erusev\Parsedown\Components\Blocks\IndentedCode;
-use Erusev\Parsedown\Components\Blocks\Markup as BlockMarkup;
 use Erusev\Parsedown\Components\Blocks\Paragraph;
-use Erusev\Parsedown\Components\Blocks\Reference;
-use Erusev\Parsedown\Components\Blocks\Rule;
-use Erusev\Parsedown\Components\Blocks\SetextHeader;
-use Erusev\Parsedown\Components\Blocks\Table;
-use Erusev\Parsedown\Components\Blocks\TList;
 use Erusev\Parsedown\Components\ContinuableBlock;
 use Erusev\Parsedown\Components\Inline;
-use Erusev\Parsedown\Components\Inlines\Code;
-use Erusev\Parsedown\Components\Inlines\Email;
-use Erusev\Parsedown\Components\Inlines\Emphasis;
-use Erusev\Parsedown\Components\Inlines\EscapeSequence;
-use Erusev\Parsedown\Components\Inlines\HardBreak;
-use Erusev\Parsedown\Components\Inlines\Image;
-use Erusev\Parsedown\Components\Inlines\Link;
-use Erusev\Parsedown\Components\Inlines\Markup as InlineMarkup;
 use Erusev\Parsedown\Components\Inlines\PlainText;
-use Erusev\Parsedown\Components\Inlines\SoftBreak;
-use Erusev\Parsedown\Components\Inlines\SpecialCharacter;
-use Erusev\Parsedown\Components\Inlines\Strikethrough;
-use Erusev\Parsedown\Components\Inlines\Url;
-use Erusev\Parsedown\Components\Inlines\UrlTag;
 use Erusev\Parsedown\Components\StateUpdatingBlock;
+use Erusev\Parsedown\Configurables\BlockTypes;
+use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Renderables\Invisible;
 use Erusev\Parsedown\Html\Renderables\Text;
@@ -48,61 +26,15 @@ final class Parsedown
     /** @var State */
     private $State;
 
-    /** @var array<array-key, class-string<Block>[]> */
-    private $BlockTypes = [
-        '#' => [Header::class],
-        '*' => [Rule::class, TList::class],
-        '+' => [TList::class],
-        '-' => [SetextHeader::class, Table::class, Rule::class, TList::class],
-        '0' => [TList::class],
-        '1' => [TList::class],
-        '2' => [TList::class],
-        '3' => [TList::class],
-        '4' => [TList::class],
-        '5' => [TList::class],
-        '6' => [TList::class],
-        '7' => [TList::class],
-        '8' => [TList::class],
-        '9' => [TList::class],
-        ':' => [Table::class],
-        '<' => [Comment::class, BlockMarkup::class],
-        '=' => [SetextHeader::class],
-        '>' => [BlockQuote::class],
-        '[' => [Reference::class],
-        '_' => [Rule::class],
-        '`' => [FencedCode::class],
-        '|' => [Table::class],
-        '~' => [FencedCode::class],
-    ];
-
-    /** @var class-string<Block>[] */
-    private $unmarkedBlockTypes = [
-        IndentedCode::class,
-    ];
-
-    /** @var array<array-key, class-string<Inline>[]> */
-    private $InlineTypes = [
-        '!' => [Image::class],
-        '*' => [Emphasis::class],
-        '_' => [Emphasis::class],
-        '&' => [SpecialCharacter::class],
-        '[' => [Link::class],
-        ':' => [Url::class],
-        '<' => [UrlTag::class, Email::class, InlineMarkup::class],
-        '`' => [Code::class],
-        '~' => [Strikethrough::class],
-        '\\' => [EscapeSequence::class],
-        "\n" => [HardBreak::class, SoftBreak::class],
-    ];
-
-    /** @var string */
-    private $inlineMarkers;
-
     public function __construct(State $State = null)
     {
         $this->State = $State ?: new State;
 
-        $this->inlineMarkers = \implode('', \array_keys($this->InlineTypes));
+        // ensure we cache the initial value if these weren't explicitly set
+        $this->State = $this->State->mergingWith(new State([
+            $this->State->get(BlockTypes::class),
+            $this->State->get(InlineTypes::class),
+        ]));
     }
 
     /**
@@ -174,18 +106,15 @@ final class Parsedown
 
             # ~
 
-            $blockTypes = $this->unmarkedBlockTypes;
-
-            if (isset($this->BlockTypes[$marker])) {
-                foreach ($this->BlockTypes[$marker] as $blockType) {
-                    $blockTypes []= $blockType;
-                }
-            }
+            $potentialBlockTypes = \array_merge(
+                $this->State->get(BlockTypes::class)->unmarked(),
+                $this->State->get(BlockTypes::class)->for($marker)
+            );
 
             #
             # ~
 
-            foreach ($blockTypes as $blockType) {
+            foreach ($potentialBlockTypes as $blockType) {
                 $Block = $blockType::build($Context, $CurrentBlock, $this->State);
 
                 if (isset($Block)) {
@@ -264,14 +193,17 @@ final class Parsedown
 
         # $excerpt is based on the first occurrence of a marker
 
+        $InlineTypes = $this->State->get(InlineTypes::class);
+        $markerMask = $InlineTypes->markers();
+
         for (
-            $Excerpt = (new Excerpt($text, 0))->pushingOffsetTo($this->inlineMarkers);
+            $Excerpt = (new Excerpt($text, 0))->pushingOffsetTo($markerMask);
             $Excerpt->text() !== '';
-            $Excerpt = $Excerpt->pushingOffsetTo($this->inlineMarkers)
+            $Excerpt = $Excerpt->pushingOffsetTo($markerMask)
         ) {
             $marker = \substr($Excerpt->text(), 0, 1);
 
-            foreach ($this->InlineTypes[$marker] as $inlineType) {
+            foreach ($InlineTypes->for($marker) as $inlineType) {
                 # check to see if the current inline type is nestable in the current context
 
                 $Inline = $inlineType::build($Excerpt, $this->State);
