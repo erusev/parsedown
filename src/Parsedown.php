@@ -22,10 +22,12 @@ use Erusev\Parsedown\Components\Inlines\Code;
 use Erusev\Parsedown\Components\Inlines\Email;
 use Erusev\Parsedown\Components\Inlines\Emphasis;
 use Erusev\Parsedown\Components\Inlines\EscapeSequence;
+use Erusev\Parsedown\Components\Inlines\HardBreak;
 use Erusev\Parsedown\Components\Inlines\Image;
 use Erusev\Parsedown\Components\Inlines\Link;
 use Erusev\Parsedown\Components\Inlines\Markup as InlineMarkup;
 use Erusev\Parsedown\Components\Inlines\PlainText;
+use Erusev\Parsedown\Components\Inlines\SoftBreak;
 use Erusev\Parsedown\Components\Inlines\SpecialCharacter;
 use Erusev\Parsedown\Components\Inlines\Strikethrough;
 use Erusev\Parsedown\Components\Inlines\Url;
@@ -41,48 +43,13 @@ use Erusev\Parsedown\Parsing\Lines;
 
 final class Parsedown
 {
-    # ~
-
     const version = '2.0.0-dev';
-
-    # ~
 
     /** @var State */
     private $State;
 
-    public function __construct(State $State = null)
-    {
-        $this->State = $State ?: new State;
-    }
-
-    /**
-     * @param string $text
-     * @return string
-     */
-    public function text($text)
-    {
-        $InitialState = $this->State;
-
-        $StateRenderables = $this->lines(Lines::fromTextLines($text, 0));
-
-        $Renderables = $this->State->applyTo($StateRenderables);
-
-        $this->State = $InitialState;
-
-        $html = self::render($Renderables);
-
-        # trim line breaks
-        $html = \trim($html, "\n");
-
-        return $html;
-    }
-
-    #
-    # Lines
-    #
-
     /** @var array<array-key, class-string<Block>[]> */
-    protected $BlockTypes = [
+    private $BlockTypes = [
         '#' => [Header::class],
         '*' => [Rule::class, TList::class],
         '+' => [TList::class],
@@ -108,16 +75,57 @@ final class Parsedown
         '~' => [FencedCode::class],
     ];
 
-    # ~
-
     /** @var class-string<Block>[] */
-    protected $unmarkedBlockTypes = [
+    private $unmarkedBlockTypes = [
         IndentedCode::class,
     ];
 
-    #
-    # Blocks
-    #
+    /** @var array<array-key, class-string<Inline>[]> */
+    private $InlineTypes = [
+        '!' => [Image::class],
+        '*' => [Emphasis::class],
+        '_' => [Emphasis::class],
+        '&' => [SpecialCharacter::class],
+        '[' => [Link::class],
+        ':' => [Url::class],
+        '<' => [UrlTag::class, Email::class, InlineMarkup::class],
+        '`' => [Code::class],
+        '~' => [Strikethrough::class],
+        '\\' => [EscapeSequence::class],
+        "\n" => [HardBreak::class, SoftBreak::class],
+    ];
+
+    /** @var string */
+    private $inlineMarkers;
+
+    public function __construct(State $State = null)
+    {
+        $this->State = $State ?: new State;
+
+        $this->inlineMarkers = \implode('', \array_keys($this->InlineTypes));
+    }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function text($text)
+    {
+        $InitialState = $this->State;
+
+        $StateRenderables = $this->lines(Lines::fromTextLines($text, 0));
+
+        $Renderables = $this->State->applyTo($StateRenderables);
+
+        $this->State = $InitialState;
+
+        $html = self::render($Renderables);
+
+        # trim line breaks
+        $html = \trim($html, "\n");
+
+        return $html;
+    }
 
     /**
      * @return StateRenderable[]
@@ -226,29 +234,6 @@ final class Parsedown
     }
 
     #
-    # Inline Elements
-    #
-
-    /** @var array<array-key, class-string<Inline>[]> */
-    protected $InlineTypes = [
-        '!' => [Image::class],
-        '&' => [SpecialCharacter::class],
-        '*' => [Emphasis::class],
-        ':' => [Url::class],
-        '<' => [UrlTag::class, Email::class, InlineMarkup::class],
-        '[' => [Link::class],
-        '_' => [Emphasis::class],
-        '`' => [Code::class],
-        '~' => [Strikethrough::class],
-        '\\' => [EscapeSequence::class],
-    ];
-
-    # ~
-
-    /** @var string */
-    protected $inlineMarkerList = '!*_&[:<`~\\';
-
-    #
     # ~
     #
 
@@ -280,9 +265,9 @@ final class Parsedown
         # $excerpt is based on the first occurrence of a marker
 
         for (
-            $Excerpt = (new Excerpt($text, 0))->pushingOffsetTo($this->inlineMarkerList);
+            $Excerpt = (new Excerpt($text, 0))->pushingOffsetTo($this->inlineMarkers);
             $Excerpt->text() !== '';
-            $Excerpt = $Excerpt->pushingOffsetTo($this->inlineMarkerList)
+            $Excerpt = $Excerpt->pushingOffsetTo($this->inlineMarkers)
         ) {
             $marker = \substr($Excerpt->text(), 0, 1);
 
