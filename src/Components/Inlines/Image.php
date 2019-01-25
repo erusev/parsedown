@@ -83,7 +83,7 @@ final class Image implements Inline
                     $attributes['title'] = $title;
                 }
 
-                if ($State->getOrDefault(SafeMode::class)->isEnabled()) {
+                if ($State->get(SafeMode::class)->isEnabled()) {
                     $attributes['src'] = Element::filterUnsafeUrl($attributes['src']);
                 }
 
