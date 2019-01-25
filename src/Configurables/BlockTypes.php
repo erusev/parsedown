@@ -101,6 +101,27 @@ final class BlockTypes implements Configurable
     }
 
     /**
+     * @param class-string<Block>[] $removeBlockTypes
+     * @return self
+     */
+    public function removing(array $removeBlockTypes)
+    {
+        return new self(
+            \array_map(
+                /**
+                 * @param class-string<Block>[] $blockTypes
+                 * @return class-string<Block>[]
+                 */
+                function ($blockTypes) use ($removeBlockTypes) {
+                    return \array_diff($blockTypes, $removeBlockTypes);
+                },
+                $this->blockTypes
+            ),
+            \array_diff($this->unmarkedBlockTypes, $removeBlockTypes)
+        );
+    }
+
+    /**
      * @param string $marker
      * @return class-string<Block>[]
      */

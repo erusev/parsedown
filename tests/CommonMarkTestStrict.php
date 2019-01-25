@@ -2,6 +2,8 @@
 
 namespace Erusev\Parsedown\Tests;
 
+use Erusev\Parsedown\Components\Inlines\Url;
+use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Configurables\StrictMode;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\State;
@@ -21,7 +23,8 @@ class CommonMarkTestStrict extends TestCase
     protected function setUp()
     {
         $this->parsedown = new Parsedown(new State([
-            StrictMode::enabled()
+            StrictMode::enabled(),
+            InlineTypes::initial()->removing([Url::class]),
         ]));
         // $this->parsedown->setUrlsLinked(false);
     }

@@ -60,6 +60,24 @@ final class InlineTypes implements Configurable
     }
 
     /**
+     * @param class-string<Inline>[] $removeInlineTypes
+     * @return self
+     */
+    public function removing(array $removeInlineTypes)
+    {
+        return new self(\array_map(
+            /**
+             * @param class-string<Inline>[] $inlineTypes
+             * @return class-string<Inline>[]
+             */
+            function ($inlineTypes) use ($removeInlineTypes) {
+                return \array_diff($inlineTypes, $removeInlineTypes);
+            },
+            $this->inlineTypes
+        ));
+    }
+
+    /**
      * @param string $marker
      * @return class-string<Inline>[]
      */

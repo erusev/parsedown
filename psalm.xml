@@ -30,6 +30,7 @@
                  <referencedMethod name="Erusev\Parsedown\Html\Renderables\Container::__construct" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::settingMarked" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::settingUnmarked" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::removing" />
             </errorLevel>
         </PossiblyUnusedMethod>
     </issueHandlers>
