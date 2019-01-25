@@ -100,19 +100,12 @@ final class Parsedown
                 }
             }
 
-            # ~
-
             $marker = $Line->text()[0];
-
-            # ~
 
             $potentialBlockTypes = \array_merge(
                 $this->State->get(BlockTypes::class)->unmarked(),
                 $this->State->get(BlockTypes::class)->for($marker)
             );
-
-            #
-            # ~
 
             foreach ($potentialBlockTypes as $blockType) {
                 $Block = $blockType::build($Context, $CurrentBlock, $this->State);
@@ -134,8 +127,6 @@ final class Parsedown
                 }
             }
 
-            # ~
-
             if (isset($CurrentBlock) and $CurrentBlock instanceof Paragraph) {
                 $Block = $CurrentBlock->advance($Context);
             }
@@ -151,20 +142,12 @@ final class Parsedown
             }
         }
 
-        # ~
-
         if (isset($CurrentBlock)) {
             $Blocks[] = $CurrentBlock;
         }
 
-        # ~
-
         return $Blocks;
     }
-
-    #
-    # ~
-    #
 
     /**
      * @param string $text
