@@ -104,7 +104,7 @@ final class BlockTypes implements Configurable
      * @param string $marker
      * @return class-string<Block>[]
      */
-    public function get($marker)
+    public function markedBy($marker)
     {
         if (isset($this->blockTypes[$marker])) {
             return $this->blockTypes[$marker];
