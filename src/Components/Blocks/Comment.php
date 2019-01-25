@@ -78,7 +78,7 @@ final class Comment implements ContinuableBlock
         return new Handler(
             /** @return Text|RawHtml */
             function (State $State) {
-                if ($State->getOrDefault(SafeMode::class)->isEnabled()) {
+                if ($State->get(SafeMode::class)->isEnabled()) {
                     return new Text($this->html);
                 } else {
                     return new RawHtml($this->html);

@@ -51,7 +51,7 @@ final class Reference implements StateUpdatingBlock
             ];
 
             $State = $State->setting(
-                $State->getOrDefault(DefinitionBook::class)->setting($id, $Data)
+                $State->get(DefinitionBook::class)->setting($id, $Data)
             );
 
             return new self($State);

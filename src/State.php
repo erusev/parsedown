@@ -47,23 +47,9 @@ final class State
      * @template T as Configurable
      * @template-typeof T $configurableClass
      * @param class-string<Configurable> $configurableClass
-     * @return T|null
-     * */
-    public function get($configurableClass)
-    {
-        return (isset($this->state[$configurableClass])
-            ? $this->state[$configurableClass]
-            : null
-        );
-    }
-
-    /**
-     * @template T as Configurable
-     * @template-typeof T $configurableClass
-     * @param class-string<Configurable> $configurableClass
      * @return T
      * */
-    public function getOrDefault($configurableClass)
+    public function get($configurableClass)
     {
         return (isset($this->state[$configurableClass])
             ? $this->state[$configurableClass]

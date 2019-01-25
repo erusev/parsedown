@@ -77,7 +77,7 @@ final class Link implements Inline
                 $definition = \strtolower($label);
             }
 
-            $data = $State->getOrDefault(DefinitionBook::class)->lookup($definition);
+            $data = $State->get(DefinitionBook::class)->lookup($definition);
 
             if (! isset($data)) {
                 return null;
@@ -122,7 +122,7 @@ final class Link implements Inline
                     $attributes['title'] = $this->title;
                 }
 
-                if ($State->getOrDefault(SafeMode::class)->isEnabled()) {
+                if ($State->get(SafeMode::class)->isEnabled()) {
                     $attributes['href'] = Element::filterUnsafeUrl($attributes['href']);
                 }
 
