@@ -6,6 +6,7 @@ use Erusev\Parsedown\AST\Handler;
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Configurables\DefinitionBook;
+use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
@@ -126,10 +127,14 @@ final class Link implements Inline
                     $attributes['href'] = Element::filterUnsafeUrl($attributes['href']);
                 }
 
+                $NewState = $State->setting(
+                    $State->get(InlineTypes::class)->removing([Url::class])
+                );
+
                 return new Element(
                     'a',
                     $attributes,
-                    $State->applyTo($Parsedown->line($this->label))
+                    $State->applyTo((new Parsedown($NewState))->line($this->label))
                 );
             }
         );
