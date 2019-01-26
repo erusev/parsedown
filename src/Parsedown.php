@@ -12,7 +12,6 @@ use Erusev\Parsedown\Components\StateUpdatingBlock;
 use Erusev\Parsedown\Configurables\BlockTypes;
 use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Html\Renderable;
-use Erusev\Parsedown\Html\Renderables\Invisible;
 use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\Parsing\Excerpt;
@@ -244,11 +243,9 @@ final class Parsedown
              * @return string
              */
             function ($html, Renderable $Renderable) {
-                return (
-                    $html
-                    . ($Renderable instanceof Invisible ? '' : "\n")
-                    . $Renderable->getHtml()
-                );
+                $newHtml = $Renderable->getHtml();
+
+                return $html . ($newHtml === '' ? '' : "\n") . $newHtml;
             },
             ''
         );
