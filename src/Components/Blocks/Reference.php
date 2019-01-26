@@ -36,7 +36,7 @@ final class Reference implements StateUpdatingBlock
         $State = $State ?: new State;
 
         if (\strpos($Context->line()->text(), ']') !== false
-            and \preg_match(
+            && \preg_match(
                 '/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/',
                 $Context->line()->text(),
                 $matches

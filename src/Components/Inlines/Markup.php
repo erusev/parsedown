@@ -42,15 +42,15 @@ final class Markup implements Inline
 
         $secondChar = \substr($Excerpt->text(), 1, 1);
 
-        if ($secondChar === '/' and \preg_match('/^<\/\w[\w-]*+[ ]*+>/s', $Excerpt->text(), $matches)) {
+        if ($secondChar === '/' && \preg_match('/^<\/\w[\w-]*+[ ]*+>/s', $Excerpt->text(), $matches)) {
             return new self($matches[0]);
         }
 
-        if ($secondChar === '!' and \preg_match('/^<!---?[^>-](?:-?+[^-])*-->/s', $Excerpt->text(), $matches)) {
+        if ($secondChar === '!' && \preg_match('/^<!---?[^>-](?:-?+[^-])*-->/s', $Excerpt->text(), $matches)) {
             return new self($matches[0]);
         }
 
-        if ($secondChar !== ' ' and \preg_match('/^<\w[\w-]*+(?:[ ]*+'.self::HTML_ATT_REGEX.')*+[ ]*+\/?>/s', $Excerpt->text(), $matches)) {
+        if ($secondChar !== ' ' && \preg_match('/^<\w[\w-]*+(?:[ ]*+'.self::HTML_ATT_REGEX.')*+[ ]*+\/?>/s', $Excerpt->text(), $matches)) {
             return new self($matches[0]);
         }
     }

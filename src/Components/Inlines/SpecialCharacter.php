@@ -32,8 +32,8 @@ final class SpecialCharacter implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (\substr($Excerpt->text(), 1, 1) !== ' ' and \strpos($Excerpt->text(), ';') !== false
-            and \preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt->text(), $matches)
+        if (\substr($Excerpt->text(), 1, 1) !== ' ' && \strpos($Excerpt->text(), ';') !== false
+            && \preg_match('/^&(#?+[0-9a-zA-Z]++);/', $Excerpt->text(), $matches)
         ) {
             return new self($matches[1]);
         }

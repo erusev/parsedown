@@ -31,7 +31,7 @@ final class Rule implements Block
 
         if (
             \substr_count($Context->line()->text(), $marker) >= 3
-            and \chop($Context->line()->text(), " \t$marker") === ''
+            && \chop($Context->line()->text(), " \t$marker") === ''
         ) {
             return new self;
         }

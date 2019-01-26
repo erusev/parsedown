@@ -34,7 +34,7 @@ final class EscapeSequence implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (isset($Excerpt->text()[1]) and \strpbrk($c = $Excerpt->text()[1], self::SPECIALS) !== false) {
+        if (isset($Excerpt->text()[1]) && \strpbrk($c = $Excerpt->text()[1], self::SPECIALS) !== false) {
             return new self($c);
         }
 

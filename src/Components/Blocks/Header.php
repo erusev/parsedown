@@ -60,7 +60,7 @@ final class Header implements Block
 
         if (
             $State->get(StrictMode::class)->isEnabled() && isset($text[0])
-            and $text[0] !== ' ' and $text[0] !== "\t"
+            && $text[0] !== ' ' && $text[0] !== "\t"
         ) {
             return null;
         }

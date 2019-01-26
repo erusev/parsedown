@@ -41,7 +41,7 @@ final class Strikethrough implements Inline
             return null;
         }
 
-        if ($text[1] === '~' and \preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $text, $matches)) {
+        if ($text[1] === '~' && \preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $text, $matches)) {
             return new self($matches[1], \strlen($matches[0]));
         }
 

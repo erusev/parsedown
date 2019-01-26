@@ -52,15 +52,15 @@ final class Table implements ContinuableBlock
         Block $Block = null,
         State $State = null
     ) {
-        if (! isset($Block) or ! $Block instanceof Paragraph or $Context->previousEmptyLines() > 0) {
+        if (! isset($Block) || ! $Block instanceof Paragraph || $Context->previousEmptyLines() > 0) {
             return null;
         }
 
         if (
             \strpos($Block->text(), '|') === false
-            and \strpos($Context->line()->text(), '|') === false
-            and \strpos($Context->line()->text(), ':') === false
-            or \strpos($Block->text(), "\n") !== false
+            && \strpos($Context->line()->text(), '|') === false
+            && \strpos($Context->line()->text(), ':') === false
+            || \strpos($Block->text(), "\n") !== false
         ) {
             return null;
         }
@@ -101,7 +101,7 @@ final class Table implements ContinuableBlock
             return null;
         }
 
-        if (\count($this->alignments) !== 1 and $Context->line()->text()[0] !== '|' and !\strpos($Context->line()->text(), '|')) {
+        if (\count($this->alignments) !== 1 && $Context->line()->text()[0] !== '|' && !\strpos($Context->line()->text(), '|')) {
             return null;
         }
 
@@ -109,8 +109,8 @@ final class Table implements ContinuableBlock
 
         if (
             ! \preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]++`|`)++/', $row, $matches)
-            or ! isset($matches[0])
-            or ! \is_array($matches[0])
+            || ! isset($matches[0])
+            || ! \is_array($matches[0])
         ) {
             return null;
         }

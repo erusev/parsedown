@@ -33,7 +33,7 @@ final class UrlTag implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (\strpos($Excerpt->text(), '>') !== false and \preg_match('/^<(\w++:\/{2}[^ >]++)>/i', $Excerpt->text(), $matches)) {
+        if (\strpos($Excerpt->text(), '>') !== false && \preg_match('/^<(\w++:\/{2}[^ >]++)>/i', $Excerpt->text(), $matches)) {
             return new self($matches[1], \strlen($matches[0]));
         }
 

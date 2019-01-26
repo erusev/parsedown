@@ -58,7 +58,7 @@ final class Emphasis implements Inline
 
         $marker = $Excerpt->text()[0] === '*' ? '*' : '_';
 
-        if ($Excerpt->text()[1] === $marker and \preg_match(self::$STRONG_REGEX[$marker], $Excerpt->text(), $matches)) {
+        if ($Excerpt->text()[1] === $marker && \preg_match(self::$STRONG_REGEX[$marker], $Excerpt->text(), $matches)) {
             $emphasis = 'strong';
         } elseif (\preg_match(self::$EM_REGEX[$marker], $Excerpt->text(), $matches)) {
             $emphasis = 'em';
