@@ -2,7 +2,12 @@
 
 namespace Erusev\Parsedown\Tests;
 
+use Erusev\Parsedown\Components\Blocks\Comment;
+use Erusev\Parsedown\Components\Blocks\Markup as BlockMarkup;
+use Erusev\Parsedown\Components\Inlines\Markup as InlineMarkup;
+use Erusev\Parsedown\Configurables\BlockTypes;
 use Erusev\Parsedown\Configurables\Breaks;
+use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Configurables\StrictMode;
 use Erusev\Parsedown\Parsedown;
@@ -89,52 +94,55 @@ class ParsedownTest extends TestCase
         return $data;
     }
 
-//     public function test_no_markup()
-//     {
-//         $markdownWithHtml = <<<MARKDOWN_WITH_MARKUP
-// <div>_content_</div>
+    public function test_no_markup()
+    {
+        $markdownWithHtml = <<<MARKDOWN_WITH_MARKUP
+<div>_content_</div>
 
-// sparse:
+sparse:
 
-// <div>
-// <div class="inner">
-// _content_
-// </div>
-// </div>
+<div>
+<div class="inner">
+_content_
+</div>
+</div>
 
-// paragraph
+paragraph
 
-// <style type="text/css">
-//     p {
-//         color: red;
-//     }
-// </style>
+<style type="text/css">
+    p {
+        color: red;
+    }
+</style>
 
-// comment
+comment
 
-// <!-- html comment -->
-// MARKDOWN_WITH_MARKUP;
+<!-- html comment -->
+MARKDOWN_WITH_MARKUP;
 
-//         $expectedHtml = <<<EXPECTED_HTML
-// <p>&lt;div&gt;<em>content</em>&lt;/div&gt;</p>
-// <p>sparse:</p>
-// <p>&lt;div&gt;
-// &lt;div class="inner"&gt;
-// <em>content</em>
-// &lt;/div&gt;
-// &lt;/div&gt;</p>
-// <p>paragraph</p>
-// <p>&lt;style type="text/css"&gt;
-// p {
-// color: red;
-// }
-// &lt;/style&gt;</p>
-// <p>comment</p>
-// <p>&lt;!-- html comment --&gt;</p>
-// EXPECTED_HTML;
+        $expectedHtml = <<<EXPECTED_HTML
+<p>&lt;div&gt;<em>content</em>&lt;/div&gt;</p>
+<p>sparse:</p>
+<p>&lt;div&gt;
+&lt;div class="inner"&gt;
+<em>content</em>
+&lt;/div&gt;
+&lt;/div&gt;</p>
+<p>paragraph</p>
+<p>&lt;style type="text/css"&gt;
+p {
+color: red;
+}
+&lt;/style&gt;</p>
+<p>comment</p>
+<p>&lt;!-- html comment --&gt;</p>
+EXPECTED_HTML;
 
-//         $parsedownWithNoMarkup = new TestParsedown();
-//         $parsedownWithNoMarkup->setMarkupEscaped(true);
-//         $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
-//     }
+        $parsedownWithNoMarkup = new Parsedown(new State([
+            BlockTypes::initial()->removing([BlockMarkup::class, Comment::class]),
+            InlineTypes::initial()->removing([InlineMarkup::class]),
+        ]));
+
+        $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
+    }
 }
