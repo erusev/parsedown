@@ -24,8 +24,10 @@ $rules = [
     'ordered_imports' => [
         'sort_algorithm' => 'alpha',
     ],
+    'single_blank_line_before_namespace' => true,
     'strict_comparison' => true,
     'strict_param' => true,
+    'whitespace_after_comma_in_array' => true,
 ];
 return Config::create()
     ->setRules($rules)
