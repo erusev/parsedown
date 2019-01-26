@@ -47,12 +47,10 @@ final class BlockQuote implements ContinuableBlock
                 $recoveredSpaces = Line::tabShortage(2, $Context->line()->indentOffset() + $Context->line()->indent());
             }
 
-            return new self(
-                Lines::fromTextLines(
+            return new self(Lines::fromTextLines(
                 \str_repeat(' ', $recoveredSpaces) . $matches[2],
                 $indentOffset
-            )
-            );
+            ));
         }
 
         return null;
