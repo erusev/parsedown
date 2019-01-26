@@ -127,14 +127,14 @@ final class Link implements Inline
                     $attributes['href'] = Element::filterUnsafeUrl($attributes['href']);
                 }
 
-                $NewState = $State->setting(
+                $State = $State->setting(
                     $State->get(InlineTypes::class)->removing([Url::class])
                 );
 
                 return new Element(
                     'a',
                     $attributes,
-                    $State->applyTo((new Parsedown($NewState))->line($this->label))
+                    $State->applyTo((new Parsedown($State))->line($this->label))
                 );
             }
         );
