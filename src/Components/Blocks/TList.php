@@ -295,7 +295,12 @@ final class TList implements ContinuableBlock
                                 $Lines = $Lines->appendingBlankLines(1);
                             }
 
-                            $Renderables = $State->applyTo((new Parsedown($State))->lines($Lines));
+                            list($StateRenderables, $State) = Parsedown::lines(
+                                $Lines,
+                                $State
+                            );
+
+                            $Renderables = $State->applyTo($StateRenderables);
 
                             if (! $Lines->containsBlankLines()
                                 && isset($Renderables[0])

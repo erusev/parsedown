@@ -134,7 +134,7 @@ final class Link implements Inline
                 return new Element(
                     'a',
                     $attributes,
-                    $State->applyTo((new Parsedown($State))->line($this->label))
+                    $State->applyTo(Parsedown::line($this->label, $State))
                 );
             }
         );
