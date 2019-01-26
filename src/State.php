@@ -9,8 +9,13 @@ final class State
 {
     /**
      * @var array<class-string<Configurable>, Configurable>
-     * */
+     */
     private $state;
+
+    /**
+     * @var array<class-string<Configurable>, Configurable>
+     */
+    private static $initialCache;
 
     /**
      * @param Configurable[] $Configurables
@@ -48,13 +53,18 @@ final class State
      * @template-typeof T $configurableClass
      * @param class-string<Configurable> $configurableClass
      * @return T
-     * */
+     */
     public function get($configurableClass)
     {
-        return (isset($this->state[$configurableClass])
-            ? $this->state[$configurableClass]
-            : $configurableClass::initial()
-        );
+        if (isset($this->state[$configurableClass])) {
+            return $this->state[$configurableClass];
+        }
+
+        if (! isset(self::$initialCache[$configurableClass])) {
+            self::$initialCache[$configurableClass] = $configurableClass::initial();
+        }
+
+        return self::$initialCache[$configurableClass];
     }
 
     public function __clone()

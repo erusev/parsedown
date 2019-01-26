@@ -28,12 +28,6 @@ final class Parsedown
     public function __construct(State $State = null)
     {
         $this->State = $State ?: new State;
-
-        // ensure we cache the initial value if these weren't explicitly set
-        $this->State = $this->State->mergingWith(new State([
-            $this->State->get(BlockTypes::class),
-            $this->State->get(InlineTypes::class),
-        ]));
     }
 
     /**
