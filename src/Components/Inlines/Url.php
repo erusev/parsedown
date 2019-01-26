@@ -39,12 +39,12 @@ final class Url implements Inline
     {
         $text = $Excerpt->text();
 
-        if (\strlen($text) < 2 or \substr($text, 2, 1) !== '/') {
+        if (\strlen($text) < 2 || \substr($text, 2, 1) !== '/') {
             return null;
         }
 
         if (\strpos($Excerpt->context(), 'http') !== false
-            and \preg_match('/\bhttps?+:[\/]{2}[^\s<]+\b\/*+/ui', $Excerpt->context(), $matches, \PREG_OFFSET_CAPTURE)
+            && \preg_match('/\bhttps?+:[\/]{2}[^\s<]+\b\/*+/ui', $Excerpt->context(), $matches, \PREG_OFFSET_CAPTURE)
         ) {
             return new self($matches[0][0], \intval($matches[0][1]));
         }

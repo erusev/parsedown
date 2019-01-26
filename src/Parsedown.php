@@ -125,7 +125,7 @@ final class Parsedown
                 }
             }
 
-            if (isset($CurrentBlock) and $CurrentBlock instanceof Paragraph) {
+            if (isset($CurrentBlock) && $CurrentBlock instanceof Paragraph) {
                 $Block = $CurrentBlock->advance($Context);
             }
 

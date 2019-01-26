@@ -90,7 +90,7 @@ final class FencedCode implements ContinuableBlock
         }
 
         if (($len = \strspn($Context->line()->text(), $this->marker)) >= $this->openerLength
-            and \chop(\substr($Context->line()->text(), $len), ' ') === ''
+            && \chop(\substr($Context->line()->text(), $len), ' ') === ''
         ) {
             $newCode = \substr($newCode, 1);
 

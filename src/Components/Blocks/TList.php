@@ -134,9 +134,9 @@ final class TList implements ContinuableBlock
 
                 if (
                     $listStart !== '1'
-                    and isset($Block)
-                    and $Block instanceof Paragraph
-                    and ! $Context->previousEmptyLines() > 0
+                    && isset($Block)
+                    && $Block instanceof Paragraph
+                    && ! $Context->previousEmptyLines() > 0
                 ) {
                     return null;
                 }
@@ -162,7 +162,7 @@ final class TList implements ContinuableBlock
      */
     public function advance(Context $Context)
     {
-        if ($Context->previousEmptyLines() > 0 and \end($this->Lis)->isEmpty()) {
+        if ($Context->previousEmptyLines() > 0 && \end($this->Lis)->isEmpty()) {
             return null;
         }
 
@@ -298,9 +298,9 @@ final class TList implements ContinuableBlock
                             $Renderables = $State->applyTo((new Parsedown($State))->lines($Lines));
 
                             if (! $Lines->containsBlankLines()
-                                and isset($Renderables[0])
-                                and $Renderables[0] instanceof Element
-                                and $Renderables[0]->name() === 'p'
+                                && isset($Renderables[0])
+                                && $Renderables[0] instanceof Element
+                                && $Renderables[0]->name() === 'p'
                             ) {
                                 $Contents = $Renderables[0]->contents();
                                 unset($Renderables[0]);

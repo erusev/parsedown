@@ -13,6 +13,7 @@ $rules = [
     'braces' => [
         'allow_single_line_closure' => true,
     ],
+    'logical_operators' => true,
     'native_constant_invocation' => [
         'fix_built_in' => true,
     ],
