@@ -43,13 +43,12 @@ final class Parsedown
      */
     public function text($text)
     {
-        $InitialState = $this->State;
+        list($StateRenderables, $State) = self::lines(
+            Lines::fromTextLines($text, 0),
+            $this->State
+        );
 
-        $StateRenderables = $this->lines(Lines::fromTextLines($text, 0));
-
-        $Renderables = $this->State->applyTo($StateRenderables);
-
-        $this->State = $InitialState;
+        $Renderables = $State->applyTo($StateRenderables);
 
         $html = self::render($Renderables);
 
@@ -60,21 +59,25 @@ final class Parsedown
     }
 
     /**
-     * @return StateRenderable[]
+     * @return array{0: StateRenderable[], 1: State}
      */
-    public function lines(Lines $Lines)
+    public static function lines(Lines $Lines, State $State)
     {
-        return \array_map(
+        list($Blocks, $State) = self::blocks($Lines, $State);
+
+        $StateRenderables = \array_map(
             /** @return StateRenderable */
             function (Block $Block) { return $Block->stateRenderable(); },
-            $this->blocks($Lines)
+            $Blocks
         );
+
+        return [$StateRenderables, $State];
     }
 
     /**
-     * @return Block[]
+     * @return array{0: Block[], 1: State}
      */
-    public function blocks(Lines $Lines)
+    public static function blocks(Lines $Lines, State $State)
     {
         /** @var Block[] */
         $Blocks = [];
@@ -103,16 +106,16 @@ final class Parsedown
             $marker = $Line->text()[0];
 
             $potentialBlockTypes = \array_merge(
-                $this->State->get(BlockTypes::class)->unmarked(),
-                $this->State->get(BlockTypes::class)->markedBy($marker)
+                $State->get(BlockTypes::class)->unmarked(),
+                $State->get(BlockTypes::class)->markedBy($marker)
             );
 
             foreach ($potentialBlockTypes as $blockType) {
-                $Block = $blockType::build($Context, $CurrentBlock, $this->State);
+                $Block = $blockType::build($Context, $CurrentBlock, $State);
 
                 if (isset($Block)) {
                     if ($Block instanceof StateUpdatingBlock) {
-                        $this->State = $Block->latestState();
+                        $State = $Block->latestState();
                     }
 
                     if (isset($CurrentBlock) && ! $Block->acquiredPrevious()) {
@@ -144,19 +147,19 @@ final class Parsedown
             $Blocks[] = $CurrentBlock;
         }
 
-        return $Blocks;
+        return [$Blocks, $State];
     }
 
     /**
      * @param string $text
      * @return StateRenderable[]
      */
-    public function line($text)
+    public static function line($text, State $State)
     {
         return \array_map(
             /** @return StateRenderable */
             function (Inline $Inline) { return $Inline->stateRenderable(); },
-            $this->inlines($text)
+            self::inlines($text, $State)
         );
     }
 
@@ -164,7 +167,7 @@ final class Parsedown
      * @param string $text
      * @return Inline[]
      */
-    public function inlines($text)
+    public static function inlines($text, State $State)
     {
         # standardize line breaks
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
@@ -174,7 +177,7 @@ final class Parsedown
 
         # $excerpt is based on the first occurrence of a marker
 
-        $InlineTypes = $this->State->get(InlineTypes::class);
+        $InlineTypes = $State->get(InlineTypes::class);
         $markerMask = $InlineTypes->markers();
 
         for (
@@ -187,7 +190,7 @@ final class Parsedown
             foreach ($InlineTypes->markedBy($marker) as $inlineType) {
                 # check to see if the current inline type is nestable in the current context
 
-                $Inline = $inlineType::build($Excerpt, $this->State);
+                $Inline = $inlineType::build($Excerpt, $State);
 
                 if (! isset($Inline)) {
                     continue;

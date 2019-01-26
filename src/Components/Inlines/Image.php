@@ -62,7 +62,7 @@ final class Image implements Inline
                 $attributes = [
                     'src' => $this->Link->url(),
                     'alt' => \array_reduce(
-                        (new Parsedown($State))->inlines($this->Link->label()),
+                        Parsedown::inlines($this->Link->label(), $State),
                         /**
                          * @param string $text
                          * @return string

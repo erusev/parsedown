@@ -59,7 +59,7 @@ final class Strikethrough implements Inline
                 return new Element(
                     'del',
                     [],
-                    $State->applyTo((new Parsedown($State))->line($this->text))
+                    $State->applyTo(Parsedown::line($this->text, $State))
                 );
             }
         );

@@ -80,7 +80,7 @@ final class Emphasis implements Inline
                 return new Element(
                     $this->type,
                     [],
-                    $State->applyTo((new Parsedown($State))->line($this->text))
+                    $State->applyTo(Parsedown::line($this->text, $State))
                 );
             }
         );
