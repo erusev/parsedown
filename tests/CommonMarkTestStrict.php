@@ -26,7 +26,6 @@ class CommonMarkTestStrict extends TestCase
             StrictMode::enabled(),
             InlineTypes::initial()->removing([Url::class]),
         ]));
-        // $this->parsedown->setUrlsLinked(false);
     }
 
     /**
