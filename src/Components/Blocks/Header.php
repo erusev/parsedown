@@ -68,7 +68,12 @@ final class Header implements Block
         $text = \trim($text, " \t");
 
         # remove closing sequence
-        $text = \rtrim(\rtrim($text, '#'), " \t");
+        $removedClosing = \rtrim($text, '#');
+        $lastChar = \substr($removedClosing, -1, 1);
+
+        if (\trim($lastChar, " \t") === '') {
+            $text = \rtrim($removedClosing, " \t");
+        }
 
         return new self($text, $level);
     }
