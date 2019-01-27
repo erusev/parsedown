@@ -1,1 +1,1 @@
-foo <a href="&ouml;">
+<a href="hi'> <a href=hi'>

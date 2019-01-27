@@ -1,1 +1,1 @@
-** is not an empty emphasis
+_foo __bar__ baz_

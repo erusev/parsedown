@@ -1,3 +1,3 @@
 aaa
-             bbb
-                                       ccc
+
+bbb

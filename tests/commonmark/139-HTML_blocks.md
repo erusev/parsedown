@@ -1,4 +1,6 @@
-> <div>
-> foo
+<script type="text/javascript">
+// JavaScript example
 
-bar
+document.getElementById("demo").innerHTML = "Hello JavaScript!";
+</script>
+okay

@@ -1,11 +1,3 @@
-<table>
-
-<tr>
-
-<td>
-Hi
-</td>
-
-</tr>
-
-</table>
+Foo
+<a href="bar">
+baz

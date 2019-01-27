@@ -1,1 +1,1 @@
-`f&ouml;&ouml;`
+&copy
