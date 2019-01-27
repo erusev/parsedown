@@ -61,8 +61,8 @@ final class Link implements Inline
 
         $remainder = \substr($remainder, $width);
 
-        if (\preg_match('/^[(]\s*+((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*+"|\'[^\']*+\'))?\s*+[)]/', $remainder, $matches)) {
-            $url = $matches[1];
+        if (\preg_match('/^[(]\s*+(?:((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*+"|\'[^\']*+\'))?\s*+)?[)]/', $remainder, $matches)) {
+            $url = isset($matches[1]) ? $matches[1] : '';
             $title = isset($matches[2]) ? \substr($matches[2], 1, - 1) : null;
 
             $width += \strlen($matches[0]);
