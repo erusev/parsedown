@@ -82,7 +82,7 @@ final class Markup implements ContinuableBlock
             return new self($rawLine, 5, self::closes12345TypeMarkup(5, $text));
         }
 
-        if (\preg_match('/^<[\/]?+(\w*)(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*+[ ]*+(\/)?>/', $text, $matches)) {
+        if (\preg_match('/^<[\/]?+(\w++)(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*+[ ]*+(\/)?>/', $text, $matches)) {
             $element = \strtolower($matches[1]);
 
             if (\array_key_exists($element, Element::$TEXT_LEVEL_ELEMENTS)) {
