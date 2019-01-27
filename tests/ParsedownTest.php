@@ -2,7 +2,6 @@
 
 namespace Erusev\Parsedown\Tests;
 
-use Erusev\Parsedown\Components\Blocks\Comment;
 use Erusev\Parsedown\Components\Blocks\Markup as BlockMarkup;
 use Erusev\Parsedown\Components\Inlines\Markup as InlineMarkup;
 use Erusev\Parsedown\Configurables\BlockTypes;
@@ -139,7 +138,7 @@ color: red;
 EXPECTED_HTML;
 
         $parsedownWithNoMarkup = new Parsedown(new State([
-            BlockTypes::initial()->removing([BlockMarkup::class, Comment::class]),
+            BlockTypes::initial()->removing([BlockMarkup::class]),
             InlineTypes::initial()->removing([InlineMarkup::class]),
         ]));
 
