@@ -4,7 +4,6 @@ namespace Erusev\Parsedown\Configurables;
 
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\Blocks\BlockQuote;
-use Erusev\Parsedown\Components\Blocks\Comment;
 use Erusev\Parsedown\Components\Blocks\FencedCode;
 use Erusev\Parsedown\Components\Blocks\Header;
 use Erusev\Parsedown\Components\Blocks\IndentedCode;
@@ -38,7 +37,7 @@ final class BlockTypes implements Configurable
         '8' => [TList::class],
         '9' => [TList::class],
         ':' => [Table::class],
-        '<' => [Comment::class, BlockMarkup::class],
+        '<' => [BlockMarkup::class],
         '=' => [SetextHeader::class],
         '>' => [BlockQuote::class],
         '[' => [Reference::class],
