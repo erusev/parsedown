@@ -1,2 +1,4 @@
-<style>p{color:red;}</style>
-*foo*
+<style
+  type="text/css">
+
+foo

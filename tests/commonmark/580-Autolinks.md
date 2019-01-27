@@ -1,1 +1,1 @@
-http://example.com
+<http://../>

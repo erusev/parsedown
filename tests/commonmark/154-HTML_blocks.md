@@ -1,3 +1,4 @@
 <div>
-*Emphasized* text.
+bar
 </div>
+*foo*

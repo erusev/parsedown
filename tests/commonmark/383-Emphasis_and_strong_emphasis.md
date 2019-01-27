@@ -1,1 +1,1 @@
-_foo __bar__ baz_
+**foo "*bar*" foo**

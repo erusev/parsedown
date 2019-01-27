@@ -1,1 +1,1 @@
-< http://foo.bar >
+<MAILTO:FOO@BAR.BAZ>

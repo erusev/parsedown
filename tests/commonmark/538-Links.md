@@ -1,3 +1,3 @@
-[foo][bar][baz]
+[*foo* bar]
 
-[baz]: /url
+[*foo* bar]: /url "title"
