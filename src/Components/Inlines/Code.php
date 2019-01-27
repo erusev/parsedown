@@ -40,7 +40,7 @@ final class Code implements Inline
         }
 
         if (\preg_match(
-            '/^(['.$marker.']++)[ ]*+(.+?)[ ]*+(?<!['.$marker.'])\1(?!'.$marker.')/s',
+            '/^(['.$marker.']++)[ ]*+(.*?)[ ]*+(?<!['.$marker.'])\1(?!'.$marker.')/s',
             $Excerpt->text(),
             $matches
         )) {
@@ -48,6 +48,8 @@ final class Code implements Inline
 
             return new self($text, \strlen($matches[0]));
         }
+
+        return null;
     }
 
     /**
