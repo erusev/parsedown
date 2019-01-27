@@ -4,7 +4,6 @@ namespace Erusev\Parsedown\Components\Inlines;
 
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Inline;
-use Erusev\Parsedown\Html\Renderables\RawHtml;
 use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
@@ -13,17 +12,17 @@ final class EscapeSequence implements Inline
 {
     use WidthTrait, DefaultBeginPosition;
 
-    const SPECIALS = '\\`*_{}[]()>#+-.!|~';
+    const SPECIALS = '!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~';
 
     /** @var string */
-    private $html;
+    private $text;
 
     /**
-     * @param string $html
+     * @param string $text
      */
-    public function __construct($html)
+    public function __construct($text)
     {
-        $this->html = $html;
+        $this->text = $text;
         $this->width = 2;
     }
 
@@ -42,11 +41,11 @@ final class EscapeSequence implements Inline
     }
 
     /**
-     * @return RawHtml
+     * @return Text
      */
     public function stateRenderable()
     {
-        return new RawHtml($this->html);
+        return new Text($this->text);
     }
 
     /**
@@ -54,6 +53,6 @@ final class EscapeSequence implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->html);
+        return new Text($this->text);
     }
 }
