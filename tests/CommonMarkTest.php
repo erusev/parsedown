@@ -79,7 +79,7 @@ class CommonMarkTest extends CommonMarkTestWeak
 
         // you can only get here when the test passes
         $dir = static::getDataDir(true);
-        $basename = $id . '-' . \preg_replace('/[^\w-.]/', '_', $section);
+        $basename = $id . '-' . \preg_replace('/[^\w.-]/', '_', $section);
         \file_put_contents($dir . $basename . '.md', $markdown);
         \file_put_contents($dir . $basename . '.html', $expectedHtml);
     }
