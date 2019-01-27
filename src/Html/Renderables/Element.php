@@ -195,25 +195,25 @@ final class Element implements Renderable
         if ($this->Contents !== null) {
             $html .= '>';
 
-            $First = \reset($this->Contents);
-
-            if (
-                $First instanceof Element
-                && ! \array_key_exists(\strtolower($First->name()), self::$TEXT_LEVEL_ELEMENTS)
-            ) {
-                $html .= "\n";
-            }
-
             if (! empty($this->Contents)) {
                 foreach ($this->Contents as $C) {
-                    $html .= $C->getHtml();
-
                     if (
                         $C instanceof Element
                         && ! \array_key_exists(\strtolower($C->name()), self::$TEXT_LEVEL_ELEMENTS)
                     ) {
                         $html .= "\n";
                     }
+
+                    $html .= $C->getHtml();
+                }
+
+                $Last = \end($this->Contents);
+
+                if (
+                    $Last instanceof Element
+                    && ! \array_key_exists(\strtolower($Last->name()), self::$TEXT_LEVEL_ELEMENTS)
+                ) {
+                    $html .= "\n";
                 }
             }
 
