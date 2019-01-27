@@ -29,6 +29,6 @@ final class Text implements Renderable
     /** @return string */
     public function getHtml()
     {
-        return Escaper::htmlElementValue($this->text);
+        return Escaper::htmlElementValueEscapingDoubleQuotes($this->text);
     }
 }

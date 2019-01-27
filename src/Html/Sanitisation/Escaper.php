@@ -24,6 +24,15 @@ final class Escaper
 
     /**
      * @param string $text
+     * @return string
+     */
+    public static function htmlElementValueEscapingDoubleQuotes($text)
+    {
+        return \htmlspecialchars($text, \ENT_COMPAT, 'UTF-8');
+    }
+
+    /**
+     * @param string $text
      * @param bool $allowQuotes
      * @return string
      */

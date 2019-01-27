@@ -33,6 +33,7 @@
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::removing" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\Breaks::enabled" />
                  <referencedMethod name="Erusev\Parsedown\State::mergingWith" />
+                 <referencedMethod name="Erusev\Parsedown\Html\Sanitisation\Escaper::htmlElementValue" />
             </errorLevel>
         </PossiblyUnusedMethod>
     </issueHandlers>
