@@ -29,7 +29,7 @@ final class Escaper
      */
     private static function escape($text, $allowQuotes = false)
     {
-        return \htmlentities(
+        return \htmlspecialchars(
             $text,
             $allowQuotes ? \ENT_NOQUOTES : \ENT_QUOTES,
             'UTF-8'
