@@ -10,20 +10,24 @@ final class Lines
     /** @var bool */
     private $containsBlankLines;
 
+    /** @var string */
+    private $trailingBlankLinesText;
+
     /** @var int */
     private $trailingBlankLines;
 
     /**
      * @param Context[] $Contexts
-     * @param int $trailingBlankLines
+     * @param string $trailingBlankLinesText
      */
-    private function __construct($Contexts, $trailingBlankLines)
+    private function __construct($Contexts, $trailingBlankLinesText)
     {
         $this->Contexts = $Contexts;
-        $this->trailingBlankLines = $trailingBlankLines;
+        $this->trailingBlankLinesText = $trailingBlankLinesText;
+        $this->trailingBlankLines = \substr_count($trailingBlankLinesText, "\n");
 
         $this->containsBlankLines = (
-            ($trailingBlankLines > 0)
+            ($this->trailingBlankLines > 0)
             || \array_reduce(
                 $Contexts,
                 /**
@@ -42,7 +46,7 @@ final class Lines
     /** @return self */
     public static function none()
     {
-        return new self([], 0);
+        return new self([], '');
     }
 
     /**
@@ -56,23 +60,23 @@ final class Lines
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
 
         $Contexts = [];
-        $sequentialBreaks = 0;
+        $sequentialLines = '';
 
         foreach (\explode("\n", $text) as $line) {
             if (\chop($line) === '') {
-                $sequentialBreaks += 1;
+                $sequentialLines .= $line . "\n";
                 continue;
             }
 
             $Contexts[] = new Context(
                 new Line($line, $indentOffset),
-                $sequentialBreaks
+                $sequentialLines
             );
 
-            $sequentialBreaks = 0;
+            $sequentialLines = '';
         }
 
-        return new self($Contexts, $sequentialBreaks);
+        return new self($Contexts, $sequentialLines);
     }
 
     /** @return bool */
@@ -116,6 +120,7 @@ final class Lines
         }
 
         $Lines = clone($this);
+        $Lines->trailingBlankLinesText .= \str_repeat("\n", $count);
         $Lines->trailingBlankLines += $count;
         $Lines->containsBlankLines = $Lines->containsBlankLines || ($count > 0);
 
@@ -135,6 +140,7 @@ final class Lines
 
         if (\count($NextLines->Contexts) === 0) {
             $Lines->trailingBlankLines += $NextLines->trailingBlankLines;
+            $Lines->trailingBlankLinesText .= $NextLines->trailingBlankLinesText;
 
             $Lines->containsBlankLines = $Lines->containsBlankLines
                 || ($Lines->trailingBlankLines > 0)
@@ -145,12 +151,13 @@ final class Lines
 
         $NextLines->Contexts[0] = new Context(
             $NextLines->Contexts[0]->line(),
-            $NextLines->Contexts[0]->previousEmptyLines() + $Lines->trailingBlankLines
+            $NextLines->Contexts[0]->previousEmptyLinesText() . $Lines->trailingBlankLinesText
         );
 
         $Lines->Contexts = \array_merge($Lines->Contexts, $NextLines->Contexts);
 
         $Lines->trailingBlankLines = $NextLines->trailingBlankLines;
+        $Lines->trailingBlankLinesText = $NextLines->trailingBlankLinesText;
 
         $Lines->containsBlankLines = $Lines->containsBlankLines
             || $NextLines->containsBlankLines
@@ -166,7 +173,7 @@ final class Lines
 
         $Context = new Context(
             $Context->line(),
-            $Context->previousEmptyLines() + $Lines->trailingBlankLines
+            $Context->previousEmptyLinesText() . $Lines->trailingBlankLinesText
         );
 
         if ($Context->previousEmptyLines() > 0) {
@@ -174,6 +181,7 @@ final class Lines
         }
 
         $Lines->trailingBlankLines = 0;
+        $Lines->trailingBlankLinesText = '';
 
         $Lines->Contexts[] = $Context;
 

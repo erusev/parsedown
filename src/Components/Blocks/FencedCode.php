@@ -85,19 +85,15 @@ final class FencedCode implements ContinuableBlock
 
         $newCode = $this->code;
 
-        if ($Context->previousEmptyLines() > 0) {
-            $newCode .= \str_repeat("\n", $Context->previousEmptyLines());
-        }
+        $newCode .= $Context->previousEmptyLinesText();
 
         if (($len = \strspn($Context->line()->text(), $this->marker)) >= $this->openerLength
             && \chop(\substr($Context->line()->text(), $len), ' ') === ''
         ) {
-            $newCode = \substr($newCode, 1);
-
             return new self($newCode, $this->infostring, $this->marker, $this->openerLength, true);
         }
 
-        $newCode .= "\n" . $Context->line()->rawLine();
+        $newCode .= $Context->line()->rawLine() . "\n";
 
         return new self($newCode, $this->infostring, $this->marker, $this->openerLength, false);
     }
