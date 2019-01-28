@@ -7,6 +7,7 @@ use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\ContinuableBlock;
 use Erusev\Parsedown\Html\Renderables\Element;
+use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\Parsing\Line;
@@ -106,6 +107,7 @@ final class BlockQuote implements ContinuableBlock
                 );
 
                 $Renderables = $State->applyTo($StateRenderables);
+                $Renderables[] = new Text("\n");
 
                 return new Element('blockquote', [], $Renderables);
             }

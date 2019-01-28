@@ -40,11 +40,18 @@ final class Code implements Inline
         }
 
         if (\preg_match(
-            '/^(['.$marker.']++)[ ]*+(.*?)[ ]*+(?<!['.$marker.'])\1(?!'.$marker.')/s',
+            '/^(['.$marker.']++)(.*?)(?<!['.$marker.'])\1(?!'.$marker.')/s',
             $Excerpt->text(),
             $matches
         )) {
-            $text = \preg_replace('/[ ]*+\n/', ' ', $matches[2]);
+            $text = \str_replace("\n", ' ', $matches[2]);
+
+            $firstChar = \substr($text, 0, 1);
+            $lastChar = \substr($text, -1);
+
+            if ($firstChar === ' ' && $lastChar === ' ') {
+                $text = \substr(\substr($text, 1), 0, -1);
+            }
 
             return new self($text, \strlen($matches[0]));
         }
