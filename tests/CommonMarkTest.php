@@ -22,7 +22,7 @@ namespace Erusev\Parsedown\Tests;
  *
  * @link http://commonmark.org/ CommonMark
  */
-class CommonMarkTest extends CommonMarkTestWeak
+class CommonMarkTest extends CommonMarkTestStrict
 {
     /**
      * @return array
