@@ -8,6 +8,7 @@ use Erusev\Parsedown\Components\ContinuableBlock;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Context;
+use Erusev\Parsedown\Parsing\Line;
 use Erusev\Parsedown\State;
 
 final class IndentedCode implements ContinuableBlock
@@ -44,7 +45,7 @@ final class IndentedCode implements ContinuableBlock
             return null;
         }
 
-        return new self($Context->line()->ltrimBodyUpto(4));
+        return new self($Context->line()->ltrimBodyUpto(4) . "\n");
     }
 
     /**
@@ -59,11 +60,19 @@ final class IndentedCode implements ContinuableBlock
 
         $newCode = $this->code;
 
+        $offset = $Context->line()->indentOffset();
+
         if ($Context->previousEmptyLines() > 0) {
-            $newCode .= \str_repeat("\n", $Context->previousEmptyLines());
+            foreach (\explode("\n", $Context->previousEmptyLinesText()) as $line) {
+                $newCode .= (new Line($line, $offset))->ltrimBodyUpto(4) . "\n";
+            }
+
+            $newCode = \substr($newCode, 0, -1);
         }
 
-        return new self($newCode . "\n" . $Context->line()->ltrimBodyUpto(4));
+        $newCode .= $Context->line()->ltrimBodyUpto(4) . "\n";
+
+        return new self($newCode);
     }
 
     /**

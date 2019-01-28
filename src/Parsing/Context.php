@@ -4,24 +4,24 @@ namespace Erusev\Parsedown\Parsing;
 
 final class Context
 {
-    /**
-     * @var Line
-     */
+    /** @var Line */
     private $Line;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $previousEmptyLines;
+
+    /** @var string */
+    private $previousEmptyLinesText;
 
     /**
      * @param Line $Line
-     * @param int $previousEmptyLines
+     * @param string $previousEmptyLinesText
      */
-    public function __construct($Line, $previousEmptyLines)
+    public function __construct($Line, $previousEmptyLinesText)
     {
         $this->Line = $Line;
-        $this->previousEmptyLines = \max($previousEmptyLines, 0);
+        $this->previousEmptyLinesText = $previousEmptyLinesText;
+        $this->previousEmptyLines = \substr_count($previousEmptyLinesText, "\n");
     }
 
     /** @return Line */
@@ -34,5 +34,11 @@ final class Context
     public function previousEmptyLines()
     {
         return $this->previousEmptyLines;
+    }
+
+    /** @return string */
+    public function previousEmptyLinesText()
+    {
+        return $this->previousEmptyLinesText;
     }
 }
