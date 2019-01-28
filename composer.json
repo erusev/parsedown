@@ -37,6 +37,7 @@
         "test-static": "vendor/bin/psalm",
         "test-dead-code": "vendor/bin/psalm --find-dead-code",
         "test-units": "vendor/bin/phpunit",
+        "test-commonmark": "vendor/bin/phpunit tests/CommonMarkTestStrict.php",
         "test-commonmark-weak": "vendor/bin/phpunit tests/CommonMarkTestWeak.php",
         "test-formatting": "@composer fix -- --dry-run",
 
