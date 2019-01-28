@@ -45,9 +45,18 @@ jobs:
         - composer test-formatting
         - composer test-dead-code
 
-    - stage: Test CommonMark (weak)
+    - stage: Test CommonMark
+      name: Weak
       php: 7.3
       env: ALLOW_FAILURE
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - composer test-commonmark-weak
+
+    - stage: Test CommonMark
+      name: Strict
+      php: 7.3
+      env: ALLOW_FAILURE
+      install: composer install --prefer-dist --no-interaction --no-progress
+      script:
+        - composer test-commonmark
