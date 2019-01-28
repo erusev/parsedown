@@ -49,7 +49,7 @@ final class SetextHeader implements Block
         if ($Context->line()->indent() < 4 && \chop(\chop($Context->line()->text(), " \t"), $Context->line()->text()[0]) === '') {
             $level = $Context->line()->text()[0] === '=' ? 1 : 2;
 
-            return new self($Block->text(), $level);
+            return new self(\trim($Block->text()), $level);
         }
 
         return null;
