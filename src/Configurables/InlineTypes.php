@@ -23,7 +23,7 @@ use Erusev\Parsedown\Configurable;
  */
 final class InlineTypes implements Configurable
 {
-    /** @var array<array-key, class-string<Inline>[]> */
+    /** @var array<array-key, array<int, class-string<Inline>>> */
     private static $defaultInlineTypes = [
         '!' => [Image::class],
         '*' => [Emphasis::class],
@@ -38,14 +38,14 @@ final class InlineTypes implements Configurable
         "\n" => [HardBreak::class, SoftBreak::class],
     ];
 
-    /** @var array<array-key, class-string<Inline>[]> */
+    /** @var array<array-key, array<int, class-string<Inline>>> */
     private $inlineTypes;
 
     /** @var string */
     private $inlineMarkers;
 
     /**
-     * @param array<array-key, class-string<Inline>[]> $inlineTypes
+     * @param array<array-key, array<int, class-string<Inline>>> $inlineTypes
      */
     public function __construct(array $inlineTypes)
     {
@@ -60,15 +60,15 @@ final class InlineTypes implements Configurable
     }
 
     /**
-     * @param class-string<Inline>[] $removeInlineTypes
+     * @param array<int, class-string<Inline>> $removeInlineTypes
      * @return self
      */
     public function removing(array $removeInlineTypes)
     {
         return new self(\array_map(
             /**
-             * @param class-string<Inline>[] $inlineTypes
-             * @return class-string<Inline>[]
+             * @param array<int, class-string<Inline>> $inlineTypes
+             * @return array<int, class-string<Inline>>
              */
             function ($inlineTypes) use ($removeInlineTypes) {
                 return \array_diff($inlineTypes, $removeInlineTypes);
@@ -79,7 +79,7 @@ final class InlineTypes implements Configurable
 
     /**
      * @param string $marker
-     * @return class-string<Inline>[]
+     * @return array<int, class-string<Inline>>
      */
     public function markedBy($marker)
     {
