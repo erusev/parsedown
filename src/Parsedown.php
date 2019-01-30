@@ -27,7 +27,9 @@ final class Parsedown
 
     public function __construct(StateBearer $StateBearer = null)
     {
-        $this->State = ($StateBearer ?: new State)->state();
+        $StateBearer = $StateBearer ?: new State;
+
+        $this->State = $StateBearer->state();
     }
 
     /**
