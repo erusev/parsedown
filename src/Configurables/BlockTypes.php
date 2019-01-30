@@ -20,7 +20,7 @@ use Erusev\Parsedown\Configurable;
  */
 final class BlockTypes implements Configurable
 {
-    /** @var array<array-key, class-string<Block>[]> */
+    /** @var array<array-key, array<int, class-string<Block>>> */
     private static $defaultBlockTypes = [
         '#' => [Header::class],
         '*' => [Rule::class, TList::class],
@@ -47,20 +47,20 @@ final class BlockTypes implements Configurable
         '~' => [FencedCode::class],
     ];
 
-    /** @var class-string<Block>[] */
+    /** @var array<int, class-string<Block>> */
     private static $defaultUnmarkedBlockTypes = [
         IndentedCode::class,
     ];
 
-    /** @var array<array-key, class-string<Block>[]> */
+    /** @var array<array-key, array<int, class-string<Block>>> */
     private $blockTypes;
 
-    /** @var class-string<Block>[] */
+    /** @var array<int, class-string<Block>> */
     private $unmarkedBlockTypes;
 
     /**
-     * @param array<array-key, class-string<Block>[]> $blockTypes
-     * @param class-string<Block>[] $unmarkedBlockTypes
+     * @param array<array-key, array<int, class-string<Block>>> $blockTypes
+     * @param array<int, class-string<Block>> $unmarkedBlockTypes
      */
     public function __construct(array $blockTypes, array $unmarkedBlockTypes)
     {
@@ -79,7 +79,7 @@ final class BlockTypes implements Configurable
 
     /**
      * @param string $marker
-     * @param class-string<Block>[] $newBlockTypes
+     * @param array<int, class-string<Block>> $newBlockTypes
      * @return self
      */
     public function settingMarked($marker, array $newBlockTypes)
@@ -91,7 +91,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @param class-string<Block>[] $newUnmarkedBlockTypes
+     * @param array<int, class-string<Block>> $newUnmarkedBlockTypes
      * @return self
      */
     public function settingUnmarked(array $newUnmarkedBlockTypes)
@@ -100,7 +100,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @param class-string<Block>[] $removeBlockTypes
+     * @param array<int, class-string<Block>> $removeBlockTypes
      * @return self
      */
     public function removing(array $removeBlockTypes)
@@ -108,8 +108,8 @@ final class BlockTypes implements Configurable
         return new self(
             \array_map(
                 /**
-                 * @param class-string<Block>[] $blockTypes
-                 * @return class-string<Block>[]
+                 * @param array<int, class-string<Block>> $blockTypes
+                 * @return array<int, class-string<Block>>
                  */
                 function ($blockTypes) use ($removeBlockTypes) {
                     return \array_diff($blockTypes, $removeBlockTypes);
@@ -122,7 +122,7 @@ final class BlockTypes implements Configurable
 
     /**
      * @param string $marker
-     * @return class-string<Block>[]
+     * @return array<int, class-string<Block>>
      */
     public function markedBy($marker)
     {
@@ -134,7 +134,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @return class-string<Block>[]
+     * @return array<int, class-string<Block>>
      */
     public function unmarked()
     {
