@@ -60,6 +60,45 @@ final class InlineTypes implements Configurable
     }
 
     /**
+     * @param string $marker
+     * @param array<int, class-string<Inline>> $newInlineTypes
+     * @return self
+     */
+    public function setting($marker, array $newInlineTypes)
+    {
+        $inlineTypes = $this->inlineTypes;
+        $inlineTypes[$marker] = $newInlineTypes;
+
+        return new self($inlineTypes);
+    }
+
+    /**
+     * @param string $marker
+     * @param array<int, class-string<Inline>> $newInlineTypes
+     * @return self
+     */
+    public function addingHighPrecedence($marker, array $newInlineTypes)
+    {
+        return $this->setting(
+            $marker,
+            \array_merge($newInlineTypes, $this->inlineTypes[$marker])
+        );
+    }
+
+    /**
+     * @param string $marker
+     * @param array<int, class-string<Inline>> $newInlineTypes
+     * @return self
+     */
+    public function addingLowPrecedence($marker, array $newInlineTypes)
+    {
+        return $this->setting(
+            $marker,
+            \array_merge($this->inlineTypes[$marker], $newInlineTypes)
+        );
+    }
+
+    /**
      * @param array<int, class-string<Inline>> $removeInlineTypes
      * @return self
      */
