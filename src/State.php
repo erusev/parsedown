@@ -5,7 +5,7 @@ namespace Erusev\Parsedown;
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Html\Renderable;
 
-final class State
+final class State implements StateBearer
 {
     /**
      * @var array<class-string<Configurable>, Configurable>
@@ -87,5 +87,13 @@ final class State
             function (StateRenderable $SR) { return $SR->renderable($this); },
             $StateRenderables
         );
+    }
+
+    /**
+     * @return State
+     */
+    public function state()
+    {
+        return $this;
     }
 }
