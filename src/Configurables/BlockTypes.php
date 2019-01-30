@@ -91,12 +91,60 @@ final class BlockTypes implements Configurable
     }
 
     /**
+     * @param string $marker
+     * @param array<int, class-string<Block>> $newBlockTypes
+     * @return self
+     */
+    public function addingMarkedHighPrecedence($marker, array $newBlockTypes)
+    {
+        return $this->settingMarked(
+            $marker,
+            \array_merge($newBlockTypes, $this->blockTypes[$marker])
+        );
+    }
+
+    /**
+     * @param string $marker
+     * @param array<int, class-string<Block>> $newBlockTypes
+     * @return self
+     */
+    public function addingMarkedLowPrecedence($marker, array $newBlockTypes)
+    {
+        return $this->settingMarked(
+            $marker,
+            \array_merge($this->blockTypes[$marker], $newBlockTypes)
+        );
+    }
+
+    /**
      * @param array<int, class-string<Block>> $newUnmarkedBlockTypes
      * @return self
      */
     public function settingUnmarked(array $newUnmarkedBlockTypes)
     {
         return new self($this->blockTypes, $newUnmarkedBlockTypes);
+    }
+
+    /**
+     * @param array<int, class-string<Block>> $newBlockTypes
+     * @return self
+     */
+    public function addingUnmarkedHighPrecedence(array $newBlockTypes)
+    {
+        return $this->settingUnmarked(
+            \array_merge($newBlockTypes, $this->unmarkedBlockTypes)
+        );
+    }
+
+    /**
+     * @param array<int, class-string<Block>> $newBlockTypes
+     * @return self
+     */
+    public function addingUnmarkedLowPrecedence(array $newBlockTypes)
+    {
+        return $this->settingUnmarked(
+            \array_merge($this->unmarkedBlockTypes, $newBlockTypes)
+        );
     }
 
     /**

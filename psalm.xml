@@ -34,6 +34,12 @@
                  <referencedMethod name="Erusev\Parsedown\Configurables\Breaks::enabled" />
                  <referencedMethod name="Erusev\Parsedown\State::mergingWith" />
                  <referencedMethod name="Erusev\Parsedown\Html\Sanitisation\Escaper::htmlElementValue" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\InlineTypes::addingHighPrecedence" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\InlineTypes::addingLowPrecedence" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingMarkedHighPrecedence" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingMarkedLowPrecedence" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingUnmarkedHighPrecedence" />
+                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingUnmarkedLowPrecedence" />
             </errorLevel>
         </PossiblyUnusedMethod>
     </issueHandlers>
