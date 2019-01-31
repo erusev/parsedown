@@ -40,6 +40,8 @@
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingMarkedLowPrecedence" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingUnmarkedHighPrecedence" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingUnmarkedLowPrecedence" />
+                 <referencedMethod name="Erusev\Parsedown\Parsing\Lines::containsBlankLines" />
+                 <referencedMethod name="Erusev\Parsedown\Parsing\Lines::trailingBlankLines" />
             </errorLevel>
         </PossiblyUnusedMethod>
     </issueHandlers>
