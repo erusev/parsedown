@@ -291,10 +291,6 @@ final class TList implements ContinuableBlock
                     \array_map(
                         /** @return Element */
                         function (Lines $Lines) use ($State) {
-                            if ($this->isLoose && $Lines->trailingBlankLines() === 0) {
-                                $Lines = $Lines->appendingBlankLines(1);
-                            }
-
                             list($StateRenderables, $State) = Parsedown::lines(
                                 $Lines,
                                 $State
@@ -302,7 +298,7 @@ final class TList implements ContinuableBlock
 
                             $Renderables = $State->applyTo($StateRenderables);
 
-                            if (! $Lines->containsBlankLines()
+                            if (! $this->isLoose
                                 && isset($Renderables[0])
                                 && $Renderables[0] instanceof Element
                                 && $Renderables[0]->name() === 'p'
