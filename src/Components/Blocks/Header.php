@@ -71,7 +71,7 @@ final class Header implements Block
 
         # remove closing sequence
         $removedClosing = \rtrim($text, '#');
-        $lastChar = \substr($removedClosing, -1, 1);
+        $lastChar = \substr($removedClosing, -1);
 
         if (\trim($lastChar, " \t") === '') {
             $text = \rtrim($removedClosing, " \t");
