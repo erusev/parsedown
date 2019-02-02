@@ -98,7 +98,7 @@ final class Parsedown
                 }
             }
 
-            $marker = $Line->text()[0];
+            $marker = \substr($Line->text(), 0, 1);
 
             $potentialBlockTypes = \array_merge(
                 $State->get(BlockTypes::class)->unmarked(),

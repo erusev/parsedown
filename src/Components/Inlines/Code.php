@@ -33,7 +33,7 @@ final class Code implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        $marker = $Excerpt->text()[0];
+        $marker = \substr($Excerpt->text(), 0, 1);
 
         if ($marker !== '`') {
             return null;

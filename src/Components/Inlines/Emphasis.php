@@ -52,17 +52,20 @@ final class Emphasis implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (! isset($Excerpt->text()[1])) {
+        if (\strlen($Excerpt->text()) < 3) {
             return null;
         }
 
-        $marker = $Excerpt->text()[0];
+        $marker = \substr($Excerpt->text(), 0, 1);
 
         if ($marker !== '*' && $marker !== '_') {
             return null;
         }
 
-        if ($Excerpt->text()[1] === $marker && \preg_match(self::$STRONG_REGEX[$marker], $Excerpt->text(), $matches)) {
+        if (
+            \substr($Excerpt->text(), 1, 1) === $marker
+            && \preg_match(self::$STRONG_REGEX[$marker], $Excerpt->text(), $matches)
+        ) {
             $emphasis = 'strong';
         } elseif (\preg_match(self::$EM_REGEX[$marker], $Excerpt->text(), $matches)) {
             $emphasis = 'em';

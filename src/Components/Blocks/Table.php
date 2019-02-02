@@ -101,7 +101,11 @@ final class Table implements ContinuableBlock
             return null;
         }
 
-        if (\count($this->alignments) !== 1 && $Context->line()->text()[0] !== '|' && !\strpos($Context->line()->text(), '|')) {
+        if (
+            \count($this->alignments) !== 1
+            && \substr($Context->line()->text(), 0, 1) !== '|'
+            && !\strpos($Context->line()->text(), '|')
+        ) {
             return null;
         }
 
@@ -148,7 +152,7 @@ final class Table implements ContinuableBlock
             /** @var _Alignment|null */
             $alignment = null;
 
-            if ($dividerCell[0] === ':') {
+            if (\substr($dividerCell, 0, 1) === ':') {
                 $alignment = 'left';
             }
 

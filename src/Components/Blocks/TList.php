@@ -89,7 +89,7 @@ final class TList implements ContinuableBlock
         State $State = null
     ) {
         list($type, $pattern) = (
-            $Context->line()->text()[0] <= '-'
+            \substr($Context->line()->text(), 0, 1) <= '-'
             ? ['ul', '[*+-]']
             : ['ol', '[0-9]{1,9}+[.\)]']
         );

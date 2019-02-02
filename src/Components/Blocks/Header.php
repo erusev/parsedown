@@ -58,9 +58,11 @@ final class Header implements Block
 
         $text = \ltrim($Context->line()->text(), '#');
 
+        $firstChar = \substr($text, 0, 1);
+
         if (
-            $State->get(StrictMode::class)->isEnabled() && isset($text[0])
-            && $text[0] !== ' ' && $text[0] !== "\t"
+            $State->get(StrictMode::class)->isEnabled()
+            && \trim($firstChar, " \t") !== ''
         ) {
             return null;
         }
