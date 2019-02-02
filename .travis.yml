@@ -42,27 +42,22 @@ jobs:
       php: 5.6
     - <<: *UNIT_TEST
       php: 7.0
-    - <<: *UNIT_TEST
+    - &MUTATION_AND_UNIT_TEST
+      <<: *UNIT_TEST
       php: 7.1
-    - <<: *UNIT_TEST
+      install:
+        - composer install --prefer-dist --no-interaction --no-progress
+      script:
+        - composer test-units
+        - vendor/bin/infection --threads=4 --min-msi=80 --min-covered-msi=80
+        - cat infection.log
+    - <<: *MUTATION_AND_UNIT_TEST
       php: 7.2
-    - <<: *UNIT_TEST
+    - <<: *MUTATION_AND_UNIT_TEST
       php: 7.3
     - <<: *UNIT_TEST
       php: nightly
       env: ALLOW_FAILURE
-
-
-    - &MUTATION_TEST
-      stage: Mutation
-      php: 7.1
-      install:
-        - composer install --prefer-dist --no-interaction --no-progress
-      script: vendor/bin/infection --threads=2 --min-msi=80 --min-covered-msi=80
-    - <<: *MUTATION_TEST
-      php: 7.2
-    - <<: *MUTATION_TEST
-      php: 7.3
 
 
     - &COMMONMARK_TEST
