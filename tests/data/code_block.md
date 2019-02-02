@@ -21,3 +21,9 @@
 - foo
 
     	bar
+
+---
+
+    code
+    more code
+   not quite enough indentation
