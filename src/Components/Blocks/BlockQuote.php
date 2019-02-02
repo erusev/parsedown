@@ -67,7 +67,10 @@ final class BlockQuote implements ContinuableBlock
             return null;
         }
 
-        if ($Context->line()->text()[0] === '>' && \preg_match('/^(>[ \t]?+)(.*+)/', $Context->line()->text(), $matches)) {
+        if (
+            \substr($Context->line()->text(), 0, 1) === '>'
+            && \preg_match('/^(>[ \t]?+)(.*+)/', $Context->line()->text(), $matches)
+        ) {
             $indentOffset = $Context->line()->indentOffset() + $Context->line()->indent() + \strlen($matches[1]);
 
             $recoveredSpaces = 0;

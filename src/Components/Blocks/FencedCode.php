@@ -56,7 +56,7 @@ final class FencedCode implements ContinuableBlock
         Block $Block = null,
         State $State = null
     ) {
-        $marker = $Context->line()->text()[0];
+        $marker = \substr($Context->line()->text(), 0, 1);
 
         $openerLength = \strspn($Context->line()->text(), $marker);
 

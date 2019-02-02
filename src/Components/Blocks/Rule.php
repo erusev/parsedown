@@ -27,7 +27,7 @@ final class Rule implements Block
             return null;
         }
 
-        $marker = $Context->line()->text()[0];
+        $marker = \substr($Context->line()->text(), 0, 1);
 
         if (
             \substr_count($Context->line()->text(), $marker) >= 3
