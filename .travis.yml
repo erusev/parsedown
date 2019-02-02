@@ -63,9 +63,6 @@ jobs:
       php: 7.2
     - <<: *MUTATION_TEST
       php: 7.3
-    - <<: *MUTATION_TEST
-      php: nightly
-      env: ALLOW_FAILURE
 
 
     - &COMMONMARK_TEST
