@@ -19,7 +19,8 @@
     "require-dev": {
         "phpunit/phpunit": "^7.4|^6.5.13|^5.7.27|^4.8.36",
         "vimeo/psalm": "^3.0.11",
-        "friendsofphp/php-cs-fixer": "^2.13"
+        "friendsofphp/php-cs-fixer": "^2.13",
+        "infection/infection": "^0.12.0"
     },
     "autoload": {
         "psr-4": {"Erusev\\Parsedown\\": "src/"}

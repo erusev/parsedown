@@ -5,30 +5,14 @@ sudo: false
 
 stages:
   - Code Format and Static Analysis
-  - test
+  - Units
+  - Mutation
   - Test CommonMark (weak)
-
-php:
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
-  - 7.3
-  - nightly
 
 matrix:    
   fast_finish: true
   allow_failures:
-    - php: nightly
     - env: ALLOW_FAILURE
-
-install:
-  # remove packages with PHP requirements higher than 7.0 to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
-  - composer remove vimeo/psalm friendsofphp/php-cs-fixer --dev --no-update --no-interaction
-  - composer install --prefer-dist --no-interaction --no-progress
-
-script: composer test-units
 
 cache:
   directories:
@@ -45,7 +29,47 @@ jobs:
         - composer test-formatting
         - composer test-dead-code
 
-    - stage: Test CommonMark
+
+    - &UNIT_TEST
+      stage: Units
+      php: 5.5
+      install:
+        # remove packages with PHP requirements higher than 7.0 to prevent composer trying to resolve these, see: https://github.com/composer/composer/issues/6011
+        - composer remove vimeo/psalm friendsofphp/php-cs-fixer infection/infection --dev --no-update --no-interaction
+        - composer install --prefer-dist --no-interaction --no-progress
+      script: composer test-units
+    - <<: *UNIT_TEST
+      php: 5.6
+    - <<: *UNIT_TEST
+      php: 7.0
+    - <<: *UNIT_TEST
+      php: 7.1
+    - <<: *UNIT_TEST
+      php: 7.2
+    - <<: *UNIT_TEST
+      php: 7.3
+    - <<: *UNIT_TEST
+      php: nightly
+      env: ALLOW_FAILURE
+
+
+    - &MUTATION_TEST
+      stage: Mutation
+      php: 7.1
+      install:
+        - composer install --prefer-dist --no-interaction --no-progress
+      script: vendor/bin/infection --threads=2 --min-msi=80 --min-covered-msi=80
+    - <<: *MUTATION_TEST
+      php: 7.2
+    - <<: *MUTATION_TEST
+      php: 7.3
+    - <<: *MUTATION_TEST
+      php: nightly
+      env: ALLOW_FAILURE
+
+
+    - &COMMONMARK_TEST
+      stage: CommonMark
       name: Weak
       php: 7.3
       env: ALLOW_FAILURE
@@ -53,10 +77,7 @@ jobs:
       script:
         - composer test-commonmark-weak
 
-    - stage: Test CommonMark
+    - <<: *COMMONMARK_TEST
       name: Strict
-      php: 7.3
-      env: ALLOW_FAILURE
-      install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - composer test-commonmark
