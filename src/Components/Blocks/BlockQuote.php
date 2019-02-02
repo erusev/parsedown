@@ -45,7 +45,7 @@ final class BlockQuote implements ContinuableBlock
 
             $recoveredSpaces = 0;
             if (\strlen($matches[1]) === 2 && \substr($matches[1], 1, 1) === "\t") {
-                $recoveredSpaces = Line::tabShortage(2, $Context->line()->indentOffset() + $Context->line()->indent());
+                $recoveredSpaces = Line::tabShortage(0, $indentOffset -1) -1;
             }
 
             return new self(Lines::fromTextLines(
@@ -75,7 +75,7 @@ final class BlockQuote implements ContinuableBlock
 
             $recoveredSpaces = 0;
             if (\strlen($matches[1]) === 2 && \substr($matches[1], 1, 1) === "\t") {
-                $recoveredSpaces = Line::tabShortage(2, $Context->line()->indentOffset() + $Context->line()->indent());
+                $recoveredSpaces = Line::tabShortage(0, $indentOffset -1) -1;
             }
 
             $Lines = $this->Lines->appendingTextLines(
