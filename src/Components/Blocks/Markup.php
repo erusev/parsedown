@@ -27,6 +27,13 @@ final class Markup implements ContinuableBlock
         5 => ']]>'
     ];
 
+    /** @var array<string, string> */
+    private static $specialHtmlBlockTags = [
+        'script' => true,
+        'style' => true,
+        'pre' => true,
+    ];
+
     /** @var string */
     private $html;
 
@@ -85,7 +92,10 @@ final class Markup implements ContinuableBlock
         if (\preg_match('/^<[\/]?+(\w++)(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*+[ ]*+(\/)?>/', $text, $matches)) {
             $element = \strtolower($matches[1]);
 
-            if (\array_key_exists($element, Element::$TEXT_LEVEL_ELEMENTS)) {
+            if (
+                \array_key_exists($element, Element::$TEXT_LEVEL_ELEMENTS)
+                || \array_key_exists($element, self::$specialHtmlBlockTags)
+            ) {
                 return null;
             }
 
