@@ -52,7 +52,7 @@ final class Table implements ContinuableBlock
         Block $Block = null,
         State $State = null
     ) {
-        if (! isset($Block) || ! $Block instanceof Paragraph || $Context->previousEmptyLines() > 0) {
+        if (! isset($Block) || ! $Block instanceof Paragraph) {
             return null;
         }
 
