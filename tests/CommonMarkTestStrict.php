@@ -17,6 +17,8 @@ use PHPUnit\Framework\TestCase;
 class CommonMarkTestStrict extends TestCase
 {
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/CommonMark/master/spec.txt';
+    const SPEC_LOCAL_CACHE = __DIR__ .'/spec_cache.txt';
+    const SPEC_CACHE_SECONDS = 5 * 60;
 
     protected $parsedown;
 
@@ -41,12 +43,27 @@ class CommonMarkTestStrict extends TestCase
         $this->assertEquals($expectedHtml, $actualHtml);
     }
 
+    public static function getSpec()
+    {
+        if (
+            \is_file(self::SPEC_LOCAL_CACHE)
+            && \time() - \filemtime(self::SPEC_LOCAL_CACHE) < self::SPEC_CACHE_SECONDS
+        ) {
+            $spec = \file_get_contents(self::SPEC_LOCAL_CACHE);
+        } else {
+            $spec = \file_get_contents(self::SPEC_URL);
+            \file_put_contents(self::SPEC_LOCAL_CACHE, $spec);
+        }
+
+        return $spec;
+    }
+
     /**
      * @return array
      */
     public function data()
     {
-        $spec = \file_get_contents(self::SPEC_URL);
+        $spec = self::getSpec();
         if ($spec === false) {
             $this->fail('Unable to load CommonMark spec from ' . self::SPEC_URL);
         }
