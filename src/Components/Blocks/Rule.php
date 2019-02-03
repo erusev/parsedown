@@ -29,6 +29,10 @@ final class Rule implements Block
 
         $marker = \substr($Context->line()->text(), 0, 1);
 
+        if ($marker !== '*' && $marker !== '-' && $marker !== '_') {
+            return null;
+        }
+
         if (
             \substr_count($Context->line()->text(), $marker) >= 3
             && \chop($Context->line()->text(), " \t$marker") === ''
