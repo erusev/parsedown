@@ -103,8 +103,7 @@ final class Table implements ContinuableBlock
 
         if (
             \count($this->alignments) !== 1
-            && \substr($Context->line()->text(), 0, 1) !== '|'
-            && !\strpos($Context->line()->text(), '|')
+            && \strpos($Context->line()->text(), '|') === false
         ) {
             return null;
         }
