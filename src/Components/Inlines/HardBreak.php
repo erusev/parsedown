@@ -41,8 +41,7 @@ final class HardBreak implements Inline
         }
 
         if (\substr($context, $offset -1, 1) === '\\') {
-            $trimTrailingWhitespace = \rtrim(\substr($context, 0, $offset -1));
-            $contentLen = \strlen($trimTrailingWhitespace);
+            $contentLen = $offset -1;
 
             return new self($offset - $contentLen, $contentLen);
         }

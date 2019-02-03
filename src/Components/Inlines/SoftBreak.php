@@ -39,8 +39,8 @@ final class SoftBreak implements Inline
         $context = $Excerpt->context();
         $offset = $Excerpt->offset();
 
-        $trimTrailingWhitespaceBefore = \rtrim(\substr($context, 0, $offset));
-        $trimLeadingWhitespaceAfter = \ltrim(\substr($context, $offset + 1));
+        $trimTrailingWhitespaceBefore = \rtrim(\substr($context, 0, $offset), ' ');
+        $trimLeadingWhitespaceAfter = \ltrim(\substr($context, $offset + 1), ' ');
         $contentLenBefore = \strlen($trimTrailingWhitespaceBefore);
         $contentLenAfter = \strlen($trimLeadingWhitespaceAfter);
 
