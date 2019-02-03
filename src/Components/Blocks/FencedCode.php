@@ -58,6 +58,10 @@ final class FencedCode implements ContinuableBlock
     ) {
         $marker = \substr($Context->line()->text(), 0, 1);
 
+        if ($marker !== '`' && $marker !== '~') {
+            return null;
+        }
+
         $openerLength = \strspn($Context->line()->text(), $marker);
 
         if ($openerLength < 3) {
