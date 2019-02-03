@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
 class CommonMarkTestStrict extends TestCase
 {
     const SPEC_URL = 'https://raw.githubusercontent.com/jgm/CommonMark/master/spec.txt';
-    const SPEC_LOCAL_CACHE = __DIR__ .'/spec_cache.txt';
-    const SPEC_CACHE_SECONDS = 5 * 60;
+    const SPEC_LOCAL_CACHE = 'spec_cache.txt';
+    const SPEC_CACHE_SECONDS = 300;
 
     protected $parsedown;
 
@@ -45,14 +45,16 @@ class CommonMarkTestStrict extends TestCase
 
     public static function getSpec()
     {
+        $specPath = __DIR__ .'/'.self::SPEC_LOCAL_CACHE;
+
         if (
-            \is_file(self::SPEC_LOCAL_CACHE)
-            && \time() - \filemtime(self::SPEC_LOCAL_CACHE) < self::SPEC_CACHE_SECONDS
+            \is_file($specPath)
+            && \time() - \filemtime($specPath) < self::SPEC_CACHE_SECONDS
         ) {
-            $spec = \file_get_contents(self::SPEC_LOCAL_CACHE);
+            $spec = \file_get_contents($specPath);
         } else {
             $spec = \file_get_contents(self::SPEC_URL);
-            \file_put_contents(self::SPEC_LOCAL_CACHE, $spec);
+            \file_put_contents($specPath, $spec);
         }
 
         return $spec;
