@@ -17,3 +17,12 @@ no space after `>`:
 >>> Info 1 text
 
 >>> Info 2 text
+
+---
+
+> ```
+>
+  >   b
+ >	                       
+   >      a
+  >  ```
