@@ -1,3 +1,4 @@
 composer.lock
 vendor/
 infection.log
+tests/spec_cache.txt
