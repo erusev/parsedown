@@ -9,3 +9,5 @@ single backtick in a code span: `` ` ``
 backtick-delimited string in a code span: `` `foo` ``
 
 `sth `` sth`
+
+`foo `
