@@ -10,13 +10,13 @@ interface Block extends Component
 {
     /**
      * @param Context $Context
+     * @param State $State
      * @param Block|null $Block
-     * @param State|null $State
      * @return static|null
      */
     public static function build(
         Context $Context,
-        Block $Block = null,
-        State $State = null
+        State $State,
+        Block $Block = null
     );
 }

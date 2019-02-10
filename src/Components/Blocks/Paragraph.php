@@ -26,23 +26,24 @@ final class Paragraph implements ContinuableBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @param Block|null $Block
-     * @param State|null $State
      * @return static
      */
     public static function build(
         Context $Context,
-        Block $Block = null,
-        State $State = null
+        State $State,
+        Block $Block = null
     ) {
         return new self($Context->line()->text());
     }
 
     /**
      * @param Context $Context
+     * @param State $State
      * @return self|null
      */
-    public function advance(Context $Context)
+    public function advance(Context $Context, State $State)
     {
         if ($Context->previousEmptyLines() > 0) {
             return null;

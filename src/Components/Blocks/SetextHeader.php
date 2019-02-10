@@ -31,14 +31,14 @@ final class SetextHeader implements AcquisitioningBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @param Block|null $Block
-     * @param State|null $State
      * @return static|null
      */
     public static function build(
         Context $Context,
-        Block $Block = null,
-        State $State = null
+        State $State,
+        Block $Block = null
     ) {
         if (! isset($Block) || ! $Block instanceof Paragraph || $Context->previousEmptyLines() > 0) {
             return null;
