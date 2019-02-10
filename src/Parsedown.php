@@ -201,15 +201,19 @@ final class Parsedown
                     continue;
                 }
 
+                $markerPosition = $Excerpt->offset();
                 $startPosition = $Inline->modifyStartPositionTo();
 
                 if (! isset($startPosition)) {
-                    $startPosition = $Excerpt->offset();
+                    $startPosition = $markerPosition;
                 }
 
-                # makes sure that the inline belongs to "our" marker
+                $endPosition = $startPosition + $Inline->width();
 
-                if ($startPosition > $Excerpt->offset() || $startPosition < 0) {
+                if ($startPosition > $markerPosition
+                    || $endPosition < $markerPosition
+                    || $startPosition < 0
+                ) {
                     continue;
                 }
 
@@ -222,7 +226,7 @@ final class Parsedown
 
                 # remove the examined text
                 /** @psalm-suppress LoopInvalidation */
-                $Excerpt = $Excerpt->choppingFromOffset($startPosition + $Inline->width());
+                $Excerpt = $Excerpt->choppingFromOffset($endPosition);
 
                 continue 2;
             }
