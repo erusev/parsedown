@@ -37,10 +37,6 @@ final class Strikethrough implements Inline
     {
         $text = $Excerpt->text();
 
-        if (\strlen($text) < 2) {
-            return null;
-        }
-
         if (\preg_match('/^~~(?=\S)(.+?)(?<=\S)~~/', $text, $matches)) {
             return new self($matches[1], \strlen($matches[0]));
         }

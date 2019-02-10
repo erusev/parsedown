@@ -52,10 +52,6 @@ final class Emphasis implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (\strlen($Excerpt->text()) < 3) {
-            return null;
-        }
-
         $marker = \substr($Excerpt->text(), 0, 1);
 
         if ($marker !== '*' && $marker !== '_') {
