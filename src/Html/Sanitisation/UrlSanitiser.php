@@ -52,12 +52,8 @@ final class UrlSanitiser
      */
     private static function striAtStart($string, $needle)
     {
-        $len = \strlen($needle);
+        $needleLen = \strlen($needle);
 
-        if ($len > \strlen($string)) {
-            return false;
-        } else {
-            return \strtolower(\substr($string, 0, $len)) === \strtolower($needle);
-        }
+        return \strtolower(\substr($string, 0, $needleLen)) === \strtolower($needle);
     }
 }
