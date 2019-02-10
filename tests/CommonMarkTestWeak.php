@@ -18,37 +18,57 @@ use Erusev\Parsedown\Html\Renderables\Element;
  */
 class CommonMarkTestWeak extends CommonMarkTestStrict
 {
+    /** @var string */
     protected $textLevelElementRegex;
 
-    protected function setUp()
+    /**
+     * @param string|null $name
+     * @param array $data
+     * @param string $dataName
+     */
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::setUp();
-
         $textLevelElements = \array_keys(Element::$TEXT_LEVEL_ELEMENTS);
 
-        \array_walk($textLevelElements, function (&$element) {
-            $element = \preg_quote($element, '/');
-        });
+        \array_walk(
+            $textLevelElements,
+            /**
+             * @param string &$element
+             * @return void
+             */
+            function (&$element) {
+                $element = \preg_quote($element, '/');
+            }
+        );
         $this->textLevelElementRegex = '\b(?:' . \implode('|', $textLevelElements) . ')\b';
+
+        parent::__construct($name, $data, $dataName);
     }
 
     /**
      * @dataProvider data
-     * @param $id
-     * @param $section
-     * @param $markdown
-     * @param $expectedHtml
+     * @param int $_
+     * @param string $__
+     * @param string $markdown
+     * @param string $expectedHtml
+     * @return void
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
-    public function testExample($id, $section, $markdown, $expectedHtml)
+    public function testExample($_, $__, $markdown, $expectedHtml)
     {
         $expectedHtml = $this->cleanupHtml($expectedHtml);
 
-        $actualHtml = $this->parsedown->text($markdown);
+        $actualHtml = $this->Parsedown->text($markdown);
         $actualHtml = $this->cleanupHtml($actualHtml);
 
         $this->assertEquals($expectedHtml, $actualHtml);
     }
 
+    /**
+     * @param string $markup
+     * @return string
+     */
     protected function cleanupHtml($markup)
     {
         // invisible whitespaces at the beginning and end of block elements

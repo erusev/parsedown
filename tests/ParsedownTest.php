@@ -15,30 +15,40 @@ use PHPUnit\Framework\TestCase;
 
 class ParsedownTest extends TestCase
 {
+    /**
+     * @param string|null $name
+     * @param array $data
+     * @param string $dataName
+     */
     final public function __construct($name = null, array $data = [], $dataName = '')
     {
         $this->dirs = $this->initDirs();
 
+        $this->backupGlobals = false;
+        $this->backupStaticAttributes = false;
+        $this->runTestInSeparateProcess = false;
+
         parent::__construct($name, $data, $dataName);
     }
 
+    /** @var string[]  */
     private $dirs;
-    protected $Parsedown;
 
     /**
-     * @return array
+     * @return string[]
      */
     protected function initDirs()
     {
-        $dirs []= \dirname(__FILE__).'/data/';
-
-        return $dirs;
+        return [\dirname(__FILE__).'/data/'];
     }
 
     /**
      * @dataProvider data
-     * @param $test
-     * @param $dir
+     * @param string $test
+     * @param string $dir
+     * @return void
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function test_($test, $dir)
     {
@@ -60,6 +70,7 @@ class ParsedownTest extends TestCase
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
 
+    /** @return array<int, array{0:string, 1:string} */
     public function data()
     {
         $data = [];
@@ -93,6 +104,11 @@ class ParsedownTest extends TestCase
         return $data;
     }
 
+    /**
+     * @return void
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     */
     public function test_no_markup()
     {
         $markdownWithHtml = <<<MARKDOWN_WITH_MARKUP

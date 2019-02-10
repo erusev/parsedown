@@ -25,7 +25,8 @@ namespace Erusev\Parsedown\Tests;
 class CommonMarkTest extends CommonMarkTestStrict
 {
     /**
-     * @return array
+     * @return array<int, array{id: int, section: string, markdown: string, expectedHtml: string}>
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function data()
     {
@@ -68,10 +69,13 @@ class CommonMarkTest extends CommonMarkTestStrict
     /**
      * @group update
      * @dataProvider dataUpdate
-     * @param $id
-     * @param $section
-     * @param $markdown
-     * @param $expectedHtml
+     * @param int $id
+     * @param string $section
+     * @param string $markdown
+     * @param string $expectedHtml
+     * @return void
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function testUpdateDatabase($id, $section, $markdown, $expectedHtml)
     {
@@ -79,19 +83,25 @@ class CommonMarkTest extends CommonMarkTestStrict
 
         // you can only get here when the test passes
         $dir = static::getDataDir(true);
-        $basename = $id . '-' . \preg_replace('/[^\w.-]/', '_', $section);
+        $basename = \strval($id) . '-' . \preg_replace('/[^\w.-]/', '_', $section);
         \file_put_contents($dir . $basename . '.md', $markdown);
         \file_put_contents($dir . $basename . '.html', $expectedHtml);
     }
 
     /**
-     * @return array
+     * @return array<int, array{id: int, section: string, markdown: string, expectedHtml: string}>
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function dataUpdate()
     {
         return parent::data();
     }
 
+    /**
+     * @param bool $mkdir
+     * @return string
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
     public static function getDataDir($mkdir = false)
     {
         $dir = __DIR__ . '/commonmark/';

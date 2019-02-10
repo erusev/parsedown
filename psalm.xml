@@ -6,11 +6,13 @@
 >
     <projectFiles>
         <directory name="src" />
+        <directory name="tests" />
     </projectFiles>
 
     <issueHandlers>
         <PossiblyUnusedMethod>
             <errorLevel type="suppress">
+                <directory name="tests" />
                  <referencedMethod name="Erusev\Parsedown\Components\Inlines\PlainText::text" />
                  <referencedMethod name="Erusev\Parsedown\Html\Renderables\Container::contents" />
                  <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::create" />
@@ -18,14 +20,8 @@
                  <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::settingName" />
                  <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::settingAttributes" />
                  <referencedMethod name="Erusev\Parsedown\Html\Renderables\Element::settingContents" />
-                 <referencedMethod name="Erusev\Parsedown\Parsedown::__construct" />
-                 <referencedMethod name="Erusev\Parsedown\Parsedown::text" />
                  <referencedMethod name="Erusev\Parsedown\Parsing\Lines::appendingContext" />
                  <referencedMethod name="Erusev\Parsedown\Parsing\Lines::last" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\StrictMode::enabled" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\SafeMode::enabled" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::removing" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\Breaks::enabled" />
                  <referencedMethod name="Erusev\Parsedown\State::mergingWith" />
                  <referencedMethod name="Erusev\Parsedown\Html\Sanitisation\Escaper::htmlElementValue" />
                  <referencedMethod name="Erusev\Parsedown\Configurables\InlineTypes::addingHighPrecedence" />
