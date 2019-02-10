@@ -209,7 +209,7 @@ final class Parsedown
 
                 # makes sure that the inline belongs to "our" marker
 
-                if ($startPosition > $Excerpt->offset()) {
+                if ($startPosition > $Excerpt->offset() || $startPosition < 0) {
                     continue;
                 }
 
