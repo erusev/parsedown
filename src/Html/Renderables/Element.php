@@ -156,11 +156,9 @@ final class Element implements Renderable
     /** @return string */
     public function getHtml()
     {
-        $html = '';
-
         $elementName = CharacterFilter::htmlElementName($this->name);
 
-        $html .= '<' . $elementName;
+        $html = '<' . $elementName;
 
         if (! empty($this->attributes)) {
             foreach ($this->attributes as $name => $value) {
