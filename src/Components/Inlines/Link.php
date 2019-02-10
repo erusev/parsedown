@@ -10,6 +10,7 @@ use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
+use Erusev\Parsedown\Html\Sanitisation\UrlSanitiser;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
@@ -124,7 +125,7 @@ final class Link implements Inline
                 }
 
                 if ($State->get(SafeMode::class)->isEnabled()) {
-                    $attributes['href'] = Element::filterUnsafeUrl($attributes['href']);
+                    $attributes['href'] = UrlSanitiser::filter($attributes['href']);
                 }
 
                 $State = $State->setting(

@@ -62,25 +62,6 @@ final class Element implements Renderable
         'basefont' => true,
     ];
 
-    /** @var string[] */
-    public static $COMMON_SCHEMES = [
-        'http://',
-        'https://',
-        'ftp://',
-        'ftps://',
-        'mailto:',
-        'tel:',
-        'data:image/png;base64,',
-        'data:image/gif;base64,',
-        'data:image/jpeg;base64,',
-        'irc:',
-        'ircs:',
-        'git:',
-        'ssh:',
-        'news:',
-        'steam:',
-    ];
-
     /** @var string */
     private $name;
 
@@ -223,41 +204,5 @@ final class Element implements Renderable
         }
 
         return $html;
-    }
-
-    /**
-     * @param string $url
-     * @param string[]|null $permittedSchemes
-     * @return string
-     */
-    public static function filterUnsafeUrl($url, $permittedSchemes = null)
-    {
-        if (! isset($permittedSchemes)) {
-            $permittedSchemes = self::$COMMON_SCHEMES;
-        }
-
-        foreach ($permittedSchemes as $scheme) {
-            if (self::striAtStart($url, $scheme)) {
-                return $url;
-            }
-        }
-
-        return \str_replace(':', '%3A', $url);
-    }
-
-    /**
-     * @param string $string
-     * @param string $needle
-     * @return bool
-     */
-    private static function striAtStart($string, $needle)
-    {
-        $len = \strlen($needle);
-
-        if ($len > \strlen($string)) {
-            return false;
-        } else {
-            return \strtolower(\substr($string, 0, $len)) === \strtolower($needle);
-        }
     }
 }
