@@ -29,14 +29,14 @@ final class BlockQuote implements ContinuableBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @param Block|null $Block
-     * @param State|null $State
      * @return static|null
      */
     public static function build(
         Context $Context,
-        Block $Block = null,
-        State $State = null
+        State $State,
+        Block $Block = null
     ) {
         if (\preg_match('/^(>[ \t]?+)(.*+)/', $Context->line()->text(), $matches)) {
             $indentOffset = $Context->line()->indentOffset() + $Context->line()->indent() + \strlen($matches[1]);
@@ -57,9 +57,10 @@ final class BlockQuote implements ContinuableBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @return self|null
      */
-    public function advance(Context $Context)
+    public function advance(Context $Context, State $State)
     {
         if ($Context->previousEmptyLines() > 0) {
             return null;

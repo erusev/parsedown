@@ -55,14 +55,14 @@ final class Markup implements ContinuableBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @param Block|null $Block
-     * @param State|null $State
      * @return static|null
      */
     public static function build(
         Context $Context,
-        Block $Block = null,
-        State $State = null
+        State $State,
+        Block $Block = null
     ) {
         $text = $Context->line()->text();
         $rawLine = $Context->line()->rawLine();
@@ -105,9 +105,10 @@ final class Markup implements ContinuableBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @return self|null
      */
-    public function advance(Context $Context)
+    public function advance(Context $Context, State $State)
     {
         $closed = $this->closed;
         $type = $this->type;

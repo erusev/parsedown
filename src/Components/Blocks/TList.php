@@ -77,14 +77,14 @@ final class TList implements ContinuableBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @param Block|null $Block
-     * @param State|null $State
      * @return static|null
      */
     public static function build(
         Context $Context,
-        Block $Block = null,
-        State $State = null
+        State $State,
+        Block $Block = null
     ) {
         list($type, $pattern) = (
             \substr($Context->line()->text(), 0, 1) <= '-'
@@ -156,9 +156,10 @@ final class TList implements ContinuableBlock
 
     /**
      * @param Context $Context
+     * @param State $State
      * @return self|null
      */
-    public function advance(Context $Context)
+    public function advance(Context $Context, State $State)
     {
         if ($Context->previousEmptyLines() > 0 && \end($this->Lis)->isEmpty()) {
             return null;
@@ -218,7 +219,7 @@ final class TList implements ContinuableBlock
                 $this->markerType,
                 $this->markerTypeRegex
             );
-        } elseif ($Context->line()->indent() < $requiredIndent && self::build($Context) !== null) {
+        } elseif ($Context->line()->indent() < $requiredIndent && self::build($Context, $State) !== null) {
             return null;
         }
 

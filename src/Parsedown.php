@@ -90,7 +90,7 @@ final class Parsedown
                 && $CurrentBlock instanceof ContinuableBlock
                 && ! $CurrentBlock instanceof Paragraph
             ) {
-                $Block = $CurrentBlock->advance($Context);
+                $Block = $CurrentBlock->advance($Context, $State);
 
                 if (isset($Block)) {
                     $CurrentBlock = $Block;
@@ -107,7 +107,7 @@ final class Parsedown
             );
 
             foreach ($potentialBlockTypes as $blockType) {
-                $Block = $blockType::build($Context, $CurrentBlock, $State);
+                $Block = $blockType::build($Context, $State, $CurrentBlock);
 
                 if (isset($Block)) {
                     if ($Block instanceof StateUpdatingBlock) {
@@ -130,7 +130,7 @@ final class Parsedown
             }
 
             if (isset($CurrentBlock) && $CurrentBlock instanceof Paragraph) {
-                $Block = $CurrentBlock->advance($Context);
+                $Block = $CurrentBlock->advance($Context, $State);
             }
 
             if (isset($Block)) {
@@ -140,7 +140,7 @@ final class Parsedown
                     $Blocks[] = $CurrentBlock;
                 }
 
-                $CurrentBlock = Paragraph::build($Context);
+                $CurrentBlock = Paragraph::build($Context, $State);
             }
         }
 
