@@ -15,8 +15,6 @@ use Erusev\Parsedown\State;
 
 final class Markup implements ContinuableBlock
 {
-    use BlockAcquisition;
-
     const REGEX_HTML_ATTRIBUTE = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
 
     /** @var array{2: string, 3: string, 4: string, 5: string} */

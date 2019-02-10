@@ -15,8 +15,6 @@ use Erusev\Parsedown\State;
 
 final class TList implements ContinuableBlock
 {
-    use BlockAcquisition;
-
     /** @var Lines[] */
     private $Lis;
 

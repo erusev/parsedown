@@ -12,8 +12,6 @@ use Erusev\Parsedown\State;
 
 final class Reference implements StateUpdatingBlock
 {
-    use BlockAcquisition;
-
     /** @var State */
     private $State;
 

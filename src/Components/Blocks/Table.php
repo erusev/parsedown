@@ -4,6 +4,7 @@ namespace Erusev\Parsedown\Components\Blocks;
 
 use Erusev\Parsedown\AST\Handler;
 use Erusev\Parsedown\AST\StateRenderable;
+use Erusev\Parsedown\Components\AcquisitioningBlock;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\ContinuableBlock;
 use Erusev\Parsedown\Html\Renderables\Element;
@@ -14,9 +15,10 @@ use Erusev\Parsedown\State;
 /**
  * @psalm-type _Alignment='left'|'center'|'right'
  */
-final class Table implements ContinuableBlock
+final class Table implements AcquisitioningBlock, ContinuableBlock
 {
-    use BlockAcquisition;
+    /** @var bool */
+    private $acquired;
 
     /** @var array<int, _Alignment|null> */
     private $alignments;
@@ -163,6 +165,12 @@ final class Table implements ContinuableBlock
         }
 
         return $alignments;
+    }
+
+    /** @return bool */
+    public function acquiredPrevious()
+    {
+        return true;
     }
 
     /**

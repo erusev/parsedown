@@ -3,6 +3,7 @@
 namespace Erusev\Parsedown;
 
 use Erusev\Parsedown\AST\StateRenderable;
+use Erusev\Parsedown\Components\AcquisitioningBlock;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\Blocks\Paragraph;
 use Erusev\Parsedown\Components\ContinuableBlock;
@@ -113,7 +114,12 @@ final class Parsedown
                         $State = $Block->latestState();
                     }
 
-                    if (isset($CurrentBlock) && ! $Block->acquiredPrevious()) {
+                    if (isset($CurrentBlock)
+                        && (
+                            ! $Block instanceof AcquisitioningBlock
+                            || ! $Block->acquiredPrevious()
+                        )
+                    ) {
                         $Blocks[] = $CurrentBlock;
                     }
 

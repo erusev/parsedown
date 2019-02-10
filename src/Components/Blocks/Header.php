@@ -13,8 +13,6 @@ use Erusev\Parsedown\State;
 
 final class Header implements Block
 {
-    use BlockAcquisition;
-
     /** @var string */
     private $text;
 

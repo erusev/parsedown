@@ -10,8 +10,6 @@ use Erusev\Parsedown\State;
 
 final class Rule implements Block
 {
-    use BlockAcquisition;
-
     /**
      * @param Context $Context
      * @param Block|null $Block
