@@ -193,8 +193,6 @@ final class Parsedown
             $marker = \substr($Excerpt->text(), 0, 1);
 
             foreach ($InlineTypes->markedBy($marker) as $inlineType) {
-                # check to see if the current inline type is nestable in the current context
-
                 $Inline = $inlineType::build($Excerpt, $State);
 
                 if (! isset($Inline)) {
