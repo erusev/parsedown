@@ -42,18 +42,10 @@ final class HardBreak implements Inline
         $context = $Excerpt->context();
         $offset = $Excerpt->offset();
 
-        if ($offset < 1) {
-            return null;
-        }
-
         if (\substr($context, $offset -1, 1) === '\\') {
             $contentLen = $offset -1;
 
             return new self($offset - $contentLen, $contentLen);
-        }
-
-        if ($offset < 2) {
-            return null;
         }
 
         if (\substr($context, $offset -2, 2) === '  ') {
