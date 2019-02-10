@@ -43,9 +43,7 @@ final class Email implements Inline
         $commonMarkEmail = '[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]++@'
             . $hostnameLabel . '(?:\.' . $hostnameLabel . ')*';
 
-        if (\strpos($Excerpt->text(), '>') !== false
-            && \preg_match("/^<((mailto:)?$commonMarkEmail)>/i", $Excerpt->text(), $matches)
-        ) {
+        if (\preg_match("/^<((mailto:)?$commonMarkEmail)>/i", $Excerpt->text(), $matches)) {
             $url = $matches[1];
 
             if (! isset($matches[2])) {

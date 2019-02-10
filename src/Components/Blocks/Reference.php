@@ -33,13 +33,11 @@ final class Reference implements StateUpdatingBlock
     ) {
         $State = $State ?: new State;
 
-        if (\strpos($Context->line()->text(), ']') !== false
-            && \preg_match(
-                '/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/',
-                $Context->line()->text(),
-                $matches
-            )
-        ) {
+        if (\preg_match(
+            '/^\[(.+?)\]:[ ]*+<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*+$/',
+            $Context->line()->text(),
+            $matches
+        )) {
             $id = \strtolower($matches[1]);
 
             $Data = [

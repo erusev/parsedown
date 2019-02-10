@@ -36,10 +36,6 @@ final class Markup implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (\strpos($Excerpt->text(), '>') === false) {
-            return null;
-        }
-
         $secondChar = \substr($Excerpt->text(), 1, 1);
 
         if ($secondChar === '/' && \preg_match('/^<\/\w[\w-]*+[ ]*+>/s', $Excerpt->text(), $matches)) {
