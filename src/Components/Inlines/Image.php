@@ -8,6 +8,7 @@ use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Html\Renderables\Text;
+use Erusev\Parsedown\Html\Sanitisation\UrlSanitiser;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
@@ -84,7 +85,7 @@ final class Image implements Inline
                 }
 
                 if ($State->get(SafeMode::class)->isEnabled()) {
-                    $attributes['src'] = Element::filterUnsafeUrl($attributes['src']);
+                    $attributes['src'] = UrlSanitiser::filter($attributes['src']);
                 }
 
                 return Element::selfClosing('img', $attributes);
