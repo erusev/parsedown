@@ -48,7 +48,7 @@ jobs:
         - composer install --prefer-dist --no-interaction --no-progress
       script:
         - composer test-units
-        - vendor/bin/infection --show-mutations --threads=4 --min-msi=80 --min-covered-msi=80
+        - vendor/bin/infection --show-mutations --threads=4 --min-msi=85 --min-covered-msi=90
     - <<: *MUTATION_AND_UNIT_TEST
       php: 7.2
     - <<: *MUTATION_AND_UNIT_TEST
