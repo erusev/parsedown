@@ -92,6 +92,10 @@ final class Parsedown
             ) {
                 $Block = $CurrentBlock->advance($Context, $State);
 
+                if ($Block instanceof StateUpdatingBlock) {
+                    $State = $Block->latestState();
+                }
+
                 if (isset($Block)) {
                     $CurrentBlock = $Block;
 
