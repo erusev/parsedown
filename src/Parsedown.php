@@ -217,14 +217,10 @@ final class Parsedown
                     continue;
                 }
 
-                # the text that comes before the inline
-                # compile the unmarked text
                 $Inlines[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition));
 
-                # compile the inline
                 $Inlines[] = $Inline;
 
-                # remove the examined text
                 /** @psalm-suppress LoopInvalidation */
                 $Excerpt = $Excerpt->choppingFromOffset($endPosition);
 
