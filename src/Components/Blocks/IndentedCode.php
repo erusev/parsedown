@@ -13,8 +13,6 @@ use Erusev\Parsedown\State;
 
 final class IndentedCode implements ContinuableBlock
 {
-    use BlockAcquisition;
-
     /** @var string */
     private $code;
 

@@ -4,16 +4,15 @@ namespace Erusev\Parsedown\Components\Blocks;
 
 use Erusev\Parsedown\AST\Handler;
 use Erusev\Parsedown\AST\StateRenderable;
+use Erusev\Parsedown\Components\AcquisitioningBlock;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
 use Erusev\Parsedown\State;
 
-final class SetextHeader implements Block
+final class SetextHeader implements AcquisitioningBlock
 {
-    use BlockAcquisition;
-
     /** @var string */
     private $text;
 
@@ -28,7 +27,6 @@ final class SetextHeader implements Block
     {
         $this->text = $text;
         $this->level = $level;
-        $this->acquired = true;
     }
 
     /**
@@ -62,6 +60,12 @@ final class SetextHeader implements Block
         }
 
         return null;
+    }
+
+    /** @return bool */
+    public function acquiredPrevious()
+    {
+        return true;
     }
 
     /**

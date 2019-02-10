@@ -16,8 +16,6 @@ use Erusev\Parsedown\State;
 
 final class BlockQuote implements ContinuableBlock
 {
-    use BlockAcquisition;
-
     /** @var Lines */
     private $Lines;
 

@@ -19,11 +19,4 @@ interface Block extends Component
         Block $Block = null,
         State $State = null
     );
-
-    /**
-     * Return true if the block was build encompassing the previous block
-     * $Block given to static::build, return false otherwise.
-     * @return bool
-     */
-    public function acquiredPrevious();
 }

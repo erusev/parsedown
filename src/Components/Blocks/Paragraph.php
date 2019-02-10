@@ -13,8 +13,6 @@ use Erusev\Parsedown\State;
 
 final class Paragraph implements ContinuableBlock
 {
-    use BlockAcquisition;
-
     /** @var string */
     private $text;
 
