@@ -26,21 +26,18 @@ final class Lines
         $this->trailingBlankLinesText = $trailingBlankLinesText;
         $this->trailingBlankLines = \substr_count($trailingBlankLinesText, "\n");
 
-        $this->containsBlankLines = (
-            ($this->trailingBlankLines > 0)
-            || \array_reduce(
-                $Contexts,
-                /**
-                 * @param bool $blankFound
-                 * @param Context $Context
-                 * @return bool
-                 */
-                function ($blankFound, $Context) {
-                    return $blankFound || ($Context->previousEmptyLines() > 0);
-                },
-                false
-            )
-        );
+        $containsBlankLines = $this->trailingBlankLines > 0;
+
+        if (! $containsBlankLines) {
+            foreach ($Contexts as $Context) {
+                if ($Context->previousEmptyLines() > 0) {
+                    $containsBlankLines = true;
+                    break;
+                }
+            }
+        }
+
+        $this->containsBlankLines = $containsBlankLines;
     }
 
     /** @return self */
