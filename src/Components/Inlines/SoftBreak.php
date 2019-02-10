@@ -36,6 +36,12 @@ final class SoftBreak implements Inline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
+        $marker = \substr($Excerpt->text(), 0, 1);
+
+        if ($marker !== "\n") {
+            return null;
+        }
+
         $context = $Excerpt->context();
         $offset = $Excerpt->offset();
 
