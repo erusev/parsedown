@@ -20,30 +20,49 @@ class CommonMarkTestStrict extends TestCase
     const SPEC_LOCAL_CACHE = 'spec_cache.txt';
     const SPEC_CACHE_SECONDS = 300;
 
-    protected $parsedown;
+    /** @var Parsedown */
+    protected $Parsedown;
 
-    protected function setUp()
+    /**
+     * @param string|null $name
+     * @param array $data
+     * @param string $dataName
+     */
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        $this->parsedown = new Parsedown(new State([
+        $this->Parsedown = new Parsedown(new State([
             StrictMode::enabled(),
             InlineTypes::initial()->removing([Url::class]),
         ]));
+
+        $this->backupGlobals = false;
+        $this->backupStaticAttributes = false;
+        $this->runTestInSeparateProcess = false;
+
+        parent::__construct($name, $data, $dataName);
     }
 
     /**
      * @dataProvider data
-     * @param $id
-     * @param $section
-     * @param $markdown
-     * @param $expectedHtml
+     * @param int $_
+     * @param string $__
+     * @param string $markdown
+     * @param string $expectedHtml
+     * @return void
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
-    public function testExample($id, $section, $markdown, $expectedHtml)
+    public function testExample($_, $__, $markdown, $expectedHtml)
     {
-        $actualHtml = $this->parsedown->text($markdown);
+        $actualHtml = $this->Parsedown->text($markdown);
         $this->assertEquals($expectedHtml, $actualHtml);
     }
 
-    public static function getSpec()
+    /**
+     * @return string
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
+    public function getSpec()
     {
         $specPath = __DIR__ .'/'.self::SPEC_LOCAL_CACHE;
 
@@ -57,20 +76,23 @@ class CommonMarkTestStrict extends TestCase
             \file_put_contents($specPath, $spec);
         }
 
-        return $spec;
-    }
-
-    /**
-     * @return array
-     */
-    public function data()
-    {
-        $spec = self::getSpec();
         if ($spec === false) {
             $this->fail('Unable to load CommonMark spec from ' . self::SPEC_URL);
         }
 
+        return $spec;
+    }
+
+    /**
+     * @return array<int, array{id: int, section: string, markdown: string, expectedHtml: string}>
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
+    public function data()
+    {
+        $spec = $this->getSpec();
+
         $spec = \str_replace("\r\n", "\n", $spec);
+        /** @var string */
         $spec = \strstr($spec, '<!-- END TESTS -->', true);
 
         $matches = [];
@@ -79,6 +101,7 @@ class CommonMarkTestStrict extends TestCase
         $data = [];
         $currentId = 0;
         $currentSection = '';
+        /** @var array{0: string, 1: string, 2?: string, 3?: string} $match */
         foreach ($matches as $match) {
             if (isset($match[3])) {
                 $currentSection = $match[3];
