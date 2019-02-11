@@ -35,10 +35,6 @@ class CommonMarkTestStrict extends TestCase
             InlineTypes::initial()->removing([Url::class]),
         ]));
 
-        $this->backupGlobals = false;
-        $this->backupStaticAttributes = false;
-        $this->runTestInSeparateProcess = false;
-
         parent::__construct($name, $data, $dataName);
     }
 

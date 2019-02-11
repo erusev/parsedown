@@ -24,10 +24,6 @@ class ParsedownTest extends TestCase
     {
         $this->dirs = $this->initDirs();
 
-        $this->backupGlobals = false;
-        $this->backupStaticAttributes = false;
-        $this->runTestInSeparateProcess = false;
-
         parent::__construct($name, $data, $dataName);
     }
 
