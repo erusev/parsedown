@@ -99,7 +99,10 @@ final class BlockTypes implements Configurable
     {
         return $this->settingMarked(
             $marker,
-            \array_merge($newBlockTypes, $this->blockTypes[$marker])
+            \array_merge(
+                $newBlockTypes,
+                isset($this->blockTypes[$marker]) ? $this->blockTypes[$marker] : []
+            )
         );
     }
 
@@ -112,7 +115,10 @@ final class BlockTypes implements Configurable
     {
         return $this->settingMarked(
             $marker,
-            \array_merge($this->blockTypes[$marker], $newBlockTypes)
+            \array_merge(
+                isset($this->blockTypes[$marker]) ? $this->blockTypes[$marker] : [],
+                $newBlockTypes
+            )
         );
     }
 

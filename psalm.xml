@@ -13,16 +13,6 @@
         <PossiblyUnusedMethod>
             <errorLevel type="suppress">
                 <directory name="tests" />
-                 <referencedMethod name="Erusev\Parsedown\Parsing\Lines::appendingContext" />
-                 <referencedMethod name="Erusev\Parsedown\Html\Sanitisation\Escaper::htmlElementValue" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\InlineTypes::addingHighPrecedence" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\InlineTypes::addingLowPrecedence" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingMarkedHighPrecedence" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingMarkedLowPrecedence" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingUnmarkedHighPrecedence" />
-                 <referencedMethod name="Erusev\Parsedown\Configurables\BlockTypes::addingUnmarkedLowPrecedence" />
-                 <referencedMethod name="Erusev\Parsedown\Parsing\Lines::containsBlankLines" />
-                 <referencedMethod name="Erusev\Parsedown\Parsing\Lines::trailingBlankLines" />
             </errorLevel>
         </PossiblyUnusedMethod>
         <PropertyNotSetInConstructor>
