@@ -9,6 +9,10 @@
         "text": "infection.log"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "@cast": false,
+        "This": false,
+        "FunctionCall": false,
+        "NewObject": false
     }
 }
