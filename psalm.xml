@@ -34,5 +34,8 @@
                  <referencedMethod name="Erusev\Parsedown\Parsing\Lines::trailingBlankLines" />
             </errorLevel>
         </PossiblyUnusedMethod>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress"><directory name="tests" /></errorLevel>
+        </PropertyNotSetInConstructor>
     </issueHandlers>
 </psalm>
