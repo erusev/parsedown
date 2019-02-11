@@ -81,7 +81,10 @@ final class InlineTypes implements Configurable
     {
         return $this->setting(
             $marker,
-            \array_merge($newInlineTypes, $this->inlineTypes[$marker])
+            \array_merge(
+                $newInlineTypes,
+                isset($this->inlineTypes[$marker]) ? $this->inlineTypes[$marker] : []
+            )
         );
     }
 
@@ -94,7 +97,10 @@ final class InlineTypes implements Configurable
     {
         return $this->setting(
             $marker,
-            \array_merge($this->inlineTypes[$marker], $newInlineTypes)
+            \array_merge(
+                isset($this->inlineTypes[$marker]) ? $this->inlineTypes[$marker] : [],
+                $newInlineTypes
+            )
         );
     }
 
