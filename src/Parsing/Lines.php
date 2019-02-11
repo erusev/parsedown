@@ -133,9 +133,7 @@ final class Lines
             $Lines->trailingBlankLines += $NextLines->trailingBlankLines;
             $Lines->trailingBlankLinesText .= $NextLines->trailingBlankLinesText;
 
-            $Lines->containsBlankLines = $Lines->containsBlankLines
-                || ($Lines->trailingBlankLines > 0)
-            ;
+            $Lines->containsBlankLines = true;
 
             return $Lines;
         }
