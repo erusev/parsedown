@@ -3,7 +3,8 @@
 	<testsuites>
 		<testsuite name="ParsedownTests">
 			<file>tests/ParsedownTest.php</file>
-			<file>tests/CommonMarkTest.php</file>			
+			<file>tests/CommonMarkTest.php</file>
+			<directory suffix="Test.php">./tests/src</directory>
 		</testsuite>
 	</testsuites>
 	<groups>
