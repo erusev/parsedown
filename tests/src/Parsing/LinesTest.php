@@ -17,19 +17,23 @@ final class LinesTest extends TestCase
     public function testContainsBlankLines()
     {
         $Lines = Lines::fromTextLines('foo', 0);
-
         $this->assertFalse($Lines->containsBlankLines());
 
         $Lines = $Lines->appendingTextLines('bar', 0);
-
         $this->assertFalse($Lines->containsBlankLines());
 
         $Lines = $Lines->appendingTextLines("boo\nbaz", 0);
-
         $this->assertFalse($Lines->containsBlankLines());
 
         $Lines = $Lines->appendingTextLines("zoo\n\nzoom", 0);
+        $this->assertTrue($Lines->containsBlankLines());
 
+        $Lines = Lines::fromTextLines('foo', 0);
+        $Lines = $Lines->appendingTextLines('', 0);
+        $this->assertTrue($Lines->containsBlankLines());
+
+        $Lines = Lines::fromTextLines('foo', 0);
+        $Lines = $Lines->appendingTextLines("\n", 0);
         $this->assertTrue($Lines->containsBlankLines());
     }
 
