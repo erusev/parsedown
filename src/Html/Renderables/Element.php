@@ -86,17 +86,6 @@ final class Element implements Renderable
     /**
      * @param string $name
      * @param array<string, string> $attributes
-     * @param Renderable[] $Contents
-     * @return self
-     */
-    public static function create($name, array $attributes, array $Contents)
-    {
-        return new self($name, $attributes, $Contents);
-    }
-
-    /**
-     * @param string $name
-     * @param array<string, string> $attributes
      * @return self
      */
     public static function selfClosing($name, array $attributes)

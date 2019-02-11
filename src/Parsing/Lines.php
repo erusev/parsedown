@@ -88,12 +88,6 @@ final class Lines
         return $this->Contexts;
     }
 
-    /** @return Context */
-    public function last()
-    {
-        return $this->Contexts[\count($this->Contexts) -1];
-    }
-
     /** @return bool */
     public function containsBlankLines()
     {
