@@ -27,3 +27,13 @@
     code
     more code
    not quite enough indentation
+
+---
+
+* foo
+*    bar
+
+---
+
+* foo
+*     bar
