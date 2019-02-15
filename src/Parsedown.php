@@ -60,13 +60,23 @@ final class Parsedown
     {
         list($Blocks, $State) = self::blocks($Lines, $State);
 
-        $StateRenderables = \array_map(
-            /** @return StateRenderable */
-            function (Block $Block) { return $Block->stateRenderable(); },
-            $Blocks
-        );
+        return [self::stateRenderablesFrom($Blocks), $State];
+    }
 
-        return [$StateRenderables, $State];
+    /**
+     * @param Component[] $Components
+     * @return StateRenderable[]
+     */
+    public static function stateRenderablesFrom($Components)
+    {
+        return \array_map(
+            /**
+             * @param Component $Component
+             * @return StateRenderable
+             */
+            function ($Component) { return $Component->stateRenderable(); },
+            $Components
+        );
     }
 
     /**
@@ -160,11 +170,7 @@ final class Parsedown
      */
     public static function line($text, State $State)
     {
-        return \array_map(
-            /** @return StateRenderable */
-            function (Inline $Inline) { return $Inline->stateRenderable(); },
-            self::inlines($text, $State)
-        );
+        return self::stateRenderablesFrom(self::inlines($text, $State));
     }
 
     /**
