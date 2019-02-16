@@ -69,6 +69,12 @@ final class Emphasis implements Inline
         return new self($matches[1], $emphasis, \strlen($matches[0]));
     }
 
+    /** @return string */
+    public function text()
+    {
+        return $this->text;
+    }
+
     /**
      * @return Handler<Element>
      */
@@ -80,7 +86,7 @@ final class Emphasis implements Inline
                 return new Element(
                     $this->type,
                     [],
-                    $State->applyTo(Parsedown::line($this->text, $State))
+                    $State->applyTo(Parsedown::line($this->text(), $State))
                 );
             }
         );
@@ -91,6 +97,6 @@ final class Emphasis implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->text);
+        return new Text($this->text());
     }
 }

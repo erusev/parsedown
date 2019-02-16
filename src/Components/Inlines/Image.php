@@ -52,6 +52,24 @@ final class Image implements Inline
         return new self($Link);
     }
 
+    /** @return string */
+    public function label()
+    {
+        return $this->Link->label();
+    }
+
+    /** @return string */
+    public function url()
+    {
+        return $this->Link->url();
+    }
+
+    /** @return string|null */
+    public function title()
+    {
+        return $this->Link->title();
+    }
+
     /**
      * @return Handler<Element|Text>
      */
@@ -61,9 +79,9 @@ final class Image implements Inline
             /** @return Element|Text */
             function (State $State) {
                 $attributes = [
-                    'src' => $this->Link->url(),
+                    'src' => $this->url(),
                     'alt' => \array_reduce(
-                        Parsedown::inlines($this->Link->label(), $State),
+                        Parsedown::inlines($this->label(), $State),
                         /**
                          * @param string $text
                          * @return string
@@ -78,7 +96,7 @@ final class Image implements Inline
                     ),
                 ];
 
-                $title = $this->Link->title();
+                $title = $this->title();
 
                 if (isset($title)) {
                     $attributes['title'] = $title;
@@ -98,6 +116,6 @@ final class Image implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->Link->label());
+        return new Text($this->label());
     }
 }

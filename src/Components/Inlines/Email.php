@@ -54,12 +54,24 @@ final class Email implements Inline
         }
     }
 
+    /** @return string */
+    public function text()
+    {
+        return $this->text;
+    }
+
+    /** @return string */
+    public function url()
+    {
+        return $this->url;
+    }
+
     /**
      * @return Element
      */
     public function stateRenderable()
     {
-        return new Element('a', ['href' => $this->url], [new Text($this->text)]);
+        return new Element('a', ['href' => $this->url()], [new Text($this->text())]);
     }
 
     /**
@@ -67,6 +79,6 @@ final class Email implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->text);
+        return new Text($this->text());
     }
 }

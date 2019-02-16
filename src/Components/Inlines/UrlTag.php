@@ -40,12 +40,18 @@ final class UrlTag implements Inline
         return null;
     }
 
+    /** @return string */
+    public function url()
+    {
+        return $this->url;
+    }
+
     /**
      * @return Element
      */
     public function stateRenderable()
     {
-        return new Element('a', ['href' => $this->url], [new Text($this->url)]);
+        return new Element('a', ['href' => $this->url()], [new Text($this->url())]);
     }
 
     /**

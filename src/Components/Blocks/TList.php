@@ -18,7 +18,7 @@ final class TList implements ContinuableBlock
     /** @var Lines[] */
     private $Lis;
 
-    /** @var string|null */
+    /** @var int|null */
     private $listStart;
 
     /** @var bool */
@@ -44,7 +44,7 @@ final class TList implements ContinuableBlock
 
     /**
      * @param Lines[] $Lis
-     * @param string|null $listStart
+     * @param int|null $listStart
      * @param bool $isLoose
      * @param int $indent
      * @param 'ul'|'ol' $type
@@ -123,15 +123,15 @@ final class TList implements ContinuableBlock
 
             $markerTypeRegex = \preg_quote($markerType, '/');
 
-            /** @var string|null */
+            /** @var int|null */
             $listStart = null;
 
             if ($type === 'ol') {
                 /** @psalm-suppress PossiblyFalseArgument */
-                $listStart = \ltrim(\strstr($matches[1], $markerType, true), '0') ?: '0';
+                $listStart = \intval(\strstr($matches[1], $markerType, true) ?: '0');
 
                 if (
-                    $listStart !== '1'
+                    $listStart !== 1
                     && isset($Block)
                     && $Block instanceof Paragraph
                     && ! $Context->previousEmptyLines() > 0
@@ -273,6 +273,32 @@ final class TList implements ContinuableBlock
     }
 
     /**
+     * @return array{0: Block[], 1: State}[]
+     */
+    public function items(State $State)
+    {
+        return \array_map(
+            /** @return array{0: Block[], 1: State} */
+            function (Lines $Lines) use ($State) {
+                return Parsedown::blocks($Lines, $State);
+            },
+            $this->Lis
+        );
+    }
+
+    /** @return 'ol'|'ul' */
+    public function type()
+    {
+        return $this->type;
+    }
+
+    /** @return int|null */
+    public function listStart()
+    {
+        return $this->listStart;
+    }
+
+    /**
      * @return Handler<Element>
      */
     public function stateRenderable()
@@ -280,21 +306,24 @@ final class TList implements ContinuableBlock
         return new Handler(
             /** @return Element */
             function (State $State) {
+                $listStart = $this->listStart();
+
                 return new Element(
-                    $this->type,
+                    $this->type(),
                     (
-                        isset($this->listStart) && $this->listStart !== '1'
-                        ? ['start' => $this->listStart]
+                        isset($listStart) && $listStart !== 1
+                        ? ['start' => \strval($listStart)]
                         : []
                     ),
                     \array_map(
-                        /** @return Element */
-                        function (Lines $Lines) use ($State) {
-                            list($StateRenderables, $State) = Parsedown::lines(
-                                $Lines,
-                                $State
-                            );
+                        /**
+                         * @param array{0: Block[], 1: State} $Item
+                         * @return Element
+                         * */
+                        function ($Item) {
+                            list($Blocks, $State) = $Item;
 
+                            $StateRenderables = Parsedown::stateRenderablesFrom($Blocks);
                             $Renderables = $State->applyTo($StateRenderables);
 
                             if (! $this->isLoose
@@ -309,7 +338,7 @@ final class TList implements ContinuableBlock
 
                             return new Element('li', [], $Renderables);
                         },
-                        $this->Lis
+                        $this->items($State)
                     )
                 );
             }

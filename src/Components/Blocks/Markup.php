@@ -149,6 +149,12 @@ final class Markup implements ContinuableBlock
         return false;
     }
 
+    /** @return string */
+    public function html()
+    {
+        return $this->html;
+    }
+
     /**
      * @return Handler<Element|RawHtml>
      */
@@ -158,9 +164,9 @@ final class Markup implements ContinuableBlock
             /** @return Element|RawHtml */
             function (State $State) {
                 if ($State->get(SafeMode::class)->isEnabled()) {
-                    return new Element('p', [], [new Text($this->html)]);
+                    return new Element('p', [], [new Text($this->html())]);
                 } else {
-                    return new RawHtml($this->html);
+                    return new RawHtml($this->html());
                 }
             }
         );

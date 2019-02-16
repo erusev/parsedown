@@ -7,6 +7,7 @@ use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\AcquisitioningBlock;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\ContinuableBlock;
+use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
@@ -174,6 +175,51 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
         return true;
     }
 
+    /** @return array<int, Inline[]> */
+    public function headerRow(State $State)
+    {
+        return \array_map(
+            /**
+             * @param string $cell
+             * @return Inline[]
+             */
+            function ($cell) use ($State) {
+                return Parsedown::inlines($cell, $State);
+            },
+            $this->headerCells
+        );
+    }
+
+    /** @return array<int, Inline[]>[] */
+    public function rows(State $State)
+    {
+        return \array_map(
+            /**
+             * @param array<int, string> $cells
+             * @return array<int, Inline[]>
+             */
+            function ($cells) use ($State) {
+                return \array_map(
+                    /**
+                     * @param string $cell
+                     * @return Inline[]
+                     */
+                    function ($cell) use ($State) {
+                        return Parsedown::inlines($cell, $State);
+                    },
+                    $cells
+                );
+            },
+            $this->rows
+        );
+    }
+
+    /** @return array<int, _Alignment|null> */
+    public function alignments()
+    {
+        return $this->alignments;
+    }
+
     /**
      * @return Handler<Element>
      */
@@ -185,44 +231,44 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
                 return new Element('table', [], [
                     new Element('thead', [], [new Element('tr', [], \array_map(
                         /**
-                         * @param string $cell
+                         * @param Inline[] $Cell
                          * @param _Alignment|null $alignment
                          * @return Element
                          */
-                        function ($cell, $alignment) use ($State) {
+                        function ($Cell, $alignment) use ($State) {
                             return new Element(
                                 'th',
                                 isset($alignment) ? ['style' => "text-align: $alignment;"] : [],
-                                $State->applyTo(Parsedown::line($cell, $State))
+                                $State->applyTo(Parsedown::stateRenderablesFrom($Cell))
                             );
                         },
-                        $this->headerCells,
-                        $this->alignments
+                        $this->headerRow($State),
+                        $this->alignments()
                     ))]),
                     new Element('tbody', [], \array_map(
                         /**
-                         * @param array<int, string> $cells
+                         * @param Inline[][] $Cells
                          * @return Element
                          */
-                        function ($cells) use ($State) {
+                        function ($Cells) use ($State) {
                             return new Element('tr', [], \array_map(
                                 /**
-                                 * @param string $cell
+                                 * @param Inline[] $Cell
                                  * @param _Alignment|null $alignment
                                  * @return Element
                                  */
-                                function ($cell, $alignment) use ($State) {
+                                function ($Cell, $alignment) use ($State) {
                                     return new Element(
                                         'td',
                                         isset($alignment) ? ['style' => "text-align: $alignment;"] : [],
-                                        $State->applyTo(Parsedown::line($cell, $State))
+                                        $State->applyTo(Parsedown::stateRenderablesFrom($Cell))
                                     );
                                 },
-                                $cells,
-                                \array_slice($this->alignments, 0, \count($cells))
+                                $Cells,
+                                \array_slice($this->alignments(), 0, \count($Cells))
                             ));
                         },
-                        $this->rows
+                        $this->rows($State)
                     ))
                 ]);
             }

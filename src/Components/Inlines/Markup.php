@@ -51,6 +51,12 @@ final class Markup implements Inline
         }
     }
 
+    /** @return string */
+    public function html()
+    {
+        return $this->html;
+    }
+
     /**
      * @return Handler<Text|RawHtml>
      */
@@ -60,9 +66,9 @@ final class Markup implements Inline
             /** @return Text|RawHtml */
             function (State $State) {
                 if ($State->get(SafeMode::class)->isEnabled()) {
-                    return new Text($this->html);
+                    return new Text($this->html());
                 } else {
-                    return new RawHtml($this->html);
+                    return new RawHtml($this->html());
                 }
             }
         );
@@ -73,6 +79,6 @@ final class Markup implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->html);
+        return new Text($this->html());
     }
 }

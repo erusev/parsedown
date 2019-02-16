@@ -55,12 +55,18 @@ final class Url implements Inline
         return $this->position;
     }
 
+    /** @return string */
+    public function url()
+    {
+        return $this->url;
+    }
+
     /**
      * @return Element
      */
     public function stateRenderable()
     {
-        return new Element('a', ['href' => $this->url], [new Text($this->url)]);
+        return new Element('a', ['href' => $this->url()], [new Text($this->url())]);
     }
 
     /**
@@ -68,6 +74,6 @@ final class Url implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->url);
+        return new Text($this->url());
     }
 }

@@ -76,6 +76,18 @@ final class Header implements Block
         return new self($text, $level);
     }
 
+    /** @return string */
+    public function text()
+    {
+        return $this->text;
+    }
+
+    /** @return 1|2|3|4|5|6 */
+    public function level()
+    {
+        return $this->level;
+    }
+
     /**
      * @return Handler<Element>
      */
@@ -85,9 +97,9 @@ final class Header implements Block
             /** @return Element */
             function (State $State) {
                 return new Element(
-                    'h' . \strval($this->level),
+                    'h' . \strval($this->level()),
                     [],
-                    $State->applyTo(Parsedown::line($this->text, $State))
+                    $State->applyTo(Parsedown::line($this->text(), $State))
                 );
             }
         );

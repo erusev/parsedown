@@ -93,6 +93,14 @@ final class BlockQuote implements ContinuableBlock
     }
 
     /**
+     * @return array{0: Block[], 1: State}
+     */
+    public function contents(State $State)
+    {
+        return Parsedown::blocks($this->Lines, $State);
+    }
+
+    /**
      * @return Handler<Element>
      */
     public function stateRenderable()
@@ -100,10 +108,9 @@ final class BlockQuote implements ContinuableBlock
         return new Handler(
             /** @return Element */
             function (State $State) {
-                list($StateRenderables, $State) = Parsedown::lines(
-                    $this->Lines,
-                    $State
-                );
+                list($Blocks, $State) = $this->contents($State);
+
+                $StateRenderables = Parsedown::stateRenderablesFrom($Blocks);
 
                 $Renderables = $State->applyTo($StateRenderables);
                 $Renderables[] = new Text("\n");
