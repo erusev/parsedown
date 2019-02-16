@@ -19,7 +19,7 @@ final class IndentedCode implements ContinuableBlock
     /**
      * @param string $code
      */
-    public function __construct($code)
+    private function __construct($code)
     {
         $this->code = $code;
     }

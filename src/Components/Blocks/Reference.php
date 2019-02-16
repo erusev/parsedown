@@ -15,7 +15,7 @@ final class Reference implements StateUpdatingBlock
     /** @var State */
     private $State;
 
-    public function __construct(State $State)
+    private function __construct(State $State)
     {
         $this->State = $State;
     }

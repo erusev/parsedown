@@ -19,7 +19,7 @@ final class SpecialCharacter implements Inline
     /**
      * @param string $charCodeHtml
      */
-    public function __construct($charCodeHtml)
+    private function __construct($charCodeHtml)
     {
         $this->charCodeHtml = $charCodeHtml;
         $this->width = \strlen($charCodeHtml) + 2;

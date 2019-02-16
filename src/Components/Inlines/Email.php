@@ -24,7 +24,7 @@ final class Email implements Inline
      * @param string $url
      * @param int $width
      */
-    public function __construct($text, $url, $width)
+    private function __construct($text, $url, $width)
     {
         $this->text = $text;
         $this->url = $url;

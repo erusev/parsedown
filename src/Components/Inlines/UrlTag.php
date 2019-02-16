@@ -20,7 +20,7 @@ final class UrlTag implements Inline
      * @param string $url
      * @param int $width
      */
-    public function __construct($url, $width)
+    private function __construct($url, $width)
     {
         $this->url = $url;
         $this->width = $width;

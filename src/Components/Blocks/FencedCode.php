@@ -34,7 +34,7 @@ final class FencedCode implements ContinuableBlock
      * @param int $openerLength
      * @param bool $isComplete
      */
-    public function __construct($code, $infostring, $marker, $openerLength, $isComplete)
+    private function __construct($code, $infostring, $marker, $openerLength, $isComplete)
     {
         $this->code = $code;
         $this->infostring = $infostring;

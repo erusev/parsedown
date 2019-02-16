@@ -23,7 +23,7 @@ final class SetextHeader implements AcquisitioningBlock
      * @param string $text
      * @param 1|2 $level
      */
-    public function __construct($text, $level)
+    private function __construct($text, $level)
     {
         $this->text = $text;
         $this->level = $level;

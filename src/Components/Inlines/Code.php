@@ -20,7 +20,7 @@ final class Code implements Inline
      * @param string $text
      * @param int $width
      */
-    public function __construct($text, $width)
+    private function __construct($text, $width)
     {
         $this->text = $text;
         $this->width = $width;

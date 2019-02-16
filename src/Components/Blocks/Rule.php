@@ -10,6 +10,10 @@ use Erusev\Parsedown\State;
 
 final class Rule implements Block
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @param Context $Context
      * @param State $State

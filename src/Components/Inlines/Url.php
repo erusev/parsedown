@@ -23,7 +23,7 @@ final class Url implements Inline
      * @param string $url
      * @param int $position
      */
-    public function __construct($url, $position)
+    private function __construct($url, $position)
     {
         $this->url = $url;
         $this->width = \strlen($url);

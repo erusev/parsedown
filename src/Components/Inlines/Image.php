@@ -24,7 +24,7 @@ final class Image implements Inline
     /**
      * @param Link $Link
      */
-    public function __construct(Link $Link)
+    private function __construct(Link $Link)
     {
         $this->Link = $Link;
         $this->width = $Link->width() + 1;

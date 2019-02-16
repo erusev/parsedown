@@ -35,7 +35,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
      * @param array<int, array<int, string>> $rows
      * @param bool $acquired
      */
-    public function __construct($alignments, $headerCells, $rows, $acquired = false)
+    private function __construct($alignments, $headerCells, $rows, $acquired = false)
     {
         $this->alignments = $alignments;
         $this->headerCells = $headerCells;
