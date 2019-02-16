@@ -47,9 +47,6 @@ final class Parsedown
 
         $html = self::render($Renderables);
 
-        # trim line breaks
-        $html = \trim($html, "\n");
-
         return $html;
     }
 
@@ -245,18 +242,21 @@ final class Parsedown
      */
     public static function render(array $Renderables)
     {
-        return \array_reduce(
-            $Renderables,
-            /**
-             * @param string $html
-             * @return string
-             */
-            function ($html, Renderable $Renderable) {
-                $newHtml = $Renderable->getHtml();
+        return \trim(
+            \array_reduce(
+                $Renderables,
+                /**
+                 * @param string $html
+                 * @return string
+                 */
+                function ($html, Renderable $Renderable) {
+                    $newHtml = $Renderable->getHtml();
 
-                return $html . ($newHtml === '' ? '' : "\n") . $newHtml;
-            },
-            ''
+                    return $html . ($newHtml === '' ? '' : "\n") . $newHtml;
+                },
+                ''
+            ),
+            "\n"
         );
     }
 }
