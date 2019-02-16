@@ -22,7 +22,7 @@ final class BlockQuote implements ContinuableBlock
     /**
      * @param Lines $Lines
      */
-    public function __construct($Lines)
+    private function __construct($Lines)
     {
         $this->Lines = $Lines;
     }

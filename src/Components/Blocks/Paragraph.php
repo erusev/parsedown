@@ -19,7 +19,7 @@ final class Paragraph implements ContinuableBlock
     /**
      * @param string $text
      */
-    public function __construct($text)
+    private function __construct($text)
     {
         $this->text = $text;
     }

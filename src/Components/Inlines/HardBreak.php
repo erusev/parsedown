@@ -20,7 +20,7 @@ final class HardBreak implements Inline
      * @param int $width
      * @param int $position
      */
-    public function __construct($width, $position)
+    private function __construct($width, $position)
     {
         $this->width = $width;
         $this->position = $position;

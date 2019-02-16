@@ -23,7 +23,7 @@ final class Markup implements Inline
     /**
      * @param string $html
      */
-    public function __construct($html)
+    private function __construct($html)
     {
         $this->html = $html;
         $this->width = \strlen($html);

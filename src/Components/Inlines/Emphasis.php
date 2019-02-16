@@ -38,7 +38,7 @@ final class Emphasis implements Inline
      * @param 'em'|'strong' $type
      * @param int $width
      */
-    public function __construct($text, $type, $width)
+    private function __construct($text, $type, $width)
     {
         $this->text = $text;
         $this->type = $type;

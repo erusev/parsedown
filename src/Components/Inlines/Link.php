@@ -35,7 +35,7 @@ final class Link implements Inline
      * @param string|null $title
      * @param int $width
      */
-    public function __construct($label, $url, $title, $width)
+    private function __construct($label, $url, $title, $width)
     {
         $this->label = $label;
         $this->url = $url;

@@ -23,7 +23,7 @@ final class Header implements Block
      * @param string $text
      * @param 1|2|3|4|5|6 $level
      */
-    public function __construct($text, $level)
+    private function __construct($text, $level)
     {
         $this->text = $text;
         $this->level = $level;

@@ -53,7 +53,7 @@ final class TList implements ContinuableBlock
      * @param string $markerType
      * @param string $markerTypeRegex
      */
-    public function __construct(
+    private function __construct(
         $Lis,
         $listStart,
         $isLoose,

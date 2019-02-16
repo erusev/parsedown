@@ -20,7 +20,7 @@ final class EscapeSequence implements Inline
     /**
      * @param string $text
      */
-    public function __construct($text)
+    private function __construct($text)
     {
         $this->text = $text;
         $this->width = 2;
