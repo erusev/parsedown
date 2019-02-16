@@ -44,6 +44,12 @@ final class Strikethrough implements Inline
         return null;
     }
 
+    /** @return string */
+    public function text()
+    {
+        return $this->text;
+    }
+
     /**
      * @return Handler<Element>
      */
@@ -55,7 +61,7 @@ final class Strikethrough implements Inline
                 return new Element(
                     'del',
                     [],
-                    $State->applyTo(Parsedown::line($this->text, $State))
+                    $State->applyTo(Parsedown::line($this->text(), $State))
                 );
             }
         );
@@ -66,6 +72,6 @@ final class Strikethrough implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->text);
+        return new Text($this->text());
     }
 }

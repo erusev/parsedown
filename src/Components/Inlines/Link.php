@@ -118,10 +118,12 @@ final class Link implements Inline
         return new Handler(
             /** @return Element|Text */
             function (State $State) {
-                $attributes = ['href' => $this->url];
+                $attributes = ['href' => $this->url()];
 
-                if (isset($this->title)) {
-                    $attributes['title'] = $this->title;
+                $title = $this->title();
+
+                if (isset($title)) {
+                    $attributes['title'] = $title;
                 }
 
                 if ($State->get(SafeMode::class)->isEnabled()) {
@@ -135,7 +137,7 @@ final class Link implements Inline
                 return new Element(
                     'a',
                     $attributes,
-                    $State->applyTo(Parsedown::line($this->label, $State))
+                    $State->applyTo(Parsedown::line($this->label(), $State))
                 );
             }
         );
@@ -146,6 +148,6 @@ final class Link implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->label);
+        return new Text($this->label());
     }
 }

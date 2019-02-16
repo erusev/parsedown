@@ -59,12 +59,18 @@ final class Code implements Inline
         return null;
     }
 
+    /** @return string */
+    public function text()
+    {
+        return $this->text;
+    }
+
     /**
      * @return Element
      */
     public function stateRenderable()
     {
-        return new Element('code', [], [new Text($this->text)]);
+        return new Element('code', [], [new Text($this->text())]);
     }
 
     /**
@@ -72,6 +78,6 @@ final class Code implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->text);
+        return new Text($this->text());
     }
 }

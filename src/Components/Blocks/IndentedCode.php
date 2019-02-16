@@ -74,6 +74,12 @@ final class IndentedCode implements ContinuableBlock
         return new self($newCode);
     }
 
+    /** @return string */
+    public function code()
+    {
+        return $this->code;
+    }
+
     /**
      * @return Element
      */
@@ -82,7 +88,7 @@ final class IndentedCode implements ContinuableBlock
         return new Element(
             'pre',
             [],
-            [new Element('code', [], [new Text($this->code)])]
+            [new Element('code', [], [new Text($this->code())])]
         );
     }
 }

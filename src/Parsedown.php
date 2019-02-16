@@ -220,7 +220,7 @@ final class Parsedown
                     continue;
                 }
 
-                $Inlines[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition));
+                $Inlines[] = Plaintext::build($Excerpt->choppingUpToOffset($startPosition), $State);
 
                 $Inlines[] = $Inline;
 
@@ -234,7 +234,7 @@ final class Parsedown
             $Excerpt = $Excerpt->addingToOffset(1);
         }
 
-        $Inlines[] = Plaintext::build($Excerpt->choppingFromOffset(0));
+        $Inlines[] = Plaintext::build($Excerpt->choppingFromOffset(0), $State);
 
         return $Inlines;
     }

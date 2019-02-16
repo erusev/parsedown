@@ -2,22 +2,22 @@
 
 namespace Erusev\Parsedown\Tests\Components\Inlines;
 
-use Erusev\Parsedown\Components\Inlines\PlainText;
+use Erusev\Parsedown\Components\Inlines\Strikethrough;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
 use PHPUnit\Framework\TestCase;
 
-final class PlainTextTest extends TestCase
+final class StrikethroughTest extends TestCase
 {
     /**
      * @return void
      * @throws \PHPUnit\Framework\ExpectationFailedException
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
-    public function testPlainTextAPI()
+    public function testStrikethroughAPI()
     {
-        $Plaintext = Plaintext::build(new Excerpt('foo', 0), new State);
+        $Strikethrough = Strikethrough::build(new Excerpt('~~foo~~', 0), new State);
 
-        $this->assertSame('foo', $Plaintext->text());
+        $this->assertSame('foo', $Strikethrough->text());
     }
 }

@@ -101,15 +101,29 @@ final class FencedCode implements ContinuableBlock
         return new self($newCode, $this->infostring, $this->marker, $this->openerLength, false);
     }
 
+    /** @return string */
+    public function infostring()
+    {
+        return $this->infostring;
+    }
+
+    /** @return string */
+    public function code()
+    {
+        return $this->code;
+    }
+
     /**
      * @return Element
      */
     public function stateRenderable()
     {
+        $infostring = $this->infostring();
+
         return new Element('pre', [], [new Element(
             'code',
-            $this->infostring !== '' ? ['class' => "language-{$this->infostring}"] : [],
-            [new Text($this->code)]
+            $infostring !== '' ? ['class' => "language-{$infostring}"] : [],
+            [new Text($this->code())]
         )]);
     }
 }

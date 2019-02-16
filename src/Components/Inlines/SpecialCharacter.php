@@ -39,13 +39,19 @@ final class SpecialCharacter implements Inline
         return null;
     }
 
+    /** @return string */
+    public function charCode()
+    {
+        return $this->charCodeHtml;
+    }
+
     /**
      * @return RawHtml
      */
     public function stateRenderable()
     {
         return new RawHtml(
-            '&' . (new Text($this->charCodeHtml))->getHtml() . ';'
+            '&' . (new Text($this->charCode()))->getHtml() . ';'
         );
     }
 
@@ -54,6 +60,6 @@ final class SpecialCharacter implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text('&'.$this->charCodeHtml.';');
+        return new Text('&'.$this->charCode().';');
     }
 }

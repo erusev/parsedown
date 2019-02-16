@@ -29,7 +29,7 @@ final class PlainText implements Inline
      * @param State $State
      * @return static
      */
-    public static function build(Excerpt $Excerpt, State $State = null)
+    public static function build(Excerpt $Excerpt, State $State)
     {
         return new self($Excerpt->text());
     }
@@ -45,7 +45,7 @@ final class PlainText implements Inline
      */
     public function stateRenderable()
     {
-        return new Text($this->text);
+        return new Text($this->text());
     }
 
     /**
@@ -53,6 +53,6 @@ final class PlainText implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->text);
+        return new Text($this->text());
     }
 }

@@ -42,12 +42,18 @@ final class EscapeSequence implements Inline
         return null;
     }
 
+    /** @return string */
+    public function char()
+    {
+        return $this->text;
+    }
+
     /**
      * @return Text
      */
     public function stateRenderable()
     {
-        return new Text($this->text);
+        return new Text($this->char());
     }
 
     /**
@@ -55,6 +61,6 @@ final class EscapeSequence implements Inline
      */
     public function bestPlaintext()
     {
-        return new Text($this->text);
+        return new Text($this->char());
     }
 }
