@@ -18,9 +18,6 @@ use Erusev\Parsedown\Components\Inlines\Url;
 use Erusev\Parsedown\Components\Inlines\UrlTag;
 use Erusev\Parsedown\Configurable;
 
-/**
- * @psalm-type _Data=array{url: string, title: string|null}
- */
 final class InlineTypes implements Configurable
 {
     /** @var array<array-key, array<int, class-string<Inline>>> */
