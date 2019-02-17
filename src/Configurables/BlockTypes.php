@@ -15,9 +15,6 @@ use Erusev\Parsedown\Components\Blocks\Table;
 use Erusev\Parsedown\Components\Blocks\TList;
 use Erusev\Parsedown\Configurable;
 
-/**
- * @psalm-type _Data=array{url: string, title: string|null}
- */
 final class BlockTypes implements Configurable
 {
     /** @var array<array-key, array<int, class-string<Block>>> */
