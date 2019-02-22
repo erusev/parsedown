@@ -4,6 +4,7 @@ namespace Erusev\Parsedown\Components\Inlines;
 
 use Erusev\Parsedown\AST\Handler;
 use Erusev\Parsedown\AST\StateRenderable;
+use Erusev\Parsedown\Components\BacktrackingInline;
 use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Configurables\Breaks;
 use Erusev\Parsedown\Html\Renderables\Container;
@@ -12,7 +13,7 @@ use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\State;
 
-final class SoftBreak implements Inline
+final class SoftBreak implements BacktrackingInline
 {
     use WidthTrait;
 

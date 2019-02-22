@@ -16,7 +16,7 @@ use Erusev\Parsedown\State;
 /** @psalm-type _Metadata=array{href: string, title?: string} */
 final class Image implements Inline
 {
-    use WidthTrait, DefaultBeginPosition;
+    use WidthTrait;
 
     /** @var Link */
     private $Link;

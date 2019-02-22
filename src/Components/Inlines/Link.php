@@ -18,7 +18,7 @@ use Erusev\Parsedown\State;
 /** @psalm-type _Metadata=array{href: string, title?: string} */
 final class Link implements Inline
 {
-    use WidthTrait, DefaultBeginPosition;
+    use WidthTrait;
 
     /** @var string */
     private $label;
