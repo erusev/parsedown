@@ -83,4 +83,20 @@ final class LinesTest extends TestCase
 
         $this->assertSame($Lines->trailingBlankLines(), 0);
     }
+
+    /**
+     * @return void
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     */
+    public function testAppendNegativeBlankLines()
+    {
+        $Lines = Lines::fromTextLines('foo', 0);
+
+        $this->assertSame($Lines->trailingBlankLines(), 0);
+
+        $Lines = $Lines->appendingBlankLines(-1);
+
+        $this->assertSame($Lines->trailingBlankLines(), 0);
+    }
 }
