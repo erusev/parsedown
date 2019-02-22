@@ -19,3 +19,11 @@ one][website] defined on 2 lines
 [1] with the a label on the next line
 
 [`link`][website]
+
+This one has a [line
+break].
+
+This one has a [line
+break] with a line-ending space.
+
+[line break]: /foo
