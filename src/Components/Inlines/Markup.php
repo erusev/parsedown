@@ -13,7 +13,7 @@ use Erusev\Parsedown\State;
 
 final class Markup implements Inline
 {
-    use WidthTrait, DefaultBeginPosition;
+    use WidthTrait;
 
     const HTML_ATT_REGEX = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
 

@@ -13,7 +13,7 @@ use Erusev\Parsedown\State;
 
 final class Emphasis implements Inline
 {
-    use WidthTrait, DefaultBeginPosition;
+    use WidthTrait;
 
     /** @var string */
     private $text;

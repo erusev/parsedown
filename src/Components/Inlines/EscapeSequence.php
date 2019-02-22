@@ -10,7 +10,7 @@ use Erusev\Parsedown\State;
 
 final class EscapeSequence implements Inline
 {
-    use WidthTrait, DefaultBeginPosition;
+    use WidthTrait;
 
     const SPECIALS = '!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~';
 

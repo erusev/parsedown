@@ -11,7 +11,7 @@ use Erusev\Parsedown\State;
 
 final class Code implements Inline
 {
-    use WidthTrait, DefaultBeginPosition;
+    use WidthTrait;
 
     /** @var string */
     private $text;
