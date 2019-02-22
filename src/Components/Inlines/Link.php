@@ -79,6 +79,8 @@ final class Link implements Inline
                 $definition = \strtolower($label);
             }
 
+            $definition = \preg_replace('/\s++/', ' ', \trim($definition));
+
             $data = $State->get(DefinitionBook::class)->lookup($definition);
 
             if (! isset($data)) {
