@@ -29,4 +29,14 @@ final class StateTest extends TestCase
         $this->assertFalse($UpdatedState->get(StrictMode::class)->isEnabled());
         $this->assertFalse($UpdatedState->get(Breaks::class)->isEnabled());
     }
+
+    /**
+     * @return void
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     */
+    public function testStateCloneVisibility()
+    {
+        $this->assertInstanceOf(State::class, clone(new State));
+    }
 }
