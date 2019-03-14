@@ -19,7 +19,7 @@ Better Markdown Parser in PHP
 * Super Fast
 * Extensible
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
-* Tested in 5.3 to 7.2 and in HHVM
+* Tested in 5.5 to 7.3
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ### Installation
