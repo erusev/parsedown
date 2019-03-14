@@ -1,60 +1,61 @@
-> I also make [Caret](https://caret.io?ref=parsedown) - a Markdown editor for Mac and PC.
+<!-- ![Parsedown](https://i.imgur.com/yE8afYV.png) -->
 
-## Parsedown
+<p align="center"><img alt="Parsedown" src="https://i.imgur.com/fKVY6Kz.png" width="240" /></p>
 
-[![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://travis-ci.org/erusev/parsedown)
-<!--[![Total Downloads](http://img.shields.io/packagist/dt/erusev/parsedown.svg?style=flat-square)](https://packagist.org/packages/erusev/parsedown)-->
+<h1>Parsedown</h1>
 
-Better Markdown Parser in PHP
+[![Build Status](https://travis-ci.org/erusev/parsedown.svg)](https://travis-ci.org/erusev/parsedown)
+[![Total Downloads](https://poser.pugx.org/erusev/parsedown/d/total.svg)](https://packagist.org/packages/erusev/parsedown)
+[![Version](https://poser.pugx.org/erusev/parsedown/v/stable.svg)](https://packagist.org/packages/erusev/parsedown)
+[![License](https://poser.pugx.org/erusev/parsedown/license.svg)](https://packagist.org/packages/erusev/parsedown)
 
-[Demo](http://parsedown.org/demo) |
-[Benchmarks](http://parsedown.org/speed) |
-[Tests](http://parsedown.org/tests/) |
-[Documentation](https://github.com/erusev/parsedown/wiki/)
+Better Markdown Parser in PHP - <a href="http://parsedown.org/demo">Demo</a>.
 
-### Features
+## Features
 
 * One File
 * No Dependencies
-* Super Fast
+* [Super Fast](http://parsedown.org/speed)
 * Extensible
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
-* Tested in 5.5 to 7.3
+* [Tested](http://parsedown.org/tests/) in 5.5 to 7.3
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
-### Installation
-#### Composer
-Install the [composer package] by running the following command:
+## Installation
+
+Install the [composer package]:
 
     composer require erusev/parsedown
 
-#### Manual
-1. Download the "Source code" from the [latest release]
-2. Include `Parsedown.php`
+Or download the [latest release] and include `Parsedown.php`
 
 [composer package]: https://packagist.org/packages/erusev/parsedown "The Parsedown package on packagist.org"
 [latest release]: https://github.com/erusev/parsedown/releases/latest "The latest release of Parsedown"
 
-### Example
+## Example
 
-``` php
+```php
 $Parsedown = new Parsedown();
 
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
-// you can also parse inline markdown only
+```
+
+You can also parse inline markdown only:
+
+```php
 echo $Parsedown->line('Hello _Parsedown_!'); # prints: Hello <em>Parsedown</em>!
 ```
 
 More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
-### Security
+## Security
 
 Parsedown is capable of escaping user-input within the HTML that it generates. Additionally Parsedown will apply sanitisation to additional scripting vectors (such as scripting link destinations) that are introduced by the markdown syntax itself.
 
 To tell Parsedown that it is processing untrusted user-input, use the following:
+
 ```php
-$parsedown = new Parsedown;
-$parsedown->setSafeMode(true);
+$Parsedown->setSafeMode(true);
 ```
 
 If instead, you wish to allow HTML within untrusted user-input, but still want output to be free from XSS it is recommended that you make use of a HTML sanitiser that allows HTML tags to be whitelisted, like [HTML Purifier](http://htmlpurifier.org/).
@@ -65,18 +66,19 @@ In both cases you should strongly consider employing defence-in-depth measures, 
 
 Safe mode does not necessarily yield safe results when using extensions to Parsedown. Extensions should be evaluated on their own to determine their specific safety against XSS.
 
-### Escaping HTML
+## Escaping HTML
+
 > ⚠️  **WARNING:** This method isn't safe from XSS!
 
 If you wish to escape HTML **in trusted input**, you can use the following:
+
 ```php
-$parsedown = new Parsedown;
-$parsedown->setMarkupEscaped(true);
+$Parsedown->setMarkupEscaped(true);
 ```
 
 Beware that this still allows users to insert unsafe scripting vectors, such as links like `[xss](javascript:alert%281%29)`.
 
-### Questions
+## Questions
 
 **How does Parsedown work?**
 
