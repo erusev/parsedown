@@ -429,7 +429,21 @@ class Parsedown
 
             if (isset($matches[1]))
             {
-                $class = 'language-'.$matches[1];
+                /**
+                 * https://www.w3.org/TR/2011/WD-html5-20110525/elements.html#classes
+                 * Every HTML element may have a class attribute specified.
+                 * The attribute, if specified, must have a value that is a set
+                 * of space-separated tokens representing the various classes
+                 * that the element belongs to.
+                 * [...]
+                 * The space characters, for the purposes of this specification,
+                 * are U+0020 SPACE, U+0009 CHARACTER TABULATION (tab),
+                 * U+000A LINE FEED (LF), U+000C FORM FEED (FF), and
+                 * U+000D CARRIAGE RETURN (CR).
+                 */
+                $language = substr($matches[1], 0, strcspn($matches[1], " \t\n\f\r"));
+
+                $class = 'language-'.$language;
 
                 $Element['attributes'] = array(
                     'class' => $class,

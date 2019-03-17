@@ -12,13 +12,12 @@ matrix:
     - php: 5.6
     - php: 7.0
     - php: 7.1
+    - php: 7.2
+    - php: 7.3
     - php: nightly
-    - php: hhvm
-    - php: hhvm-nightly
   fast_finish: true
   allow_failures:
     - php: nightly
-    - php: hhvm-nightly
 
 install:
   - composer install --prefer-dist --no-interaction --no-progress
