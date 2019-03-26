@@ -1,4 +1,3 @@
-[foo][bar][baz]
+[foo](not a link)
 
-[baz]: /url1
-[foo]: /url2
+[foo]: /url1

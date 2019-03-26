@@ -1,3 +1,1 @@
-foo <!--> foo -->
-
-foo <!-- foo--->
+</a href="foo">

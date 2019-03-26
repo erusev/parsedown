@@ -1,1 +1,3 @@
-My ![foo bar](/path/to/train.jpg  "title"   )
+![foo *bar*][]
+
+[foo *bar*]: train.jpg "train & tracks"

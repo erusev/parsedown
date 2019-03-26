@@ -1,1 +1,1 @@
-[link] (/uri)
+[link](/url "title "and" title")

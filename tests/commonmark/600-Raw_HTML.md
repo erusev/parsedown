@@ -1,1 +1,1 @@
-<a href="hi'> <a href=hi'>
+Foo <responsive-image src="foo.jpg" />

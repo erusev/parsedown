@@ -1,3 +1,5 @@
-[Foo][]
+[
+ ]
 
-[foo]: /url "title"
+[
+ ]: /uri

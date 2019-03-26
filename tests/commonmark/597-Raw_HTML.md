@@ -1,1 +1,1 @@
-Foo <responsive-image src="foo.jpg" />
+<a/><b2/>

@@ -1,1 +1,1 @@
-<foo+special@Bar.baz-bar0.com>
+<http://foo.bar/baz bim>
