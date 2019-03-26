@@ -38,7 +38,12 @@ final class Url implements BacktrackingInline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (\preg_match('/\bhttps?+:[\/]{2}[^\s<]+\b\/*+/ui', $Excerpt->context(), $matches, \PREG_OFFSET_CAPTURE)) {
+        if (\preg_match(
+            '/(?<=^|\s|[*_~(])https?+:[\/]{2}[^\s<]+\b\/*+/ui',
+            $Excerpt->context(),
+            $matches,
+            \PREG_OFFSET_CAPTURE
+        )) {
             return new self($matches[0][0], \intval($matches[0][1]));
         }
 
