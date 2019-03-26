@@ -1,1 +1,1 @@
-foo ***
+__ is not an empty emphasis

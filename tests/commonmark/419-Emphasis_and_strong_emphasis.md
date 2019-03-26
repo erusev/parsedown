@@ -1,1 +1,1 @@
-**foo [*bar*](/url)**
+**foo *bar***

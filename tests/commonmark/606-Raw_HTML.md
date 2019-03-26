@@ -1,1 +1,1 @@
-foo <!-- not a comment -- two hyphens -->
+</a></foo >

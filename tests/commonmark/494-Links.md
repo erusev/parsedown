@@ -1,1 +1,1 @@
-[link [bar](/uri)
+[link] (/uri)
