@@ -119,6 +119,15 @@ class Parsedown
         'steam:',
     );
 
+    function setSyntaxHighlighter($syntaxHighlighter)
+    {
+        $this->syntaxHighlighter = $syntaxHighlighter;
+
+        return $this;
+    }
+
+    protected $syntaxHighlighter = false;
+
     #
     # Lines
     #
@@ -470,7 +479,20 @@ class Parsedown
 
         if ($infostring !== '')
         {
-            $Element['attributes'] = array('class' => "language-$infostring");
+			if ($this->syntaxHighlighter) 
+			{
+                $attrb = array('class' => 'brush:'.$infostring);
+			    $Element = null;
+			}
+			else
+			{
+                $Element['attributes'] = array('class' => "language-$infostring");
+			    $attrb = null;
+			}     
+        }
+        else
+        {
+            $attrb = null;
         }
 
         $Block = array(
@@ -478,6 +500,7 @@ class Parsedown
             'openerLength' => $openerLength,
             'element' => array(
                 'name' => 'pre',
+                'attributes' => $attrb,
                 'element' => $Element,
             ),
         );
