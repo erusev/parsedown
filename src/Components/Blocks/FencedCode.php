@@ -136,6 +136,11 @@ final class FencedCode implements ContinuableBlock
             \strcspn($this->infostring(), " \t\n\f\r")
         );
 
+        // only necessary pre-php7
+        if ($infostring === false) {
+            $infostring = '';
+        }
+
         return new Element('pre', [], [new Element(
             'code',
             $infostring !== '' ? ['class' => "language-{$infostring}"] : [],
