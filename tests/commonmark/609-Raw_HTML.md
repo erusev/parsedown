@@ -1,1 +1,1 @@
-foo <!-- not a comment -- two hyphens -->
+Foo <responsive-image src="foo.jpg" />

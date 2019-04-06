@@ -1,1 +1,1 @@
-foo-_(bar)_
+_foo bar_

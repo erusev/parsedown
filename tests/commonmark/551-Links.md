@@ -1,3 +1,3 @@
-[foo](not a link)
+[[*foo* bar]]
 
-[foo]: /url1
+[*foo* bar]: /url "title"

@@ -1,1 +1,1 @@
-foo <a href="\*">
+<a href="hi'> <a href=hi'>

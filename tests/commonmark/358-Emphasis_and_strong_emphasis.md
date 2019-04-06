@@ -1,1 +1,1 @@
-*foo*bar
+aa_"bb"_cc
