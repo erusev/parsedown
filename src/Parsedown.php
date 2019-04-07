@@ -13,6 +13,7 @@ use Erusev\Parsedown\Components\Inlines\PlainText;
 use Erusev\Parsedown\Components\StateUpdatingBlock;
 use Erusev\Parsedown\Configurables\BlockTypes;
 use Erusev\Parsedown\Configurables\InlineTypes;
+use Erusev\Parsedown\Configurables\RecursionLimiter;
 use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Excerpt;
@@ -82,6 +83,14 @@ final class Parsedown
      */
     public static function blocks(Lines $Lines, State $State)
     {
+        $RecursionLimiter = $State->get(RecursionLimiter::class)->increment();
+
+        if ($RecursionLimiter->isDepthExceeded()) {
+            $State = $State->setting(new BlockTypes([], []));
+        }
+
+        $State = $State->setting($RecursionLimiter);
+
         /** @var Block[] */
         $Blocks = [];
         /** @var Block|null */
@@ -179,6 +188,14 @@ final class Parsedown
     {
         # standardize line breaks
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
+
+        $RecursionLimiter = $State->get(RecursionLimiter::class)->increment();
+
+        if ($RecursionLimiter->isDepthExceeded()) {
+            return [Plaintext::build(new Excerpt($text, 0), $State)];
+        }
+
+        $State = $State->setting($RecursionLimiter);
 
         /** @var Inline[] */
         $Inlines = [];
