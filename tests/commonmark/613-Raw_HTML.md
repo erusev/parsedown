@@ -1,4 +1,1 @@
-< a><
-foo><bar/ >
-<foo bar=baz
-bim!bop />
+Foo <responsive-image src="foo.jpg" />

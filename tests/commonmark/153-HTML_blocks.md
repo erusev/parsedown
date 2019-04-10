@@ -1,4 +1,3 @@
-Foo
-<div>
-bar
-</div>
+  <div>
+
+    <div>

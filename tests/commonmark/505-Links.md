@@ -1,1 +1,1 @@
-[link] bar](/uri)
+[link](/url 'title "and" title')

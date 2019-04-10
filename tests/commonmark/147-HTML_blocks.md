@@ -1,5 +1,3 @@
-<!-- Foo
-
-bar
-   baz -->
-okay
+<script>
+foo
+</script>1. *bar*

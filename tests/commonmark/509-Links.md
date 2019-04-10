@@ -1,1 +1,1 @@
-[![moon](moon.jpg)](/uri)
+[link] bar](/uri)

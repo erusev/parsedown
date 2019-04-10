@@ -1,2 +1,3 @@
-</div>
-*foo*
+ <div>
+  *hello*
+         <foo><a>

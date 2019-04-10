@@ -1,4 +1,3 @@
-<div></div>
-``` c
-int x = 33;
-```
+<table><tr><td>
+foo
+</td></tr></table>

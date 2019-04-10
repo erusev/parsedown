@@ -1,7 +1,6 @@
-- a
- - b
-  - c
-   - d
-  - e
- - f
-- g
+- foo
+
+- bar
+
+
+- baz

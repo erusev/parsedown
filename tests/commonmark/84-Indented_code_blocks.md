@@ -1,6 +1,2 @@
-# Heading
     foo
-Heading
-------
-    foo
-----
+bar

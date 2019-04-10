@@ -1,4 +1,2 @@
-- foo
- - bar
-  - baz
-   - boo
+  1.  A paragraph
+    with two lines.

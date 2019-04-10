@@ -1,6 +1,7 @@
-<script type="text/javascript">
-// JavaScript example
+<pre language="haskell"><code>
+import Text.HTML.TagSoup
 
-document.getElementById("demo").innerHTML = "Hello JavaScript!";
-</script>
+main :: IO ()
+main = print $ parseTags tags
+</code></pre>
 okay

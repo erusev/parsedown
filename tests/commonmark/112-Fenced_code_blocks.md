@@ -1,5 +1,5 @@
-~~~~    ruby startline=3 $%@#$
+```ruby
 def foo(x)
   return 3
 end
-~~~~~~~
+```

@@ -1,11 +1,11 @@
 <table>
 
-  <tr>
+<tr>
 
-    <td>
-      Hi
-    </td>
+<td>
+Hi
+</td>
 
-  </tr>
+</tr>
 
 </table>

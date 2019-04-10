@@ -1,1 +1,3 @@
-foo <a href="&ouml;">
+foo <!--> foo -->
+
+foo <!-- foo--->

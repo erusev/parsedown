@@ -1,6 +1,5 @@
 Foo
+
 bar
-
 ---
-
 baz

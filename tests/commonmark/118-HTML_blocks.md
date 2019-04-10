@@ -1,9 +1,7 @@
-<table>
-  <tr>
-    <td>
-           hi
-    </td>
-  </tr>
-</table>
+<table><tr><td>
+<pre>
+**Hello**,
 
-okay.
+_world_.
+</pre>
+</td></tr></table>

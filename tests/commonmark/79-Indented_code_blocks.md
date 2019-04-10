@@ -1,4 +1,3 @@
-    <a/>
-    *hi*
+1.  foo
 
-    - one
+    - bar

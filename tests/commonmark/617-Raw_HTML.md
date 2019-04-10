@@ -1,2 +1,4 @@
-foo <!-- this is a
-comment - with hyphen -->
+< a><
+foo><bar/ >
+<foo bar=baz
+bim!bop />

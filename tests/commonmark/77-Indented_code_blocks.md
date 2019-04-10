@@ -1,3 +1,2 @@
-  - foo
-
-    bar
+    a simple
+      indented code block

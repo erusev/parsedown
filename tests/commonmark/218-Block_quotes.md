@@ -1,3 +1,3 @@
->     code
+> bar
 
->    not code
+baz

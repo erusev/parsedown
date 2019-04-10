@@ -1,4 +1,4 @@
+Foo
 <div>
 bar
 </div>
-*foo*
