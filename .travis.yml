@@ -24,7 +24,7 @@ jobs:
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
-        - composer test-static
+        - composer test-static -- --shepherd
         - composer test-formatting
         - composer test-dead-code
 
