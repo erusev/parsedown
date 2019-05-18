@@ -13,11 +13,14 @@
 #
 #
 
-class Parsedown
+class Parsedown 
 {
     # ~
 
     const version = '1.8.0-beta-7';
+
+    # ~ 
+    protected $texthook = NULL;
 
     # ~
 
@@ -1720,6 +1723,11 @@ class Parsedown
 
         $permitRawHtml = false;
 
+        // Add a hook for change blocks on the fly
+        if(is_callable($this->texthook)) {
+            $Element = call_user_func($this->texthook, $Element);
+        }
+
         if (isset($Element['text']))
         {
             $text = $Element['text'];
@@ -1750,6 +1758,8 @@ class Parsedown
             }
             else
             {
+                
+
                 if (!$permitRawHtml)
                 {
                     $markup .= self::escape($text, true);
@@ -1768,6 +1778,13 @@ class Parsedown
         }
 
         return $markup;
+    }
+
+    /**
+     * Set callback hool
+     */
+    public function setTextHook($callback) {
+        $this->texthook = $callback;
     }
 
     protected function elements(array $Elements)
