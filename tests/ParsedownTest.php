@@ -66,7 +66,7 @@ class ParsedownTest extends TestCase
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
 
-    /** @return array<int, array{0:string, 1:string} */
+    /** @return array<int, array{0:string, 1:string}> */
     public function data()
     {
         $data = [];
