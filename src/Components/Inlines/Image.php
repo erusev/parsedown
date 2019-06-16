@@ -71,12 +71,12 @@ final class Image implements Inline
     }
 
     /**
-     * @return Handler<Element|Text>
+     * @return Handler<Element>
      */
     public function stateRenderable()
     {
         return new Handler(
-            /** @return Element|Text */
+            /** @return Element */
             function (State $State) {
                 $attributes = [
                     'src' => $this->url(),
