@@ -19,7 +19,7 @@
             <errorLevel type="suppress"><directory name="tests" /></errorLevel>
         </PropertyNotSetInConstructor>
         <UnusedClass>
-            <errorLevel type="suppress"><directory name="tests/src" /></errorLevel>
+            <errorLevel type="suppress"><directory name="tests" /></errorLevel>
         </UnusedClass>
         <UndefinedInterfaceMethod>
             <errorLevel type="suppress"><directory name="tests/src" /></errorLevel>
