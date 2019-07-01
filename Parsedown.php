@@ -11,13 +11,16 @@
 # For the full license information, view the LICENSE file that was distributed
 # with this source code.
 #
-#
+# 2019-07-01T09:48:39/Erik Bachmann: Implementet Note blocks as <fieldset>
+# (see: https://docs.microsoft.com/en-us/contribute/how-to-write-use-markdown#note-blocks )
+
+$_in_fieldset   = FALSE;    // On=Fieldset, off=blockquote
 
 class Parsedown
 {
     # ~
 
-    const version = '1.8.0-beta-7';
+    const version = '1.8.0-beta-7-noteblock';
 
     # ~
 
@@ -744,14 +747,93 @@ class Parsedown
 
     #
     # Quote
-
     protected function blockQuote($Line)
     {
         if (preg_match('/^>[ ]?+(.*+)/', $Line['text'], $matches))
         {
+            // >>> Note block header >>>
+            /**
+              * Creating field sets from blockquotes with header
+              *
+              * Microsoft names this "Note blocks" but it is simply fieldsets
+              * ( https://docs.microsoft.com/en-us/contribute/how-to-write-use-markdown#note-blocks )
+              *
+              * The Header has the syntax: [!#xxx]
+              *
+              * Element | Function
+              * --------|-------------------------
+              * `[!`    | Legend start
+              * `#`     | Special legend indicator
+              * `xxx`   | Legend text
+              * `]`     | Legend end
+              *
+              *
+              *
+              * Examples:
+              *
+              * > This is a block quote
+              * 
+              * > [!#NOTE]
+              * > This is a 
+              * > NOTE block
+              * 
+              * will parse as
+              * 
+              * <quote>This is a block quote</quote>
+              * <fieldset class='legend1'><legend class='legend1'>&#9432; NOTE</legend>This is a NOTE block</fieldset>
+              * 
+              * Special legends with Unicode indicator:
+              * 
+              * Function    | Unicode   | Tag   | Description
+              * ------------|-----------|-------|------------
+              * Note        | &#9432;   | #     | (i)
+              * Warning     | &#x2620;  | $     | Jolly Roger / Skull and crossbones
+              * Tip         | &#x1f4a1; | +     | Light bulb
+              * Important   | &#9888;   | !     | /!\
+              *
+              * Easy to spice up with som CSS
+              */
+            global $_in_fieldset;   // Fieldset / blockquote flag
+            $_type = 'blockquote';  // Default block type
+
+            if ( "[!" == substr($matches[1], 0, 2) ){
+                $_in_fieldset   = TRUE;
+                $_type = 'fieldset';
+                
+                // Extract legend
+                preg_match( '/\[!(.)(.*)\]/', $matches[1], $_match );
+
+                $_class = "legend1";    // Class
+                //echo "<pre>".var_export($_match, TRUE). "</pre>";
+                switch ( $_match[1] ) { // Check special legends
+                case '$':    //'IMPORTANT':
+                        $matches[1] = "&#9888; "     . $_match[2] ; 
+                        $_class .= " legendimportant"; 
+                    break;
+                case '#':    //'NOTE':
+                        $matches[1] = "&#9432; "     . $_match[2] ; 
+                        $_class .= " legendnote"; 
+                    break;
+                case '?':    //'TIP':
+                        $matches[1] = "&#x1f4a1; "   . $_match[2] ; 
+                        $_class .= " legendtip"; 
+                    break;
+                case '!':    //'WARNING':
+                        $matches[1] = "&#x2620;  "    . $_match[2] ; 
+                        $_class .= " legendwarning"; 
+                    break;
+                default:
+                    $matches[1] = $_match[1] . $_match[2] ;
+                
+                }
+                $matches[1] = "<fieldset class='legend1'><legend class='${_class}'>". $matches[1] ."</legend>";
+            }
+            // <<< Note block header
+
             $Block = array(
                 'element' => array(
-                    'name' => 'blockquote',
+                    //'name' => 'blockquote',
+                    'name' => $_type,   // Variable type: fieldset or blockquote (default)
                     'handler' => array(
                         'function' => 'linesElements',
                         'argument' => (array) $matches[1],
@@ -768,6 +850,15 @@ class Parsedown
     {
         if (isset($Block['interrupted']))
         {
+            // >>> Note block footer
+            global $_in_fieldset;
+            if ( $_in_fieldset ) {
+                $Line['text']   = "</fieldset>\n" . $Line['text'];
+                 $_in_fieldset  = false;
+                
+            }
+            // <<< Note block footer <<<
+
             return;
         }
 
