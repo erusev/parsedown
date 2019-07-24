@@ -20,8 +20,7 @@ use Erusev\Parsedown\Configurable;
 
 final class InlineTypes implements Configurable
 {
-    /** @var array<array-key, array<int, class-string<Inline>>> */
-    private static $defaultInlineTypes = [
+    private const DEFAULT_INLINE_TYPES = [
         '!' => [Image::class],
         '*' => [Emphasis::class],
         '_' => [Emphasis::class],
@@ -53,7 +52,7 @@ final class InlineTypes implements Configurable
     /** @return self */
     public static function initial()
     {
-        return new self(self::$defaultInlineTypes);
+        return new self(self::DEFAULT_INLINE_TYPES);
     }
 
     /**

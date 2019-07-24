@@ -21,14 +21,12 @@ final class Emphasis implements Inline
     /** @var 'em'|'strong' */
     private $type;
 
-    /** @var array{*: string, _: string} */
-    private static $STRONG_REGEX = [
+    private const STRONG_REGEX = [
         '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*+[*])+?)[*]{2}(?![*])/s',
         '_' => '/^__((?:\\\\_|[^_]|_[^_]*+_)+?)__(?!_)/us',
     ];
 
-    /** @var array{*: string, _: string} */
-    private static $EM_REGEX = [
+    private const EM_REGEX = [
         '*' => '/^[*]((?:\\\\\*|[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
         '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
     ];
@@ -58,9 +56,9 @@ final class Emphasis implements Inline
             return null;
         }
 
-        if (\preg_match(self::$STRONG_REGEX[$marker], $Excerpt->text(), $matches)) {
+        if (\preg_match(self::STRONG_REGEX[$marker], $Excerpt->text(), $matches)) {
             $emphasis = 'strong';
-        } elseif (\preg_match(self::$EM_REGEX[$marker], $Excerpt->text(), $matches)) {
+        } elseif (\preg_match(self::EM_REGEX[$marker], $Excerpt->text(), $matches)) {
             $emphasis = 'em';
         } else {
             return null;

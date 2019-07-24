@@ -17,8 +17,7 @@ use Erusev\Parsedown\Configurable;
 
 final class BlockTypes implements Configurable
 {
-    /** @var array<array-key, array<int, class-string<Block>>> */
-    private static $defaultBlockTypes = [
+    private const DEFAULT_BLOCK_TYPES = [
         '#' => [Header::class],
         '*' => [Rule::class, TList::class],
         '+' => [TList::class],
@@ -44,8 +43,7 @@ final class BlockTypes implements Configurable
         '~' => [FencedCode::class],
     ];
 
-    /** @var array<int, class-string<Block>> */
-    private static $defaultUnmarkedBlockTypes = [
+    private const DEFAULT_UNMARKED_BLOCK_TYPES = [
         IndentedCode::class,
     ];
 
@@ -69,8 +67,8 @@ final class BlockTypes implements Configurable
     public static function initial()
     {
         return new self(
-            self::$defaultBlockTypes,
-            self::$defaultUnmarkedBlockTypes
+            self::DEFAULT_BLOCK_TYPES,
+            self::DEFAULT_UNMARKED_BLOCK_TYPES
         );
     }
 

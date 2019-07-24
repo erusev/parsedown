@@ -28,7 +28,7 @@ class CommonMarkTestWeak extends CommonMarkTestStrict
      */
     public function __construct($name = null, array $data = [], $dataName = '')
     {
-        $textLevelElements = \array_keys(Element::$TEXT_LEVEL_ELEMENTS);
+        $textLevelElements = \array_keys(Element::TEXT_LEVEL_ELEMENTS);
 
         \array_walk(
             $textLevelElements,

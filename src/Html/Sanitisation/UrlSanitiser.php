@@ -4,8 +4,7 @@ namespace Erusev\Parsedown\Html\Sanitisation;
 
 final class UrlSanitiser
 {
-    /** @var string[] */
-    private static $COMMON_SCHEMES = [
+    private const COMMON_SCHEMES = [
         'http://',
         'https://',
         'ftp://',
@@ -33,7 +32,7 @@ final class UrlSanitiser
     public static function filter($url, $permittedSchemes = null)
     {
         if (! isset($permittedSchemes)) {
-            $permittedSchemes = self::$COMMON_SCHEMES;
+            $permittedSchemes = self::COMMON_SCHEMES;
         }
 
         foreach ($permittedSchemes as $scheme) {

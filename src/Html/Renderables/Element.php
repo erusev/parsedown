@@ -10,8 +10,7 @@ final class Element implements Renderable
 {
     use CanonicalStateRenderable;
 
-    /** @var array<string, true> */
-    public static $TEXT_LEVEL_ELEMENTS = [
+    const TEXT_LEVEL_ELEMENTS = [
         'a' => true,
         'b' => true,
         'i' => true,
@@ -167,7 +166,7 @@ final class Element implements Renderable
                 foreach ($this->Contents as $C) {
                     if (
                         $C instanceof Element
-                        && ! \array_key_exists(\strtolower($C->name()), self::$TEXT_LEVEL_ELEMENTS)
+                        && ! \array_key_exists(\strtolower($C->name()), self::TEXT_LEVEL_ELEMENTS)
                     ) {
                         $html .= "\n";
                     }
@@ -179,7 +178,7 @@ final class Element implements Renderable
 
                 if (
                     $Last instanceof Element
-                    && ! \array_key_exists(\strtolower($Last->name()), self::$TEXT_LEVEL_ELEMENTS)
+                    && ! \array_key_exists(\strtolower($Last->name()), self::TEXT_LEVEL_ELEMENTS)
                 ) {
                     $html .= "\n";
                 }
