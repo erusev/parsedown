@@ -53,7 +53,7 @@ final class Parsedown
     }
 
     /**
-     * @return array{0: StateRenderable[], 1: State}
+     * @return array{StateRenderable[], State}
      */
     public static function lines(Lines $Lines, State $State)
     {
@@ -79,7 +79,7 @@ final class Parsedown
     }
 
     /**
-     * @return array{0: Block[], 1: State}
+     * @return array{Block[], State}
      */
     public static function blocks(Lines $Lines, State $State)
     {

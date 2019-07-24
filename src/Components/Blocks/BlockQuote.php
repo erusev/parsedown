@@ -93,7 +93,7 @@ final class BlockQuote implements ContinuableBlock
     }
 
     /**
-     * @return array{0: Block[], 1: State}
+     * @return array{Block[], State}
      */
     public function contents(State $State)
     {

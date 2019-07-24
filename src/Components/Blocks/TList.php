@@ -273,12 +273,12 @@ final class TList implements ContinuableBlock
     }
 
     /**
-     * @return array{0: Block[], 1: State}[]
+     * @return array{Block[], State}[]
      */
     public function items(State $State)
     {
         return \array_map(
-            /** @return array{0: Block[], 1: State} */
+            /** @return array{Block[], State} */
             function (Lines $Lines) use ($State) {
                 return Parsedown::blocks($Lines, $State);
             },
@@ -317,7 +317,7 @@ final class TList implements ContinuableBlock
                     ),
                     \array_map(
                         /**
-                         * @param array{0: Block[], 1: State} $Item
+                         * @param array{Block[], State} $Item
                          * @return Element
                          * */
                         function ($Item) {
