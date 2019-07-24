@@ -15,18 +15,81 @@ use Erusev\Parsedown\State;
 
 final class Markup implements ContinuableBlock
 {
-    const REGEX_HTML_ATTRIBUTE = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
+    private const REGEX_HTML_ATTRIBUTE = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
 
-    /** @var array{2: string, 3: string, 4: string, 5: string} */
-    private static $simpleContainsEndConditions = [
+    private const BLOCK_ELEMENTS = [
+        'address' => true,
+        'article' => true,
+        'aside' => true,
+        'base' => true,
+        'basefont' => true,
+        'blockquote' => true,
+        'body' => true,
+        'caption' => true,
+        'center' => true,
+        'col' => true,
+        'colgroup' => true,
+        'dd' => true,
+        'details' => true,
+        'dialog' => true,
+        'dir' => true,
+        'div' => true,
+        'dl' => true,
+        'dt' => true,
+        'fieldset' => true,
+        'figcaption' => true,
+        'figure' => true,
+        'footer' => true,
+        'form' => true,
+        'frame' => true,
+        'frameset' => true,
+        'h1' => true,
+        'h2' => true,
+        'h3' => true,
+        'h4' => true,
+        'h5' => true,
+        'h6' => true,
+        'head' => true,
+        'header' => true,
+        'hr' => true,
+        'html' => true,
+        'iframe' => true,
+        'legend' => true,
+        'li' => true,
+        'link' => true,
+        'main' => true,
+        'menu' => true,
+        'menuitem' => true,
+        'nav' => true,
+        'noframes' => true,
+        'ol' => true,
+        'optgroup' => true,
+        'option' => true,
+        'p' => true,
+        'param' => true,
+        'section' => true,
+        'source' => true,
+        'summary' => true,
+        'table' => true,
+        'tbody' => true,
+        'td' => true,
+        'tfoot' => true,
+        'th' => true,
+        'thead' => true,
+        'title' => true,
+        'tr' => true,
+        'track' => true,
+        'ul' => true,
+    ];
+
+    private const SIMPLE_CONTAINS_END_CONDITIONS = [
         2 => '-->',
         3 => '?>',
         4 => '>',
-        5 => ']]>'
+        5 => ']]>',
     ];
 
-    /** @var array<string, string> */
-    private static $specialHtmlBlockTags = [
+    private const SPECIAL_HTML_BLOCK_TAGS = [
         'script' => true,
         'style' => true,
         'pre' => true,
@@ -87,17 +150,36 @@ final class Markup implements ContinuableBlock
             return new self($rawLine, 5, self::closes12345TypeMarkup(5, $text));
         }
 
-        if (\preg_match('/^<[\/]?+(\w++)(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*+[ ]*+(\/)?>/', $text, $matches)) {
-            $element = \strtolower($matches[1]);
+        if (\preg_match('/^<([\/]?+)(\w++)(.*+)$/', $text, $matches)) {
+            $isClosing = ($matches[1] === '/');
+            $element = \strtolower($matches[2]);
+            $tail = $matches[3];
 
-            if (
-                \array_key_exists($element, Element::$TEXT_LEVEL_ELEMENTS)
-                || \array_key_exists($element, self::$specialHtmlBlockTags)
+            if (\array_key_exists($element, self::BLOCK_ELEMENTS)
+                && \preg_match('/^(?:\s|$|>|\/)/', $tail)
             ) {
-                return null;
+                return new self($rawLine, 6);
             }
 
-            return new self($rawLine, 6);
+            if (! $isClosing && \preg_match(
+                '/^(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*(?:[ ]*+)[\/]?+[>](.*+)$/',
+                $tail,
+                $matches
+                ) || $isClosing && \preg_match(
+                    '/^(?:[ ]*+)[\/]?+[>](.*+)$/',
+                    $tail,
+                    $matches
+                )
+            ) {
+                $tail = $matches[1];
+
+                if (! \array_key_exists($element, self::SPECIAL_HTML_BLOCK_TAGS)
+                    && ! (isset($Block) && $Block instanceof Paragraph && $Context->previousEmptyLines() < 1)
+                    && \preg_match('/^\s*+$/', $tail)
+                ) {
+                    return new self($rawLine, 7);
+                }
+            }
         }
 
         return null;
@@ -142,7 +224,7 @@ final class Markup implements ContinuableBlock
             if (\preg_match('/<\/(?:script|pre|style)>/i', $text)) {
                 return true;
             }
-        } elseif (\stripos($text, self::$simpleContainsEndConditions[$type]) !== false) {
+        } elseif (\stripos($text, self::SIMPLE_CONTAINS_END_CONDITIONS[$type]) !== false) {
             return true;
         }
 
