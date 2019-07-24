@@ -1,1 +1,2 @@
-<div><a href="bar">*foo*</a></div>
+<div *???-&&&-<---
+*foo*

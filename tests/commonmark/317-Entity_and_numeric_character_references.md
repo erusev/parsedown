@@ -1,1 +1,1 @@
-`f&ouml;&ouml;`
+<a href="&ouml;&ouml;.html">

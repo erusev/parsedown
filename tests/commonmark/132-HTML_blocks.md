@@ -1,3 +1,3 @@
-<Warning>
+<a href="foo">
 *bar*
-</Warning>
+</a>
