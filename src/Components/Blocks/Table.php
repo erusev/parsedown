@@ -18,9 +18,6 @@ use Erusev\Parsedown\State;
  */
 final class Table implements AcquisitioningBlock, ContinuableBlock
 {
-    /** @var bool */
-    private $acquired;
-
     /** @var array<int, _Alignment|null> */
     private $alignments;
 
@@ -34,14 +31,12 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
      * @param array<int, _Alignment|null> $alignments
      * @param array<int, string> $headerCells
      * @param array<int, array<int, string>> $rows
-     * @param bool $acquired
      */
-    private function __construct($alignments, $headerCells, $rows, $acquired = false)
+    private function __construct($alignments, $headerCells, $rows)
     {
         $this->alignments = $alignments;
         $this->headerCells = $headerCells;
         $this->rows = $rows;
-        $this->acquired = $acquired;
     }
 
     /**
@@ -91,7 +86,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
 
         # ~
 
-        return new self($alignments, $headerCells, [], true);
+        return new self($alignments, $headerCells, []);
     }
 
     /**
