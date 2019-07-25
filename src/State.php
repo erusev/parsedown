@@ -50,21 +50,18 @@ final class State implements StateBearer
 
     /**
      * @template T as Configurable
-     * @template-typeof T $configurableClass
-     * @param class-string<Configurable> $configurableClass
+     * @template-typeof T $className
+     * @param class-string<T> $className
      * @return T
      */
-    public function get($configurableClass)
+    public function get($className)
     {
-        if (isset($this->state[$configurableClass])) {
-            return $this->state[$configurableClass];
-        }
-
-        if (! isset(self::$initialCache[$configurableClass])) {
-            self::$initialCache[$configurableClass] = $configurableClass::initial();
-        }
-
-        return self::$initialCache[$configurableClass];
+        /** @var T */
+        return (
+            $this->state[$className]
+            ?? self::$initialCache[$className]
+            ?? self::$initialCache[$className] = $className::initial()
+        );
     }
 
     public function __clone()
