@@ -44,6 +44,8 @@ jobs:
       php: 7.3
     - <<: *MUTATION_AND_UNIT_TEST
       php: 7.4snapshot
+      # 7.4snapshot doesn't ship with xdebug yet
+      script: composer test-units
 
     - <<: *MUTATION_AND_UNIT_TEST
       php: nightly
