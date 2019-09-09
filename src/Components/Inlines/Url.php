@@ -44,6 +44,7 @@ final class Url implements BacktrackingInline
             $matches,
             \PREG_OFFSET_CAPTURE
         )) {
+            /** @var array{0: array{string, int}} $matches */
             return new self($matches[0][0], \intval($matches[0][1]));
         }
 
