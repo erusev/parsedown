@@ -24,7 +24,7 @@ final class State implements StateBearer
     {
         $this->state = \array_combine(
             \array_map(
-                /** @return class-string */
+                /** @return class-string<Configurable> */
                 function (Configurable $C) { return \get_class($C); },
                 $Configurables
             ),
