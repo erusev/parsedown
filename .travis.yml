@@ -37,10 +37,14 @@ jobs:
       script:
         - composer test-units
         - vendor/bin/infection --show-mutations --threads=4 --min-msi=90 --min-covered-msi=90
+
     - <<: *MUTATION_AND_UNIT_TEST
       php: 7.2
     - <<: *MUTATION_AND_UNIT_TEST
       php: 7.3
+    - <<: *MUTATION_AND_UNIT_TEST
+      php: 7.4snapshot
+
     - <<: *MUTATION_AND_UNIT_TEST
       php: nightly
       env: ALLOW_FAILURE
