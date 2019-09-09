@@ -161,10 +161,11 @@ final class Markup implements ContinuableBlock
                 return new self($rawLine, 6);
             }
 
-            if (! $isClosing && \preg_match(
-                '/^(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*(?:[ ]*+)[\/]?+[>](.*+)$/',
-                $tail,
-                $matches
+            if (
+                ! $isClosing && \preg_match(
+                    '/^(?:[ ]*+'.self::REGEX_HTML_ATTRIBUTE.')*(?:[ ]*+)[\/]?+[>](.*+)$/',
+                    $tail,
+                    $matches
                 ) || $isClosing && \preg_match(
                     '/^(?:[ ]*+)[\/]?+[>](.*+)$/',
                     $tail,
