@@ -363,12 +363,6 @@ class Parsedown
                     'element' => array(
                         'name' => 'code',
                         'text' => $text,
-                        'attributes' => array(
-                            'class' => '',# class name
-                        )
-                    ),
-                    'attributes' => array(
-                        'class' => '',# class name
                     ),
                 ),
             );
@@ -499,9 +493,6 @@ class Parsedown
             'element' => array(
                 'name' => 'pre',
                 'element' => $Element,
-                'attributes' => array(
-                    'class' => '',# class name
-                )
             ),
         );
 
@@ -547,6 +538,7 @@ class Parsedown
 
     protected function blockHeader($Line)
     {
+        static $sort = 1;
         $level = strspn($Line['text'], '#');
 
         if ($level > 6)
@@ -572,10 +564,11 @@ class Parsedown
                     'destination' => 'elements',
                 ),
                 'attributes' => array(
-                    'class' => '',# class name
+                    'data-id' => 'heading-'.$sort,
                 ),
             ),
         );
+        $sort++;
 
         return $Block;
     }
@@ -693,10 +686,7 @@ class Parsedown
                     'function' => 'li',
                     'argument' => array($text),
                     'destination' => 'elements'
-                ),
-                'attributes' => array(
-                    'class' => '',# class name
-                ),
+                )
             );
 
             $Block['element']['elements'] []= & $Block['li'];
@@ -771,10 +761,7 @@ class Parsedown
                         'function' => 'linesElements',
                         'argument' => (array) $matches[1],
                         'destination' => 'elements',
-                    ),
-                    'attributes' => array(
-                        'class' => '',# class name
-                    ),
+                    )
                 ),
             );
 
@@ -816,9 +803,6 @@ class Parsedown
             $Block = array(
                 'element' => array(
                     'name' => 'hr',
-                    'attributes' => array(
-                        'class' => '',# class name
-                    ),
                 ),
             );
 
@@ -868,9 +852,6 @@ class Parsedown
                 'element' => array(
                     'rawHtml' => $Line['text'],
                     'autobreak' => true,
-                    'attributes' => array(
-                        'class' => '',# class name
-                    ),
                 ),
             );
 
@@ -908,11 +889,7 @@ class Parsedown
             $this->DefinitionData['Reference'][$id] = $Data;
 
             $Block = array(
-                'element' => array(
-                    'attributes' => array(
-                        'class' => '',# class name
-                    ),
-                ),
+                'element' => array(),
             );
 
             return $Block;
@@ -1002,7 +979,7 @@ class Parsedown
                     'function' => 'lineElements',
                     'argument' => $headerCell,
                     'destination' => 'elements',
-                ),
+                )
             );
 
             if (isset($alignments[$index]))
@@ -1025,9 +1002,6 @@ class Parsedown
             'element' => array(
                 'name' => 'table',
                 'elements' => array(),
-                'attributes' => array(
-                    'class' => '',# class name
-                ),
             ),
         );
 
@@ -1116,9 +1090,6 @@ class Parsedown
                     'function' => 'lineElements',
                     'argument' => $Line['text'],
                     'destination' => 'elements',
-                ),
-                'attributes' => array(
-                    'class' => '',# class name
                 ),
             ),
         );
@@ -1303,9 +1274,6 @@ class Parsedown
                 'element' => array(
                     'name' => 'code',
                     'text' => $text,
-                    'attributes' => array(
-                        'class' => '',# class name
-                    ),
                 ),
             );
         }
@@ -1335,7 +1303,6 @@ class Parsedown
                     'text' => $matches[1],
                     'attributes' => array(
                         'href' => $url,
-                        'class' => '',# class name
                     ),
                 ),
             );
@@ -1372,8 +1339,7 @@ class Parsedown
                     'function' => 'lineElements',
                     'argument' => $matches[1],
                     'destination' => 'elements',
-                ),
-                'class' => '',# class name
+                )
             ),
         );
     }
@@ -1412,7 +1378,6 @@ class Parsedown
                 'attributes' => array(
                     'src' => $Link['element']['attributes']['href'],
                     'alt' => $Link['element']['handler']['argument'],
-                    'class' => '',# class name
                 ),
                 'autobreak' => true,
             ),
@@ -1438,7 +1403,6 @@ class Parsedown
             'attributes' => array(
                 'href' => null,
                 'title' => null,
-                'class' => '',# class name
             ),
         );
 
@@ -1590,7 +1554,6 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
-                        'class' => '',# class name
                     ),
                 ),
             );
@@ -1612,7 +1575,6 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
-                        'class' => '',# class name
                     ),
                 ),
             );
