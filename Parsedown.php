@@ -574,7 +574,7 @@ class Parsedown
 
         if(isset($anchor))
         {
-            $Block['element']['attributes']['id'] = $anchor;
+            $Block['element']['attributes']['id'] = '#'.$anchor;
         }
 
         return $Block;
