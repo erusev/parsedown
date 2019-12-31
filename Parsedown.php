@@ -101,6 +101,24 @@ class Parsedown
         'steam:',
     );
 
+    function setDisabledBlockTypes($disabledBlockTypes)
+    {
+        $this->disabledBlockTypes = $disabledBlockTypes;
+
+        return $this;
+    }
+
+    protected $disabledBlockTypes = false;
+
+    function setDisabledInlineTypes($disabledInlineTypes)
+    {
+        $this->disabledInlineTypes = $disabledInlineTypes;
+
+        return $this;
+    }
+
+    protected $disabledInlineTypes = false;
+
     #
     # Lines
     #
@@ -220,6 +238,11 @@ class Parsedown
             {
                 foreach ($this->BlockTypes[$marker] as $blockType)
                 {
+                    if ($this->disabledBlockTypes && in_array($blockType, $this->disabledBlockTypes))
+                    {
+                        continue;
+                    }
+
                     $blockTypes []= $blockType;
                 }
             }
@@ -1067,6 +1090,11 @@ class Parsedown
 
             foreach ($this->InlineTypes[$marker] as $inlineType)
             {
+                if ($this->disabledInlineTypes && in_array($inlineType, $this->disabledInlineTypes))
+                {
+                    continue;
+                }
+
                 # check to see if the current inline type is nestable in the current context
 
                 if ( ! empty($nonNestables) and in_array($inlineType, $nonNestables))
