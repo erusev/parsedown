@@ -134,7 +134,7 @@ final class TList implements ContinuableBlock
                     $listStart !== 1
                     && isset($Block)
                     && $Block instanceof Paragraph
-                    && ! $Context->previousEmptyLines() > 0
+                    && ! $Context->precedingEmptyLines() > 0
                 ) {
                     return null;
                 }
@@ -161,11 +161,11 @@ final class TList implements ContinuableBlock
      */
     public function advance(Context $Context, State $State)
     {
-        if ($Context->previousEmptyLines() > 0 && \end($this->Lis)->isEmpty()) {
+        if ($Context->precedingEmptyLines() > 0 && \end($this->Lis)->isEmpty()) {
             return null;
         }
 
-        $newlines = \str_repeat("\n", $Context->previousEmptyLines());
+        $newlines = \str_repeat("\n", $Context->precedingEmptyLines());
 
         $requiredIndent = $this->indent + \strlen($this->marker) + $this->afterMarkerSpaces;
         $isLoose = $this->isLoose;
@@ -182,7 +182,7 @@ final class TList implements ContinuableBlock
         if ($Context->line()->indent() < $requiredIndent
             && \preg_match($regex, $Context->line()->text(), $matches)
         ) {
-            if ($Context->previousEmptyLines() > 0) {
+            if ($Context->precedingEmptyLines() > 0) {
                 $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingBlankLines(1);
 
                 $isLoose = true;
@@ -224,8 +224,8 @@ final class TList implements ContinuableBlock
         }
 
         if ($Context->line()->indent() >= $requiredIndent) {
-            if ($Context->previousEmptyLines() > 0) {
-                $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingBlankLines($Context->previousEmptyLines());
+            if ($Context->precedingEmptyLines() > 0) {
+                $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingBlankLines($Context->precedingEmptyLines());
 
                 $isLoose = true;
             }
@@ -248,7 +248,7 @@ final class TList implements ContinuableBlock
             );
         }
 
-        if (! $Context->previousEmptyLines() > 0) {
+        if (! $Context->precedingEmptyLines() > 0) {
             $text = $Context->line()->ltrimBodyUpto($requiredIndent);
 
             $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingTextLines(

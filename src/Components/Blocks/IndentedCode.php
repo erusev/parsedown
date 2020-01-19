@@ -35,7 +35,7 @@ final class IndentedCode implements ContinuableBlock
         State $State,
         Block $Block = null
     ) {
-        if (isset($Block) && $Block instanceof Paragraph && ! $Context->previousEmptyLines() > 0) {
+        if (isset($Block) && $Block instanceof Paragraph && ! $Context->precedingEmptyLines() > 0) {
             return null;
         }
 
@@ -61,8 +61,8 @@ final class IndentedCode implements ContinuableBlock
 
         $offset = $Context->line()->indentOffset();
 
-        if ($Context->previousEmptyLines() > 0) {
-            foreach (\explode("\n", $Context->previousEmptyLinesText()) as $line) {
+        if ($Context->precedingEmptyLines() > 0) {
+            foreach (\explode("\n", $Context->precedingEmptyLinesText()) as $line) {
                 $newCode .= (new Line($line, $offset))->ltrimBodyUpto(4) . "\n";
             }
 

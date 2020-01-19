@@ -40,7 +40,7 @@ final class SetextHeader implements AcquisitioningBlock
         State $State,
         Block $Block = null
     ) {
-        if (! isset($Block) || ! $Block instanceof Paragraph || $Context->previousEmptyLines() > 0) {
+        if (! isset($Block) || ! $Block instanceof Paragraph || $Context->precedingEmptyLines() > 0) {
             return null;
         }
 

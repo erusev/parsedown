@@ -96,7 +96,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
      */
     public function advance(Context $Context, State $State)
     {
-        if ($Context->previousEmptyLines() > 0) {
+        if ($Context->precedingEmptyLines() > 0) {
             return null;
         }
 

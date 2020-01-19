@@ -30,7 +30,7 @@ final class Lines
 
         if (! $containsBlankLines) {
             foreach ($Contexts as $Context) {
-                if ($Context->previousEmptyLines() > 0) {
+                if ($Context->precedingEmptyLines() > 0) {
                     $containsBlankLines = true;
                     break;
                 }
@@ -140,7 +140,7 @@ final class Lines
 
         $NextLines->Contexts[0] = new Context(
             $NextLines->Contexts[0]->line(),
-            $NextLines->Contexts[0]->previousEmptyLinesText() . $Lines->trailingBlankLinesText
+            $NextLines->Contexts[0]->precedingEmptyLinesText() . $Lines->trailingBlankLinesText
         );
 
         $Lines->Contexts = \array_merge($Lines->Contexts, $NextLines->Contexts);
@@ -162,10 +162,10 @@ final class Lines
 
         $Context = new Context(
             $Context->line(),
-            $Context->previousEmptyLinesText() . $Lines->trailingBlankLinesText
+            $Context->precedingEmptyLinesText() . $Lines->trailingBlankLinesText
         );
 
-        if ($Context->previousEmptyLines() > 0) {
+        if ($Context->precedingEmptyLines() > 0) {
             $Lines->containsBlankLines = true;
         }
 

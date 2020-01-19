@@ -175,7 +175,7 @@ final class Markup implements ContinuableBlock
                 $tail = $matches[1];
 
                 if (! \array_key_exists($element, self::SPECIAL_HTML_BLOCK_TAGS)
-                    && ! (isset($Block) && $Block instanceof Paragraph && $Context->previousEmptyLines() < 1)
+                    && ! (isset($Block) && $Block instanceof Paragraph && $Context->precedingEmptyLines() < 1)
                     && \preg_match('/^\s*+$/', $tail)
                 ) {
                     return new self($rawLine, 7);
@@ -200,7 +200,7 @@ final class Markup implements ContinuableBlock
             return null;
         }
 
-        if (($type === 6 || $type === 7) && $Context->previousEmptyLines() > 0) {
+        if (($type === 6 || $type === 7) && $Context->precedingEmptyLines() > 0) {
             return null;
         }
 
@@ -208,7 +208,7 @@ final class Markup implements ContinuableBlock
             $closed = self::closes12345TypeMarkup($type, $Context->line()->text());
         }
 
-        $html = $this->html . \str_repeat("\n", $Context->previousEmptyLines() + 1);
+        $html = $this->html . \str_repeat("\n", $Context->precedingEmptyLines() + 1);
         $html .= $Context->line()->rawLine();
 
         return new self($html, $type, $closed);

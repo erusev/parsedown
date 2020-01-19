@@ -8,20 +8,20 @@ final class Context
     private $Line;
 
     /** @var int|null */
-    private $previousEmptyLines;
+    private $precedingEmptyLines;
 
     /** @var string */
-    private $previousEmptyLinesText;
+    private $precedingEmptyLinesText;
 
     /**
      * @param Line $Line
-     * @param string $previousEmptyLinesText
+     * @param string $precedingEmptyLinesText
      */
-    public function __construct($Line, $previousEmptyLinesText)
+    public function __construct($Line, $precedingEmptyLinesText)
     {
         $this->Line = $Line;
-        $this->previousEmptyLinesText = $previousEmptyLinesText;
-        $this->previousEmptyLines = null;
+        $this->precedingEmptyLinesText = $precedingEmptyLinesText;
+        $this->precedingEmptyLines = null;
     }
 
     /** @return Line */
@@ -31,18 +31,18 @@ final class Context
     }
 
     /** @return int */
-    public function previousEmptyLines()
+    public function precedingEmptyLines()
     {
-        if (! isset($this->previousEmptyLines)) {
-            $this->previousEmptyLines = \substr_count($this->previousEmptyLinesText, "\n");
+        if (! isset($this->precedingEmptyLines)) {
+            $this->precedingEmptyLines = \substr_count($this->precedingEmptyLinesText, "\n");
         }
 
-        return $this->previousEmptyLines;
+        return $this->precedingEmptyLines;
     }
 
     /** @return string */
-    public function previousEmptyLinesText()
+    public function precedingEmptyLinesText()
     {
-        return $this->previousEmptyLinesText;
+        return $this->precedingEmptyLinesText;
     }
 }
