@@ -59,7 +59,7 @@ class CommonMarkTestWeak extends CommonMarkTestStrict
     {
         $expectedHtml = $this->cleanupHtml($expectedHtml);
 
-        $actualHtml = $this->Parsedown->text($markdown);
+        $actualHtml = $this->Parsedown->toHtml($markdown);
         $actualHtml = $this->cleanupHtml($actualHtml);
 
         $this->assertEquals($expectedHtml, $actualHtml);

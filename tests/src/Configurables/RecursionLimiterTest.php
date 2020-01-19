@@ -30,7 +30,7 @@ final class RecursionLimiterTest extends TestCase
                 . '<p>foo</p>'
                 . \str_repeat("\n</blockquote>", 3)
             ),
-            $Parsedown->text($borderline)
+            $Parsedown->toHtml($borderline)
         );
 
         $this->assertSame(
@@ -39,7 +39,7 @@ final class RecursionLimiterTest extends TestCase
                 . '<p>&gt; foo</p>'
                 . \str_repeat("\n</blockquote>", 3)
             ),
-            $Parsedown->text($exceeded)
+            $Parsedown->toHtml($exceeded)
         );
 
         $this->assertSame(
@@ -48,7 +48,7 @@ final class RecursionLimiterTest extends TestCase
                 . '<p>fo*o*</p>'
                 . \str_repeat("\n</blockquote>", 3)
             ),
-            $Parsedown->text($exceededByInline)
+            $Parsedown->toHtml($exceededByInline)
         );
     }
 }

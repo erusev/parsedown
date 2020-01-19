@@ -50,7 +50,7 @@ class CommonMarkTestStrict extends TestCase
      */
     public function testExample($_, $__, $markdown, $expectedHtml)
     {
-        $actualHtml = $this->Parsedown->text($markdown);
+        $actualHtml = $this->Parsedown->toHtml($markdown);
         $this->assertEquals($expectedHtml, $actualHtml);
     }
 

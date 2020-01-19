@@ -61,7 +61,7 @@ class ParsedownTest extends TestCase
             new Breaks(\substr($test, 0, 14) === 'breaks_enabled'),
         ]));
 
-        $actualMarkup = $Parsedown->text($markdown);
+        $actualMarkup = $Parsedown->toHtml($markdown);
 
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
@@ -154,6 +154,6 @@ EXPECTED_HTML;
             InlineTypes::initial()->removing([InlineMarkup::class]),
         ]));
 
-        $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->text($markdownWithHtml));
+        $this->assertEquals($expectedHtml, $parsedownWithNoMarkup->toHtml($markdownWithHtml));
     }
 }

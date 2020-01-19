@@ -35,13 +35,13 @@ final class Parsedown
     }
 
     /**
-     * @param string $text
+     * @param string $markdown
      * @return string
      */
-    public function text($text)
+    public function toHtml($markdown)
     {
         list($StateRenderables, $State) = self::lines(
-            Lines::fromTextLines($text, 0),
+            Lines::fromTextLines($markdown, 0),
             $this->State
         );
 
