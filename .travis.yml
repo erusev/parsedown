@@ -20,7 +20,7 @@ cache:
 jobs:
   include:
     - stage: Code Format and Static Analysis
-      php: 7.3
+      php: 7.4
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
@@ -43,9 +43,7 @@ jobs:
     - <<: *MUTATION_AND_UNIT_TEST
       php: 7.3
     - <<: *MUTATION_AND_UNIT_TEST
-      php: 7.4snapshot
-      # 7.4snapshot doesn't ship with xdebug yet
-      script: composer test-units
+      php: 7.4
 
     - <<: *MUTATION_AND_UNIT_TEST
       php: nightly
@@ -56,7 +54,7 @@ jobs:
     - &COMMONMARK_TEST
       stage: CommonMark
       name: Weak
-      php: 7.3
+      php: 7.4
       env: ALLOW_FAILURE
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
