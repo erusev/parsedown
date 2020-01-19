@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="vendor/autoload.php" colors="true">
 	<testsuites>
-		<testsuite>
-			<file>test/ParsedownTest.php</file>
+		<testsuite name="ParsedownTests">
+			<file>tests/ParsedownTest.php</file>
+			<file>tests/CommonMarkTest.php</file>
+			<directory suffix="Test.php">./tests/src</directory>
 		</testsuite>
 	</testsuites>
+	<groups>
+		<exclude>
+			<group>update</group>
+		</exclude>
+	</groups>
 </phpunit>

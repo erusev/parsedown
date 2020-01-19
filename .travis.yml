@@ -3,26 +3,64 @@ language: php
 dist: trusty
 sudo: false
 
-matrix:
-  include:
-    - php: 5.3
-      dist: precise
-    - php: 5.4
-    - php: 5.5
-    - php: 5.6
-    - php: 7.0
-    - php: 7.1
-    - php: 7.2
-    - php: 7.3
-    - php: nightly
+stages:
+  - Code Format and Static Analysis
+  - Units
+  - Test CommonMark (weak)
+
+matrix:    
   fast_finish: true
   allow_failures:
-    - php: nightly
+    - env: ALLOW_FAILURE
 
-install:
-  - composer install --prefer-dist --no-interaction --no-progress
+cache:
+  directories:
+    - $HOME/.composer/cache
 
-script:
-  - vendor/bin/phpunit
-  - vendor/bin/phpunit test/CommonMarkTestWeak.php || true
-  - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"Parsedown.php\"); echo Parsedown::version;")" ]'
+jobs:
+  include:
+    - stage: Code Format and Static Analysis
+      php: 7.4
+      install: composer install --prefer-dist --no-interaction --no-progress
+      script:
+        - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
+        - composer test-static
+        - composer test-formatting
+        - composer test-dead-code
+
+
+    - &MUTATION_AND_UNIT_TEST
+      stage: Units
+      php: 7.1
+      install:
+        - composer install --prefer-dist --no-interaction --no-progress
+      script:
+        - composer test-units
+        - vendor/bin/infection --show-mutations --threads=4 --min-msi=90 --min-covered-msi=90
+
+    - <<: *MUTATION_AND_UNIT_TEST
+      php: 7.2
+    - <<: *MUTATION_AND_UNIT_TEST
+      php: 7.3
+    - <<: *MUTATION_AND_UNIT_TEST
+      php: 7.4
+
+    - <<: *MUTATION_AND_UNIT_TEST
+      php: nightly
+      env: ALLOW_FAILURE
+      script: composer test-units
+
+
+    - &COMMONMARK_TEST
+      stage: CommonMark
+      name: Weak
+      php: 7.4
+      env: ALLOW_FAILURE
+      install: composer install --prefer-dist --no-interaction --no-progress
+      script:
+        - composer test-commonmark-weak
+
+    - <<: *COMMONMARK_TEST
+      name: Strict
+      script:
+        - composer test-commonmark
