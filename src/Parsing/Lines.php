@@ -83,7 +83,7 @@ final class Lines
     }
 
     /** @return Context[] */
-    public function Contexts()
+    public function contexts()
     {
         return $this->Contexts;
     }
