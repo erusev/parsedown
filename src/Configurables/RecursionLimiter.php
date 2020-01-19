@@ -38,7 +38,7 @@ final class RecursionLimiter implements Configurable
     }
 
     /** @return self */
-    public function increment()
+    public function incremented()
     {
         return new self($this->maxDepth, $this->currentDepth + 1);
     }

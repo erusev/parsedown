@@ -83,7 +83,7 @@ final class Parsedown
      */
     public static function blocks(Lines $Lines, State $State)
     {
-        $RecursionLimiter = $State->get(RecursionLimiter::class)->increment();
+        $RecursionLimiter = $State->get(RecursionLimiter::class)->incremented();
 
         if ($RecursionLimiter->isDepthExceeded()) {
             $State = $State->setting(new BlockTypes([], []));
@@ -189,7 +189,7 @@ final class Parsedown
         # standardize line breaks
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
 
-        $RecursionLimiter = $State->get(RecursionLimiter::class)->increment();
+        $RecursionLimiter = $State->get(RecursionLimiter::class)->incremented();
 
         if ($RecursionLimiter->isDepthExceeded()) {
             return [Plaintext::build(new Excerpt($text, 0), $State)];
