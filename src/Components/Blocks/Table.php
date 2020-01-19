@@ -18,19 +18,19 @@ use Erusev\Parsedown\State;
  */
 final class Table implements AcquisitioningBlock, ContinuableBlock
 {
-    /** @var array<int, _Alignment|null> */
+    /** @var list<_Alignment|null> */
     private $alignments;
 
-    /** @var array<int, string> */
+    /** @var list<string> */
     private $headerCells;
 
-    /** @var array<int, array<int, string>> */
+    /** @var list<list<string>> */
     private $rows;
 
     /**
-     * @param array<int, _Alignment|null> $alignments
-     * @param array<int, string> $headerCells
-     * @param array<int, array<int, string>> $rows
+     * @param list<_Alignment|null> $alignments
+     * @param list<string> $headerCells
+     * @param list<list<string>> $rows
      */
     private function __construct($alignments, $headerCells, $rows)
     {
@@ -117,7 +117,10 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
             return null;
         }
 
-        $cells = \array_map('trim', \array_slice($matches[0], 0, \count($this->alignments)));
+        $cells = \array_values(\array_map(
+            'trim',
+            \array_slice($matches[0], 0, \count($this->alignments))
+        ));
 
         return new self(
             $this->alignments,
@@ -128,7 +131,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
 
     /**
      * @param string $dividerRow
-     * @return array<int, _Alignment|null>|null
+     * @return list<_Alignment|null>|null
      */
     private static function parseAlignments($dividerRow)
     {
@@ -137,7 +140,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
 
         $dividerCells = \explode('|', $dividerRow);
 
-        /** @var array<int, _Alignment|null> */
+        /** @var list<_Alignment|null> */
         $alignments = [];
 
         foreach ($dividerCells as $dividerCell) {
@@ -170,7 +173,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
         return true;
     }
 
-    /** @return array<int, Inline[]> */
+    /** @return list<Inline[]> */
     public function headerRow(State $State)
     {
         return \array_map(
@@ -185,13 +188,13 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
         );
     }
 
-    /** @return array<int, Inline[]>[] */
+    /** @return list<Inline[]>[] */
     public function rows(State $State)
     {
         return \array_map(
             /**
-             * @param array<int, string> $cells
-             * @return array<int, Inline[]>
+             * @param list<string> $cells
+             * @return list<Inline[]>
              */
             function ($cells) use ($State) {
                 return \array_map(
@@ -209,7 +212,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
         );
     }
 
-    /** @return array<int, _Alignment|null> */
+    /** @return list<_Alignment|null> */
     public function alignments()
     {
         return $this->alignments;

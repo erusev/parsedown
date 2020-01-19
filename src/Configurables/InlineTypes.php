@@ -34,14 +34,14 @@ final class InlineTypes implements Configurable
         "\n" => [HardBreak::class, SoftBreak::class],
     ];
 
-    /** @var array<array-key, array<int, class-string<Inline>>> */
+    /** @var array<array-key, list<class-string<Inline>>> */
     private $inlineTypes;
 
     /** @var string */
     private $inlineMarkers;
 
     /**
-     * @param array<array-key, array<int, class-string<Inline>>> $inlineTypes
+     * @param array<array-key, list<class-string<Inline>>> $inlineTypes
      */
     public function __construct(array $inlineTypes)
     {
@@ -57,7 +57,7 @@ final class InlineTypes implements Configurable
 
     /**
      * @param string $marker
-     * @param array<int, class-string<Inline>> $newInlineTypes
+     * @param list<class-string<Inline>> $newInlineTypes
      * @return self
      */
     public function setting($marker, array $newInlineTypes)
@@ -70,7 +70,7 @@ final class InlineTypes implements Configurable
 
     /**
      * @param string $marker
-     * @param array<int, class-string<Inline>> $newInlineTypes
+     * @param list<class-string<Inline>> $newInlineTypes
      * @return self
      */
     public function addingHighPrecedence($marker, array $newInlineTypes)
@@ -86,7 +86,7 @@ final class InlineTypes implements Configurable
 
     /**
      * @param string $marker
-     * @param array<int, class-string<Inline>> $newInlineTypes
+     * @param list<class-string<Inline>> $newInlineTypes
      * @return self
      */
     public function addingLowPrecedence($marker, array $newInlineTypes)
@@ -101,18 +101,18 @@ final class InlineTypes implements Configurable
     }
 
     /**
-     * @param array<int, class-string<Inline>> $removeInlineTypes
+     * @param list<class-string<Inline>> $removeInlineTypes
      * @return self
      */
     public function removing(array $removeInlineTypes)
     {
         return new self(\array_map(
             /**
-             * @param array<int, class-string<Inline>> $inlineTypes
-             * @return array<int, class-string<Inline>>
+             * @param list<class-string<Inline>> $inlineTypes
+             * @return list<class-string<Inline>>
              */
             function ($inlineTypes) use ($removeInlineTypes) {
-                return \array_diff($inlineTypes, $removeInlineTypes);
+                return \array_values(\array_diff($inlineTypes, $removeInlineTypes));
             },
             $this->inlineTypes
         ));
@@ -120,7 +120,7 @@ final class InlineTypes implements Configurable
 
     /**
      * @param string $marker
-     * @return array<int, class-string<Inline>>
+     * @return list<class-string<Inline>>
      */
     public function markedBy($marker)
     {

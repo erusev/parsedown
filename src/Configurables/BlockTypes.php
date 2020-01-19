@@ -47,15 +47,15 @@ final class BlockTypes implements Configurable
         IndentedCode::class,
     ];
 
-    /** @var array<array-key, array<int, class-string<Block>>> */
+    /** @var array<array-key, list<class-string<Block>>> */
     private $blockTypes;
 
-    /** @var array<int, class-string<Block>> */
+    /** @var list<class-string<Block>> */
     private $unmarkedBlockTypes;
 
     /**
-     * @param array<array-key, array<int, class-string<Block>>> $blockTypes
-     * @param array<int, class-string<Block>> $unmarkedBlockTypes
+     * @param array<array-key, list<class-string<Block>>> $blockTypes
+     * @param list<class-string<Block>> $unmarkedBlockTypes
      */
     public function __construct(array $blockTypes, array $unmarkedBlockTypes)
     {
@@ -74,7 +74,7 @@ final class BlockTypes implements Configurable
 
     /**
      * @param string $marker
-     * @param array<int, class-string<Block>> $newBlockTypes
+     * @param list<class-string<Block>> $newBlockTypes
      * @return self
      */
     public function settingMarked($marker, array $newBlockTypes)
@@ -87,7 +87,7 @@ final class BlockTypes implements Configurable
 
     /**
      * @param string $marker
-     * @param array<int, class-string<Block>> $newBlockTypes
+     * @param list<class-string<Block>> $newBlockTypes
      * @return self
      */
     public function addingMarkedHighPrecedence($marker, array $newBlockTypes)
@@ -103,7 +103,7 @@ final class BlockTypes implements Configurable
 
     /**
      * @param string $marker
-     * @param array<int, class-string<Block>> $newBlockTypes
+     * @param list<class-string<Block>> $newBlockTypes
      * @return self
      */
     public function addingMarkedLowPrecedence($marker, array $newBlockTypes)
@@ -118,7 +118,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @param array<int, class-string<Block>> $newUnmarkedBlockTypes
+     * @param list<class-string<Block>> $newUnmarkedBlockTypes
      * @return self
      */
     public function settingUnmarked(array $newUnmarkedBlockTypes)
@@ -127,7 +127,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @param array<int, class-string<Block>> $newBlockTypes
+     * @param list<class-string<Block>> $newBlockTypes
      * @return self
      */
     public function addingUnmarkedHighPrecedence(array $newBlockTypes)
@@ -138,7 +138,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @param array<int, class-string<Block>> $newBlockTypes
+     * @param list<class-string<Block>> $newBlockTypes
      * @return self
      */
     public function addingUnmarkedLowPrecedence(array $newBlockTypes)
@@ -149,7 +149,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @param array<int, class-string<Block>> $removeBlockTypes
+     * @param list<class-string<Block>> $removeBlockTypes
      * @return self
      */
     public function removing(array $removeBlockTypes)
@@ -157,21 +157,21 @@ final class BlockTypes implements Configurable
         return new self(
             \array_map(
                 /**
-                 * @param array<int, class-string<Block>> $blockTypes
-                 * @return array<int, class-string<Block>>
+                 * @param list<class-string<Block>> $blockTypes
+                 * @return list<class-string<Block>>
                  */
                 function ($blockTypes) use ($removeBlockTypes) {
-                    return \array_diff($blockTypes, $removeBlockTypes);
+                    return \array_values(\array_diff($blockTypes, $removeBlockTypes));
                 },
                 $this->blockTypes
             ),
-            \array_diff($this->unmarkedBlockTypes, $removeBlockTypes)
+            \array_values(\array_diff($this->unmarkedBlockTypes, $removeBlockTypes))
         );
     }
 
     /**
      * @param string $marker
-     * @return array<int, class-string<Block>>
+     * @return list<class-string<Block>>
      */
     public function markedBy($marker)
     {
@@ -183,7 +183,7 @@ final class BlockTypes implements Configurable
     }
 
     /**
-     * @return array<int, class-string<Block>>
+     * @return list<class-string<Block>>
      */
     public function unmarked()
     {
