@@ -57,23 +57,23 @@ final class Lines
         $text = \str_replace(["\r\n", "\r"], "\n", $text);
 
         $Contexts = [];
-        $sequentialLines = '';
+        $sequentialEmptyLines = '';
 
         foreach (\explode("\n", $text) as $line) {
             if (\chop($line) === '') {
-                $sequentialLines .= $line . "\n";
+                $sequentialEmptyLines .= $line . "\n";
                 continue;
             }
 
             $Contexts[] = new Context(
                 new Line($line, $indentOffset),
-                $sequentialLines
+                $sequentialEmptyLines
             );
 
-            $sequentialLines = '';
+            $sequentialEmptyLines = '';
         }
 
-        return new self($Contexts, $sequentialLines);
+        return new self($Contexts, $sequentialEmptyLines);
     }
 
     /** @return bool */
