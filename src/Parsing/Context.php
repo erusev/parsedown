@@ -7,7 +7,7 @@ final class Context
     /** @var Line */
     private $Line;
 
-    /** @var int */
+    /** @var int|null */
     private $previousEmptyLines;
 
     /** @var string */
@@ -21,7 +21,7 @@ final class Context
     {
         $this->Line = $Line;
         $this->previousEmptyLinesText = $previousEmptyLinesText;
-        $this->previousEmptyLines = \substr_count($previousEmptyLinesText, "\n");
+        $this->previousEmptyLines = null;
     }
 
     /** @return Line */
@@ -33,6 +33,10 @@ final class Context
     /** @return int */
     public function previousEmptyLines()
     {
+        if (! isset($this->previousEmptyLines)) {
+            $this->previousEmptyLines = \substr_count($this->previousEmptyLinesText, "\n");
+        }
+
         return $this->previousEmptyLines;
     }
 
