@@ -79,7 +79,7 @@ final class Lines
     /** @return bool */
     public function isEmpty()
     {
-        return \count($this->Contexts) === 0 && $this->trailingBlankLines === 0;
+        return ! $this->containsBlankLines && \count($this->Contexts) === 0;
     }
 
     /** @return Context[] */
