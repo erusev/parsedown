@@ -173,14 +173,14 @@ final class TList implements ContinuableBlock
 
         $Lis = $this->Lis;
 
+        if ($this->type === 'ol') {
+            $regex = '/^([0-9]++'.$this->markerTypeRegex.')([\t ]++.*|$)/';
+        } else {
+            $regex = '/^('.$this->markerTypeRegex.')([\t ]++.*|$)/';
+        }
+
         if ($Context->line()->indent() < $requiredIndent
-            && ((
-                $this->type === 'ol'
-                && \preg_match('/^([0-9]++'.$this->markerTypeRegex.')([\t ]++.*|$)/', $Context->line()->text(), $matches)
-            ) || (
-                $this->type === 'ul'
-                && \preg_match('/^('.$this->markerTypeRegex.')([\t ]++.*|$)/', $Context->line()->text(), $matches)
-            ))
+            && \preg_match($regex, $Context->line()->text(), $matches)
         ) {
             if ($Context->previousEmptyLines() > 0) {
                 $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingBlankLines(1);
