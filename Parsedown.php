@@ -13,6 +13,8 @@
 #
 #
 
+namespace Parsedown;
+
 class Parsedown
 {
     # ~

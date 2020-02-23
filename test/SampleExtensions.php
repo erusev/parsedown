@@ -1,6 +1,6 @@
 <?php
 
-class UnsafeExtension extends Parsedown
+class UnsafeExtension extends \Parsedown\Parsedown
 {
     protected function blockFencedCodeComplete($Block)
     {
@@ -19,7 +19,7 @@ class UnsafeExtension extends Parsedown
 }
 
 
-class TrustDelegatedExtension extends Parsedown
+class TrustDelegatedExtension extends \Parsedown\Parsedown
 {
     protected function blockFencedCodeComplete($Block)
     {

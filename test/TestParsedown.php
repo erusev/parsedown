@@ -1,6 +1,6 @@
 <?php
 
-class TestParsedown extends Parsedown
+class TestParsedown extends \Parsedown\Parsedown
 {
     public function getTextLevelElements()
     {

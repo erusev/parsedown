@@ -35,7 +35,7 @@ Or download the [latest release] and include `Parsedown.php`
 ## Example
 
 ```php
-$Parsedown = new Parsedown();
+$Parsedown = new Parsedown\Parsedown();
 
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
