@@ -553,15 +553,19 @@ class Parsedown
         }
 
         $text = trim($text, ' ');
+        $link = strtolower(str_replace(' ','-',$text));
 
         $Block = array(
             'element' => array(
                 'name' => 'h' . $level,
+                'attributes' => array(
+                    'id' => $link,
+                ),
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $text,
                     'destination' => 'elements',
-                )
+                ),
             ),
         );
 
@@ -1992,3 +1996,4 @@ class Parsedown
                    'wbr', 'time',
     );
 }
+
