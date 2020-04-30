@@ -554,13 +554,17 @@ class Parsedown
 
         $text = trim($text, ' ');
         $link = strtolower(str_replace(' ','-',$text));
+	$attr = array();
+	if (!empty($link)) {
+		$attr = array(
+                    'id' => $link,
+                );
+	}
 
         $Block = array(
             'element' => array(
                 'name' => 'h' . $level,
-                'attributes' => array(
-                    'id' => $link,
-                ),
+                'attributes' => $attr,
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $text,
