@@ -32,7 +32,7 @@ jobs:
       stage: Units
       php: 7.1
       install:
-        - composer install --prefer-dist --no-interaction --no-progress
+        - composer update --prefer-dist --no-interaction --no-progress
       script:
         - composer test-units
         - vendor/bin/infection --show-mutations --threads=4 --min-msi=90 --min-covered-msi=90
