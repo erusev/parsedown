@@ -6,6 +6,7 @@ use Erusev\Parsedown\Components\Blocks\Markup as BlockMarkup;
 use Erusev\Parsedown\Components\Inlines\Markup as InlineMarkup;
 use Erusev\Parsedown\Configurables\BlockTypes;
 use Erusev\Parsedown\Configurables\Breaks;
+use Erusev\Parsedown\Configurables\HeaderSlug;
 use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Configurables\StrictMode;
@@ -59,6 +60,7 @@ class ParsedownTest extends TestCase
             new SafeMode(\substr($test, 0, 3) === 'xss'),
             new StrictMode(\substr($test, 0, 6) === 'strict'),
             new Breaks(\substr($test, 0, 14) === 'breaks_enabled'),
+            new HeaderSlug(\substr($test, 0, 4) === 'slug'),
         ]));
 
         $actualMarkup = $Parsedown->toHtml($markdown);
