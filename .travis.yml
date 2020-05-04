@@ -8,16 +8,15 @@ stages:
   - Units
   - Test CommonMark (weak)
 
-matrix:    
-  fast_finish: true
-  allow_failures:
-    - env: ALLOW_FAILURE
-
 cache:
   directories:
     - $HOME/.composer/cache
 
 jobs:
+  fast_finish: true
+  allow_failures:
+    - env: ALLOW_FAILURE
+
   include:
     - stage: Code Format and Static Analysis
       php: 7.4
