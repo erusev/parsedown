@@ -553,7 +553,7 @@ class Parsedown
         }
 
         $text = trim($text, ' ');
-        $link = strtolower(str_replace(' ','-',$text));
+	$link = preg_replace('/[^\p{L}\p{N}\p{M}-]+/u', '', mb_strtolower(mb_ereg_replace(' ','-',$text)));
 	$attr = array();
 	if (!empty($link)) {
 		$attr = array(
