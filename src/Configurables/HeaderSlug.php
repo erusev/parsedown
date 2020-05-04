@@ -24,7 +24,7 @@ final class HeaderSlug implements Configurable
             $this->slugCallback = function (string $text): string {
                 $slug = \mb_strtolower($text);
                 $slug = \str_replace(' ', '-', $slug);
-                $slug = \preg_replace('/[^\p{L}\p{N}\p{M}-]+/u', '', $slug);
+                $slug = \preg_replace('/[^\p{L}\p{Nd}\p{Nl}\p{M}-]+/u', '', $slug);
 
                 return $slug;
             };
