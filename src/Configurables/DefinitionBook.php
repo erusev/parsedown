@@ -2,12 +2,12 @@
 
 namespace Erusev\Parsedown\Configurables;
 
-use Erusev\Parsedown\Configurable;
+use Erusev\Parsedown\MutableConfigurable;
 
 /**
  * @psalm-type _Data=array{url: string, title: string|null}
  */
-final class DefinitionBook implements Configurable
+final class DefinitionBook implements MutableConfigurable
 {
     /** @var array<string, _Data> */
     private $book;
@@ -29,14 +29,10 @@ final class DefinitionBook implements Configurable
     /**
      * @param string $id
      * @param _Data $data
-     * @return self
      */
-    public function setting($id, array $data)
+    public function mutatingSet($id, array $data): void
     {
-        $book = $this->book;
-        $book[$id] = $data;
-
-        return new self($book);
+        $this->book[$id] = $data;
     }
 
     /**
@@ -50,5 +46,10 @@ final class DefinitionBook implements Configurable
         }
 
         return null;
+    }
+
+    public function isolatedCopy(): self
+    {
+        return new self($this->book);
     }
 }

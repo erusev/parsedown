@@ -43,9 +43,7 @@ final class Reference implements StateUpdatingBlock
                 'title' => isset($matches[3]) ? $matches[3] : null,
             ];
 
-            $State = $State->setting(
-                $State->get(DefinitionBook::class)->setting($id, $Data)
-            );
+            $State->get(DefinitionBook::class)->mutatingSet($id, $Data);
 
             return new self($State);
         }
