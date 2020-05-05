@@ -31,7 +31,7 @@ final class Parsedown
     {
         $StateBearer = $StateBearer ?: new State;
 
-        $this->State = $StateBearer->state();
+        $this->State = $StateBearer->state()->isolatedCopy();
     }
 
     /**
@@ -42,7 +42,7 @@ final class Parsedown
     {
         list($StateRenderables, $State) = self::lines(
             Lines::fromTextLines($markdown, 0),
-            $this->State
+            $this->State->isolatedCopy()
         );
 
         $Renderables = $State->applyTo($StateRenderables);
