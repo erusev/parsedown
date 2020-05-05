@@ -6,6 +6,7 @@ use Erusev\Parsedown\AST\Handler;
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Configurables\HeaderSlug;
+use Erusev\Parsedown\Configurables\SlugRegister;
 use Erusev\Parsedown\Configurables\StrictMode;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Parsedown;
@@ -98,9 +99,10 @@ final class Header implements Block
             /** @return Element */
             function (State $State) {
                 $HeaderSlug = $State->get(HeaderSlug::class);
+                $Register = $State->get(SlugRegister::class);
                 $attributes = (
                     $HeaderSlug->isEnabled()
-                    ? ['id' => $HeaderSlug->transform($this->text())]
+                    ? ['id' => $HeaderSlug->transform($Register, $this->text())]
                     : []
                 );
 

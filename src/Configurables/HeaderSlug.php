@@ -12,12 +12,19 @@ final class HeaderSlug implements Configurable
     /** @var \Closure(string):string */
     private $slugCallback;
 
+    /** @var \Closure(string,int):string */
+    private $duplicationCallback;
+
     /**
      * @param bool $enabled
      * @param (\Closure(string):string)|null $slugCallback
+     * @param (\Closure(string, int):string)|null $duplicationCallback
      */
-    public function __construct($enabled, $slugCallback = null)
-    {
+    public function __construct(
+        $enabled,
+        $slugCallback = null,
+        $duplicationCallback = null
+    ) {
         $this->enabled = $enabled;
 
         if (! isset($slugCallback)) {
@@ -32,6 +39,14 @@ final class HeaderSlug implements Configurable
         } else {
             $this->slugCallback = $slugCallback;
         }
+
+        if (! isset($duplicationCallback)) {
+            $this->duplicationCallback = function (string $slug, int $duplicateNumber): string {
+                return $slug . '-' . \strval($duplicateNumber-1);
+            };
+        } else {
+            $this->duplicationCallback = $duplicationCallback;
+        }
     }
 
     /** @return bool */
@@ -40,15 +55,35 @@ final class HeaderSlug implements Configurable
         return $this->enabled;
     }
 
-    public function transform(string $text): string
+    public function transform(SlugRegister $SlugRegister, string $text): string
     {
-        return ($this->slugCallback)($text);
+        $slug = ($this->slugCallback)($text);
+
+        if ($SlugRegister->slugCount($slug) > 0) {
+            $newSlug = ($this->duplicationCallback)($slug, $SlugRegister->mutatingIncrement($slug));
+
+            while ($SlugRegister->slugCount($newSlug) > 0) {
+                $newSlug = ($this->duplicationCallback)($slug, $SlugRegister->mutatingIncrement($slug));
+            }
+
+            return $newSlug;
+        }
+
+        $SlugRegister->mutatingIncrement($slug);
+
+        return $slug;
     }
 
     /** @param \Closure(string):string $slugCallback */
     public static function withCallback($slugCallback): self
     {
         return new self(true, $slugCallback);
+    }
+
+    /** @param \Closure(string,int):string $duplicationCallback */
+    public static function withDuplicationCallback($duplicationCallback): self
+    {
+        return new self(true, null, $duplicationCallback);
     }
 
     /** @return self */
