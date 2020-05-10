@@ -6,6 +6,8 @@ use Erusev\Parsedown\AST\Handler;
 use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\AcquisitioningBlock;
 use Erusev\Parsedown\Components\Block;
+use Erusev\Parsedown\Configurables\HeaderSlug;
+use Erusev\Parsedown\Configurables\SlugRegister;
 use Erusev\Parsedown\Html\Renderables\Element;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\Parsing\Context;
@@ -88,9 +90,17 @@ final class SetextHeader implements AcquisitioningBlock
         return new Handler(
             /** @return Element */
             function (State $State) {
+                $HeaderSlug = $State->get(HeaderSlug::class);
+                $Register = $State->get(SlugRegister::class);
+                $attributes = (
+                    $HeaderSlug->isEnabled()
+                    ? ['id' => $HeaderSlug->transform($Register, $this->text())]
+                    : []
+                );
+
                 return new Element(
                     'h' . \strval($this->level()),
-                    [],
+                    $attributes,
                     $State->applyTo(Parsedown::line($this->text(), $State))
                 );
             }
