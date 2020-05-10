@@ -15,7 +15,7 @@ final class State implements StateBearer
     /**
      * @var array<class-string<Configurable>, Configurable>
      */
-    private static $initialCache;
+    private static $initialCache = [];
 
     /**
      * @param Configurable[] $Configurables
@@ -56,6 +56,22 @@ final class State implements StateBearer
      */
     public function get($className)
     {
+        if (
+            ! isset($this->state[$className])
+            && \is_subclass_of($className, MutableConfigurable::class, true)
+        ) {
+            if (! isset(self::$initialCache[$className])) {
+                /** @var T */
+                self::$initialCache[$className] = $className::initial();
+            }
+
+            /**
+             * @var T
+             * @psalm-suppress PossiblyUndefinedMethod
+             */
+            $this->state[$className] = self::$initialCache[$className]->isolatedCopy();
+        }
+
         /** @var T */
         return (
             $this->state[$className]
@@ -92,5 +108,15 @@ final class State implements StateBearer
     public function state()
     {
         return $this;
+    }
+
+    public function isolatedCopy(): self
+    {
+        return new self(\array_map(
+            function ($C) {
+                return $C instanceof MutableConfigurable ? $C->isolatedCopy() : $C;
+            },
+            $this->state
+        ));
     }
 }
