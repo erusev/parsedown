@@ -21,7 +21,7 @@ class Parsedown
 
     # ~
 
-    function text($text)
+    public function text($text)
     {
         $Elements = $this->textElements($text);
 
@@ -56,7 +56,7 @@ class Parsedown
     # Setters
     #
 
-    function setBreaksEnabled($breaksEnabled)
+    public function setBreaksEnabled($breaksEnabled)
     {
         $this->breaksEnabled = $breaksEnabled;
 
@@ -65,7 +65,7 @@ class Parsedown
 
     protected $breaksEnabled;
 
-    function setMarkupEscaped($markupEscaped)
+    public function setMarkupEscaped($markupEscaped)
     {
         $this->markupEscaped = $markupEscaped;
 
@@ -74,7 +74,7 @@ class Parsedown
 
     protected $markupEscaped;
 
-    function setUrlsLinked($urlsLinked)
+    public function setUrlsLinked($urlsLinked)
     {
         $this->urlsLinked = $urlsLinked;
 
@@ -83,7 +83,7 @@ class Parsedown
 
     protected $urlsLinked = true;
 
-    function setSafeMode($safeMode)
+    public function setSafeMode($safeMode)
     {
         $this->safeMode = (bool) $safeMode;
 
@@ -92,7 +92,7 @@ class Parsedown
 
     protected $safeMode;
 
-    function setStrictMode($strictMode)
+    public function setStrictMode($strictMode)
     {
         $this->strictMode = (bool) $strictMode;
 
@@ -1851,7 +1851,7 @@ class Parsedown
     # Deprecated Methods
     #
 
-    function parse($text)
+    public function parse($text)
     {
         $markup = $this->text($text);
 
