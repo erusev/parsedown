@@ -117,6 +117,7 @@ class Parsedown
         'ssh:',
         'news:',
         'steam:',
+        'tel:'
     );
 
     #
