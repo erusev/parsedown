@@ -73,6 +73,24 @@ class Parsedown
         return $this;
     }
 
+    protected $strippedElements = array();
+
+    public function setStrippedImages($stripImages)
+    {
+        $pos = array_search('img', $this->strippedElements);
+        if ($stripImages)
+        {
+            if ($pos === false)
+                $this->strippedElements[] = 'img';
+        }
+        else
+        {
+            if ($pos !== false)
+                array_splice($this->strippedElements, $pos, 1);
+        }
+    }
+
+
     protected $urlsLinked = true;
 
     function setSafeMode($safeMode)
@@ -1109,7 +1127,14 @@ class Parsedown
                 $markup .= $this->unmarkedText($unmarkedText);
 
                 # compile the inline
-                $markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
+                if (isset($Inline['markup']))
+                    $markup .= $Inline['markup'];
+                else
+                {
+                    # make sure element is not stripped
+                    if (!$this->isElementStripped($Inline['element']))
+                        $markup .= $this->element($Inline['element']);
+                }
 
                 # remove the examined text
                 $text = substr($text, $Inline['position'] + $Inline['extent']);
@@ -1466,6 +1491,11 @@ class Parsedown
     #
     # Handlers
     #
+
+    protected function isElementStripped(array $Element)
+    {
+        return (isset($Element['name']) && in_array($Element['name'], $this->strippedElements));
+    }
 
     protected function element(array $Element)
     {
