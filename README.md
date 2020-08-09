@@ -68,7 +68,7 @@ Safe mode does not necessarily yield safe results when using extensions to Parse
 
 ## Escaping HTML
 
-> ⚠️  **WARNING:** This method isn't safe from XSS!
+> **WARNING:** This method isn't safe from XSS!
 
 If you wish to escape HTML **in trusted input**, you can use the following:
 
