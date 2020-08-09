@@ -97,3 +97,7 @@ It passes most of the CommonMark tests. Most of the tests that don't pass deal w
 **How can I help?**
 
 Use it, star it, share it and if you feel generous, [donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
+
+**What else should I know?**
+
+I also make [Nota](https://nota.md/) — a writing app designed for Markdown files :)
