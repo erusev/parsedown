@@ -554,6 +554,13 @@ class Parsedown
 
         $text = trim($text, ' ');
 
+        preg_match('/(.*?)\{#([\w-]+)\}/', $text, $matches);
+        if(!empty($matches))
+        {
+            $text = trim($matches[1]);
+            $anchor = trim($matches[2]);
+        }
+
         $Block = array(
             'element' => array(
                 'name' => 'h' . $level,
@@ -564,6 +571,11 @@ class Parsedown
                 )
             ),
         );
+
+        if(isset($anchor))
+        {
+            $Block['element']['attributes']['id'] = '#'.$anchor;
+        }
 
         return $Block;
     }
@@ -1966,7 +1978,7 @@ class Parsedown
 
     protected $StrongRegex = array(
         '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*+[*])+?)[*]{2}(?![*])/s',
-        '_' => '/^__((?:\\\\_|[^_]|_[^_]*+_)+?)__(?!_)/us',
+        '_' => '/^__((?:\\\\_|[^_\s]|_[^_\s]*_)+?)__(?!_)/us',
     );
 
     protected $EmRegex = array(
