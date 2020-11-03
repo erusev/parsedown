@@ -20,6 +20,8 @@ matrix:
       dist: bionic
     - php: 7.4
       dist: bionic
+    - php: 8.0snapshot
+      dist: bionic
 
 install:
   - composer install --prefer-dist --no-interaction --no-progress
