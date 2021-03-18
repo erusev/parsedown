@@ -360,6 +360,7 @@ class Parsedown
             $Block = array(
                 'element' => array(
                     'name' => 'pre',
+                    'class' => 'bg-graydark rounded-lg p-5 overscroll-contain overflow-auto',
                     'element' => array(
                         'name' => 'code',
                         'text' => $text,
@@ -484,16 +485,30 @@ class Parsedown
              */
             $language = substr($infostring, 0, strcspn($infostring, " \t\n\f\r"));
 
-            $Element['attributes'] = array('class' => "language-$language bg-graydark rounded-lg p-5 overscroll-contain overflow-auto");
+            $Element['attributes'] = array('class' => "language-$language");
         }
 
         $Block = array(
             'char' => $marker,
             'openerLength' => $openerLength,
-            'element' => array(
-                'name' => 'pre',
-                'element' => $Element,
-            ),
+            'element' => [
+                'name' => 'div',
+                'attributes' => ['class' => 'mb-6'],
+                'element' => [
+                    'name' => 'div',
+                    'element' => [
+                        'name' => 'div',
+                        'attributes' => ['class' => 'max-h-96'],
+                        'element' => array(
+                            'attributes' => [
+                                'class' => 'bg-graydark rounded-lg p-5 overscroll-contain overflow-auto',
+                            ],
+                            'name' => 'pre',
+                            'element' => $Element,
+                        ),
+                    ]
+                ]
+            ],
         );
 
         return $Block;
@@ -508,7 +523,7 @@ class Parsedown
 
         if (isset($Block['interrupted']))
         {
-            $Block['element']['element']['text'] .= str_repeat("\n", $Block['interrupted']);
+            $Block['element']['element']['element']['element']['element']['text'] .= str_repeat("\n", $Block['interrupted']);
 
             unset($Block['interrupted']);
         }
@@ -516,14 +531,15 @@ class Parsedown
         if (($len = strspn($Line['text'], $Block['char'])) >= $Block['openerLength']
             and chop(substr($Line['text'], $len), ' ') === ''
         ) {
-            $Block['element']['element']['text'] = substr($Block['element']['element']['text'], 1);
+//            dd($Block['element']['element']['element']['element']['element']);
+            $Block['element']['element']['element']['element']['element']['text'] = substr($Block['element']['element']['element']['element']['element']['text'], 1);
 
             $Block['complete'] = true;
 
             return $Block;
         }
 
-        $Block['element']['element']['text'] .= "\n" . $Line['body'];
+        $Block['element']['element']['element']['element']['element']['text'] .= "\n" . $Line['body'];
 
         return $Block;
     }
@@ -610,7 +626,7 @@ class Parsedown
             if ($name === 'ol')
             {
                 $listStart = ltrim(strstr($matches[1], $Block['data']['markerType'], true), '0') ?: '0';
-
+                $Block['element']['attributes']['class'] = 'list-decimal list-inside mb-6 ml-4';
                 if ($listStart !== '1')
                 {
                     if (
@@ -623,6 +639,8 @@ class Parsedown
 
                     $Block['element']['attributes'] = array('start' => $listStart);
                 }
+            } else {
+                $Block['element']['attributes']['class'] = 'list-disc list-inside mb-6 ml-4';
             }
 
             $Block['li'] = array(
@@ -749,17 +767,41 @@ class Parsedown
     {
         if (preg_match('/^>[ ]?+(.*+)/', $Line['text'], $matches))
         {
+//            dd($matches[1]);
             $Block = array(
                 'element' => array(
                     'name' => 'blockquote',
-                    'handler' => array(
-                        'function' => 'linesElements',
-                        'argument' => (array) $matches[1],
-                        'destination' => 'elements',
-                    )
+                    'attributes' => [
+                        'class' => 'lg:pr-32 mb-7 mt-7 lg:ml-4 quote',
+                    ],
+                    'element' => [
+                        'name' => 'div',
+                        'attributes' => ['class' => 'relative'],
+                        'element' => [
+                            'name' => 'div',
+                            'attributes' => ['class' => 'text-gray font-light pl-8'],
+                            'handler' => array(
+                                'function' => 'linesElements',
+                                'argument' => (array) $matches[1],
+                                'destination' => 'elements',
+                            )
+                        ],
+                    ],
                 ),
             );
+            // TODO: implement quotes
+            /*
 
+            <div class="lg:pr-32 mb-7 mt-7 lg:ml-4">
+                <div class="relative">
+                    <span class="bg-blue absolute top-0 bottom-0 left-0 w-1.5 rounded-xl"></span>
+                    <div class="text-gray font-light pl-8">«Если Вы сделаете хорошую работу для хороших клиентов, то это приведет к следующей хорошей работе для других хороших клиентов. А если Вы сделаете плохую работу
+                        для плохих клиентов, то это, в свою очередь, приведет к другой плохой работе
+                    для других плохих клиентов»</div>
+                </div>
+            </div>
+
+             * */
             return $Block;
         }
     }
@@ -773,14 +815,14 @@ class Parsedown
 
         if ($Line['text'][0] === '>' and preg_match('/^>[ ]?+(.*+)/', $Line['text'], $matches))
         {
-            $Block['element']['handler']['argument'] []= $matches[1];
+            $Block['element']['element']['element']['handler']['argument'] []= $matches[1];
 
             return $Block;
         }
 
         if ( ! isset($Block['interrupted']))
         {
-            $Block['element']['handler']['argument'] []= $Line['text'];
+            $Block['element']['element']['element']['handler']['argument'] []= $Line['text'];
 
             return $Block;
         }
@@ -1298,6 +1340,7 @@ class Parsedown
                     'text' => $matches[1],
                     'attributes' => array(
                         'href' => $url,
+                        'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
             );
@@ -1371,6 +1414,7 @@ class Parsedown
             'element' => array(
                 'name' => 'img',
                 'attributes' => array(
+                    'class' => 'mb-6',
                     'src' => $Link['element']['attributes']['href'],
                     'alt' => $Link['element']['handler']['argument'],
                 ),
@@ -1397,6 +1441,7 @@ class Parsedown
             'nonNestables' => array('Url', 'Link'),
             'attributes' => array(
                 'href' => null,
+                'class' => 'text-blue hover:opacity-60 transition',
                 'title' => null,
             ),
         );
@@ -1549,6 +1594,7 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
+                        'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
             );
@@ -1570,6 +1616,7 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
+                        'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
             );
@@ -1987,8 +2034,8 @@ class Parsedown
         'q', 'rt', 'ins', 'font',          'strong',
         's', 'tt', 'kbd', 'mark',
         'u', 'xm', 'sub', 'nobr',
-                   'sup', 'ruby',
-                   'var', 'span',
-                   'wbr', 'time',
+        'sup', 'ruby',
+        'var', 'span',
+        'wbr', 'time',
     );
 }
