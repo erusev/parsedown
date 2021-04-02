@@ -840,6 +840,9 @@ class Parsedown
             $Block = array(
                 'element' => array(
                     'name' => 'hr',
+                    'attributes' => array(
+                        'class' => 'my-3 border-gray',
+                    ),
                 ),
             );
 
