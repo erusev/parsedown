@@ -1340,6 +1340,7 @@ class Parsedown
                     'text' => $matches[1],
                     'attributes' => array(
                         'href' => $url,
+                        'target' => '_blank',
                         'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
@@ -1445,6 +1446,7 @@ class Parsedown
             'nonNestables' => array('Url', 'Link'),
             'attributes' => array(
                 'href' => null,
+                'target' => '_blank',
                 'class' => 'text-blue hover:opacity-60 transition',
                 'title' => null,
             ),
@@ -1598,6 +1600,7 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
+                        'target' => '_blank',
                         'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
@@ -1620,6 +1623,7 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
+                        'target' => '_blank',
                         'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
