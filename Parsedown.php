@@ -1415,12 +1415,16 @@ class Parsedown
                 'name' => 'img',
                 'attributes' => array(
                     'class' => 'mb-6',
+                    'loading' => 'lazy',
                     'src' => $Link['element']['attributes']['href'],
                     'alt' => $Link['element']['handler']['argument'],
                 ),
                 'autobreak' => true,
             ),
         );
+        if ($Inline['element']['attributes']['alt']) {
+            $Inline['element']['attributes']['title'] = $Inline['element']['attributes']['alt'];
+        }
 
         $Inline['element']['attributes'] += $Link['element']['attributes'];
 
