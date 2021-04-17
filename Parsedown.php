@@ -1344,7 +1344,7 @@ class Parsedown
                     'attributes' => array(
                         'href' => $url,
                         'target' => '_blank',
-                        'rel' => 'ugc nofollow',
+                        'rel' => 'ugc nofollow noreferrer',
                         'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
@@ -1460,7 +1460,7 @@ class Parsedown
             'attributes' => array(
                 'href' => null,
                 'target' => '_blank',
-                'rel' => 'ugc nofollow',
+                'rel' => 'ugc nofollow noreferrer',
                 'class' => 'text-blue hover:opacity-60 transition',
                 'title' => null,
             ),
@@ -1615,7 +1615,7 @@ class Parsedown
                     'attributes' => array(
                         'href' => $url,
                         'target' => '_blank',
-                        'rel' => 'ugc nofollow',
+                        'rel' => 'ugc nofollow noreferrer',
                         'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
@@ -1639,7 +1639,7 @@ class Parsedown
                     'attributes' => array(
                         'href' => $url,
                         'target' => '_blank',
-                        'rel' => 'ugc nofollow',
+                        'rel' => 'ugc nofollow noreferrer',
                         'class' => 'text-blue hover:opacity-60 transition',
                     ),
                 ),
