@@ -1414,6 +1414,8 @@ class Parsedown
             return;
         }
 
+        $alt = $Link['element']['handler']['argument'] == 'enter image description here' ? '' : $Link['element']['handler']['argument'];
+
         $Inline = array(
             'extent' => $Link['extent'] + 1,
             'element' => array(
@@ -1422,14 +1424,15 @@ class Parsedown
                     'class' => 'mb-6',
                     'loading' => 'lazy',
                     'src' => $Link['element']['attributes']['href'],
-                    'alt' => $Link['element']['handler']['argument'],
+                    'alt' => $alt,
                 ),
                 'autobreak' => true,
             ),
         );
-        if ($Inline['element']['attributes']['alt']) {
-            $Inline['element']['attributes']['title'] = $Inline['element']['attributes']['alt'];
+        if ($alt) {
+            $Inline['element']['attributes']['title'] = $alt;
         }
+        unset($alt);
 
         $Inline['element']['attributes'] += $Link['element']['attributes'];
 
