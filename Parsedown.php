@@ -1414,7 +1414,13 @@ class Parsedown
             return;
         }
 
-        $alt = $Link['element']['handler']['argument'] == 'enter image description here' ? '' : $Link['element']['handler']['argument'];
+        $alt_default = [
+            'введите сюда описание изображения',
+            'enter image description here',
+            '입력한 이미지는 여기에 설명',
+        ];
+
+        $alt = in_array($Link['element']['handler']['argument'], $alt_default) ? '' : $Link['element']['handler']['argument'];
 
         $Inline = array(
             'extent' => $Link['extent'] + 1,
