@@ -18,7 +18,7 @@ Better Markdown Parser in PHP - <a href="http://parsedown.org/demo">Demo</a>.
 * [Super Fast](http://parsedown.org/speed)
 * Extensible
 * [GitHub flavored](https://github.github.com/gfm)
-* [Tested](http://parsedown.org/tests/) in 5.3 to 7.3
+* [Tested](http://parsedown.org/tests/) in 5.3 to 7.4
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ## Installation
