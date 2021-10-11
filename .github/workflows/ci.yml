@@ -89,8 +89,10 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: CommonMark Strict
+        continue-on-error: true
         run: composer test-commonmark
 
       - name: CommonMark Weak
+        continue-on-error: true
         run: composer test-commonmark-weak
 
