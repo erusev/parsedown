@@ -14,6 +14,9 @@ final class Url implements BacktrackingInline
 {
     use WidthTrait;
 
+    private const ABSOLUTE_URI = '[a-z][a-z0-9+.-]{1,31}:[^\s[:cntrl:]<>]*';
+    private const NO_TRAILING_PUNCT = '(?<![?!.,:*_~])';
+
     /** @var string */
     private $url;
 
@@ -38,14 +41,31 @@ final class Url implements BacktrackingInline
      */
     public static function build(Excerpt $Excerpt, State $State)
     {
-        if (\preg_match(
-            '/(?<=^|\s|[*_~(])https?+:[\/]{2}[^\s<]+\b\/*+/ui',
-            $Excerpt->context(),
-            $matches,
-            \PREG_OFFSET_CAPTURE
-        )) {
+        // this needs some work to follow spec
+        if (
+            \preg_match(
+                '/'.self::ABSOLUTE_URI.self::NO_TRAILING_PUNCT.'/iu',
+                $Excerpt->context(),
+                $matches,
+                \PREG_OFFSET_CAPTURE
+            )
+        ) {
             /** @var array{0: array{string, int}} $matches */
-            return new self($matches[0][0], \intval($matches[0][1]));
+            $url = $matches[0][0];
+            $position = \intval($matches[0][1]);
+
+            if (\preg_match('/[)]++$/', $url, $matches)) {
+                $trailingParens = \strlen($matches[0]);
+
+                $openingParens = \substr_count($url, '(');
+                $closingParens = \substr_count($url, ')');
+
+                if ($closingParens > $openingParens) {
+                    $url = \substr($url, 0, -\min($trailingParens, $closingParens - $openingParens));
+                }
+            }
+
+            return new self($url, $position);
         }
 
         return null;
