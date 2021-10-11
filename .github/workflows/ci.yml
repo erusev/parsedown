@@ -19,8 +19,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          composer remove infection/infection --no-update
-          composer remove roave/infection-static-analysis-plugin --no-update
+          composer remove infection/infection --no-update --dev
+          composer remove roave/infection-static-analysis-plugin --no-update --dev
           composer update --prefer-dist --no-interaction --no-progress
           composer test-units
 
