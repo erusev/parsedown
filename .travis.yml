@@ -19,7 +19,7 @@ jobs:
 
   include:
     - stage: Code Format and Static Analysis
-      php: 7.4
+      php: 8.0
       install: composer install --prefer-dist --no-interaction --no-progress
       script:
         - '[ -z "$TRAVIS_TAG" ] || [ "$TRAVIS_TAG" == "$(php -r "require(\"vendor/autoload.php\"); echo Erusev\Parsedown\Parsedown::version;")" ]'
@@ -43,6 +43,8 @@ jobs:
       php: 7.3
     - <<: *MUTATION_AND_UNIT_TEST
       php: 7.4
+    - <<: *MUTATION_AND_UNIT_TEST
+      php: 8.0
 
     - <<: *MUTATION_AND_UNIT_TEST
       php: nightly
