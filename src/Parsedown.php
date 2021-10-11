@@ -14,6 +14,7 @@ use Erusev\Parsedown\Components\StateUpdatingBlock;
 use Erusev\Parsedown\Configurables\BlockTypes;
 use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Configurables\RecursionLimiter;
+use Erusev\Parsedown\Configurables\RenderStack;
 use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\Parsing\Line;
@@ -44,7 +45,18 @@ final class Parsedown
             $this->State->isolatedCopy()
         );
 
-        $Renderables = $State->applyTo($StateRenderables);
+        $Renderables = \array_reduce(
+            \array_reverse($State->get(RenderStack::class)->getStack()),
+            /**
+             * @param Renderable[] $Renderables
+             * @param \Closure(Renderable[]):Renderable[] $RenderMap
+             * @return Renderable[]
+             */
+            function (array $Renderables, \Closure $RenderMap): array {
+                return $RenderMap($Renderables);
+            },
+            $State->applyTo($StateRenderables)
+        );
 
         $html = self::render($Renderables);
 
