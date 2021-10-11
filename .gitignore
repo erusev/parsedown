@@ -3,3 +3,4 @@ vendor/
 infection.log
 tests/spec_cache.txt
 .phpunit.result.cache
+composer.lock
