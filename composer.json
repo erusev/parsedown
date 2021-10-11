@@ -20,7 +20,8 @@
         "phpunit/phpunit": "^9.3.11",
         "vimeo/psalm": "^4.10.0",
         "friendsofphp/php-cs-fixer": "^2.13",
-        "infection/infection": "^0.25.3"
+        "infection/infection": "^0.25.0",
+        "roave/infection-static-analysis-plugin": "^1.10.0"
     },
     "autoload": {
         "psr-4": {"Erusev\\Parsedown\\": "src/"}

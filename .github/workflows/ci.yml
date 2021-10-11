@@ -19,7 +19,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          composer remove infection/infection
+          composer remove infection/infection --no-update
+          composer remove roave/infection-static-analysis-plugin --no-update
           composer update --prefer-dist --no-interaction --no-progress
           composer test-units
 
@@ -42,7 +43,7 @@ jobs:
       - name: Run Tests
         run: |
           composer update --prefer-dist --no-interaction --no-progress
-          vendor/bin/infection --show-mutations --threads=4 --min-msi=90 --min-covered-msi=90
+          vendor/bin/roave-infection-static-analysis-plugin --show-mutations --threads=4 --min-msi=90 --min-covered-msi=90
 
   static-analysis:
     name: Code Format and Static Analysis
