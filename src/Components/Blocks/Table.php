@@ -112,7 +112,6 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
         if (
             ! \preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]++`|`)++/', $row, $matches)
             || ! isset($matches[0])
-            || ! \is_array($matches[0])
         ) {
             return null;
         }

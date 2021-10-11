@@ -134,7 +134,7 @@ final class TList implements ContinuableBlock
                     $listStart !== 1
                     && isset($Block)
                     && $Block instanceof Paragraph
-                    && ! $Context->precedingEmptyLines() > 0
+                    && ! ($Context->precedingEmptyLines() > 0)
                 ) {
                     return null;
                 }
@@ -248,7 +248,7 @@ final class TList implements ContinuableBlock
             );
         }
 
-        if (! $Context->precedingEmptyLines() > 0) {
+        if (! ($Context->precedingEmptyLines() > 0)) {
             $text = $Context->line()->ltrimBodyUpto($requiredIndent);
 
             $Lis[\count($Lis) -1] = $Lis[\count($Lis) -1]->appendingTextLines(

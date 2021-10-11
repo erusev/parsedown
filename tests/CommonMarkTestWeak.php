@@ -30,16 +30,11 @@ class CommonMarkTestWeak extends CommonMarkTestStrict
     {
         $textLevelElements = \array_keys(Element::TEXT_LEVEL_ELEMENTS);
 
-        \array_walk(
-            $textLevelElements,
-            /**
-             * @param string &$element
-             * @return void
-             */
-            function (&$element) {
-                $element = \preg_quote($element, '/');
-            }
+        $textLevelElements = \array_map(
+            function ($e) { return \preg_quote($e, '/'); },
+            $textLevelElements
         );
+
         $this->textLevelElementRegex = '\b(?:' . \implode('|', $textLevelElements) . ')\b';
 
         parent::__construct($name, $data, $dataName);

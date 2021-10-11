@@ -30,5 +30,10 @@
         <PossiblyNullReference>
             <errorLevel type="suppress"><directory name="tests/src" /></errorLevel>
         </PossiblyNullReference>
+        <InternalMethod>
+            <errorLevel type="suppress">
+                <directory name="tests" />
+            </errorLevel>
+        </InternalMethod>
     </issueHandlers>
 </psalm>

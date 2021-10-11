@@ -35,7 +35,7 @@ final class IndentedCode implements ContinuableBlock
         State $State,
         Block $Block = null
     ) {
-        if (isset($Block) && $Block instanceof Paragraph && ! $Context->precedingEmptyLines() > 0) {
+        if (isset($Block) && $Block instanceof Paragraph && ! ($Context->precedingEmptyLines() > 0)) {
             return null;
         }
 

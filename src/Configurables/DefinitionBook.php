@@ -48,6 +48,7 @@ final class DefinitionBook implements MutableConfigurable
         return null;
     }
 
+    /** @return static */
     public function isolatedCopy(): self
     {
         return new self($this->book);

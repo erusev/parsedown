@@ -37,6 +37,7 @@ final class SlugRegister implements MutableConfigurable
         return $this->register[$slug] ?? 0;
     }
 
+    /** @return static */
     public function isolatedCopy(): self
     {
         return new self($this->register);

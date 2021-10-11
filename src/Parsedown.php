@@ -15,7 +15,6 @@ use Erusev\Parsedown\Configurables\BlockTypes;
 use Erusev\Parsedown\Configurables\InlineTypes;
 use Erusev\Parsedown\Configurables\RecursionLimiter;
 use Erusev\Parsedown\Html\Renderable;
-use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Excerpt;
 use Erusev\Parsedown\Parsing\Line;
 use Erusev\Parsedown\Parsing\Lines;

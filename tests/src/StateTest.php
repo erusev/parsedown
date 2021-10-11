@@ -32,7 +32,7 @@ final class StateTest extends TestCase
 
     /**
      * @return void
-     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function testStateCloneVisibility()

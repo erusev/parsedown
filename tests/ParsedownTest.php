@@ -75,10 +75,7 @@ class ParsedownTest extends TestCase
 
         foreach ($this->dirs as $dir) {
             $Folder = new \DirectoryIterator($dir);
-
             foreach ($Folder as $File) {
-                /** @var $File DirectoryIterator */
-
                 if (! $File->isFile()) {
                     continue;
                 }
