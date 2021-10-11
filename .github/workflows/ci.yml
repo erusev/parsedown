@@ -1,0 +1,94 @@
+name: Parsedown
+on: [push, pull_request]
+jobs:
+  units:
+    name: Unit Tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.0, 7.4, 7.3, 7.2, 7.1]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+
+      - uses: actions/checkout@v2
+      - name: Run Tests
+        run: |
+          composer update --prefer-dist --no-interaction --no-progress
+          composer test-units
+
+  mutations:
+    name: Mutation Tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.0]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+
+      - uses: actions/checkout@v2
+      - name: Run Tests
+        run: |
+          composer update --prefer-dist --no-interaction --no-progress
+          vendor/bin/infection --show-mutations --threads=4 --min-msi=90 --min-covered-msi=90
+
+  static-analysis:
+    name: Code Format and Static Analysis
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.0]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+
+      - uses: actions/checkout@v2
+      - name: Run Tests
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          composer test-static -- --shepherd
+          composer test-formatting
+          composer test-dead-code
+
+  commonmark:
+    name: CommonMark
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.0]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+
+      - uses: actions/checkout@v2
+      - name: Install
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: CommonMark Strict
+        run: composer test-commonmark
+
+      - name: CommonMark Weak
+        run: composer test-commonmark-weak
+
