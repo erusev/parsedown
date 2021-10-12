@@ -102,10 +102,7 @@ final class State implements StateBearer
         );
     }
 
-    /**
-     * @return State
-     */
-    public function state()
+    public function state(): State
     {
         return $this;
     }
