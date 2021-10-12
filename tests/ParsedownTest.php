@@ -39,6 +39,16 @@ class ParsedownTest extends TestCase
         return [\dirname(__FILE__).'/data/'];
     }
 
+    protected function initState(string $testName): State
+    {
+        return new State([
+            new SafeMode(\substr($testName, 0, 3) === 'xss'),
+            new StrictMode(\substr($testName, 0, 6) === 'strict'),
+            new Breaks(\substr($testName, 0, 14) === 'breaks_enabled'),
+            new HeaderSlug(\substr($testName, 0, 4) === 'slug'),
+        ]);
+    }
+
     /**
      * @dataProvider data
      * @param string $test
@@ -56,12 +66,7 @@ class ParsedownTest extends TestCase
         $expectedMarkup = \str_replace("\r\n", "\n", $expectedMarkup);
         $expectedMarkup = \str_replace("\r", "\n", $expectedMarkup);
 
-        $Parsedown = new Parsedown(new State([
-            new SafeMode(\substr($test, 0, 3) === 'xss'),
-            new StrictMode(\substr($test, 0, 6) === 'strict'),
-            new Breaks(\substr($test, 0, 14) === 'breaks_enabled'),
-            new HeaderSlug(\substr($test, 0, 4) === 'slug'),
-        ]));
+        $Parsedown = new Parsedown($this->initState($test));
 
         $actualMarkup = $Parsedown->toHtml($markdown);
 
