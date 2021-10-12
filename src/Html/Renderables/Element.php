@@ -5,8 +5,9 @@ namespace Erusev\Parsedown\Html\Renderables;
 use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Sanitisation\CharacterFilter;
 use Erusev\Parsedown\Html\Sanitisation\Escaper;
+use Erusev\Parsedown\Html\TransformableRenderable;
 
-final class Element implements Renderable
+final class Element implements TransformableRenderable
 {
     use CanonicalStateRenderable;
 
@@ -190,5 +191,27 @@ final class Element implements Renderable
         }
 
         return $html;
+    }
+
+    /**
+     * @param \Closure(string):Renderable $Transform
+     * @return Renderable
+     */
+    public function transformingContent(\Closure $Transform): Renderable
+    {
+        if (! isset($this->Contents)) {
+            return $this;
+        }
+
+        return new self($this->name, $this->attributes, \array_map(
+            function (Renderable $R) use ($Transform): Renderable {
+                if (! $R instanceof TransformableRenderable) {
+                    return $R;
+                }
+
+                return $R->transformingContent($Transform);
+            },
+            $this->Contents
+        ));
     }
 }

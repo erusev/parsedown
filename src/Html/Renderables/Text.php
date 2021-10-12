@@ -4,8 +4,9 @@ namespace Erusev\Parsedown\Html\Renderables;
 
 use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Sanitisation\Escaper;
+use Erusev\Parsedown\Html\TransformableRenderable;
 
-final class Text implements Renderable
+final class Text implements TransformableRenderable
 {
     use CanonicalStateRenderable;
 
@@ -30,5 +31,14 @@ final class Text implements Renderable
     public function getHtml()
     {
         return Escaper::htmlElementValueEscapingDoubleQuotes($this->text);
+    }
+
+    /**
+     * @param \Closure(string):Renderable $Transform
+     * @return Renderable
+     */
+    public function transformingContent(\Closure $Transform): Renderable
+    {
+        return $Transform($this->text);
     }
 }

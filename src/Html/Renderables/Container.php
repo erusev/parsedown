@@ -3,8 +3,9 @@
 namespace Erusev\Parsedown\Html\Renderables;
 
 use Erusev\Parsedown\Html\Renderable;
+use Erusev\Parsedown\Html\TransformableRenderable;
 
-final class Container implements Renderable
+final class Container implements TransformableRenderable
 {
     use CanonicalStateRenderable;
 
@@ -43,5 +44,23 @@ final class Container implements Renderable
             },
             ''
         );
+    }
+
+    /**
+     * @param \Closure(string):Renderable $Transform
+     * @return Renderable
+     */
+    public function transformingContent(\Closure $Transform): Renderable
+    {
+        return new Container(\array_map(
+            function (Renderable $R) use ($Transform): Renderable {
+                if (! $R instanceof TransformableRenderable) {
+                    return $R;
+                }
+
+                return $R->transformingContent($Transform);
+            },
+            $this->Contents
+        ));
     }
 }
