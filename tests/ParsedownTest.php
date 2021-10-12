@@ -12,6 +12,7 @@ use Erusev\Parsedown\Configurables\SafeMode;
 use Erusev\Parsedown\Configurables\StrictMode;
 use Erusev\Parsedown\Parsedown;
 use Erusev\Parsedown\State;
+use Erusev\Parsedown\StateBearer;
 use PHPUnit\Framework\TestCase;
 
 class ParsedownTest extends TestCase
@@ -39,7 +40,7 @@ class ParsedownTest extends TestCase
         return [\dirname(__FILE__).'/data/'];
     }
 
-    protected function initState(string $testName): State
+    protected function initState(string $testName): StateBearer
     {
         return new State([
             new SafeMode(\substr($testName, 0, 3) === 'xss'),
