@@ -14,7 +14,7 @@ final class Url implements BacktrackingInline
 {
     use WidthTrait;
 
-    private const ABSOLUTE_URI = '[a-z][a-z0-9+.-]{1,31}:[^\s[:cntrl:]<>]*';
+    private const URI = 'https?+:[^\s[:cntrl:]<>]*';
     private const NO_TRAILING_PUNCT = '(?<![?!.,:*_~])';
 
     /** @var string */
@@ -44,7 +44,7 @@ final class Url implements BacktrackingInline
         // this needs some work to follow spec
         if (
             \preg_match(
-                '/'.self::ABSOLUTE_URI.self::NO_TRAILING_PUNCT.'/iu',
+                '/'.self::URI.self::NO_TRAILING_PUNCT.'/iu',
                 $Excerpt->context(),
                 $matches,
                 \PREG_OFFSET_CAPTURE
