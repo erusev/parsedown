@@ -26,6 +26,9 @@ interface TransformableRenderable extends Renderable
     /**
      * Similar to transformingContent, but replace the string $search in text content
      * with the renderable $Replacement and return the result.
+     *
+     * @param string $search
+     * @return Renderable
      */
     public function replacingAll(string $search, Renderable $Replacement): Renderable;
 }
