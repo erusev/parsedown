@@ -4,14 +4,15 @@ namespace Erusev\Parsedown\Configurables;
 
 use Erusev\Parsedown\Configurable;
 use Erusev\Parsedown\Html\Renderable;
+use Erusev\Parsedown\State;
 
 final class RenderStack implements Configurable
 {
-    /** @var list<\Closure(Renderable[]):Renderable[]> */
+    /** @var list<\Closure(Renderable[],State):Renderable[]> */
     private $stack;
 
     /**
-     * @param list<\Closure(Renderable[]):Renderable[]> $stack
+     * @param list<\Closure(Renderable[],State):Renderable[]> $stack
      */
     private function __construct($stack = [])
     {
@@ -25,7 +26,7 @@ final class RenderStack implements Configurable
     }
 
     /**
-     * @param \Closure(Renderable[]):Renderable[] $RenderMap
+     * @param \Closure(Renderable[],State):Renderable[] $RenderMap
      * @return self
      */
     public function push(\Closure $RenderMap): self
@@ -33,7 +34,7 @@ final class RenderStack implements Configurable
         return new self(\array_merge($this->stack, [$RenderMap]));
     }
 
-    /** @return list<\Closure(Renderable[]):Renderable[]> */
+    /** @return list<\Closure(Renderable[],State):Renderable[]> */
     public function getStack(): array
     {
         return $this->stack;

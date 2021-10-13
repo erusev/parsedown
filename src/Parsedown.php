@@ -49,11 +49,11 @@ final class Parsedown
             \array_reverse($State->get(RenderStack::class)->getStack()),
             /**
              * @param Renderable[] $Renderables
-             * @param \Closure(Renderable[]):Renderable[] $RenderMap
+             * @param \Closure(Renderable[],State):Renderable[] $RenderMap
              * @return Renderable[]
              */
             function (array $Renderables, \Closure $RenderMap): array {
-                return $RenderMap($Renderables);
+                return $RenderMap($Renderables, $this->State);
             },
             $State->applyTo($StateRenderables)
         );

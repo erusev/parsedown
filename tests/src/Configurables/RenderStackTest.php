@@ -23,16 +23,18 @@ final class RenderStackTest extends TestCase
             ->push(
                 /**
                  * @param Renderable[] $Rs
-                 * return Renderable[]
+                 * @param State $_
+                 * @return Renderable[]
                  */
-                function ($Rs) { return \array_merge($Rs, [new Text('baz')]); }
+                function ($Rs, $_) { return \array_merge($Rs, [new Text('baz')]); }
             )
             ->push(
                 /**
                  * @param Renderable[] $Rs
-                 * return Renderable[]
+                 * @param State $_
+                 * @return Renderable[]
                  */
-                function ($Rs) { return \array_merge($Rs, [new Text('bar')]); }
+                function ($Rs, $_) { return \array_merge($Rs, [new Text('bar')]); }
             )
         ;
 
