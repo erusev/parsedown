@@ -28,6 +28,10 @@ final class Container implements TransformableRenderable
         return $this->Contents;
     }
 
+    public function adding(Renderable $Renderable): Container
+    {
+        return new Container(\array_merge($this->Contents, [$Renderable]));
+    }
 
     /** @return string */
     public function getHtml()

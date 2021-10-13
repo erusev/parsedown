@@ -21,11 +21,15 @@ final class ContainerTest extends TestCase
             new Text('bar'),
         ]);
 
+        $Container = $Container->adding(new Text('boo'));
+
         $Contents = $Container->contents();
 
         $this->assertTrue($Contents[0] instanceof Element);
         $this->assertSame($Contents[0]->name(), 'foo');
         $this->assertTrue($Contents[1] instanceof Text);
         $this->assertSame($Contents[1]->getHtml(), 'bar');
+        $this->assertTrue($Contents[2] instanceof Text);
+        $this->assertSame($Contents[2]->getHtml(), 'boo');
     }
 }
