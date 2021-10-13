@@ -41,4 +41,50 @@ final class Text implements TransformableRenderable
     {
         return $Transform($this->text);
     }
+
+    public function replacingAll(string $search, Renderable $Replacement): Renderable
+    {
+        $searchLen = \strlen($search);
+
+        if ($searchLen < 1) {
+            return $this;
+        }
+
+        $result = \preg_match_all(
+            '/\b'.\preg_quote($search, '/').'\b/',
+            $this->text,
+            $matches,
+            \PREG_OFFSET_CAPTURE
+        );
+
+        if (empty($result)) {
+            return $this;
+        }
+
+        $lastEndPos = 0;
+
+        $Container = new Container;
+
+        foreach ($matches[0] as $match) {
+            $pos = $match[1];
+            $endPos = $pos + $searchLen;
+
+            if ($pos !== $lastEndPos) {
+                $Container = $Container->adding(
+                    new Text(\substr($this->text, $lastEndPos, $pos - $lastEndPos))
+                );
+            }
+
+            $Container = $Container->adding($Replacement);
+            $lastEndPos = $endPos;
+        }
+
+        if (\strlen($this->text) -1 !== $lastEndPos) {
+            $Container = $Container->adding(
+                new Text(\substr($this->text, $lastEndPos))
+            );
+        }
+
+        return $Container;
+    }
 }

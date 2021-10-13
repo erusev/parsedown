@@ -214,4 +214,22 @@ final class Element implements TransformableRenderable
             $this->Contents
         ));
     }
+
+    public function replacingAll(string $search, Renderable $Replacement): Renderable
+    {
+        if (! isset($this->Contents)) {
+            return $this;
+        }
+
+        return new self($this->name, $this->attributes, \array_map(
+            function (Renderable $R) use ($search, $Replacement): Renderable {
+                if (! $R instanceof TransformableRenderable) {
+                    return $R;
+                }
+
+                return $R->replacingAll($search, $Replacement);
+            },
+            $this->Contents
+        ));
+    }
 }

@@ -22,4 +22,10 @@ interface TransformableRenderable extends Renderable
      * @return Renderable
      */
     public function transformingContent(\Closure $Transform): Renderable;
+
+    /**
+     * Similar to transformingContent, but replace the string $search in text content
+     * with the renderable $Replacement and return the result.
+     */
+    public function replacingAll(string $search, Renderable $Replacement): Renderable;
 }

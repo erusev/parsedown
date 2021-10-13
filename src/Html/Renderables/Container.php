@@ -15,7 +15,7 @@ final class Container implements TransformableRenderable
     /**
      * @param Renderable[] $Contents
      */
-    public function __construct($Contents)
+    public function __construct($Contents = [])
     {
         $this->Contents = $Contents;
     }
@@ -63,6 +63,20 @@ final class Container implements TransformableRenderable
                 }
 
                 return $R->transformingContent($Transform);
+            },
+            $this->Contents
+        ));
+    }
+
+    public function replacingAll(string $search, Renderable $Replacement): Renderable
+    {
+        return new Container(\array_map(
+            function (Renderable $R) use ($search, $Replacement): Renderable {
+                if (! $R instanceof TransformableRenderable) {
+                    return $R;
+                }
+
+                return $R->replacingAll($search, $Replacement);
             },
             $this->Contents
         ));
