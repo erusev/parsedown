@@ -78,7 +78,7 @@ final class Text implements TransformableRenderable
             $lastEndPos = $endPos;
         }
 
-        if (\strlen($this->text) -1 !== $lastEndPos) {
+        if (\strlen($this->text) !== $lastEndPos) {
             $Container = $Container->adding(
                 new Text(\substr($this->text, $lastEndPos))
             );
