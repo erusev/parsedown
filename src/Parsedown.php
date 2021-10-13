@@ -52,8 +52,8 @@ final class Parsedown
              * @param \Closure(Renderable[],State):Renderable[] $RenderMap
              * @return Renderable[]
              */
-            function (array $Renderables, \Closure $RenderMap): array {
-                return $RenderMap($Renderables, $this->State);
+            function (array $Renderables, \Closure $RenderMap) use ($State): array {
+                return $RenderMap($Renderables, $State);
             },
             $State->applyTo($StateRenderables)
         );
