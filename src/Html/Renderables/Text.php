@@ -2,7 +2,6 @@
 
 namespace Erusev\Parsedown\Html\Renderables;
 
-use Erusev\Parsedown\Html\Renderable;
 use Erusev\Parsedown\Html\Sanitisation\Escaper;
 use Erusev\Parsedown\Html\TransformableRenderable;
 
@@ -34,15 +33,15 @@ final class Text implements TransformableRenderable
     }
 
     /**
-     * @param \Closure(string):Renderable $Transform
-     * @return Renderable
+     * @param \Closure(string):TransformableRenderable $Transform
+     * @return TransformableRenderable
      */
-    public function transformingContent(\Closure $Transform): Renderable
+    public function transformingContent(\Closure $Transform): TransformableRenderable
     {
         return $Transform($this->text);
     }
 
-    public function replacingAll(string $search, Renderable $Replacement): Renderable
+    public function replacingAll(string $search, TransformableRenderable $Replacement): TransformableRenderable
     {
         $searchLen = \strlen($search);
 

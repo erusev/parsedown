@@ -51,10 +51,10 @@ final class Container implements TransformableRenderable
     }
 
     /**
-     * @param \Closure(string):Renderable $Transform
-     * @return Renderable
+     * @param \Closure(string):TransformableRenderable $Transform
+     * @return TransformableRenderable
      */
-    public function transformingContent(\Closure $Transform): Renderable
+    public function transformingContent(\Closure $Transform): TransformableRenderable
     {
         return new Container(\array_map(
             function (Renderable $R) use ($Transform): Renderable {
@@ -68,7 +68,7 @@ final class Container implements TransformableRenderable
         ));
     }
 
-    public function replacingAll(string $search, Renderable $Replacement): Renderable
+    public function replacingAll(string $search, TransformableRenderable $Replacement): TransformableRenderable
     {
         return new Container(\array_map(
             function (Renderable $R) use ($search, $Replacement): Renderable {

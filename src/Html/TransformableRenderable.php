@@ -18,17 +18,17 @@ interface TransformableRenderable extends Renderable
      *
      * It is acceptable to only partially transform "contained text".
      *
-     * @param \Closure(string):Renderable $Transform
-     * @return Renderable
+     * @param \Closure(string):TransformableRenderable $Transform
+     * @return TransformableRenderable
      */
-    public function transformingContent(\Closure $Transform): Renderable;
+    public function transformingContent(\Closure $Transform): TransformableRenderable;
 
     /**
      * Similar to transformingContent, but replace the string $search in text content
      * with the renderable $Replacement and return the result.
      *
      * @param string $search
-     * @return Renderable
+     * @return TransformableRenderable
      */
-    public function replacingAll(string $search, Renderable $Replacement): Renderable;
+    public function replacingAll(string $search, TransformableRenderable $Replacement): TransformableRenderable;
 }

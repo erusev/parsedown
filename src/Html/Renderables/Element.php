@@ -194,10 +194,10 @@ final class Element implements TransformableRenderable
     }
 
     /**
-     * @param \Closure(string):Renderable $Transform
-     * @return Renderable
+     * @param \Closure(string):TransformableRenderable $Transform
+     * @return TransformableRenderable
      */
-    public function transformingContent(\Closure $Transform): Renderable
+    public function transformingContent(\Closure $Transform): TransformableRenderable
     {
         if (! isset($this->Contents)) {
             return $this;
@@ -215,7 +215,7 @@ final class Element implements TransformableRenderable
         ));
     }
 
-    public function replacingAll(string $search, Renderable $Replacement): Renderable
+    public function replacingAll(string $search, TransformableRenderable $Replacement): TransformableRenderable
     {
         if (! isset($this->Contents)) {
             return $this;
