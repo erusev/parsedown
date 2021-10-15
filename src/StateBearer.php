@@ -6,5 +6,5 @@ interface StateBearer
 {
     public function state(): State;
     /** @return static */
-    public static function from(State $State);
+    public static function from(StateBearer $StateBearer);
 }
