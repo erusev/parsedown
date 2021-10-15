@@ -107,6 +107,12 @@ final class State implements StateBearer
         return $this;
     }
 
+    /** @return self */
+    public static function fromState(State $State)
+    {
+        return $State;
+    }
+
     public function isolatedCopy(): self
     {
         return new self(\array_map(

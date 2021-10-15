@@ -39,4 +39,16 @@ final class StateTest extends TestCase
     {
         $this->assertInstanceOf(State::class, clone(new State));
     }
+
+    /**
+     * @return void
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     */
+    public function testStateFromStateIdentical()
+    {
+        $State = new State;
+
+        $this->assertSame($State, State::fromState($State));
+    }
 }
