@@ -29,7 +29,7 @@ $rules = [
     'strict_param' => true,
     'whitespace_after_comma_in_array' => true,
 ];
-return Config::create()
+return (new Config)
     ->setRules($rules)
     ->setFinder($finder)
     ->setUsingCache(false)

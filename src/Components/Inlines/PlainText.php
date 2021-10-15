@@ -2,7 +2,6 @@
 
 namespace Erusev\Parsedown\Components\Inlines;
 
-use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Inline;
 use Erusev\Parsedown\Html\Renderables\Text;
 use Erusev\Parsedown\Parsing\Excerpt;

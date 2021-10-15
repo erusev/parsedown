@@ -2,7 +2,6 @@
 
 namespace Erusev\Parsedown\Components\Blocks;
 
-use Erusev\Parsedown\AST\StateRenderable;
 use Erusev\Parsedown\Components\Block;
 use Erusev\Parsedown\Components\ContinuableBlock;
 use Erusev\Parsedown\Html\Renderables\Element;
