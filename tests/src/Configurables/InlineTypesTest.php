@@ -5,6 +5,7 @@ namespace Erusev\Parsedown\Tests\Configurables;
 use Erusev\Parsedown\Components\Inlines\Code;
 use Erusev\Parsedown\Components\Inlines\Emphasis;
 use Erusev\Parsedown\Components\Inlines\Link;
+use Erusev\Parsedown\Components\Inlines\Url;
 use Erusev\Parsedown\Configurables\InlineTypes;
 use PHPUnit\Framework\TestCase;
 
@@ -28,5 +29,8 @@ final class InlineTypesTest extends TestCase
 
         $InlineTypes = $InlineTypes->addingLowPrecedence('@', [Link::class]);
         $this->assertSame([Code::class, Emphasis::class, Link::class], $InlineTypes->markedBy('@'));
+
+        $InlineTypes = $InlineTypes->replacing(Link::class, Url::class);
+        $this->assertSame([Code::class, Emphasis::class, Url::class], $InlineTypes->markedBy('@'));
     }
 }

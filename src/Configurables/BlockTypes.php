@@ -102,6 +102,45 @@ final class BlockTypes implements Configurable
     }
 
     /**
+     * @param class-string<Block> $searchBlockType
+     * @param class-string<Block> $replacementBlockType
+     */
+    public function replacing($searchBlockType, $replacementBlockType): self
+    {
+        $replacer = self::makeReplacer($searchBlockType, $replacementBlockType);
+
+        return new self(
+            \array_map($replacer, $this->blockTypes),
+            $replacer($this->unmarkedBlockTypes)
+        );
+    }
+
+    /**
+     * @param class-string<Block> $searchBlockType
+     * @param class-string<Block> $replacementBlockType
+     * @return \Closure(list<class-string<Block>>):list<class-string<Block>>
+     */
+    private static function makeReplacer($searchBlockType, $replacementBlockType)
+    {
+        /**
+         * @param list<class-string<Block>> $blockTypes
+         * @return list<class-string<Block>>
+         */
+        return function ($blockTypes) use ($searchBlockType, $replacementBlockType) {
+            return \array_map(
+                /**
+                 * @param class-string<Block> $blockType
+                 * @return class-string<Block>
+                 */
+                function ($blockType) use ($searchBlockType, $replacementBlockType) {
+                    return $blockType === $searchBlockType ? $replacementBlockType : $blockType;
+                },
+                $blockTypes
+            );
+        };
+    }
+
+    /**
      * @param string $marker
      * @param list<class-string<Block>> $newBlockTypes
      * @return self

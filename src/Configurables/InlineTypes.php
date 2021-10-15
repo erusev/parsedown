@@ -69,6 +69,35 @@ final class InlineTypes implements Configurable
     }
 
     /**
+     * @param class-string<Inline> $searchInlineType
+     * @param class-string<Inline> $replacementInlineType
+     */
+    public function replacing($searchInlineType, $replacementInlineType): self
+    {
+        return new self(
+            \array_map(
+                /**
+                 * @param list<class-string<Inline>> $inlineTypes
+                 * @return list<class-string<Inline>>
+                 */
+                function ($inlineTypes) use ($searchInlineType, $replacementInlineType) {
+                    return \array_map(
+                        /**
+                         * @param class-string<Inline> $inlineType
+                         * @return class-string<Inline>
+                         */
+                        function ($inlineType) use ($searchInlineType, $replacementInlineType) {
+                            return $inlineType === $searchInlineType ? $replacementInlineType : $inlineType;
+                        },
+                        $inlineTypes
+                    );
+                },
+                $this->inlineTypes
+            )
+        );
+    }
+
+    /**
      * @param string $marker
      * @param list<class-string<Inline>> $newInlineTypes
      * @return self
