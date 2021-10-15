@@ -108,7 +108,7 @@ final class State implements StateBearer
     }
 
     /** @return self */
-    public static function fromState(State $State)
+    public static function from(State $State)
     {
         return $State;
     }

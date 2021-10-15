@@ -49,6 +49,6 @@ final class StateTest extends TestCase
     {
         $State = new State;
 
-        $this->assertSame($State, State::fromState($State));
+        $this->assertSame($State, State::from($State));
     }
 }
