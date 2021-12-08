@@ -15,6 +15,7 @@ final class BlockTypesTest extends TestCase
      * @return void
      * @throws \PHPUnit\Framework\ExpectationFailedException
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @psalm-suppress InvalidDocblock
      */
     public function testAddingTypes()
     {
