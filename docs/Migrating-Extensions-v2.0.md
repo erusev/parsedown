@@ -68,6 +68,8 @@ functionality from different authors as they like. For example, a feature of Par
 A user could import *only* the abbreviations feature from ParsedownExtra by using the following:
 
 ```php
+use Erusev\Parsedown\State;
+use Erusev\Parsedown\Parsedown;
 use Erusev\ParsedownExtra\Features\Abbreviations;
 
 $State = Abbreviations::from(new State);
