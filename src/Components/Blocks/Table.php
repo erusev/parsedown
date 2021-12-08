@@ -115,10 +115,10 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
             return null;
         }
 
-        $cells = \array_values(\array_map(
+        $cells = \array_map(
             'trim',
             \array_slice($matches[0], 0, \count($this->alignments))
-        ));
+        );
 
         return new self(
             $this->alignments,
