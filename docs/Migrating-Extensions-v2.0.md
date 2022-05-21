@@ -44,6 +44,16 @@ $Parsedown = new Parsedown(ParsedownExtra::from(ParsedownMath::from(new State)))
 $Parsedown = new Parsedown(ParsedownMath::from(ParsedownExtra::from(new State)));
 ```
 
+In the above, the first object that we initialise the chain of composed extensions is the `State` object. This `State`
+object is passed from `ParsedownExtra` to `ParsedownMath`, and then finally, to `Parsedown`. At each stage new
+information is added to the `State`: adding or removing parsing instructions, and to enabling or disabling features.
+
+The `State` object both contains instructions for how to parse a document (e.g. new blocks and inlines), as well as
+information used throughout parsing (such as link reference definitions, or recursion depth). By writing `new State`,
+we create a `State` object that is setup with Parsedown's default behaviours, and by passing that object through
+different extensions (using the `::from` method), these extensions are free to alter, add to, or remove from that
+default behaviour.
+
 ## Introduction to the `State` Object
 Key to Parsedown's new composability for extensions is the `State` object.
 
