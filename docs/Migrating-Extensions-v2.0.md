@@ -7,7 +7,7 @@ level methods and variables.
 Whilst this approach allows huge breadth to the type of functionality that can
 be added by an extension, it has some downsides too:
 
-* ### Composability: extensions cannot be combined easily
+* ### Composability: extensions cannot be combined easily
   An extension must extend another extension for two extensions to work together.
   This limits the usefulness of small extensions, because they cannot be combined with another small or popular extension.
   If an extension author wishes the extension to be compatible with another extension, they can only pick one.
