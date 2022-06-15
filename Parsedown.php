@@ -83,6 +83,15 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+    function minHeaderLevel($minHeaderLevel)
+    {
+        $this->minHeaderLevel = (int) $minHeaderLevel;
+
+        return $this;
+    }
+
+    protected $minHeaderLevel;
+
     function setSafeMode($safeMode)
     {
         $this->safeMode = (bool) $safeMode;
@@ -539,6 +548,8 @@ class Parsedown
     protected function blockHeader($Line)
     {
         $level = strspn($Line['text'], '#');
+
+        $level = (isset($this->minHeaderLevel) ? $this->minHeaderLevel + $level - 1 : $level);
 
         if ($level > 6)
         {
