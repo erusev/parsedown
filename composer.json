@@ -2,7 +2,7 @@
     "name": "erusev/parsedown",
     "description": "Parser for Markdown.",
     "keywords": ["markdown", "parser"],
-    "homepage": "http://parsedown.org",
+    "homepage": "https://parsedown.org",
     "type": "library",
     "license": "MIT",
     "authors": [
