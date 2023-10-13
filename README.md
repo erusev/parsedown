@@ -68,15 +68,15 @@ Safe mode does not necessarily yield safe results when using extensions to Parse
 
 ## Escaping HTML
 
-> **WARNING:** This method isn't safe from XSS!
+> WARNING: This method isn't safe from XSS!
 
-If you wish to escape HTML **in trusted input**, you can use the following:
+If you wish to escape HTML in trusted input, you can use the following:
 
 ```php
 $Parsedown->setMarkupEscaped(true);
 ```
 
-Beware that this still allows users to insert unsafe scripting vectors, such as links like `[xss](javascript:alert%281%29)`.
+Beware that this still allows users to insert unsafe scripting vectors, ex: `[xss](javascript:alert%281%29)`.
 
 ## Questions
 
