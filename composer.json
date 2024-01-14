@@ -20,7 +20,7 @@
         "phpunit/phpunit": "^9.3.11||^8.5.21||^7.5.20",
         "vimeo/psalm": "^4.10.0",
         "friendsofphp/php-cs-fixer": "^3.0.0",
-        "infection/infection": "^0.25.0",
+        "infection/infection": "^0.27.0",
         "roave/infection-static-analysis-plugin": "^1.10.0"
     },
     "autoload": {
@@ -44,5 +44,10 @@
         "test-formatting": "@composer fix -- --dry-run",
 
         "fix": "vendor/bin/php-cs-fixer fix --verbose --show-progress=dots --diff"
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     }
 }
