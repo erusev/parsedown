@@ -75,6 +75,34 @@ $Parsedown->setMarkupEscaped(true);
 
 Beware that this still allows users to insert unsafe scripting vectors, ex: `[xss](javascript:alert%281%29)`.
 
+## Link Target Features
+Fork by The Digital Sorceress to add options to let one control how the target attribute is set in links
+
+The original parsedown did not set any link target attribute at all. This leads to the default that all links are opened in the same window. For users whow want alternate behavior, two new configuration options were added:
+
+### setExtLinksInNewWindow
+
+With this feature enabled:
+
+``` php
+$parser->setExtLinksInNewWindow(true);
+```
+
+Links that start with http (so http and https) will be considered "external" and thus will use the _blank target attribute - meaning that they will open in a new window/tab instead of in the current window/tab
+
+When set to false, (and assuming setAllLinksInNewWindow is not set below) all links will open in _self
+
+When links are parsed that do not start with http/https (so relative or absolute links, they will not be targeted to _blank with this setting on (or off)
+
+### setAllLinksInNewWindow
+Functions the same as setExtLinksInNewWindow above except that ALL links whether htey start wth http or not will be forced to target=_blank  and thus open in a new tab/ window.
+
+``` php
+$parser->setAllLinksInNewWindow(true);
+```
+
+This setting set to true will override the setExtLinks and force all - so if both are on then this takes prioroty.
+
 ## Questions
 
 **How does Parsedown work?**
