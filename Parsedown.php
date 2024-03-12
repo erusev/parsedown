@@ -1113,6 +1113,7 @@ class Parsedown
         ':' => array('Url'),
         '<' => array('UrlTag', 'EmailTag', 'Markup'),
         '[' => array('Link'),
+        '^' => array('Superscript'),
         '_' => array('Emphasis'),
         '`' => array('Code'),
         '~' => array('Strikethrough'),
@@ -1121,7 +1122,7 @@ class Parsedown
 
     # ~
 
-    protected $inlineMarkerList = '!*_&[:<`~\\';
+    protected $inlineMarkerList = '!*_&[^:<`~\\';
 
     #
     # ~
@@ -1519,6 +1520,29 @@ class Parsedown
                 'extent' => strlen($matches[0]),
                 'element' => array(
                     'name' => 'del',
+                    'handler' => array(
+                        'function' => 'lineElements',
+                        'argument' => $matches[1],
+                        'destination' => 'elements',
+                    )
+                ),
+            );
+        }
+    }
+
+    protected function inlineSuperscript($Excerpt)
+    {
+        if ( ! isset($Excerpt['text'][1]))
+        {
+            return;
+        }
+
+        if ($Excerpt['text'][1] === '^' and preg_match('/^\^\^(?=\S)(.+?)(?<=\S)\^\^/', $Excerpt['text'], $matches))
+        {
+            return array(
+                'extent' => strlen($matches[0]),
+                'element' => array(
+                    'name' => 'sup',
                     'handler' => array(
                         'function' => 'lineElements',
                         'argument' => $matches[1],
@@ -1961,7 +1985,7 @@ class Parsedown
     # Read-Only
 
     protected $specialCharacters = array(
-        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|', '~'
+        '\\', '`', '*', '_', '{', '}', '[', ']', '^', '(', ')', '>', '#', '+', '-', '.', '!', '|', '~'
     );
 
     protected $StrongRegex = array(
