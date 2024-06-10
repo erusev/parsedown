@@ -6,7 +6,7 @@
 [![Version](https://poser.pugx.org/erusev/parsedown/v/stable.svg)](https://packagist.org/packages/erusev/parsedown)
 [![License](https://poser.pugx.org/erusev/parsedown/license.svg)](https://packagist.org/packages/erusev/parsedown)
 
-Better Markdown Parser in PHP — <a href="http://parsedown.org/demo">Demo</a>.
+Better Markdown Parser in PHP — <a href="https://parsedown.org/demo">Demo</a>.
 
 ## Features
 
