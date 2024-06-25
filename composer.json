@@ -2,14 +2,14 @@
     "name": "erusev/parsedown",
     "description": "Parser for Markdown.",
     "keywords": ["markdown", "parser"],
-    "homepage": "http://parsedown.org",
+    "homepage": "https://parsedown.org",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Emanuil Rusev",
             "email": "hello@erusev.com",
-            "homepage": "http://erusev.com"
+            "homepage": "https://erusev.com"
         }
     ],
     "require": {
