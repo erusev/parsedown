@@ -8,7 +8,7 @@ jobs:
 
         strategy:
             matrix:
-                include:
+                php:
                     - '7.1'
                     - '7.2'
                     - '7.3'
