@@ -2,7 +2,7 @@
 
 class UnsafeExtension extends Parsedown
 {
-    protected function blockFencedCodeComplete($Block)
+    protected function blockFencedCodeComplete(array $Block) : array
     {
         $text = $Block['element']['element']['text'];
         unset($Block['element']['element']['text']);
@@ -21,7 +21,7 @@ class UnsafeExtension extends Parsedown
 
 class TrustDelegatedExtension extends Parsedown
 {
-    protected function blockFencedCodeComplete($Block)
+    protected function blockFencedCodeComplete(array $Block) : array
     {
         $text = $Block['element']['element']['text'];
         unset($Block['element']['element']['text']);
