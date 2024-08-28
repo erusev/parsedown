@@ -13,7 +13,7 @@ class CommonMarkTestStrict extends TestCase
 
     protected $parsedown;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->parsedown = new TestParsedown();
         $this->parsedown->setUrlsLinked(false);
