@@ -1,0 +1,37 @@
+on:
+    - push
+    - pull_request
+
+jobs:
+    phpunit:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                php:
+                    - '7.1'
+                    - '7.2'
+                    - '7.3'
+                    - '7.4'
+                    - '8.0'
+                    - '8.1'
+                    - '8.2'
+                    - '8.3'
+                    - '8.4'
+
+        steps:
+            - name: Checkout the source code
+              uses: actions/checkout@v4
+
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '${{ matrix.php }}'
+
+            - name: Install dependencies
+              run: composer install
+
+            - name: Run tests
+              run: |
+                  vendor/bin/phpunit
+                  vendor/bin/phpunit test/CommonMarkTestWeak.php || true
