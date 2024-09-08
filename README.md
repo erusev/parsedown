@@ -95,4 +95,4 @@ Use it, star it, share it and if you feel generous, [donate](https://www.paypal.
 
 **What else should I know?**
 
-I also make [Nota](https://nota.md/) — a writing app designed for Markdown files :)
+I also make [Nota](https://nota.md/) — a notes app designed for local Markdown files.
