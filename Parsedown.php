@@ -119,6 +119,15 @@ class Parsedown
         'steam:',
     );
 
+    protected $useTargetBlankLinks = false;
+
+    function setTargetBlankLinks($useTargetBlankLinks)
+    {
+        $this->useTargetBlankLinks = (bool)$useTargetBlankLinks;
+
+        return $this;
+    }
+
     #
     # Lines
     #
@@ -1274,6 +1283,16 @@ class Parsedown
         }
     }
 
+    protected function updateLinkAttributes($attributes)
+    {
+      if ($this->useTargetBlankLinks)
+      {
+          $attributes['target'] = '_blank';
+          $attributes['rel'] = 'noopener noreferrer';
+      }
+      return $attributes;
+    }
+
     protected function inlineEmailTag($Excerpt)
     {
         $hostnameLabel = '[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?';
@@ -1296,9 +1315,9 @@ class Parsedown
                 'element' => array(
                     'name' => 'a',
                     'text' => $matches[1],
-                    'attributes' => array(
+                    'attributes' => $this->updateLinkAttributes(array(
                         'href' => $url,
-                    ),
+                    )),
                 ),
             );
         }
@@ -1395,10 +1414,10 @@ class Parsedown
                 'destination' => 'elements',
             ),
             'nonNestables' => array('Url', 'Link'),
-            'attributes' => array(
+            'attributes' => $this->updateLinkAttributes(array(
                 'href' => null,
                 'title' => null,
-            ),
+            )),
         );
 
         $extent = 0;
@@ -1547,9 +1566,9 @@ class Parsedown
                 'element' => array(
                     'name' => 'a',
                     'text' => $url,
-                    'attributes' => array(
+                    'attributes' => $this->updateLinkAttributes(array(
                         'href' => $url,
-                    ),
+                    )),
                 ),
             );
 
@@ -1568,9 +1587,9 @@ class Parsedown
                 'element' => array(
                     'name' => 'a',
                     'text' => $url,
-                    'attributes' => array(
+                    'attributes' => $this->updateLinkAttributes(array(
                         'href' => $url,
-                    ),
+                    )),
                 ),
             );
         }
