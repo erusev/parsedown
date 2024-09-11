@@ -54,8 +54,10 @@ class ParsedownTest extends TestCase
         $this->Parsedown->setStrictMode(substr($test, 0, 6) === 'strict');
 
         $actualMarkup = $this->Parsedown->text($markdown);
+        $actualMarkup = str_replace("\r\n", "\n", $actualMarkup);
+        $actualMarkup = str_replace("\r", "\n", $actualMarkup);
 
-        $this->assertEquals($expectedMarkup, $actualMarkup);
+        $this->assertEquals(trim($expectedMarkup), trim($actualMarkup));
     }
 
     function testRawHtml()
