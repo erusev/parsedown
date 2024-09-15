@@ -181,7 +181,7 @@ class Parsedown
                     );
                     $CurrentBlockHelper = $CurrentBlock;
                     $CurrentBlock = $Block = null;
-                    $blockTypes = $this->unmarkedBlockTypes;
+                    $blockTypes = $this->unmarkedTextTypes;
                     $marker = '';
                 }
                 continue;
@@ -249,7 +249,7 @@ class Parsedown
 
             foreach ($blockTypes as $blockType)
             {
-                $Block = $this->{"block$blockType"}($Line, $CurrentBlock?: $CurrentBlockHelper);
+                $Block = $this->{"block$blockType"}($Line, $CurrentBlock);
 
                 if (isset($Block))
                 {
@@ -257,9 +257,9 @@ class Parsedown
 
                     if ( ! isset($Block['identified']))
                     {
-                        if (isset($CurrentBlock) || isset($CurrentBlockHelper))
+                        if (isset($CurrentBlock))
                         {
-                            $Elements[] = $CurrentBlock ? $this->extractElement($CurrentBlock):$this->extractElement($CurrentBlockHelper);
+                            $Elements[] = $this->extractElement($CurrentBlock);
                         }
 
                         $Block['identified'] = true;
@@ -289,9 +289,9 @@ class Parsedown
             }
             else
             {
-                if (isset($CurrentBlock) || isset($CurrentBlockHelper))
+                if (isset($CurrentBlock))
                 {
-                    $Elements[] = $CurrentBlock ?$this->extractElement($CurrentBlock): $this->extractElement($CurrentBlockHelper);
+                    $Elements[] = $this->extractElement($CurrentBlock);
                 }
 
                 $CurrentBlock = $this->paragraph($Line);
