@@ -168,6 +168,7 @@ class Parsedown
     {
         $Elements = array();
         $CurrentBlock = null;
+        $CurrentBlockHelper = null;
 
         foreach ($lines as $line)
         {
@@ -178,8 +179,11 @@ class Parsedown
                     $CurrentBlock['interrupted'] = (isset($CurrentBlock['interrupted'])
                         ? $CurrentBlock['interrupted'] + 1 : 1
                     );
+                    $CurrentBlockHelper = $CurrentBlock;
+                    $CurrentBlock = $Block = null;
+                    $blockTypes = $this->unmarkedTextTypes;
+                    $marker = '';
                 }
-
                 continue;
             }
 
