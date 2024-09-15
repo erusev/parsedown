@@ -4,9 +4,8 @@ include 'Parsedown.php';
 
 $Parsedown = new Parsedown();
 
-echo $Parsedown->text('Horizontal rule made up of three stars
-
-Garcia Isaias Manuel
+echo $Parsedown->text('
+Horizontal rule made up of three stars
 
 * * *
 
@@ -17,8 +16,6 @@ An unordered list
 * There now follows two newlines and then another horizontal rule
 
 * * *
-
-Garcia Isaias Manuel
 ');
 
 ?>
