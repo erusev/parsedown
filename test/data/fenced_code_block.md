@@ -36,3 +36,8 @@ foo
 
 bar
 ```
+
+```php some-class
+<?php
+echo "Hello World";
+```
