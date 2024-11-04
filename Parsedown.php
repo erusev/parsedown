@@ -56,6 +56,41 @@ class Parsedown
     # Setters
     #
 
+    /**
+     * ## When enabled all parsed hyperlinks will have their target attribute set to _blank
+     * - This will cause all links to open in a new winwow / tab
+     * - If you only want links to external sites to have the target _blank then set this false
+     * and instead, use setExtLinksInNewWindow to true instead
+     * ### NOTE that this property set to true overrides setExtLinksInNewWindow
+     * @param bool $allLinksInNewWindow 
+     * @return void 
+     */
+    function setAllinksInNewWindow($allLinksInNewWindow)
+    {
+        $this->allLinksInNewWindow = $allLinksInNewWindow;
+    }
+    
+    protected $allLinksInNewWindow;
+
+    /**
+     * ## When enabled all external hyperlinks will have their target attribute set to _blank
+     * - This will cause links to external sites to open in a new winwow / tab
+     * - It uses the presense of http/https as the determining factor as to whether a link is "external"
+     * - This is a bit of a cheat but it works well for my purposes
+     * - If you only want links to all sites to have the target _blank then set this false
+     * and instead, use setAllinksInNewWindow to true
+     * ### NOTE that SetAllLinksInNewWindow true will override this behavior
+     * 
+     * @param bool $extLinksInNewWindow 
+     * @return void 
+     */
+    function setExtLinksInNewWindow($extLinksInNewWindow)
+    {
+        $this->extLinksInNewWindow = $extLinksInNewWindow;
+    }
+    
+    protected $extLinksInNewWindow;
+
     function setBreaksEnabled($breaksEnabled)
     {
         $this->breaksEnabled = $breaksEnabled;
@@ -1398,6 +1433,7 @@ class Parsedown
             'attributes' => array(
                 'href' => null,
                 'title' => null,
+                'target' => null,
             ),
         );
 
@@ -1427,6 +1463,12 @@ class Parsedown
                 $Element['attributes']['title'] = substr($matches[2], 1, - 1);
             }
 
+            if ($this->allLinksInNewWindow || ($this->extLinksInNewWindow && str_starts_with($matches[1], 'http'))) {
+                $Element['attributes']['target'] = '_blank';
+            } else {
+                $Element['attributes']['target'] = '_self';
+            }
+
             $extent += strlen($matches[0]);
         }
         else
@@ -1452,6 +1494,12 @@ class Parsedown
 
             $Element['attributes']['href'] = $Definition['url'];
             $Element['attributes']['title'] = $Definition['title'];
+
+            if ($this->allLinksInNewWindow || ($this->extLinksInNewWindow && str_starts_with($Definition['url]'], 'http'))) {
+                $Element['attributes']['target'] = '_blank';
+            } else {
+                $Element['attributes']['target'] = '_self';
+            }
         }
 
         return array(
@@ -1541,6 +1589,12 @@ class Parsedown
         ) {
             $url = $matches[0][0];
 
+            if ($this->allLinksInNewWindow || ($this->extLinksInNewWindow && str_starts_with($url, 'http'))) {
+                $target = '_blank';
+            } else {
+                $target = '_self';
+            }
+
             $Inline = array(
                 'extent' => strlen($matches[0][0]),
                 'position' => $matches[0][1],
@@ -1549,6 +1603,7 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
+                        'target' => $target,
                     ),
                 ),
             );
@@ -1563,6 +1618,12 @@ class Parsedown
         {
             $url = $matches[1];
 
+            if ($this->allLinksInNewWindow || ($this->extLinksInNewWindow && str_starts_with($url, 'http'))) {
+                $target = '_blank';
+            } else {
+                $target = '_self';
+            }
+
             return array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
@@ -1570,6 +1631,7 @@ class Parsedown
                     'text' => $url,
                     'attributes' => array(
                         'href' => $url,
+                        'target' => $target,
                     ),
                 ),
             );
