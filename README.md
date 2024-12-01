@@ -1,5 +1,3 @@
-<p align="center"><img alt="Parsedown" src="https://i.imgur.com/fKVY6Kz.png" width="240" /></p>
-
 # Parsedown
 
 [![Total Downloads](https://poser.pugx.org/erusev/parsedown/d/total.svg)](https://packagist.org/packages/erusev/parsedown)
