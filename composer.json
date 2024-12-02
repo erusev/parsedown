@@ -29,5 +29,10 @@
             "CommonMarkTest": "test/",
             "CommonMarkTestWeak": "test/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
     }
 }
