@@ -20,7 +20,10 @@
         "phpunit/phpunit": "^7.5|^8.5|^9.6"
     },
     "autoload": {
-        "psr-0": {"Parsedown": ""}
+        "psr-0": {"Parsedown": ""},
+        "files": [
+            "Parsedown.php"
+        ]
     },
     "autoload-dev": {
         "psr-0": {
@@ -28,6 +31,6 @@
             "ParsedownTest": "test/",
             "CommonMarkTest": "test/",
             "CommonMarkTestWeak": "test/"
-        }
+        },
     }
 }
