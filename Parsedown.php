@@ -346,7 +346,7 @@ class Parsedown
     #
     # Code
 
-    protected function blockCode($Line, $Block = null)
+    protected function blockCode($Line, ?$Block = null)
     {
         if (isset($Block) and $Block['type'] === 'Paragraph' and ! isset($Block['interrupted']))
         {

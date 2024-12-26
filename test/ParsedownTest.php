@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class ParsedownTest extends TestCase
 {
-    final function __construct($name = null, array $data = array(), $dataName = '')
+    final function __construct(?$name = null, array $data = array(), $dataName = '')
     {
         $this->dirs = $this->initDirs();
         $this->Parsedown = $this->initParsedown();
