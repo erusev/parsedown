@@ -82,6 +82,15 @@ class Parsedown
     }
 
     protected $urlsLinked = true;
+    
+    function setUrlsTarget($urlsTarget)
+    {
+        $this->urlsTarget = $urlsTarget;
+
+        return $this;
+    }
+
+    protected $urlsTarget = false;
 
     function setSafeMode($safeMode)
     {
@@ -1552,6 +1561,10 @@ class Parsedown
                     ),
                 ),
             );
+            
+            if ($this->urlsTarget === true) {
+                $Inline['element']['attributes']['target'] = '_blank';
+            }
 
             return $Inline;
         }
