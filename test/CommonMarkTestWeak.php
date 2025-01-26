@@ -17,7 +17,7 @@ class CommonMarkTestWeak extends CommonMarkTestStrict
 {
     protected $textLevelElementRegex;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
