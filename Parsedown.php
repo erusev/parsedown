@@ -143,7 +143,7 @@ class Parsedown
 
     protected function lines(array $lines)
     {
-        $CurrentBlock = [];
+        $CurrentBlock = array();
 
         foreach ($lines as $line)
         {
