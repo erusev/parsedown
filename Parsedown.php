@@ -143,13 +143,13 @@ class Parsedown
 
     protected function lines(array $lines)
     {
-        $CurrentBlock = null;
+        $CurrentBlock = [];
 
         foreach ($lines as $line)
         {
             if (chop($line) === '')
             {
-                if (isset($CurrentBlock))
+                if (!empty($CurrentBlock))
                 {
                     $CurrentBlock['interrupted'] = true;
                 }
@@ -255,7 +255,7 @@ class Parsedown
 
             # ~
 
-            if (isset($CurrentBlock) and ! isset($CurrentBlock['type']) and ! isset($CurrentBlock['interrupted']))
+            if (!empty($CurrentBlock) and ! isset($CurrentBlock['type']) and ! isset($CurrentBlock['interrupted']))
             {
                 $CurrentBlock['element']['text'] .= "\n".$text;
             }
@@ -317,9 +317,9 @@ class Parsedown
     #
     # Code
 
-    protected function blockCode($Line, $Block = null)
+    protected function blockCode($Line, $Block = array())
     {
-        if (isset($Block) and ! isset($Block['type']) and ! isset($Block['interrupted']))
+        if (!empty($Block) and ! isset($Block['type']) and ! isset($Block['interrupted']))
         {
             return;
         }
