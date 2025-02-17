@@ -13,7 +13,7 @@ Better Markdown Parser in PHP — <a href="https://parsedown.org/demo">demo</a>
 * [Super Fast](http://parsedown.org/speed)
 * Extensible
 * [GitHub flavored](https://github.github.com/gfm)
-* [Tested](http://parsedown.org/tests/) in 5.3 to 7.3
+* [Tested](http://parsedown.org/tests/) from PHP 7.1 to 8.4
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ## Installation
@@ -85,7 +85,7 @@ It passes most of the CommonMark tests. Most of the tests that don't pass deal w
 
 **Who uses it?**
 
-[Laravel Framework](https://laravel.com/), [Bolt CMS](http://bolt.cm/), [Grav CMS](http://getgrav.org/), [Herbie CMS](http://www.getherbie.org/), [Kirby CMS](http://getkirby.com/), [October CMS](http://octobercms.com/), [Pico CMS](http://picocms.org), [Statamic CMS](http://www.statamic.com/), [phpDocumentor](http://www.phpdoc.org/), [RaspberryPi.org](http://www.raspberrypi.org/), [Symfony Demo](https://github.com/symfony/demo) and [more](https://packagist.org/packages/erusev/parsedown/dependents).
+[Laravel Framework](https://laravel.com/), [Bolt CMS](https://boltcms.io/), [Grav CMS](https://getgrav.org/), [Herbie CMS](https://www.getherbie.org/), [Kirby CMS](https://getkirby.com/), [October CMS](https://octobercms.com/), [Pico CMS](https://picocms.org), [Statamic CMS](https://www.statamic.com/), [phpDocumentor](https://www.phpdoc.org/), [RaspberryPi.org](https://www.raspberrypi.org/), [Symfony Demo](https://github.com/symfony/demo) and [more](https://packagist.org/packages/erusev/parsedown/dependents).
 
 **How can I help?**
 
