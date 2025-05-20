@@ -8,9 +8,9 @@ Better Markdown Parser in PHP — <a href="https://parsedown.org/demo">demo</a>
 
 ## Features
 
-* One File
-* No Dependencies
-* [Super Fast](http://parsedown.org/speed)
+* One file
+* No dependencies
+* [Super fast](http://parsedown.org/speed)
 * Extensible
 * [GitHub flavored](https://github.github.com/gfm)
 * [Tested](http://parsedown.org/tests/) in 5.3 to 7.3
