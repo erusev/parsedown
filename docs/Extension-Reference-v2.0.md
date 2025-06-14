@@ -162,16 +162,12 @@ $State = $State->setting(
 If the limit is exceeded an exception is thrown to prevent malicious input from exhausting resources.
 
 
-### Input and Syntax
+### Input Representation
 
-The raw Markdown string is split into [`Lines`](../src/Parsing/Lines.php) objects.
-Each `Line` records its text and indentation while a `Context` stores preceding
-blank lines. Together these form the **input** that blocks work with.
+Parsedown first separates the raw Markdown string into [`Lines`](../src/Parsing/Lines.php) objects. Each `Line` stores its text and indentation while a `Context` tracks preceding blank lines. Blocks read from these structures as they parse.
 
-The registered block and inline components make up the **syntax**. They are
-stored in `BlockTypes` and `InlineTypes` and determine how the input is
-interpreted. Extensions can modify the syntax by adding, removing or replacing
-these components.
+The available block and inline components define the syntax. They are organised in `BlockTypes` and `InlineTypes`. Extensions may add, remove or replace entries in these lists to change how the input is interpreted.
+
 
 ### Block and Inline Precedence
 
