@@ -3,6 +3,28 @@
 This document provides an overview of several core concepts that appear when implementing custom extensions.
 It is intended to complement the extension tutorial and the migration guide.
 
+## State and StateBearers
+
+Extensions communicate their behaviour through a `State` object. Every
+`State` contains a collection of **configurables** which describe how
+Parsedown should parse and render Markdown. Objects that expose a
+`state()` method and can build on another `State` via
+`::from(StateBearer $Other)` are known as **StateBearers**. Parsedown
+and its extensions are all implemented this way so they can be composed
+together:
+
+```php
+$Parsedown = new Parsedown(
+    ExtensionB::from(
+        ExtensionA::from(new State)
+    )
+);
+```
+
+Each call to `::from()` receives the previous `State` and returns a new
+object that wraps a modified version. The final `State` controls every
+aspect of parsing and rendering.
+
 ## Configurables
 
 A [`Configurable`](../src/Configurable.php) represents a single configuration value within a [`State`](../src/State.php).
@@ -52,6 +74,32 @@ A plain text node that automatically escapes HTML entities. Use it for raw strin
 ### Container
 
 A lightweight wrapper that stores an ordered list of renderables. The `adding()` method returns a new instance with an extra item appended. Containers are commonly produced when transforming renderables or building fragments.
+
+### RenderStack
+
+After constructing the AST every renderable is passed through the
+`RenderStack` configurable. The stack contains an ordered list of
+transformations applied before the final HTML is produced. Extensions may
+add new callbacks by retrieving the current stack and inserting a new
+step:
+
+```php
+use Erusev\Parsedown\Configurables\RenderStack;
+use Erusev\Parsedown\Html\Renderable;
+use Erusev\Parsedown\Html\Renderables\Container;
+use Erusev\Parsedown\Html\Renderables\Element;
+use Erusev\Parsedown\State;
+
+$Stack = $State->get(RenderStack::class)
+    ->adding(function (Renderable $r, State $s) {
+        return new Container([new Element('span', ['class' => 'debug'], $r)]);
+    });
+
+$State = $State->setting($Stack);
+```
+
+Each function receives a `Renderable` and returns a replacement. Multiple
+extensions can work together by adding their own callbacks to the stack.
 
 ## WidthTrait
 
