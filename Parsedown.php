@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 #
 #
@@ -21,7 +21,7 @@ class Parsedown
 
     # ~
 
-    function text($text)
+    public function text(string $text): string
     {
         $Elements = $this->textElements($text);
 
@@ -34,7 +34,7 @@ class Parsedown
         return $markup;
     }
 
-    protected function textElements($text)
+    protected function textElements(string $text): array
     {
         # make sure no definitions are set
         $this->DefinitionData = array();
@@ -56,52 +56,52 @@ class Parsedown
     # Setters
     #
 
-    function setBreaksEnabled($breaksEnabled)
+    public function setBreaksEnabled(bool $breaksEnabled): self
     {
         $this->breaksEnabled = $breaksEnabled;
 
         return $this;
     }
 
-    protected $breaksEnabled;
+    protected bool $breaksEnabled = false;
 
-    function setMarkupEscaped($markupEscaped)
+    public function setMarkupEscaped(bool $markupEscaped): self
     {
         $this->markupEscaped = $markupEscaped;
 
         return $this;
     }
 
-    protected $markupEscaped;
+    protected bool $markupEscaped = false;
 
-    function setUrlsLinked($urlsLinked)
+    public function setUrlsLinked(bool $urlsLinked): self
     {
         $this->urlsLinked = $urlsLinked;
 
         return $this;
     }
 
-    protected $urlsLinked = true;
+    protected bool $urlsLinked = true;
 
-    function setSafeMode($safeMode)
+    public function setSafeMode(bool $safeMode): self
     {
         $this->safeMode = (bool) $safeMode;
 
         return $this;
     }
 
-    protected $safeMode;
+    protected bool $safeMode = false;
 
-    function setStrictMode($strictMode)
+    public function setStrictMode(bool $strictMode): self
     {
         $this->strictMode = (bool) $strictMode;
 
         return $this;
     }
 
-    protected $strictMode;
+    protected bool $strictMode = false;
 
-    protected $safeLinksWhitelist = array(
+    protected array $safeLinksWhitelist = array(
         'http://',
         'https://',
         'ftp://',
@@ -123,7 +123,7 @@ class Parsedown
     # Lines
     #
 
-    protected $BlockTypes = array(
+    protected array $BlockTypes = array(
         '#' => array('Header'),
         '*' => array('Rule', 'List'),
         '+' => array('List'),
@@ -151,7 +151,7 @@ class Parsedown
 
     # ~
 
-    protected $unmarkedBlockTypes = array(
+    protected array $unmarkedBlockTypes = array(
         'Code',
     );
 
@@ -159,12 +159,12 @@ class Parsedown
     # Blocks
     #
 
-    protected function lines(array $lines)
+    protected function lines(array $lines): string
     {
         return $this->elements($this->linesElements($lines));
     }
 
-    protected function linesElements(array $lines)
+    protected function linesElements(array $lines): array
     {
         $Elements = array();
         $CurrentBlock = null;
@@ -1851,7 +1851,7 @@ class Parsedown
     # Deprecated Methods
     #
 
-    function parse($text)
+    public function parse(string $text): string
     {
         $markup = $this->text($text);
 
@@ -1916,12 +1916,12 @@ class Parsedown
     # Static Methods
     #
 
-    protected static function escape($text, $allowQuotes = false)
+    protected static function escape(string $text, bool $allowQuotes = false): string
     {
         return htmlspecialchars($text, $allowQuotes ? ENT_NOQUOTES : ENT_QUOTES, 'UTF-8');
     }
 
-    protected static function striAtStart($string, $needle)
+    protected static function striAtStart(string $string, string $needle): bool
     {
         $len = strlen($needle);
 
@@ -1949,38 +1949,38 @@ class Parsedown
         return $instance;
     }
 
-    private static $instances = array();
+    private static array $instances = [];
 
     #
     # Fields
     #
 
-    protected $DefinitionData;
+    protected array $DefinitionData = [];
 
     #
     # Read-Only
 
-    protected $specialCharacters = array(
+    protected array $specialCharacters = array(
         '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|', '~'
     );
 
-    protected $StrongRegex = array(
+    protected array $StrongRegex = array(
         '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*+[*])+?)[*]{2}(?![*])/s',
         '_' => '/^__((?:\\\\_|[^_]|_[^_]*+_)+?)__(?!_)/us',
     );
 
-    protected $EmRegex = array(
+    protected array $EmRegex = array(
         '*' => '/^[*]((?:\\\\\*|[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
         '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
     );
 
-    protected $regexHtmlAttribute = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
+    protected string $regexHtmlAttribute = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
 
-    protected $voidElements = array(
+    protected array $voidElements = array(
         'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
     );
 
-    protected $textLevelElements = array(
+    protected array $textLevelElements = array(
         'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
         'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
         'i', 'rp', 'del', 'code',          'strike', 'marquee',
