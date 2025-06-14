@@ -280,5 +280,8 @@ use Erusev\Parsedown\Configurables\RecursionLimiter;
 $State = $State->setting(RecursionLimiter::withLimit(25));
 ```
 
+For more detail on Parsedown's architecture and additional extension APIs consult
+the companion [Extension Reference](Extension-Reference-v2.0.md).
+
 
 

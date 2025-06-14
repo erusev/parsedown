@@ -101,15 +101,15 @@ provides a `RenderStack` that transforms these objects into the final HTML strin
 
 ### Element
 
-Represents a single HTML tag. The constructor accepts the tag name, attributes and optional child renderables. A convenience method `Element::selfClosing()` creates elements without children. When rendered, names and attribute values are escaped for safety.
+Represents a single HTML tag. The constructor accepts the tag name, a map of attributes and an optional array of child renderables. `Element` objects are immutable; methods such as `settingAttributes()` and `settingContents()` return new instances with the modified data. A convenience helper `Element::selfClosing()` creates elements without children. When rendered, tag names and attribute values are escaped to protect against invalid markup.
 
 ### Text
 
-A plain text node that automatically escapes HTML entities. Use it for raw strings that should not be treated as markup.
+A plain text node that automatically escapes HTML entities. Use it for raw strings that should not be treated as markup. Because `Text` implements `TransformableRenderable`, it can participate in render stack transformations like any other element.
 
 ### Container
 
-A lightweight wrapper that stores an ordered list of renderables. The `adding()` method returns a new instance with an extra item appended. Containers are commonly produced when transforming renderables or building fragments.
+A lightweight wrapper that stores an ordered list of renderables. The `adding()` method returns a new instance with an extra item appended while `contents()` exposes the underlying list. Containers are commonly produced when transforming renderables or constructing small fragments of output.
 
 ### RenderStack
 
