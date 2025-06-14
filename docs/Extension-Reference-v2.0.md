@@ -49,6 +49,42 @@ $State->get(DefinitionBook::class)->mutatingSet('id', ['url' => 'https://example
 
 The `mutatingSet()` method updates the stored data and affects the rest of the current parse.
 
+Custom books let you expose extension specific state. A book simply needs to
+implement `MutableConfigurable` and provide an `isolatedCopy()` method:
+
+```php
+final class CalloutBook implements MutableConfigurable
+{
+    /** @var array<int, string> */
+    private $callouts;
+
+    public function __construct(array $callouts = [])
+    {
+        $this->callouts = $callouts;
+    }
+
+    public static function initial(): self
+    {
+        return new self;
+    }
+
+    public function mutatingAdd(string $text): int
+    {
+        $this->callouts[] = $text;
+
+        return count($this->callouts);
+    }
+
+    public function isolatedCopy(): self
+    {
+        return new self($this->callouts);
+    }
+}
+```
+
+An inline or block can store entries in the book using `mutatingAdd()` and later
+reference them while rendering.
+
 ## AST
 
 Parsedown creates an abstract syntax tree (AST) while parsing. Each block or inline returns an object that exposes a
@@ -112,6 +148,19 @@ Parsing is performed line by line. `BlockTypes` holds the list of block parsers 
 `InlineTypes` performs a similar role for inlines. The [`Parsing\Context`](../src/Parsing/Context.php) object tracks the
 current line and facilitates continuations. Recursion is limited via the `RecursionLimiter` configurable to avoid runaway
 processing.
+
+The limiter defaults to a depth of **15**. Extensions may change this by replacing the configurable:
+
+```php
+use Erusev\Parsedown\Configurables\RecursionLimiter;
+
+$State = $State->setting(
+    RecursionLimiter::withLimit(30)
+);
+```
+
+If the limit is exceeded an exception is thrown to prevent malicious input from exhausting resources.
+
 
 ### Input and Syntax
 

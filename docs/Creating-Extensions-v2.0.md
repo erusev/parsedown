@@ -242,3 +242,43 @@ $Parsedown = new Parsedown(
 
 Here `MyExtension` receives the `State` produced by `ParsedownExtra` before the
 final parser is constructed.
+
+## Adding render steps
+
+Custom callbacks can be inserted into the `RenderStack` to transform output before it is turned into HTML.
+
+```php
+use Erusev\Parsedown\Configurables\RenderStack;
+use Erusev\Parsedown\Html\Renderables\Element;
+use Erusev\Parsedown\Html\Renderables\Container;
+use Erusev\Parsedown\StateBearer;
+use Erusev\Parsedown\State;
+
+public static function from(StateBearer $s): self
+{
+    $State = $s->state();
+
+    $Stack = $State->get(RenderStack::class)
+        ->adding(function ($r, State $s) {
+            return new Container([new Element('div', ['class' => 'wrap'], $r)]);
+        });
+
+    return new self($State->setting($Stack));
+}
+```
+
+The callbacks receive the current renderable and must return a replacement.
+
+## Adjusting recursion limit
+
+The `RecursionLimiter` configurable prevents excessively nested documents from consuming all available memory.
+It defaults to 15 levels of depth but can be changed:
+
+```php
+use Erusev\Parsedown\Configurables\RecursionLimiter;
+
+$State = $State->setting(RecursionLimiter::withLimit(25));
+```
+
+
+
