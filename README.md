@@ -78,6 +78,16 @@ $Parsedown->setMarkupEscaped(true);
 
 Beware that this still allows users to insert unsafe scripting vectors, such as links like `[xss](javascript:alert%281%29)`.
 
+## Extensions
+
+Parsedown v2 exposes a composable plugin system built around the `StateBearer`
+interface. A walk‑through for creating a custom extension is available in
+[docs/Creating-Extensions-v2.0.md](docs/Creating-Extensions-v2.0.md). An
+overview of key concepts can be found in
+[docs/Extension-Reference-v2.0.md](docs/Extension-Reference-v2.0.md). If you are
+migrating an extension written for v1.x, see
+[docs/Migrating-Extensions-v2.0.md](docs/Migrating-Extensions-v2.0.md).
+
 ## Questions
 
 **How does Parsedown work?**
