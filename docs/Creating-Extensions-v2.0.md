@@ -126,6 +126,10 @@ public static function from(StateBearer $StateBearer): self
 }
 ```
 
+`addingHighPrecedence()` places the inline class at the beginning of the list
+for its marker so it executes before existing types. Use
+`addingLowPrecedence()` to append it instead.
+
 The extension can now be composed with Parsedown:
 
 ```php
@@ -211,6 +215,11 @@ public static function from(StateBearer $StateBearer): self
     return new self($State->setting($BlockTypes));
 }
 ```
+
+`addingMarkedHighPrecedence()` adds the block to the start of the list for the
+specified marker so it is tried before other marked blocks. Blocks that do not
+have a dedicated marker can be registered with
+`addingUnmarkedHighPrecedence()` or `addingUnmarkedLowPrecedence()`.
 
 ## Composing multiple extensions
 

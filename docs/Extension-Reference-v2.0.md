@@ -113,5 +113,28 @@ Parsing is performed line by line. `BlockTypes` holds the list of block parsers 
 current line and facilitates continuations. Recursion is limited via the `RecursionLimiter` configurable to avoid runaway
 processing.
 
+### Input and Syntax
+
+The raw Markdown string is split into [`Lines`](../src/Parsing/Lines.php) objects.
+Each `Line` records its text and indentation while a `Context` stores preceding
+blank lines. Together these form the **input** that blocks work with.
+
+The registered block and inline components make up the **syntax**. They are
+stored in `BlockTypes` and `InlineTypes` and determine how the input is
+interpreted. Extensions can modify the syntax by adding, removing or replacing
+these components.
+
+### Block and Inline Precedence
+
+`InlineTypes` provides `addingHighPrecedence()` and `addingLowPrecedence()` to
+control the order of inline parsers for a given marker. High precedence inserts
+new types at the front of the list whereas low precedence appends them.
+
+`BlockTypes` distinguishes between blocks that require a marker and those that
+do not. Marked blocks are added with `addingMarkedHighPrecedence()` or
+`addingMarkedLowPrecedence()`. Unmarked blocks use
+`addingUnmarkedHighPrecedence()` or `addingUnmarkedLowPrecedence()`. Choose the
+method that matches how your block is triggered.
+
 For a practical walkthrough of extending Parsedown refer to
 [Creating-Extensions-v2.0.md](Creating-Extensions-v2.0.md).
