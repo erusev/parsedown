@@ -101,7 +101,7 @@ class Parsedown
 
     protected bool $strictMode = false;
 
-    protected array $safeLinksWhitelist = array(
+    protected array $safeLinksWhitelist = [
         'http://',
         'https://',
         'ftp://',
@@ -117,7 +117,7 @@ class Parsedown
         'ssh:',
         'news:',
         'steam:',
-    );
+    ];
 
     #
     # Lines
