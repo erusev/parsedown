@@ -45,10 +45,10 @@ class CommonMarkTestStrict extends TestCase
         $spec = str_replace("\r\n", "\n", $spec);
         $spec = strstr($spec, '<!-- END TESTS -->', true);
 
-        $matches = array();
+        $matches = [];
         preg_match_all('/^`{32} example\n((?s).*?)\n\.\n(?:|((?s).*?)\n)`{32}$|^#{1,6} *(.*?)$/m', $spec, $matches, PREG_SET_ORDER);
 
-        $data = array();
+        $data = [];
         $currentId = 0;
         $currentSection = '';
         foreach ($matches as $match) {
@@ -59,12 +59,12 @@ class CommonMarkTestStrict extends TestCase
                 $markdown = str_replace('→', "\t", $match[1]);
                 $expectedHtml = isset($match[2]) ? str_replace('→', "\t", $match[2]) : '';
 
-                $data[$currentId] = array(
+                $data[$currentId] = [
                     'id' => $currentId,
                     'section' => $currentSection,
                     'markdown' => $markdown,
                     'expectedHtml' => $expectedHtml
-                );
+                ];
             }
         }
 
