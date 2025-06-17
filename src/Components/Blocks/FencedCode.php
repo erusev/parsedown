@@ -51,7 +51,7 @@ final class FencedCode implements ContinuableBlock
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     ) {
         $marker = \substr($Context->line()->text(), 0, 1);
 

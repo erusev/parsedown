@@ -17,6 +17,6 @@ interface Block extends Component
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     );
 }

@@ -83,7 +83,7 @@ final class TList implements ContinuableBlock
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     ) {
         list($type, $pattern) = (
             \substr($Context->line()->text(), 0, 1) <= '-'

@@ -22,7 +22,7 @@ final class Rule implements Block
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     ) {
         if ($Context->line()->indent() > 3) {
             return null;

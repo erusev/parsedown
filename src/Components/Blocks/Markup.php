@@ -124,7 +124,7 @@ final class Markup implements ContinuableBlock
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     ) {
         $text = $Context->line()->text();
         $rawLine = $Context->line()->rawLine();
