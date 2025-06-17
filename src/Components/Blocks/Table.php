@@ -47,7 +47,7 @@ final class Table implements AcquisitioningBlock, ContinuableBlock
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     ) {
         if (! isset($Block) || ! $Block instanceof Paragraph) {
             return null;

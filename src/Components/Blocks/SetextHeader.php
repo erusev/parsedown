@@ -39,7 +39,7 @@ final class SetextHeader implements AcquisitioningBlock
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     ) {
         if (! isset($Block) || ! $Block instanceof Paragraph || $Context->precedingEmptyLines() > 0) {
             return null;
