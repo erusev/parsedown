@@ -5,16 +5,15 @@ sudo: false
 
 matrix:
   include:
-    - php: 5.3
-      dist: precise
-    - php: 5.4
-    - php: 5.5
-    - php: 5.6
-    - php: 7.0
     - php: 7.1
     - php: 7.2
     - php: 7.3
     - php: 7.4
+    - php: 8.0
+    - php: 8.1
+    - php: 8.2
+    - php: 8.3
+    - php: 8.4
     - php: nightly
   fast_finish: true
   allow_failures:
