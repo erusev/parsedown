@@ -17,11 +17,11 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "vimeo/psalm": "^6.12",
-        "phpunit/phpunit": "^11.5",
         "friendsofphp/php-cs-fixer": "^3.82",
         "infection/infection": "^0.29",
-        "roave/infection-static-analysis-plugin": "^1.38"
+        "phpunit/phpunit": "^11.5",
+        "roave/infection-static-analysis-plugin": "^1.38",
+        "vimeo/psalm": "^6.12"
     },
     "autoload": {
         "psr-4": {"Erusev\\Parsedown\\": "src/"}
