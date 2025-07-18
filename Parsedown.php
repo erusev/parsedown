@@ -1378,6 +1378,13 @@ class Parsedown
             ),
         );
 
+        //get width and height from href attribute if exists (ex: "http://www.example.com/image.png#100x100")
+        if (!empty($Inline['element']['attributes']['src'])&&preg_match('/^(.*)#(\d*)x(\d*)$/', $Link['element']['attributes']['href'], $matches)) {
+            if(isset($matches[2])) $Inline['element']['attributes']['width']  = $matches[2];
+            if(isset($matches[3])) $Inline['element']['attributes']['height'] = $matches[3];
+            $Inline['element']['attributes']['src'] = $matches[1];
+        }
+
         $Inline['element']['attributes'] += $Link['element']['attributes'];
 
         unset($Inline['element']['attributes']['href']);
