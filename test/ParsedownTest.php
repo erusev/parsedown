@@ -196,4 +196,16 @@ EXPECTED_HTML;
         $sameInstanceAgain = TestParsedown::instance('test late static binding');
         $this->assertSame($testParsedown, $sameInstanceAgain);
     }
+
+    function testHeaderOffset()
+    {
+        $markdown = '## header 2';
+        $expectedMarkup = '<h4>header 2</h4>';
+
+        $this->Parsedown->setHeaderOffset(2);
+
+        $actualMarkup = $this->Parsedown->text($markdown);
+
+        $this->assertEquals($expectedMarkup, $actualMarkup);
+    }
 }
