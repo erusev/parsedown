@@ -20,7 +20,9 @@ Better Markdown Parser in PHP — <a href="https://parsedown.org/demo">demo</a>
 
 Install the [composer package]:
 
-    composer require erusev/parsedown
+```sh
+composer require erusev/parsedown
+```
 
 Or download the [latest release] and include `Parsedown.php`
 
