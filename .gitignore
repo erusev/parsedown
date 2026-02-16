@@ -1,3 +1,6 @@
+*.md
+!readme.md
+
 composer.lock
 vendor/
 .phpunit.result.cache
