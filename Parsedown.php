@@ -83,6 +83,13 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+    private $relativePath;
+    function setRelativePath($relativePath)
+    {
+      $this->relativePath = $relativePath;
+      return $this;
+    }
+
     function setSafeMode($safeMode)
     {
         $this->safeMode = (bool) $safeMode;
@@ -1366,12 +1373,19 @@ class Parsedown
             return;
         }
 
+        $url = $Link['element']['attributes']['href'];
+        $hostURL = parse_url($url);
+        if (isset($this->relativePath) && !isset($hostURL['host']))
+        {
+        	$url = $this->relativePath . $url;
+        }
+        
         $Inline = array(
             'extent' => $Link['extent'] + 1,
             'element' => array(
                 'name' => 'img',
                 'attributes' => array(
-                    'src' => $Link['element']['attributes']['href'],
+                    'src' => $url,
                     'alt' => $Link['element']['handler']['argument'],
                 ),
                 'autobreak' => true,
