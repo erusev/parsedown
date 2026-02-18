@@ -168,6 +168,7 @@ class Parsedown
     {
         $Elements = array();
         $CurrentBlock = null;
+        $CurrentBlockHelper = null;
 
         foreach ($lines as $line)
         {
@@ -178,8 +179,11 @@ class Parsedown
                     $CurrentBlock['interrupted'] = (isset($CurrentBlock['interrupted'])
                         ? $CurrentBlock['interrupted'] + 1 : 1
                     );
+                    $CurrentBlockHelper = $CurrentBlock;
+                    $CurrentBlock = $Block = null;
+                    $blockTypes = $this->unmarkedBlockTypes;
+                    $marker = '';
                 }
-
                 continue;
             }
 
@@ -245,7 +249,7 @@ class Parsedown
 
             foreach ($blockTypes as $blockType)
             {
-                $Block = $this->{"block$blockType"}($Line, $CurrentBlock);
+                $Block = $this->{"block$blockType"}($Line, $CurrentBlock?: $CurrentBlockHelper);
 
                 if (isset($Block))
                 {
@@ -253,9 +257,9 @@ class Parsedown
 
                     if ( ! isset($Block['identified']))
                     {
-                        if (isset($CurrentBlock))
+                        if (isset($CurrentBlock) || isset($CurrentBlockHelper))
                         {
-                            $Elements[] = $this->extractElement($CurrentBlock);
+                            $Elements[] = $CurrentBlock ? $this->extractElement($CurrentBlock):$this->extractElement($CurrentBlockHelper);
                         }
 
                         $Block['identified'] = true;
@@ -285,9 +289,9 @@ class Parsedown
             }
             else
             {
-                if (isset($CurrentBlock))
+                if (isset($CurrentBlock) || isset($CurrentBlockHelper))
                 {
-                    $Elements[] = $this->extractElement($CurrentBlock);
+                    $Elements[] = $CurrentBlock ?$this->extractElement($CurrentBlock): $this->extractElement($CurrentBlockHelper);
                 }
 
                 $CurrentBlock = $this->paragraph($Line);
