@@ -553,15 +553,23 @@ class Parsedown
         }
 
         $text = trim($text, ' ');
+	$link = preg_replace('/[^\p{L}\p{N}\p{M}-]+/u', '', mb_strtolower(mb_ereg_replace(' ','-',$text)));
+	$attr = array();
+	if (!empty($link)) {
+		$attr = array(
+                    'id' => $link,
+                );
+	}
 
         $Block = array(
             'element' => array(
                 'name' => 'h' . $level,
+                'attributes' => $attr,
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $text,
                     'destination' => 'elements',
-                )
+                ),
             ),
         );
 
@@ -1993,3 +2001,4 @@ class Parsedown
                    'wbr', 'time',
     );
 }
+
