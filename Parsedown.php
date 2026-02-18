@@ -1033,7 +1033,7 @@ class Parsedown
             $row = trim($row);
             $row = trim($row, '|');
 
-            preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]++`|`)++/', $row, $matches);
+            preg_match_all('/(?:(\\\\[|])|`{3,3}.*?`{3,3}|[^|`]|`[^`]++`|`)++/', $row, $matches);
 
             $cells = array_slice($matches[0], 0, count($Block['alignments']));
 
