@@ -32,7 +32,7 @@ final class Paragraph implements ContinuableBlock
     public static function build(
         Context $Context,
         State $State,
-        Block $Block = null
+        ?Block $Block = null
     ) {
         return new self($Context->line()->text());
     }
