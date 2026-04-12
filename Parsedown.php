@@ -692,6 +692,10 @@ class Parsedown
         {
             return null;
         }
+        elseif ($Line['indent'] < $requiredIndent and $Line['text'][0] === '<' and $this->blockMarkup($Line))
+        {
+            return null;
+        }
 
         if ($Line['text'][0] === '[' and $this->blockReference($Line))
         {
@@ -850,6 +854,18 @@ class Parsedown
                 ),
             );
 
+            // Single-tag markup lines should not consume following Markdown lines.
+            // Close this block for explicit closing tags, self-closing tags, and void elements.
+            
+            $isClosingTag = $Line['text'][1] === '/';
+            $isSelfClosingTag = isset($matches[2]);
+            $isVoidElement = in_array($element, $this->voidElements);
+            
+            if ($isClosingTag || $isSelfClosingTag || $isVoidElement)
+            {
+                $Block['closed'] = true;
+            }
+
             return $Block;
         }
     }
@@ -859,6 +875,22 @@ class Parsedown
         if (isset($Block['closed']) or isset($Block['interrupted']))
         {
             return;
+        }
+
+        // If a markup-starting line ends with nested closing tags (but not this block's
+        // own closing tag), stop continuation so the next line can be parsed as Markdown.
+        if ($Line['text'][0] === '<' and strpos($Line['text'], '</') !== false)
+        {
+            if (
+                ! preg_match('/<\/' . preg_quote($Block['name'], '/') . '\s*>/i', $Line['text'])
+                and preg_match('/<\/[a-zA-Z][\w:-]*\s*>(?:\s*<\/[a-zA-Z][\w:-]*\s*>)*\s*$/i', $Line['text'])
+            )
+            {
+                $Block['element']['rawHtml'] .= "\n" . $Line['body'];
+                $Block['interrupted'] = 1;
+
+                return $Block;
+            }
         }
 
         $Block['element']['rawHtml'] .= "\n" . $Line['body'];
@@ -1976,7 +2008,7 @@ class Parsedown
     );
 
     protected $regexHtmlAttribute = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
-
+    
     protected $voidElements = array(
         'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
     );
