@@ -1,5 +1,6 @@
 *.md
 !readme.md
+!test/data/*.md
 
 composer.lock
 vendor/
