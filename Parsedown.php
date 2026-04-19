@@ -718,6 +718,11 @@ class Parsedown
 
         if ( ! isset($Block['interrupted']))
         {
+            if ($Line['text'][0] === '<' and ($this->blockComment($Line) or $this->blockMarkup($Line)))
+            {
+                return null;
+            }
+
             $text = preg_replace('/^[ ]{0,'.$requiredIndent.'}+/', '', $Line['body']);
 
             $Block['li']['handler']['argument'] []= $text;
