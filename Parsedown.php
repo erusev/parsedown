@@ -83,6 +83,15 @@ class Parsedown
 
     protected $urlsLinked = true;
 
+    function setLinkTarget($linkTarget)
+    {
+        $this->linkTarget = $linkTarget;
+
+        return $this;
+    }
+
+    protected $linkTarget;
+
     function setSafeMode($safeMode)
     {
         $this->safeMode = (bool) $safeMode;
@@ -1454,6 +1463,12 @@ class Parsedown
             $Element['attributes']['title'] = $Definition['title'];
         }
 
+        if ($this->linkTarget)
+        {
+            $Element['attributes']['target'] = $this->linkTarget;
+            $Element['attributes']['rel'] = 'noopener noreferrer';
+        }
+
         return array(
             'extent' => $extent,
             'element' => $Element,
@@ -1529,7 +1544,7 @@ class Parsedown
 
     protected function inlineUrl($Excerpt)
     {
-        if ($this->urlsLinked !== true or ! isset($Excerpt['text'][2]) or $Excerpt['text'][2] !== '/')
+        if ( ! $this->urlsLinked or ! isset($Excerpt['text'][2]) or $Excerpt['text'][2] !== '/')
         {
             return;
         }
@@ -1539,15 +1554,23 @@ class Parsedown
         ) {
             $url = $matches[0][0];
 
+            $attributes = array(
+                'href' => $url,
+            );
+
+            if ($this->linkTarget)
+            {
+                $attributes['target'] = $this->linkTarget;
+                $attributes['rel'] = 'noopener noreferrer';
+            }
+
             $Inline = array(
                 'extent' => strlen($matches[0][0]),
                 'position' => $matches[0][1],
                 'element' => array(
                     'name' => 'a',
                     'text' => $url,
-                    'attributes' => array(
-                        'href' => $url,
-                    ),
+                    'attributes' => $attributes,
                 ),
             );
 
@@ -1561,14 +1584,22 @@ class Parsedown
         {
             $url = $matches[1];
 
+            $attributes = array(
+                'href' => $url,
+            );
+
+            if ($this->linkTarget)
+            {
+                $attributes['target'] = $this->linkTarget;
+                $attributes['rel'] = 'noopener noreferrer';
+            }
+
             return array(
                 'extent' => strlen($matches[0]),
                 'element' => array(
                     'name' => 'a',
                     'text' => $url,
-                    'attributes' => array(
-                        'href' => $url,
-                    ),
+                    'attributes' => $attributes,
                 ),
             );
         }
