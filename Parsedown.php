@@ -545,7 +545,7 @@ class Parsedown
             return;
         }
 
-        $text = trim($Line['text'], '#');
+        $text = substr($Line['text'], $level);
 
         if ($this->strictMode and isset($text[0]) and $text[0] !== ' ')
         {
@@ -553,6 +553,17 @@ class Parsedown
         }
 
         $text = trim($text, ' ');
+
+        # optional closing sequence: a space followed by trailing #s
+        if (isset($text[0]) and substr($text, -1) === '#')
+        {
+            $withoutClosingHashes = rtrim($text, '#');
+
+            if ($withoutClosingHashes === '' or substr($withoutClosingHashes, -1) === ' ')
+            {
+                $text = rtrim($withoutClosingHashes, ' ');
+            }
+        }
 
         $Block = array(
             'element' => array(
