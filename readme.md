@@ -9,7 +9,7 @@ Better Markdown Parser in PHP — <a href="https://parsedown.org/demo">demo</a>
 ## Features
 
 - One file
-- No dependencies
+- No other PHP libraries required
 - [Super fast](http://parsedown.org/speed)
 - Extensible
 - [GitHub flavored](https://github.github.com/gfm)
@@ -17,6 +17,12 @@ Better Markdown Parser in PHP — <a href="https://parsedown.org/demo">demo</a>
 - [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ## Installation
+
+Requires PHP 7.2 or later and the [mbstring extension](https://www.php.net/manual/en/mbstring.installation.php).
+Enable mbstring for the PHP runtime that will run Parsedown, including when
+installing the single file manually. Composer checks this requirement during
+installation; without the extension, parsing Markdown containing tabs can fail
+with `Call to undefined function mb_strlen()`.
 
 Install the [composer package]:
 
