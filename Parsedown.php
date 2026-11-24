@@ -716,6 +716,15 @@ class Parsedown
             return $Block;
         }
 
+        $marker = $Line['text'][0];
+
+        if ($Line['indent'] < 4 and isset($this->BlockTypes[$marker])
+            and in_array('FencedCode', $this->BlockTypes[$marker], true)
+            and $this->blockFencedCode($Line)
+        ) {
+            return null;
+        }
+
         if ( ! isset($Block['interrupted']))
         {
             $text = preg_replace('/^[ ]{0,'.$requiredIndent.'}+/', '', $Line['body']);
